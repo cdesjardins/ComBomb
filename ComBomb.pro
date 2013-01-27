@@ -14,10 +14,12 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    childform.cpp
+    childform.cpp \
+    cbtextedit.cpp
 
 HEADERS  += mainwindow.h \
-    childform.h
+    childform.h \
+    cbtextedit.h
 
 FORMS    += mainwindow.ui \
     childform.ui
