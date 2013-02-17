@@ -15,14 +15,19 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     childform.cpp \
-    cbtextedit.cpp
+    cbtextedit.cpp \
+    TargetIntf.cpp \
+    opendialog.cpp
 
 HEADERS  += mainwindow.h \
     childform.h \
-    cbtextedit.h
+    cbtextedit.h \
+    TargetIntf.h \
+    opendialog.h
 
 FORMS    += mainwindow.ui \
-    childform.ui
+    childform.ui \
+    opendialog.ui
 
 RESOURCES += \
     ComBomb.qrc
