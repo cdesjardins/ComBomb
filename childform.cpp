@@ -12,3 +12,10 @@ ChildForm::~ChildForm()
 {
     delete ui;
 }
+
+
+
+void ChildForm::setTargetInterface(TgtIntf* targetInterface)
+{
+    ui->_textEdit->setTargetInterface(targetInterface);
+}

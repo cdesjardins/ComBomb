@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "opendialog.h"
 #include <QMainWindow>
 #include <QMdiArea>
 
@@ -20,6 +21,8 @@ private slots:
     void on_actionOpen_triggered();
 
 private:
+
+    OpenDialog *_openDialog;
     Ui::MainWindow *_ui;
     QMdiArea *_mdiArea;
 };

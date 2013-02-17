@@ -1,7 +1,7 @@
 
-#pragma once
+#ifndef TARGETINTF_H
+#define TARGETINTF_H
 
-#include "ScrollBuff.h"
 #include <list>
 
 class TgtIntf
@@ -10,19 +10,19 @@ public:
     TgtIntf(void);
     virtual ~TgtIntf(void);
 
-    virtual char * TgtConnect()
+    virtual void TgtConnect()
     {
-        return TgtMakeConnection();
+        TgtMakeConnection();
     };
     virtual int TgtDisconnect() = 0;
     virtual int TgtRead(char *szReadData, int nMaxBytes) = 0;
     virtual int TgtWrite(char *szWriteData, int nBytes) = 0;
     virtual bool TgtConnected() = 0;
-    virtual void TgtGetTitle(char *szTitle) = 0;
+    virtual void TgtGetTitle(std::string *szTitle) = 0;
     virtual int TgtGetBytesRx() { return m_nTotalRx; };
     virtual int TgtGetBytesTx() { return m_nTotalTx; };
 protected:
-    virtual char * TgtMakeConnection() = 0;
+    virtual void TgtMakeConnection() = 0;
     int m_nTotalTx;
     int m_nTotalRx;
 };
@@ -133,7 +133,7 @@ protected:
     int TgtDeny(eTelnetOption eOpt);
     int TgtConfirm(eTelnetOption eOpt);
     int TgtSendCommand(eTelnetCommand eCmd, eTelnetOption eOpt);
-    virtual char * TgtMakeConnection();
+    virtual void TgtMakeConnection();
 
     int m_nSocket;
     char m_sTelnetRx[512];
@@ -187,12 +187,12 @@ public:
 
 
 protected:
-    virtual char * TgtMakeConnection();
+    virtual void TgtMakeConnection();
     static void TgtSerialMonitor(void *arg);
     virtual void TgtReadFromPort();
     virtual void TgtSendToPort();
-    virtual void TgtWritePortData(char *szData, DWORD nBytes);
-
+    virtual void TgtWritePortData(char *szData, int nBytes);
+/*
     HANDLE m_hSerialMonitor;
     HANDLE m_hThreadTerm;
     HANDLE m_hSerial;
@@ -201,6 +201,7 @@ protected:
     std::list<char> m_dataOutgoing;
     CRITICAL_SECTION m_csInProtector;
     CRITICAL_SECTION m_csOutProtector;
+*/
     TgtConnection m_sTgtConnection;
 };
 
@@ -215,19 +216,20 @@ public:
     virtual int TgtRead(char *szReadData, int nMaxBytes);
     virtual int TgtWrite(char *szWriteData, int nBytes);
     virtual bool TgtConnected();
-    virtual void TgtGetTitle(char *szTitle);
-    virtual void TgtSetConfig(char *szFileName)
+    virtual void TgtGetTitle(std::string *szTitle);
+    virtual void TgtSetConfig(const std::string &szFileName)
     {
-        strncpy(m_sTgtConnection.m_szFileName, szFileName, sizeof(m_sTgtConnection.m_szFileName));
+        m_sTgtConnection.m_szFileName = szFileName;
     };
     struct TgtConnection
     {
-        char m_szFileName[256];
+        std::string m_szFileName;
     };
 protected:
-    virtual char * TgtMakeConnection();
+    virtual void TgtMakeConnection();
 
     FILE *m_fInput;
     int m_cnt;
     TgtConnection m_sTgtConnection;
 };
+#endif

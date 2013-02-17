@@ -16,6 +16,9 @@ public:
     ~OpenDialog();
     
 private:
+    void detectComPorts();
+    std::vector<std::string> _comPorts;
+
     Ui::OpenDialog *ui;
 };
 

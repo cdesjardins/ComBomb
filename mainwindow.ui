@@ -17,8 +17,8 @@
    <iconset resource="ComBomb.qrc">
     <normaloff>:/images/ComBomb32.png</normaloff>:/images/ComBomb32.png</iconset>
   </property>
-  <widget class="QWidget" name="centralWidget"/>
-  <widget class="QMenuBar" name="menuBar">
+  <widget class="QWidget" name="_centralWidget"/>
+  <widget class="QMenuBar" name="_menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
@@ -27,15 +27,16 @@
      <height>21</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuFile">
+   <widget class="QMenu" name="_menuFile">
     <property name="title">
      <string>File</string>
     </property>
     <addaction name="actionOpen"/>
+    <addaction name="actionExit"/>
    </widget>
-   <addaction name="menuFile"/>
+   <addaction name="_menuFile"/>
   </widget>
-  <widget class="QToolBar" name="mainToolBar">
+  <widget class="QToolBar" name="_mainToolBar">
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
    </attribute>
@@ -44,7 +45,7 @@
    </attribute>
    <addaction name="actionOpen"/>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QStatusBar" name="_statusBar"/>
   <action name="actionOpen">
    <property name="icon">
     <iconset resource="ComBomb.qrc">
@@ -55,6 +56,11 @@
    </property>
    <property name="toolTip">
     <string>Open new connection</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
    </property>
   </action>
  </widget>

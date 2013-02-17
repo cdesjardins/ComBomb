@@ -1,7 +1,10 @@
 #include <QMdiSubWindow>
+#include <QMessageBox>
 #include "mainwindow.h"
 #include "childform.h"
+#include "TargetIntf.h"
 #include "ui_mainwindow.h"
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -10,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     _ui->setupUi(this);
     _mdiArea = new QMdiArea;
     setCentralWidget(_mdiArea);
+    _openDialog = new OpenDialog();
 }
 
 MainWindow::~MainWindow()
@@ -19,6 +23,29 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_actionOpen_triggered()
 {
-    QMdiSubWindow *subWindow = _mdiArea->addSubWindow(new ChildForm());
-    subWindow->show();
+    if (_openDialog->exec() == OpenDialog::Accepted)
+    {
+        try
+        {
+            ChildForm *childForm = new ChildForm();
+
+            TgtFileIntf * intf = new TgtFileIntf();
+            intf->TgtSetConfig("test.dat");
+            childForm->setTargetInterface(intf);
+
+            QMdiSubWindow *subWindow = _mdiArea->addSubWindow(childForm);
+            subWindow->show();
+        }
+        catch (const std::exception &e)
+        {
+            QMessageBox messageBox;
+            QString err = "Unable to open connection to: ";
+            err.append(e.what());
+            messageBox.critical(0, "Error", err);
+            messageBox.setFixedSize(500,200);
+        }
+    }
 }
+
+
+

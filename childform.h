@@ -2,6 +2,7 @@
 #define CHILDFORM_H
 
 #include <QWidget>
+#include "TargetIntf.h"
 
 namespace Ui {
 class ChildForm;
@@ -14,7 +15,8 @@ class ChildForm : public QWidget
 public:
     explicit ChildForm(QWidget *parent = 0);
     ~ChildForm();
-    
+    void setTargetInterface(TgtIntf* targetInterface);
+
 private:
     Ui::ChildForm *ui;
 };

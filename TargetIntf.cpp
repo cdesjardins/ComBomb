@@ -1,8 +1,5 @@
 
-#include "StdAfx.h"
-#include "TgtIntf.h"
-#include "scrollbuff.h"
-#include <process.h>
+#include "TargetIntf.h"
 /*
 ** If telnet or ssh to a remote server and it is unix based and you see
 ** ^H every time you issue a backspace, then add stty erase ^H to your
@@ -26,7 +23,7 @@ TgtIntf::~TgtIntf(void)
 **  Telnet
 **
 ******************************************************************************/
-
+#if 0
 TgtTelnetIntf::TgtTelnetIntf()
 {
     m_nSocket = -1;
@@ -418,13 +415,13 @@ void TgtTelnetIntf::TgtGetTitle(char *szTitle)
             m_sTgtConnection.m_nPort);
     }
 }
-
+#endif
 /******************************************************************************
 **
 **  Serial
 **
 ******************************************************************************/
-
+#if 0
 TgtSerialIntf::TgtSerialIntf ()
 {
     InitializeCriticalSection(&m_csInProtector);
@@ -727,7 +724,7 @@ void TgtSerialIntf::TgtGetTitle(char *szTitle)
         parity, m_sTgtConnection.m_byByteSize,
         m_sTgtConnection.m_byStopBits + 1);
 }
-
+#endif
 
 /******************************************************************************
 **
@@ -745,16 +742,13 @@ TgtFileIntf::~TgtFileIntf ()
 {
 }
 
-char * TgtFileIntf::TgtMakeConnection()
+void TgtFileIntf::TgtMakeConnection()
 {
-    static char szError[80];
-    m_fInput = fopen(m_sTgtConnection.m_szFileName, "rb");
-    if (m_fInput)
+    m_fInput = fopen(m_sTgtConnection.m_szFileName.c_str(), "rb");
+    if (m_fInput == NULL)
     {
-        return NULL;
+        throw std::exception(m_sTgtConnection.m_szFileName.c_str());
     }
-    sprintf(szError, "Unable to open file %s", m_sTgtConnection.m_szFileName);
-    return szError;
 }
 
 int TgtFileIntf::TgtDisconnect()
@@ -764,7 +758,7 @@ int TgtFileIntf::TgtDisconnect()
 
 int TgtFileIntf::TgtRead(char *szReadData, int nMaxBytes)
 {
-    int nLen;
+    int nLen = 0;
     if (fread(&nLen, sizeof(nLen), 1, m_fInput) == 1)
     {
         return fread(szReadData, sizeof(char), nLen, m_fInput);
@@ -782,7 +776,7 @@ bool TgtFileIntf::TgtConnected()
     return true;
 }
 
-void TgtFileIntf::TgtGetTitle(char *szTitle)
+void TgtFileIntf::TgtGetTitle(std::string *szTitle)
 {
-    strcpy(szTitle, m_sTgtConnection.m_szFileName);
+    *szTitle = m_sTgtConnection.m_szFileName;
 }

@@ -31,3 +31,5 @@ FORMS    += mainwindow.ui \
 
 RESOURCES += \
     ComBomb.qrc
+
+QMAKE_CXXFLAGS += -D_WIN32_WINNT=0x0501
