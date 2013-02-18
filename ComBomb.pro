@@ -17,13 +17,15 @@ SOURCES += main.cpp\
     childform.cpp \
     cbtextedit.cpp \
     TargetIntf.cpp \
-    opendialog.cpp
+    opendialog.cpp \
+    vt100.cpp
 
 HEADERS  += mainwindow.h \
     childform.h \
     cbtextedit.h \
     TargetIntf.h \
-    opendialog.h
+    opendialog.h \
+    vt100.h
 
 FORMS    += mainwindow.ui \
     childform.ui \
