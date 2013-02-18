@@ -1219,7 +1219,7 @@ void Terminal::term_wputc(unsigned char c)
         term_wmove(RIGHT);
         break;
     }
-    win->dirty = 1;
+    win->dirty = true;
 }
 
 void Terminal::term_wmove(int dir)
@@ -1268,7 +1268,7 @@ void Terminal::term_wmove(int dir)
         }
         break;
     }
-    win->dirty = 1;
+    win->dirty = true;
 }
 
 /* locate the cursor */
@@ -1284,14 +1284,14 @@ void Terminal::term_wlocate(int x, int y)
         win->cursor_x = x;
         win->cursor_y = y;
     }
-    win->dirty = 1;
+    win->dirty = true;
 }
 
 /* redraw the term */
 void Terminal::term_wredraw(int newdirect)
 {
     printf("wredraw\n");
-    win->dirty = 1;
+    win->dirty = true;
 }
 
 /* flush output */
@@ -1373,7 +1373,7 @@ void Terminal::term_wscroll(int dir)
                     win->chars[x + (W * win->sy1)].attrib = 0;
         }
     }
-    win->dirty = 1;
+    win->dirty = true;
 }
 
 /* clear to end of line */
@@ -1591,7 +1591,7 @@ Terminal::Terminal(int w, int h)
     memset(pwin->chars, 0, w * h * sizeof(char_t));
     pwin->cursor_x = 0;
     pwin->cursor_y = 0;
-    pwin->dirty = 1;
+    pwin->dirty = true;
     pwin->sy1 = 0;
     pwin->sy2 = h - 1;
 

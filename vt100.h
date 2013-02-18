@@ -227,7 +227,7 @@ struct term_t
     state_t state;
     winsize_t ws_conf;
     char_t *chars;
-    int dirty;
+    bool dirty;
 };
 
 class Terminal

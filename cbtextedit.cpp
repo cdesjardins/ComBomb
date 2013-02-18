@@ -1,17 +1,45 @@
 #include "cbtextedit.h"
 #include <QKeyEvent>
 
+static int _colormap[] =
+{
+    0x00afaf,
+    0xaf0000,
+    0x00af00,
+    0xafaf00,
+
+    0x1f1faf,
+    0xaf00af,
+    0x00afaf,
+    0xafafaf,
+
+    0xffff00,
+    0xff0000,
+    0x00ff00,
+    0xffff00,
+
+    0x1f1fff,
+    0xff00ff,
+    0x00ffff,
+    0xffffff
+};
+
 CBTextEdit::CBTextEdit(QWidget *parent)
     :QTextEdit(parent)
 {
     _targetInterface = NULL;
     _runThread = true;
+    for (int i = 0; i < (sizeof(_colormap) / sizeof(_colormap[0])); i++)
+    {
+        _colors.push_back(QColor(QRgb(_colormap[i])));
+    }
 }
 
 CBTextEdit::~CBTextEdit()
 {
     _runThread = false;
     _readTargetThread.join();
+    _paintScreenThread.join();
 }
 
 void CBTextEdit::setTargetInterface(TgtIntf* targetInterface)
@@ -19,6 +47,7 @@ void CBTextEdit::setTargetInterface(TgtIntf* targetInterface)
     _targetInterface = targetInterface;
     _targetInterface->TgtConnect();
     _readTargetThread = boost::thread(&CBTextEdit::readTarget, this);
+    _paintScreenThread = boost::thread(&CBTextEdit::paintScreen, this);
 }
 
 void CBTextEdit::keyPressEvent(QKeyEvent *e)
@@ -116,6 +145,73 @@ void CBTextEdit::readTarget()
             {
                 vt_out(data[i]);
             }
+        }
+        boost::this_thread::sleep(boost::posix_time::milliseconds(1));
+    }
+}
+
+void CBTextEdit::paintChar(int x, int y, char_t *c)
+{
+    QTextBlockFormat format;
+    QString myqdata;
+    int fg, bg;
+
+    bg = c->col & 0xf;
+    fg = (c->col >> 4) & 0xf;
+
+    if (bg == 0)
+    {
+        format.setBackground(QColor(QRgb(0x000000)));
+    }
+    else
+    {
+        format.setBackground(_colors[bg]);
+    }
+
+    if (fg == 7)
+    {
+        format.setForeground(QColor(QRgb(0xffffff)));
+    }
+    else
+    {
+        format.setForeground(_colors[fg]);
+    }
+
+    if (c->text == 0)
+    {
+        //myqdata = " ";
+    }
+    else
+    {
+        myqdata = c->text;
+        textCursor().setPosition(x + (win->ws_conf.ws_col * y));
+        textCursor().insertBlock(format);
+        textCursor().insertText(myqdata);
+    }
+    /*
+    XDrawImageString(window.dpy, window.window, window.gc,
+                     x * window.font_w,
+                     (y * window.font_h) + offset, (char *)data, 1);
+    */
+}
+
+void CBTextEdit::paintScreen()
+{
+    int x, y;
+    while (_runThread == true)
+    {
+        boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+        if (win->dirty == true)
+        {
+            for (y = 0; y < win->ws_conf.ws_row; y++)
+            {
+                for (x = 0; x < win->ws_conf.ws_col; x++)
+                {
+                    paintChar(x, y, &win->chars[x + (win->ws_conf.ws_col * y)]);
+                }
+            }
+
+            win->dirty = false;
         }
     }
 }
