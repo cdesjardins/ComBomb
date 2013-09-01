@@ -19,12 +19,14 @@ protected:
     void readTarget();
     void paintScreen();
     void paintChar(int x, int y, char_t *c);
+    void paintEvent(QPaintEvent *e);
 
+    void CBTextEdit::drawLineCharString(QPainter& painter, int x, int y, const QString& str);
     TgtIntf *_targetInterface;
 
     volatile bool _runThread;
     boost::thread _readTargetThread;
-    boost::thread _paintScreenThread;
+    //boost::thread _paintScreenThread;
     std::vector<QColor> _colors;
 };
 

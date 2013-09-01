@@ -744,7 +744,7 @@ TgtFileIntf::~TgtFileIntf ()
 
 void TgtFileIntf::TgtMakeConnection()
 {
-    m_fInput = fopen(m_sTgtConnection.m_szFileName.c_str(), "rb");
+    m_fInput.open(m_sTgtConnection.m_szFileName.c_str(), std::ifstream::in | std::ifstream::binary);
     if (m_fInput == NULL)
     {
         throw std::exception(m_sTgtConnection.m_szFileName.c_str());
@@ -759,9 +759,11 @@ int TgtFileIntf::TgtDisconnect()
 int TgtFileIntf::TgtRead(char *szReadData, int nMaxBytes)
 {
     int nLen = 0;
-    if (fread(&nLen, sizeof(nLen), 1, m_fInput) == 1)
+    m_fInput.read((char*)&nLen, sizeof(int));
+    if (m_fInput)
     {
-        return fread(szReadData, sizeof(char), nLen, m_fInput);
+        m_fInput.read(szReadData, nLen);
+        return nLen;
     }
     return 0;
 }

@@ -3,7 +3,8 @@
 #define TARGETINTF_H
 
 #include <list>
-
+#include <fstream>
+#include <string>
 class TgtIntf
 {
 public:
@@ -109,17 +110,17 @@ public:
     virtual int TgtWrite(char *szWriteData, int nBytes);
     virtual bool TgtConnected();
     virtual void TgtGetTitle(char *szTitle);
-    virtual void TgtSetConfig(char *szServerName, int nPort, char *szDescription)
+    virtual void TgtSetConfig(const std::string &szServerName, const int nPort, const std::string &szDescription)
     {
-        strncpy(m_sTgtConnection.m_szDescription, szDescription, sizeof(m_sTgtConnection.m_szDescription));
-        strncpy(m_sTgtConnection.m_szServerName, szServerName, sizeof(m_sTgtConnection.m_szServerName));
+        m_sTgtConnection.m_szServerName = szServerName;
+        m_sTgtConnection.m_szDescription = szDescription;
         m_sTgtConnection.m_nPort = nPort;
     };
     struct TgtConnection
     {
-        char m_szServerName[256];
+        std::string m_szServerName;
         int m_nPort;
-        char m_szDescription[256];
+        std::string m_szDescription;
     };
 
 protected:
@@ -149,7 +150,7 @@ class TgtSerialIntf : public TgtIntf
 public:
     struct TgtConnection
     {
-        char m_szPortName[256];
+        std::string m_szPortName;
         unsigned long m_dwBaudRate;
         unsigned char m_byParity;
         unsigned char m_byStopBits;
@@ -172,13 +173,13 @@ public:
     {
         memcpy(&m_sTgtConnection, pTgtConfig, sizeof(TgtConnection));
     };
-    virtual void TgtSetConfig(char *szPortName,
+    virtual void TgtSetConfig(const std::string &szPortName,
         unsigned long dwBaudRate,
         unsigned char byParity,
         unsigned char byStopBits,
         unsigned char byByteSize)
     {
-        strncpy(m_sTgtConnection.m_szPortName, szPortName, sizeof(m_sTgtConnection.m_szPortName));
+        m_sTgtConnection.m_szPortName = szPortName;
         m_sTgtConnection.m_dwBaudRate = dwBaudRate;
         m_sTgtConnection.m_byParity   = byParity;
         m_sTgtConnection.m_byStopBits = byStopBits;
@@ -228,7 +229,7 @@ public:
 protected:
     virtual void TgtMakeConnection();
 
-    FILE *m_fInput;
+    std::ifstream m_fInput;
     int m_cnt;
     TgtConnection m_sTgtConnection;
 };
