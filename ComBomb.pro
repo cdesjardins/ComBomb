@@ -25,8 +25,7 @@ HEADERS  += mainwindow.h \
     cbtextedit.h \
     TargetIntf.h \
     opendialog.h \
-    vt100.h \
-    LineFont.h
+    vt100.h
 
 FORMS    += mainwindow.ui \
     childform.ui \

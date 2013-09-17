@@ -18,7 +18,7 @@ protected:
     virtual void keyPressEvent(QKeyEvent *e);
     void readTarget();
     void paintScreen();
-    void paintChar(int x, int y, char_t *c);
+    bool setCharColor(QPainter &painter, char_t *c, QPen *newPen);
     void paintEvent(QPaintEvent *e);
 
     void CBTextEdit::drawLineCharString(QPainter& painter, int x, int y, const QString& str);
