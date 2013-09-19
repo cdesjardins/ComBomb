@@ -28,9 +28,8 @@ void MainWindow::on_actionOpen_triggered()
         try
         {
             ChildForm *childForm = new ChildForm();
-
-            TgtFileIntf * intf = new TgtFileIntf();
-            intf->TgtSetConfig("test.dat");
+            TgtSerialIntf::TgtConnection config(_openDialog->getSerialConfig());
+            boost::shared_ptr<TgtSerialIntf> intf = TgtSerialIntf::createSerialConnection(config);
             childForm->setTargetInterface(intf);
 
             QMdiSubWindow *subWindow = _mdiArea->addSubWindow(childForm);

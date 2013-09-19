@@ -10,6 +10,10 @@
 
 TgtIntf::TgtIntf(void)
 {
+    for (int i = 0; i < sizeof(_buffer) / sizeof(_buffer[0]); i++)
+    {
+        _buffer[i] = 0;
+    }
     m_nTotalTx = 0;
     m_nTotalRx = 0;
 }
@@ -421,25 +425,35 @@ void TgtTelnetIntf::TgtGetTitle(char *szTitle)
 **  Serial
 **
 ******************************************************************************/
-#if 0
-TgtSerialIntf::TgtSerialIntf ()
+#if 1
+
+boost::shared_ptr<TgtSerialIntf> TgtSerialIntf::createSerialConnection(TgtConnection config)
 {
-    InitializeCriticalSection(&m_csInProtector);
-    InitializeCriticalSection(&m_csOutProtector);
-    m_hSerial = 0;
-    m_hThreadTerm = 0;
-    m_hOutput = 0;
+    boost::shared_ptr<TgtSerialIntf> ret(new TgtSerialIntf(config));
+    ret->_serialThread.reset(new boost::thread(boost::bind(&boost::asio::io_service::run, &ret->_service)));
+    return ret;
+}
+
+TgtSerialIntf::TgtSerialIntf (TgtConnection config)
+    : _tgtConnectionConfig(config),
+      _port(_service, config._portName),
+      _serialThreadRun(true)
+{
+    _port.set_option(boost::asio::serial_port_base::baud_rate(115200));
+    _port.set_option(boost::asio::serial_port_base::parity(boost::asio::serial_port_base::parity::none));
+    _port.set_option(boost::asio::serial_port_base::character_size(8));
+    _port.set_option(boost::asio::serial_port_base::stop_bits(boost::asio::serial_port_base::stop_bits::one));
+    _port.set_option(boost::asio::serial_port_base::flow_control(boost::asio::serial_port_base::flow_control::none));
 }
 
 TgtSerialIntf::~TgtSerialIntf ()
 {
-    DeleteCriticalSection (&m_csInProtector);
-    DeleteCriticalSection (&m_csOutProtector);
 }
 
 char * TgtSerialIntf::TgtSetupPort()
 {
-    char *pRet;
+    char *pRet = "Not implemented";
+    /*
     DCB dDcb;
 
     pRet = NULL;
@@ -464,94 +478,34 @@ char * TgtSerialIntf::TgtSetupPort()
             pRet = "SetCommState failed";
         }
     }
+    */
     return pRet;
 }
 
-char * TgtSerialIntf::TgtMakeConnection()
+void TgtSerialIntf::TgtReadCallback(const boost::system::error_code& error, const size_t bytesTransferred)
 {
-    char *pRet;
-    COMMTIMEOUTS cTimeOuts;
-
-    pRet = NULL;
-
-    m_hSerial = CreateFile(m_sTgtConnection.m_szPortName,
-        GENERIC_READ | GENERIC_WRITE,
-        0, 0, OPEN_EXISTING,
-        FILE_FLAG_OVERLAPPED, 0);
-    if (m_hSerial == INVALID_HANDLE_VALUE)
+    if (!error)
     {
-        pRet = "Unable to open serial port";
-    }
-    else if (!SetCommMask(m_hSerial, EV_RXCHAR | EV_TXEMPTY))
-    {
-        pRet = "SetCommMask failed";
-    }
-    else
-    {
-        pRet = TgtSetupPort();
-        if (pRet == NULL)
+        if (bytesTransferred > 0)
         {
-            cTimeOuts.ReadIntervalTimeout = MAXDWORD;
-            cTimeOuts.ReadTotalTimeoutMultiplier = 0;
-            cTimeOuts.ReadTotalTimeoutConstant = 0;
-            cTimeOuts.WriteTotalTimeoutMultiplier = 0;
-            cTimeOuts.WriteTotalTimeoutConstant = 0;
-
-            if (!SetCommTimeouts(m_hSerial, &cTimeOuts))
-            {
-                pRet = "SetCommTimeouts failed";
-            }
-            else
-            {
-                m_hOutput = CreateEvent(0,0,0,0);
-                m_hThreadTerm = CreateEvent(0,0,0,0);
-                m_hSerialMonitor = (HANDLE)_beginthread(&TgtSerialIntf::TgtSerialMonitor, 0,
-                    (LPVOID)this);
-            }
+            _incomingData.push_back(boost::asio::buffer(_buffer, bytesTransferred));
         }
+        _port.async_read_some(boost::asio::buffer(_buffer),
+            boost::bind(&TgtSerialIntf::TgtReadCallback, this,
+            boost::asio::placeholders::error,
+            boost::asio::placeholders::bytes_transferred));
     }
-    return pRet;
 }
 
-void TgtSerialIntf::TgtSerialMonitor(void *arg)
+void TgtSerialIntf::TgtMakeConnection()
 {
-    TgtSerialIntf* _this = (TgtSerialIntf*) arg;
-    HANDLE arHandles[3];
-    OVERLAPPED ov;
-    DWORD dwWait;
-    DWORD dwEventMask = 0;
-
-    arHandles[0] = _this->m_hThreadTerm;
-
-    memset(&ov, 0, sizeof(ov));
-    ov.hEvent = CreateEvent(0, true, 0, 0);
-
-    while (1)
-    {
-        WaitCommEvent(_this->m_hSerial, &dwEventMask, &ov);
-        arHandles[1] = ov.hEvent;
-        arHandles[2] = _this->m_hOutput;
-        dwWait = WaitForMultipleObjects(3, arHandles, FALSE, INFINITE);
-        switch (dwWait)
-        {
-        case WAIT_OBJECT_0:
-            _endthread();
-            return;
-        case WAIT_OBJECT_0 + 1:
-            _this->TgtReadFromPort();
-            ResetEvent(ov.hEvent);
-            break;
-        case WAIT_OBJECT_0 + 2:
-            _this->TgtSendToPort();
-            ResetEvent(_this->m_hOutput);
-            break;
-        }
-    }
-    CloseHandle(ov.hEvent);
+    boost::system::error_code err;
+    TgtReadCallback(err, 0);
 }
 
-void TgtSerialIntf::TgtWritePortData(char *szData, DWORD nBytes)
+void TgtSerialIntf::TgtWritePortData(char *szData, int nBytes)
 {
+    /*
     DWORD dwTotalBytesWrote;
     DWORD dwBytesWrote;
     OVERLAPPED ovWrite;
@@ -604,10 +558,12 @@ void TgtSerialIntf::TgtWritePortData(char *szData, DWORD nBytes)
             Sleep(1);
         }
     } while (dwTotalBytesWrote < nBytes);
+    */
 }
 
 void TgtSerialIntf::TgtSendToPort()
 {
+    /*
     char szData[64];
     DWORD nBytes = 0;
     do
@@ -618,10 +574,12 @@ void TgtSerialIntf::TgtSendToPort()
         TgtWritePortData(szData, nBytes);
         m_nTotalTx += nBytes;
     } while (m_dataOutgoing.size() > 0);
+    */
 }
 
 void TgtSerialIntf::TgtReadFromPort()
 {
+    /*
     OVERLAPPED ovRead;
     DWORD dwBytesRead;
     DWORD dwErrors;
@@ -648,10 +606,12 @@ void TgtSerialIntf::TgtReadFromPort()
         ClearCommError(m_hSerial, &dwErrors, NULL);
     }
     CloseHandle(ovRead.hEvent);
+    */
 }
 
 int TgtSerialIntf::TgtDisconnect()
 {
+    /*
     if (m_hThreadTerm)
     {
         SignalObjectAndWait(m_hThreadTerm, m_hSerialMonitor, 1000, FALSE);
@@ -665,22 +625,25 @@ int TgtSerialIntf::TgtDisconnect()
     {
         CloseHandle(m_hSerial);
     }
+    */
     return 0;
 }
 
-int TgtSerialIntf::TgtRead(char *szReadData, int nMaxBytes)
+int TgtSerialIntf::TgtRead(boost::asio::mutable_buffer &b)
 {
     int nRet = 0;
-
-    EnterCriticalSection(&m_csInProtector);
-    nRet = Vec2Char(szReadData, &m_dataIncoming, nMaxBytes);
-    LeaveCriticalSection(&m_csInProtector);
-
+    if (_incomingData.size() > 0)
+    {
+        b = _incomingData.front();
+        _incomingData.pop_front();
+    }
     return nRet;
 }
 
 int TgtSerialIntf::TgtWrite(char *szWriteData, int nBytes)
 {
+    int ret = _port.write_some(boost::asio::buffer(szWriteData, nBytes));
+    /*
     int nIndex;
     EnterCriticalSection(&m_csOutProtector);
     for (nIndex = 0; nIndex < nBytes; nIndex++)
@@ -689,7 +652,8 @@ int TgtSerialIntf::TgtWrite(char *szWriteData, int nBytes)
     }
     LeaveCriticalSection(&m_csOutProtector);
     SetEvent(m_hOutput);
-    return 0;
+    */
+    return ret;
 }
 
 bool TgtSerialIntf::TgtConnected()
@@ -697,8 +661,9 @@ bool TgtSerialIntf::TgtConnected()
     return true;
 }
 
-void TgtSerialIntf::TgtGetTitle(char *szTitle)
+void TgtSerialIntf::TgtGetTitle(std::string *szTitle)
 {
+    /*
     char parity;
     switch (m_sTgtConnection.m_byParity)
     {
@@ -723,6 +688,7 @@ void TgtSerialIntf::TgtGetTitle(char *szTitle)
         m_sTgtConnection.m_dwBaudRate,
         parity, m_sTgtConnection.m_byByteSize,
         m_sTgtConnection.m_byStopBits + 1);
+    */
 }
 #endif
 

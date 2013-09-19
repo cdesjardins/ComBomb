@@ -4,14 +4,16 @@
 #include "TargetIntf.h"
 #include "vt100.h"
 #include <QTextEdit>
+#ifndef Q_MOC_RUN
 #include <boost/thread.hpp>
+#endif
 
 class CBTextEdit : public QTextEdit, Terminal
 {
 public:
     CBTextEdit(QWidget *parent = 0);
     ~CBTextEdit();
-    void setTargetInterface(TgtIntf* targetInterface);
+    void setTargetInterface(const boost::shared_ptr<TgtIntf> &targetInterface);
     virtual void char_out(char c);
 
 protected:
@@ -22,7 +24,7 @@ protected:
     void paintEvent(QPaintEvent *e);
 
     void CBTextEdit::drawLineCharString(QPainter& painter, int x, int y, const QString& str);
-    TgtIntf *_targetInterface;
+    boost::shared_ptr<TgtIntf> _targetInterface;
 
     volatile bool _runThread;
     boost::thread _readTargetThread;

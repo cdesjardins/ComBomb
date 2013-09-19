@@ -15,7 +15,7 @@ class ChildForm : public QWidget
 public:
     explicit ChildForm(QWidget *parent = 0);
     ~ChildForm();
-    void setTargetInterface(TgtIntf* targetInterface);
+    void setTargetInterface(const boost::shared_ptr<TgtIntf> &targetInterface);
 
 private:
     Ui::ChildForm *ui;

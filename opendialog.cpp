@@ -1,7 +1,9 @@
 #include "opendialog.h"
 #include "ui_opendialog.h"
 #include <sstream>
+#ifndef Q_MOC_RUN
 #include <boost/asio/serial_port.hpp>
+#endif
 
 #ifdef WIN32
 #define BASE_PORTNAME "COM"
@@ -20,6 +22,12 @@ OpenDialog::OpenDialog(QWidget *parent) :
     {
         ui->_comPortComboBox->insertItem(i, _comPorts[i].c_str());
     }
+}
+
+const TgtSerialIntf::TgtConnection OpenDialog::getSerialConfig() const
+{
+    TgtSerialIntf::TgtConnection ret(ui->_comPortComboBox->currentText().toUtf8().constData(), 115200, 0, 0, 0);
+    return ret;
 }
 
 OpenDialog::~OpenDialog()

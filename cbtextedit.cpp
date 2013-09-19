@@ -44,7 +44,7 @@ CBTextEdit::~CBTextEdit()
     _readTargetThread.join();
 }
 
-void CBTextEdit::setTargetInterface(TgtIntf* targetInterface)
+void CBTextEdit::setTargetInterface(const boost::shared_ptr<TgtIntf> &targetInterface)
 {
     _targetInterface = targetInterface;
     _targetInterface->TgtConnect();
@@ -55,8 +55,9 @@ void CBTextEdit::setTargetInterface(TgtIntf* targetInterface)
 void CBTextEdit::keyPressEvent(QKeyEvent *e)
 {
     QTextEdit::keyPressEvent(e);
+    QString s = e->text();
 
-    for (QString::Iterator it = e->text().begin(); it != e->text().end(); it++)
+    for (QString::Iterator it = s.begin(); it != s.end(); it++)
     {
         if (it->isPrint())
         {
@@ -72,7 +73,8 @@ void CBTextEdit::keyPressEvent(QKeyEvent *e)
             }
             else
             {
-                char_out(it->toLatin1());
+                char szReadData = it->toLatin1();
+                char_out(szReadData);
             }
         }
         else
@@ -136,17 +138,19 @@ void CBTextEdit::char_out(char c)
 
 void CBTextEdit::readTarget()
 {
-    char data[255];
+    boost::asio::mutable_buffer b;
     while (_runThread == true)
     {
-        int bytes = _targetInterface->TgtRead(data, sizeof(data));
+        _targetInterface->TgtRead(b);
+        int bytes = boost::asio::buffer_size(b);
         if (bytes > 0)
         {
-            data[bytes] = NULL;
+            char *data = boost::asio::buffer_cast<char*>(b);
             for (int i = 0; i < bytes; i++)
             {
                 vt_out(data[i]);
             }
+            b = boost::asio::mutable_buffer();
         }
         boost::this_thread::sleep(boost::posix_time::milliseconds(1));
     }
@@ -172,7 +176,7 @@ bool CBTextEdit::setCharColor(QPainter &painter, char_t *c, QPen *newPen)
 
     if (fg == 7)
     {
-        newPen->setColor(Qt::black);
+        newPen->setColor(Qt::blue);
     }
     else
     {

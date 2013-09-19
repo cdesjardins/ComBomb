@@ -5,6 +5,13 @@
 #include <list>
 #include <fstream>
 #include <string>
+#ifndef Q_MOC_RUN
+#include <boost/asio.hpp>
+#include <boost/thread.hpp>
+#include <boost/array.hpp>
+#include <boost/enable_shared_from_this.hpp>
+#endif
+
 class TgtIntf
 {
 public:
@@ -16,7 +23,7 @@ public:
         TgtMakeConnection();
     };
     virtual int TgtDisconnect() = 0;
-    virtual int TgtRead(char *szReadData, int nMaxBytes) = 0;
+    virtual int TgtRead(boost::asio::mutable_buffer &b) = 0;
     virtual int TgtWrite(char *szWriteData, int nBytes) = 0;
     virtual bool TgtConnected() = 0;
     virtual void TgtGetTitle(std::string *szTitle) = 0;
@@ -26,8 +33,10 @@ protected:
     virtual void TgtMakeConnection() = 0;
     int m_nTotalTx;
     int m_nTotalRx;
+    std::list<boost::asio::mutable_buffer> _incomingData;
+    std::vector<boost::asio::mutable_buffer> _outgoingData;
+    boost::array<char, 4096> _buffer;
 };
-
 
 enum eTelnetState
 {
@@ -150,60 +159,47 @@ class TgtSerialIntf : public TgtIntf
 public:
     struct TgtConnection
     {
-        std::string m_szPortName;
-        unsigned long m_dwBaudRate;
-        unsigned char m_byParity;
-        unsigned char m_byStopBits;
-        unsigned char m_byByteSize;
-    };
+        TgtConnection(const std::string &szPortName, const unsigned long baudRate, const unsigned char parity, const unsigned char stopBits, const unsigned char byteSize)
+            : _portName(szPortName),
+              _baudRate(baudRate),
+              _parity(parity),
+              _stopBits(stopBits),
+              _byteSize(byteSize)
+        {
+        }
 
-    TgtSerialIntf ();
+        std::string _portName;
+        unsigned long _baudRate;
+        unsigned char _parity;
+        unsigned char _stopBits;
+        unsigned char _byteSize;
+    };
+    static boost::shared_ptr<TgtSerialIntf> createSerialConnection(TgtConnection config);
     virtual ~TgtSerialIntf ();
     virtual int TgtDisconnect();
-    virtual int TgtRead(char *szReadData, int nMaxBytes);
+    virtual int TgtRead(boost::asio::mutable_buffer &b);
     virtual int TgtWrite(char *szWriteData, int nBytes);
     virtual bool TgtConnected();
-    virtual void TgtGetTitle(char *szTitle);
+    virtual void TgtGetTitle(std::string *szTitle);
     virtual char * TgtSetupPort();
     virtual TgtConnection TgtGetConfig()
     {
-        return m_sTgtConnection;
-    };
-    virtual void TgtSetConfig(TgtConnection *pTgtConfig)
-    {
-        memcpy(&m_sTgtConnection, pTgtConfig, sizeof(TgtConnection));
-    };
-    virtual void TgtSetConfig(const std::string &szPortName,
-        unsigned long dwBaudRate,
-        unsigned char byParity,
-        unsigned char byStopBits,
-        unsigned char byByteSize)
-    {
-        m_sTgtConnection.m_szPortName = szPortName;
-        m_sTgtConnection.m_dwBaudRate = dwBaudRate;
-        m_sTgtConnection.m_byParity   = byParity;
-        m_sTgtConnection.m_byStopBits = byStopBits;
-        m_sTgtConnection.m_byByteSize = byByteSize;
-    };
-
+        return _tgtConnectionConfig;
+    }
 
 protected:
+    TgtSerialIntf (TgtConnection config);
     virtual void TgtMakeConnection();
-    static void TgtSerialMonitor(void *arg);
     virtual void TgtReadFromPort();
     virtual void TgtSendToPort();
     virtual void TgtWritePortData(char *szData, int nBytes);
-/*
-    HANDLE m_hSerialMonitor;
-    HANDLE m_hThreadTerm;
-    HANDLE m_hSerial;
-    HANDLE m_hOutput;
-    std::list<char> m_dataIncoming;
-    std::list<char> m_dataOutgoing;
-    CRITICAL_SECTION m_csInProtector;
-    CRITICAL_SECTION m_csOutProtector;
-*/
-    TgtConnection m_sTgtConnection;
+    void TgtReadCallback(const boost::system::error_code& error, const size_t bytesTransferred);
+
+    TgtConnection _tgtConnectionConfig;
+    boost::asio::io_service _service;
+    boost::asio::serial_port _port;
+    volatile bool _serialThreadRun;
+    boost::scoped_ptr<boost::thread> _serialThread;
 };
 
 

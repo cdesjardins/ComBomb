@@ -32,9 +32,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <boost/thread.hpp>
 #include <string.h>
 #include "vt100.h"
+#ifndef Q_MOC_RUN
+#include <boost/thread.hpp>
+#endif
 
 #define W ws_conf.ws_col
 #define H ws_conf.ws_row

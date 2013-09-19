@@ -13,9 +13,7 @@ ChildForm::~ChildForm()
     delete ui;
 }
 
-
-
-void ChildForm::setTargetInterface(TgtIntf* targetInterface)
+void ChildForm::setTargetInterface(const boost::shared_ptr<TgtIntf> &targetInterface)
 {
     ui->_textEdit->setTargetInterface(targetInterface);
 }
