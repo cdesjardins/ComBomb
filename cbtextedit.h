@@ -1,5 +1,5 @@
-#ifndef CBTEXTEDIT_H
-#define CBTEXTEDIT_H
+#ifndef CJD_CBTEXTEDIT_H
+#define CJD_CBTEXTEDIT_H
 
 #include "TargetIntf.h"
 #include "vt100.h"
@@ -20,8 +20,10 @@ protected:
     virtual void keyPressEvent(QKeyEvent *e);
     void readTarget();
     void paintScreen();
-    bool setCharColor(QPainter &painter, char_t *c, QPen *newPen);
+    bool setCharColor(int *fg, int *bg, char_t *c, QPen *newPen);
     void paintEvent(QPaintEvent *e);
+    void mypaint();
+    QSize sizeHint() const;
 
     void CBTextEdit::drawLineCharString(QPainter& painter, int x, int y, const QString& str);
     boost::shared_ptr<TgtIntf> _targetInterface;

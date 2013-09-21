@@ -36,6 +36,7 @@
 #include "vt100.h"
 #ifndef Q_MOC_RUN
 #include <boost/thread.hpp>
+#include <Boost/format.hpp>
 #endif
 
 #define W ws_conf.ws_col
@@ -119,15 +120,7 @@ size_t Terminal::one_mbtowc(char *pwc, char *s, size_t n)
 /*
  * Initialize the emulator once.
  */
-/*
-void Terminal::vt_install(void (*fun1)(const char *, int, struct term_t *),
-                struct term_t *pwin)
-{
-    term_t *win = (term_t *)pwin;
-    win->state.termout = fun1;
-    win = win;
-}
-*/
+
 /* Partial init (after screen resize) */
 void Terminal::vt_pinit(int fg, int bg)
 {
@@ -156,7 +149,6 @@ void Terminal::vt_init(int type, int fg, int bg, int wrap, int add)
     win->state.vt_bs = 8;
     win->state.vt_insert = 0;
     win->state.vt_crlf = 0;
-    win->state.vt_docap = 0;
     win->state.enable_iconv = 0;
     win->state.ptr = 0;
     win->state.newy1 = 0;
@@ -207,7 +199,7 @@ void Terminal::vt_init(int type, int fg, int bg, int wrap, int add)
 }
 
 /* Change some things on the fly. */
-void Terminal::vt_set(int addlf, int wrap, int docap, int bscode,
+void Terminal::vt_set(int addlf, int wrap, int bscode,
             int echo, int cursor, int asis)
 {
     if (addlf >= 0)
@@ -217,10 +209,6 @@ void Terminal::vt_set(int addlf, int wrap, int docap, int bscode,
     if (wrap >= 0)
     {
         win->wrap = win->state.vt_wrap = wrap;
-    }
-    if (docap >= 0)
-    {
-        win->state.vt_docap = docap;
     }
     if (bscode >= 0)
     {
@@ -241,7 +229,7 @@ void Terminal::vt_set(int addlf, int wrap, int docap, int bscode,
 }
 
 /* Output a string to the modem. */
-void Terminal::v_termout(const char *s, int len)
+void Terminal::v_termout(const char *s)
 {
     const char *p;
 
@@ -256,7 +244,7 @@ void Terminal::v_termout(const char *s, int len)
             }
         }
     }
-    (*win->state.termout)(s, len, (struct term_t *)win);
+    term_wputs((const unsigned char*)s);
 }
 
 /*
@@ -342,11 +330,11 @@ void Terminal::state1(int c)
     case 'Z': /* Report terminal type */
         if (win->state.vt_type == VT100)
         {
-            v_termout("\033[?1;0c", 0);
+            v_termout("\033[?1;0c");
         }
         else
         {
-            v_termout("\033[?c", 0);
+            v_termout("\033[?c");
         }
         break;
     case 'c': /* Reset to initial state */
@@ -405,7 +393,6 @@ void Terminal::ansi_mode(int on_off)
 void Terminal::state2(int c)
 {
     short x, y, attr, f;
-    char temp[32];
 
     /* See if a number follows */
     if (c >= '0' && c <= '9')
@@ -529,26 +516,28 @@ void Terminal::state2(int c)
         switch (win->state.escparms[0])
         {
         case 5: /* Status */
-            v_termout("\033[0n", 0);
+            v_termout("\033[0n");
             break;
         case 6: /* Cursor Position */
-            sprintf(temp, "\033[%d;%dR", win->cursor_y + 1, win->cursor_x + 1);
-            v_termout(temp, 0);
+            boost::format f("\033[%d;%dR");
+            v_termout(str(f % (win->cursor_y + 1) % (win->cursor_x + 1)).c_str());
             break;
         }
         break;
     case 'c': /* Identify Terminal Type */
         if (win->state.vt_type == VT100)
         {
-            v_termout("\033[?1;2c", 0);
+            v_termout("\033[?1;2c");
             break;
         }
-        v_termout("\033[?c", 0);
+        v_termout("\033[?c");
         break;
     case 'x': /* Request terminal parameters. */
         /* Always answers 19200-8N1 no options. */
-        sprintf(temp, "\033[%c;1;1;120;120;1;0x", win->state.escparms[0] == 1 ? '3' : '2');
-        v_termout(temp, 0);
+        {
+            boost::format f("\033[%c;1;1;120;120;1;0x");
+            v_termout(str(f % (win->state.escparms[0] == 1 ? '3' : '2')).c_str());
+        }
         break;
     case 's': /* Save attributes and cursor position */
         win->state.savex = win->cursor_x;
@@ -691,7 +680,7 @@ void Terminal::state2(int c)
         }
         for (f = 0; f < x; f++)
         {
-            term_winschar(' ', 0);
+            term_winschar(' ');
         }
         break;
     case 'r': /* Set scroll region */
@@ -879,7 +868,7 @@ void Terminal::state6(int c)
         }
         term_wlocate(0, 0);
         win->doscroll = 1;
-        term_wredraw(1);
+        term_wredraw();
         break;
     default:
         /* IGNORED */
@@ -958,11 +947,6 @@ void Terminal::vt_out(unsigned int ch)
 
     c = (unsigned char)ch;
 
-    if (win->state.vt_docap == 2) /* Literal. */
-    {
-        fputc(c, win->state.capfp);
-    }
-
     /* Process <31 chars first, even in an escape sequence. */
     switch (c)
     {
@@ -971,10 +955,6 @@ void Terminal::vt_out(unsigned int ch)
         if (win->state.vt_addlf)
         {
             term_wputc('\n');
-            if (win->state.vt_docap == 1)
-            {
-                fputc('\n', win->state.capfp);
-            }
         }
         break;
     case '\t': /* Non - destructive TAB */
@@ -992,10 +972,6 @@ void Terminal::vt_out(unsigned int ch)
             f = win->W - 1;
         }
         term_wlocate(f, win->cursor_y);
-        if (win->state.vt_docap == 1)
-        {
-            fputc(c, win->state.capfp);
-        }
         break;
     case 013: /* Old Minix: CTRL-K = up */
         term_wlocate(win->cursor_x, win->cursor_y - 1);
@@ -1022,10 +998,6 @@ void Terminal::vt_out(unsigned int ch)
     case '\b':
     case 7: /* Bell */
         term_wputc(c);
-        if (win->state.vt_docap == 1)
-        {
-            fputc(c, win->state.capfp);
-        }
         break;
     default:
         go_on = 1;
@@ -1048,7 +1020,7 @@ void Terminal::vt_out(unsigned int ch)
             one_mbtowc ((char *)&wc, (char *)&c, 1);
             if (win->state.vt_insert)
             {
-                term_winschar(wc, 1);
+                term_winschar(wc);
             }
             else
             {
@@ -1090,7 +1062,6 @@ void Terminal::vt_send(unsigned int c)
 {
     char s[3];
     int f;
-    int len = 1;
 
     /* Special key? */
     if (c < 256)
@@ -1107,9 +1078,8 @@ void Terminal::vt_send(unsigned int c)
         {
             s[1] = '\n';
             s[2] = 0;
-            len = 2;
         }
-        v_termout(s, len);
+        v_termout(s);
         if (win->state.vt_nl_delay > 0 && c == '\r')
         {
             boost::this_thread::sleep(boost::posix_time::milliseconds(win->state.vt_nl_delay));
@@ -1131,33 +1101,27 @@ void Terminal::vt_send(unsigned int c)
     }
 
     /* Now send appropriate escape code. */
-    v_termout("\33", 0);
+    v_termout("\33");
     if (win->state.vt_type == VT100)
     {
         if (win->state.vt_cursor == NORMAL)
         {
-            v_termout(vt_keys[f].vt100_st, 0);
+            v_termout(vt_keys[f].vt100_st);
         }
         else
         {
-            v_termout(vt_keys[f].vt100_app, 0);
+            v_termout(vt_keys[f].vt100_app);
         }
     }
     else
     {
-        v_termout(vt_keys[f].ansi, 0);
+        v_termout(vt_keys[f].ansi);
     }
 }
 
-#undef W
-#undef H
-
-#define W win->ws_conf.ws_col
-#define H win->ws_conf.ws_row
-
 /* insert a character at cursor position */
 /* XXX:winschar */
-void Terminal::term_winschar(unsigned char c, int move)
+void Terminal::term_winschar(unsigned char c)
 {
     int i;
 
@@ -1167,18 +1131,13 @@ void Terminal::term_winschar(unsigned char c, int move)
 
     for (i = win->ws_conf.ws_col - 1; i != win->cursor_x; i--)
     {
-        win->chars[i + (win->cursor_y * win->ws_conf.ws_col) + 1].text =
-            win->chars[i + (win->cursor_y * win->ws_conf.ws_col)].text;
-        win->chars[i + (win->cursor_y * win->ws_conf.ws_col) + 1].col =
-            win->chars[i + (win->cursor_y * win->ws_conf.ws_col)].col;
-        win->chars[i + (win->cursor_y * win->ws_conf.ws_col) + 1].attrib =
-            win->chars[i + (win->cursor_y * win->ws_conf.ws_col)].attrib;
+        win->chars[i + (win->cursor_y * win->ws_conf.ws_col) + 1].text = win->chars[i + (win->cursor_y * win->ws_conf.ws_col)].text;
+        win->chars[i + (win->cursor_y * win->ws_conf.ws_col) + 1].col = win->chars[i + (win->cursor_y * win->ws_conf.ws_col)].col;
+        win->chars[i + (win->cursor_y * win->ws_conf.ws_col) + 1].attrib = win->chars[i + (win->cursor_y * win->ws_conf.ws_col)].attrib;
     }
     win->chars[win->cursor_x + (win->cursor_y * win->ws_conf.ws_col)].text = c;
-    win->chars[win->cursor_x + (win->cursor_y * win->ws_conf.ws_col)].col =
-        win->color;
-    win->chars[win->cursor_x + (win->cursor_y * win->ws_conf.ws_col)].attrib =
-        win->attr;
+    win->chars[win->cursor_x + (win->cursor_y * win->ws_conf.ws_col)].col = win->color;
+    win->chars[win->cursor_x + (win->cursor_y * win->ws_conf.ws_col)].attrib = win->attr;
 
     term_wmove(RIGHT);
 }
@@ -1207,6 +1166,7 @@ void Terminal::term_wputc(unsigned char c)
         if (c == KEY_BACKSPACE)
         {
             term_wmove(LEFT);
+            term_wdelchar();
             break;
         }
         if (c < 32)
@@ -1214,10 +1174,8 @@ void Terminal::term_wputc(unsigned char c)
             break;
         }
         win->chars[win->cursor_x + (win->cursor_y * win->ws_conf.ws_col)].text = c;
-        win->chars[win->cursor_x + (win->cursor_y * win->ws_conf.ws_col)].col =
-            win->color;
-        win->chars[win->cursor_x + (win->cursor_y * win->ws_conf.ws_col)].attrib =
-            win->attr;
+        win->chars[win->cursor_x + (win->cursor_y * win->ws_conf.ws_col)].col = win->color;
+        win->chars[win->cursor_x + (win->cursor_y * win->ws_conf.ws_col)].attrib = win->attr;
         term_wmove(RIGHT);
         break;
     }
@@ -1290,7 +1248,7 @@ void Terminal::term_wlocate(int x, int y)
 }
 
 /* redraw the term */
-void Terminal::term_wredraw(int newdirect)
+void Terminal::term_wredraw()
 {
     printf("wredraw\n");
     win->dirty = true;
@@ -1315,9 +1273,7 @@ void Terminal::term_winclr()
 
     for (q = 0; q < (win->ws_conf.ws_row * win->ws_conf.ws_col); q++)
     {
-        win->chars[q].text =
-            win->chars[q].col =
-                win->chars[q].attrib = 0;
+        win->chars[q].text = win->chars[q].col = win->chars[q].attrib = 0;
     }
 }
 
@@ -1344,16 +1300,16 @@ void Terminal::term_wscroll(int dir)
         {
             for (x = 0; x < win->ws_conf.ws_col; x++)
             {
-                win->chars[x + (y * W)].text = win->chars[x + ((y + 1) * W)].text;
-                win->chars[x + (y * W)].col =  win->chars[x + ((y + 1) * W)].col;
-                win->chars[x + (y * W)].attrib = win->chars[x + ((y + 1) * W)].attrib;
+                win->chars[x + (y * win->ws_conf.ws_col)].text = win->chars[x + ((y + 1) * win->ws_conf.ws_col)].text;
+                win->chars[x + (y * win->ws_conf.ws_col)].col =  win->chars[x + ((y + 1) * win->ws_conf.ws_col)].col;
+                win->chars[x + (y * win->ws_conf.ws_col)].attrib = win->chars[x + ((y + 1) * win->ws_conf.ws_col)].attrib;
             }
         }
         for (x = 0; x < win->ws_conf.ws_col; x++)
         {
-            win->chars[x + (W * win->sy2)].text =
-                win->chars[x + (W * win->sy2)].col =
-                    win->chars[x + (W * win->sy2)].attrib = 0;
+            win->chars[x + (win->ws_conf.ws_col * win->sy2)].text =
+                win->chars[x + (win->ws_conf.ws_col * win->sy2)].col =
+                    win->chars[x + (win->ws_conf.ws_col * win->sy2)].attrib = 0;
         }
     }
     else
@@ -1363,16 +1319,16 @@ void Terminal::term_wscroll(int dir)
         {
             for (x = 0; x < win->ws_conf.ws_col; x++)
             {
-                win->chars[x + (y * W)].text = win->chars[x + ((y - 1) * W)].text;
-                win->chars[x + (y * W)].col = win->chars[x + ((y - 1) * W)].col;
-                win->chars[x + (y * W)].attrib =  win->chars[x + ((y - 1) * W)].attrib;
+                win->chars[x + (y * win->ws_conf.ws_col)].text = win->chars[x + ((y - 1) * win->ws_conf.ws_col)].text;
+                win->chars[x + (y * win->ws_conf.ws_col)].col = win->chars[x + ((y - 1) * win->ws_conf.ws_col)].col;
+                win->chars[x + (y * win->ws_conf.ws_col)].attrib =  win->chars[x + ((y - 1) * win->ws_conf.ws_col)].attrib;
             }
         }
         for (x = 0; x < win->ws_conf.ws_col; x++)
         {
-            win->chars[x + (W * win->sy1)].text =
-                win->chars[x + (W * win->sy1)].col =
-                    win->chars[x + (W * win->sy1)].attrib = 0;
+            win->chars[x + (win->ws_conf.ws_col * win->sy1)].text =
+                win->chars[x + (win->ws_conf.ws_col * win->sy1)].col =
+                    win->chars[x + (win->ws_conf.ws_col * win->sy1)].attrib = 0;
         }
     }
     win->dirty = true;
@@ -1512,13 +1468,10 @@ void Terminal::term_wdelchar()
 
     for (i = win->cursor_x; i < win->ws_conf.ws_col - 1; i++)
     {
-        win->chars[i + (win->cursor_y * win->ws_conf.ws_col)].text =
-            win->chars[i + (win->cursor_y * win->ws_conf.ws_col) + 1].text;
+        win->chars[i + (win->cursor_y * win->ws_conf.ws_col)].text = win->chars[i + (win->cursor_y * win->ws_conf.ws_col) + 1].text;
     }
-    win->chars[i + (win->cursor_y * win->ws_conf.ws_col)].col =
-        win->chars[i + (win->cursor_y * win->ws_conf.ws_col) + 1].col;
-    win->chars[i + (win->cursor_y * win->ws_conf.ws_col)].attrib =
-        win->chars[i + (win->cursor_y * win->ws_conf.ws_col) + 1].attrib;
+    win->chars[i + (win->cursor_y * win->ws_conf.ws_col)].col = win->chars[i + (win->cursor_y * win->ws_conf.ws_col) + 1].col;
+    win->chars[i + (win->cursor_y * win->ws_conf.ws_col)].attrib = win->chars[i + (win->cursor_y * win->ws_conf.ws_col) + 1].attrib;
 
     win->chars[win->ws_conf.ws_col + (win->cursor_y * win->ws_conf.ws_col) - 1].text = 0;
     win->chars[win->ws_conf.ws_col + (win->cursor_y * win->ws_conf.ws_col) - 1].col = 0;
@@ -1529,6 +1482,7 @@ void Terminal::term_wdelchar()
 void Terminal::term_wclrch(int n)
 {
     printf("wclrch\n");
+    n = n;
 }
 
 /* set cursor type */
@@ -1550,14 +1504,8 @@ void Terminal::term_wcursor(int type)
     }
 }
 
-/* edit one line in term */
-void Terminal::term_wgetwcs(unsigned char *s, int linelen, int maxle)
-{
-    printf("wgetwcs\n");
-}
-
 /* print a string */
-void Terminal::term_wputs(unsigned char *s)
+void Terminal::term_wputs(const unsigned char *s)
 {
 #ifdef DEBUG
     printf("term_wputs %s\n", s);
@@ -1600,7 +1548,7 @@ Terminal::Terminal(int w, int h)
     pwin->color = 0;
     pwin->attr = 0;
 
-    vt_init(ANSI, 0, 0, 1, 0);
+    vt_init(ANSI, 0, 0, 1, 1);
 }
 
 void Terminal::resize_term(int w, int h)

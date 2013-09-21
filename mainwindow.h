@@ -1,5 +1,5 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef CJD_MAINWINDOW_H
+#define CJD_MAINWINDOW_H
 
 #include "opendialog.h"
 #include <QMainWindow>

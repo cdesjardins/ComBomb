@@ -1,10 +1,12 @@
 #include "cbtextedit.h"
 #include <QKeyEvent>
+#include <QScrollBar>
 #include <QtGui/QPainter>
+
 
 static int _colormap[] =
 {
-    0x00afaf,
+    0x000000,
     0xaf0000,
     0x00af00,
     0xafaf00,
@@ -14,7 +16,7 @@ static int _colormap[] =
     0x00afaf,
     0xafafaf,
 
-    0xffff00,
+    0x1f1f1f,
     0xff0000,
     0x00ff00,
     0xffff00,
@@ -54,76 +56,58 @@ void CBTextEdit::setTargetInterface(const boost::shared_ptr<TgtIntf> &targetInte
 
 void CBTextEdit::keyPressEvent(QKeyEvent *e)
 {
-    QTextEdit::keyPressEvent(e);
-    QString s = e->text();
+    QChar ch = e->text()[0];
 
-    for (QString::Iterator it = s.begin(); it != s.end(); it++)
+    if (ch.isPrint())
     {
-        if (it->isPrint())
+        vt_send(ch.toLatin1());
+    }
+    else
+    {
+        switch (e->key())
         {
-            if (e->modifiers() == Qt::ShiftModifier)
-            {
-                char byte = it->toUpper().toLatin1();
-                byte = toupper(byte);
-                if ((byte >= '@') && (byte <= '_'))
-                {
-                    byte -= 0x40;
-                    char_out(byte);
-                }
-            }
-            else
-            {
-                char szReadData = it->toLatin1();
-                char_out(szReadData);
-            }
-        }
-        else
-        {
-            switch (e->key())
-            {
-            case Qt::Key_Tab:
-                char_out('\t');
-                break;
-            case Qt::Key_Backspace:
-                char_out(KEY_BACKSPACE);
-                break;
-            case Qt::Key_Escape:
-                char_out('\33');
-                break;
-            case Qt::Key_Return:
-                char_out('\r');
-                break;
-            case Qt::Key_Left:
-                vt_send(K_LT);
-                break;
-            case Qt::Key_Right:
-                vt_send(K_RT);
-                break;
-            case Qt::Key_Up:
-                vt_send(K_UP);
-                break;
-            case Qt::Key_Down:
-                vt_send(K_DN);
-                break;
-            case Qt::Key_PageUp:
-                vt_send(K_PGUP);
-                break;
-            case Qt::Key_PageDown:
-                vt_send(K_PGDN);
-                break;
-            case Qt::Key_Home:
-                vt_send(K_HOME);
-                break;
-            case Qt::Key_Insert:
-                vt_send(K_INS);
-                break;
-            case Qt::Key_Delete:
-                vt_send(K_DEL);
-                break;
-            case Qt::Key_End:
-                vt_send(K_END);
-                break;
-            }
+        case Qt::Key_Tab:
+            vt_send('\t');
+            break;
+        case Qt::Key_Backspace:
+            vt_send(KEY_BACKSPACE);
+            break;
+        case Qt::Key_Escape:
+            vt_send('\33');
+            break;
+        case Qt::Key_Return:
+            vt_send('\r');
+            break;
+        case Qt::Key_Left:
+            vt_send(K_LT);
+            break;
+        case Qt::Key_Right:
+            vt_send(K_RT);
+            break;
+        case Qt::Key_Up:
+            vt_send(K_UP);
+            break;
+        case Qt::Key_Down:
+            vt_send(K_DN);
+            break;
+        case Qt::Key_PageUp:
+            vt_send(K_PGUP);
+            break;
+        case Qt::Key_PageDown:
+            vt_send(K_PGDN);
+            break;
+        case Qt::Key_Home:
+            vt_send(K_HOME);
+            break;
+        case Qt::Key_Insert:
+            vt_send(K_INS);
+            break;
+        case Qt::Key_Delete:
+            vt_send(K_DEL);
+            break;
+        case Qt::Key_End:
+            vt_send(K_END);
+            break;
         }
     }
 }
@@ -156,36 +140,27 @@ void CBTextEdit::readTarget()
     }
 }
 
-bool CBTextEdit::setCharColor(QPainter &painter, char_t *c, QPen *newPen)
+bool CBTextEdit::setCharColor(int *fg, int *bg, char_t *c, QPen *curPen)
 {
     bool ret = false;
-    int fg, bg;
-    QPen currentPen = painter.pen();
+    int newFg;
+    int newBg;
 
-    bg = c->col & 0xf;
-    fg = (c->col >> 4) & 0xf;
+    newBg = c->col & 0xf;
+    newFg = (c->col >> 4) & 0xf;
 
-    if (bg == 0)
-    {
-        //painter.setPen(QPen(Qt::black));
-    }
-    else
-    {
-        //painter.setPen(_colors[bg]);
-    }
-
-    if (fg == 7)
-    {
-        newPen->setColor(Qt::blue);
-    }
-    else
-    {
-        newPen->setColor(_colors[fg]);
-    }
-    if (*newPen != currentPen)
+    if (newBg != *bg)
     {
         ret = true;
     }
+
+    if (newFg != *fg)
+    {
+        curPen->setColor(_colors[newFg]);
+        ret = true;
+    }
+    *fg = newFg;
+    *bg = newBg;
     return ret;
 }
 
@@ -195,33 +170,47 @@ void CBTextEdit::paintEvent(QPaintEvent *)
     int y = 0;
     int px = 0;
     int py = 0;
-    QPen newPen;
+    int fg = -1;
+    int bg = -1;
+    QPen curPen;
     QString text;
     QPainter painter(this->viewport());
     QFont f = painter.font();
     QFontMetrics fm(f);
     bool draw = false;
-    newPen = painter.pen();
-    setCharColor(painter, &win->chars[0], &newPen);
-    painter.setPen(newPen);
+    curPen = painter.pen();
+    setCharColor(&fg, &bg, &win->chars[0], &curPen);
+    painter.setPen(curPen);
+
     for (y = 0; y < win->ws_conf.ws_row; y++)
     {
         px = 0;
         py += fm.xHeight();
+        draw = false;
         for (x = 0; x < win->ws_conf.ws_col; x++)
         {
             char_t *c = &(win->chars[x + (win->ws_conf.ws_col * y)]);
             uchar code = c->text;
 
-            draw = setCharColor(painter, c, &newPen);
+            if (code != 0)
+            {
+                draw = setCharColor(&fg, &bg, c, &curPen);
+            }
+            else
+            {
+                draw = true;
+            }
 
             if ((text.length() > 0) && (draw == true))
             {
+                QRect textRect = fm.boundingRect(text);
+                textRect.moveBottomLeft(QPoint(px - 1, py + 1));
+                painter.fillRect(textRect, QBrush(_colors[bg]));
                 painter.drawText(QPoint(px, py), text);
                 px += fm.width(text);
                 text.clear();
                 draw = false;
-                painter.setPen(newPen);
+                painter.setPen(curPen);
             }
 
             if (code != 0)
@@ -230,11 +219,27 @@ void CBTextEdit::paintEvent(QPaintEvent *)
             }
             else
             {
-                draw = true;
+                px += fm.width(" ");
             }
         }
     }
-
+    viewport()->update();
     win->dirty = false;
 }
 
+QSize CBTextEdit::sizeHint() const
+{
+    int width = 80 * fontMetrics().width('x');
+    int height = 25 * fontMetrics().lineSpacing();
+    QScrollBar *q = verticalScrollBar();
+    if (q)
+    {
+        width += q->width();
+    }
+    q = horizontalScrollBar();
+    if (q)
+    {
+        height += q->height();
+    }
+    return QSize(width, height);
+}

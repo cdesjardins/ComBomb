@@ -1,6 +1,6 @@
 
-#ifndef TARGETINTF_H
-#define TARGETINTF_H
+#ifndef CJD_TARGETINTF_H
+#define CJD_TARGETINTF_H
 
 #include <list>
 #include <fstream>
@@ -198,7 +198,6 @@ protected:
     TgtConnection _tgtConnectionConfig;
     boost::asio::io_service _service;
     boost::asio::serial_port _port;
-    volatile bool _serialThreadRun;
     boost::scoped_ptr<boost::thread> _serialThread;
 };
 

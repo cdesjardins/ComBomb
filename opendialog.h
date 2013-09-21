@@ -1,5 +1,5 @@
-#ifndef OPENDIALOG_H
-#define OPENDIALOG_H
+#ifndef CJD_OPENDIALOG_H
+#define CJD_OPENDIALOG_H
 
 #include <QDialog>
 #include "TargetIntf.h"

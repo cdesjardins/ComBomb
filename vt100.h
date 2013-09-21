@@ -23,8 +23,8 @@
  * sigflup
  */
 
-#ifndef __MINICOM__SRC__VT100_H__
-#define __MINICOM__SRC__VT100_H__
+#ifndef CJD_VT100_H
+#define CJD_VT100_H
 
 #include <stdio.h>
 
@@ -45,7 +45,6 @@
 
 struct state_t
 {
-    FILE *capfp;
     int vt_echo;
     int vt_nl_delay;    /* Delay after CR key */
     int vt_type; /* Terminal type. */
@@ -60,8 +59,6 @@ struct state_t
     int vt_insert; /* Insert mode */
     int vt_crlf;    /* Return sends CR/LF */
     int vt_om;  /* Origin mode. */
-    int vt_docap;   /* Capture on/off. */
-    void (*termout)(const char *, int, struct term_t *); /* Gets called to output a string. */
     int enable_iconv;
     int escparms[8];    /* Cumulated escape sequence. */
     int ptr;    /* Index into escparms array. */
@@ -235,7 +232,6 @@ class Terminal
 public:
     void vt_out(unsigned int);
     void vt_send(unsigned int ch);
-
     Terminal(int w = 80, int h = 25);
     ~Terminal();
 
@@ -244,7 +240,7 @@ protected:
 
     void term_wscroll(int dir);
     void term_wlocate(int x, int y);
-    void term_wputs(unsigned char *s);
+    void term_wputs(const unsigned char *s);
     void term_wclrch(int n);
     void term_wclreol();
     void term_wclrbol();
@@ -255,24 +251,24 @@ protected:
     void term_winsline();
     void term_wdelline();
     void term_wdelchar();
-    void term_winschar(unsigned char c, int move);
+    void term_winschar(unsigned char c);
     void term_wcursor(int type);
     void term_wputc(unsigned char c);
     void term_wmove(int dir);
-    void term_wredraw(int newdirect);
+    void term_wredraw();
     void resize_term(int w, int h);
 
     /* Prototypes from vt100.c */
 
     void vt_init(int, int, int, int, int);
     void vt_pinit(int, int);
-    void vt_set(int, int, int, int, int, int, int);
+    void vt_set(int, int, int, int, int, int);
 
     void ansi_mode(int on_off);
     void dec_mode(int on_off);
 
     size_t one_mbtowc(char *pwc, char *s, size_t n);
-    void v_termout(const char *s, int len);
+    void v_termout(const char *s);
 
     void state1(int c);
     void state2(int c);
@@ -283,9 +279,6 @@ protected:
     void state7(int c);
 
     void term_wflush();
-    void term_wgetwcs(unsigned char *s, int linelen, int maxle);
-
 
     term_t *win;
-
 };

@@ -436,8 +436,7 @@ boost::shared_ptr<TgtSerialIntf> TgtSerialIntf::createSerialConnection(TgtConnec
 
 TgtSerialIntf::TgtSerialIntf (TgtConnection config)
     : _tgtConnectionConfig(config),
-      _port(_service, config._portName),
-      _serialThreadRun(true)
+      _port(_service, config._portName)
 {
     _port.set_option(boost::asio::serial_port_base::baud_rate(115200));
     _port.set_option(boost::asio::serial_port_base::parity(boost::asio::serial_port_base::parity::none));
@@ -448,6 +447,8 @@ TgtSerialIntf::TgtSerialIntf (TgtConnection config)
 
 TgtSerialIntf::~TgtSerialIntf ()
 {
+    _service.stop();
+    _serialThread->join();
 }
 
 char * TgtSerialIntf::TgtSetupPort()

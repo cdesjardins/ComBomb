@@ -1,5 +1,5 @@
-#ifndef CHILDFORM_H
-#define CHILDFORM_H
+#ifndef CJD_CHILDFORM_H
+#define CJD_CHILDFORM_H
 
 #include <QWidget>
 #include "TargetIntf.h"
