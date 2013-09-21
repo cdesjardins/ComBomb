@@ -13,12 +13,28 @@ class OpenDialog : public QDialog
     Q_OBJECT
     
 public:
+    enum ConnectionType
+    {
+        CB_CONN_SERIAL,
+        CB_CONN_FILE
+    };
+
     explicit OpenDialog(QWidget *parent = 0);
     ~OpenDialog();
     const TgtSerialIntf::TgtConnection getSerialConfig() const;
+    const TgtFileIntf::TgtConnection getFileConfig() const;
+
+    ConnectionType getConnectionType();
+private slots:
+    void on__browseButton_clicked();
+
 private:
-    void detectComPorts();
-    std::vector<std::string> _comPorts;
+    void addComPorts();
+    void addBaudRates();
+    void addParity();
+    void addStopBits();
+    void addByteSize();
+    void addFlowControl();
 
     Ui::OpenDialog *ui;
 };

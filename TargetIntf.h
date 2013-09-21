@@ -23,7 +23,7 @@ public:
         TgtMakeConnection();
     };
     virtual int TgtDisconnect() = 0;
-    virtual int TgtRead(boost::asio::mutable_buffer &b) = 0;
+    virtual int TgtRead(boost::asio::mutable_buffer b) = 0;
     virtual int TgtWrite(char *szWriteData, int nBytes) = 0;
     virtual bool TgtConnected() = 0;
     virtual void TgtGetTitle(std::string *szTitle) = 0;
@@ -159,25 +159,32 @@ class TgtSerialIntf : public TgtIntf
 public:
     struct TgtConnection
     {
-        TgtConnection(const std::string &szPortName, const unsigned long baudRate, const unsigned char parity, const unsigned char stopBits, const unsigned char byteSize)
+        TgtConnection(const std::string &szPortName,
+                      const boost::asio::serial_port_base::baud_rate baudRate,
+                      const boost::asio::serial_port_base::parity parity,
+                      const boost::asio::serial_port_base::stop_bits stopBits,
+                      const boost::asio::serial_port_base::character_size byteSize,
+                      const boost::asio::serial_port_base::flow_control flowControl)
             : _portName(szPortName),
               _baudRate(baudRate),
               _parity(parity),
               _stopBits(stopBits),
-              _byteSize(byteSize)
+              _byteSize(byteSize),
+              _flowControl(flowControl)
         {
         }
 
         std::string _portName;
-        unsigned long _baudRate;
-        unsigned char _parity;
-        unsigned char _stopBits;
-        unsigned char _byteSize;
+        boost::asio::serial_port_base::baud_rate _baudRate;
+        boost::asio::serial_port_base::parity _parity;
+        boost::asio::serial_port_base::stop_bits _stopBits;
+        boost::asio::serial_port_base::character_size _byteSize;
+        boost::asio::serial_port_base::flow_control _flowControl;
     };
-    static boost::shared_ptr<TgtSerialIntf> createSerialConnection(TgtConnection config);
+    static boost::shared_ptr<TgtSerialIntf> createSerialConnection(const TgtConnection &config);
     virtual ~TgtSerialIntf ();
     virtual int TgtDisconnect();
-    virtual int TgtRead(boost::asio::mutable_buffer &b);
+    virtual int TgtRead(boost::asio::mutable_buffer b);
     virtual int TgtWrite(char *szWriteData, int nBytes);
     virtual bool TgtConnected();
     virtual void TgtGetTitle(std::string *szTitle);
@@ -188,7 +195,7 @@ public:
     }
 
 protected:
-    TgtSerialIntf (TgtConnection config);
+    TgtSerialIntf (const TgtConnection &config);
     virtual void TgtMakeConnection();
     virtual void TgtReadFromPort();
     virtual void TgtSendToPort();
@@ -205,27 +212,29 @@ protected:
 class TgtFileIntf : public TgtIntf
 {
 public:
-    TgtFileIntf(void);
+    struct TgtConnection
+    {
+        TgtConnection(std::string fileName)
+            :_fileName(fileName)
+        {
+        }
+        std::string _fileName;
+    };
+
+    static boost::shared_ptr<TgtFileIntf> createFileConnection(const TgtConnection &config);
     virtual ~TgtFileIntf(void);
 
     virtual int TgtDisconnect();
-    virtual int TgtRead(char *szReadData, int nMaxBytes);
+    virtual int TgtRead(boost::asio::mutable_buffer b);
     virtual int TgtWrite(char *szWriteData, int nBytes);
     virtual bool TgtConnected();
     virtual void TgtGetTitle(std::string *szTitle);
-    virtual void TgtSetConfig(const std::string &szFileName)
-    {
-        m_sTgtConnection.m_szFileName = szFileName;
-    };
-    struct TgtConnection
-    {
-        std::string m_szFileName;
-    };
+
 protected:
+    TgtFileIntf(const TgtConnection &config);
     virtual void TgtMakeConnection();
 
-    std::ifstream m_fInput;
-    int m_cnt;
-    TgtConnection m_sTgtConnection;
+    std::ifstream _inputFile;
+    TgtConnection _tgtConnectionConfig;
 };
 #endif

@@ -1,4 +1,3 @@
-
 #include "TargetIntf.h"
 /*
 ** If telnet or ssh to a remote server and it is unix based and you see
@@ -427,22 +426,22 @@ void TgtTelnetIntf::TgtGetTitle(char *szTitle)
 ******************************************************************************/
 #if 1
 
-boost::shared_ptr<TgtSerialIntf> TgtSerialIntf::createSerialConnection(TgtConnection config)
+boost::shared_ptr<TgtSerialIntf> TgtSerialIntf::createSerialConnection(const TgtConnection &config)
 {
     boost::shared_ptr<TgtSerialIntf> ret(new TgtSerialIntf(config));
     ret->_serialThread.reset(new boost::thread(boost::bind(&boost::asio::io_service::run, &ret->_service)));
     return ret;
 }
 
-TgtSerialIntf::TgtSerialIntf (TgtConnection config)
+TgtSerialIntf::TgtSerialIntf (const TgtConnection &config)
     : _tgtConnectionConfig(config),
       _port(_service, config._portName)
 {
-    _port.set_option(boost::asio::serial_port_base::baud_rate(115200));
-    _port.set_option(boost::asio::serial_port_base::parity(boost::asio::serial_port_base::parity::none));
-    _port.set_option(boost::asio::serial_port_base::character_size(8));
-    _port.set_option(boost::asio::serial_port_base::stop_bits(boost::asio::serial_port_base::stop_bits::one));
-    _port.set_option(boost::asio::serial_port_base::flow_control(boost::asio::serial_port_base::flow_control::none));
+    _port.set_option(config._baudRate);
+    _port.set_option(config._parity);
+    _port.set_option(config._byteSize);
+    _port.set_option(config._stopBits);
+    _port.set_option(config._flowControl);
 }
 
 TgtSerialIntf::~TgtSerialIntf ()
@@ -630,15 +629,17 @@ int TgtSerialIntf::TgtDisconnect()
     return 0;
 }
 
-int TgtSerialIntf::TgtRead(boost::asio::mutable_buffer &b)
+int TgtSerialIntf::TgtRead(boost::asio::mutable_buffer b)
 {
-    int nRet = 0;
+    int ret = 0;
     if (_incomingData.size() > 0)
     {
-        b = _incomingData.front();
+        boost::asio::mutable_buffer f = _incomingData.front();
+        boost::asio::buffer_copy(b, f);
         _incomingData.pop_front();
+        ret = boost::asio::buffer_size(f);
     }
-    return nRet;
+    return ret;
 }
 
 int TgtSerialIntf::TgtWrite(char *szWriteData, int nBytes)
@@ -698,23 +699,27 @@ void TgtSerialIntf::TgtGetTitle(std::string *szTitle)
 **  File
 **
 ******************************************************************************/
-
-
-TgtFileIntf::TgtFileIntf ()
+boost::shared_ptr<TgtFileIntf> TgtFileIntf::createFileConnection(const TgtConnection &config)
 {
-    m_cnt = 0;
+    boost::shared_ptr<TgtFileIntf> ret(new TgtFileIntf(config));
+    return ret;
 }
 
-TgtFileIntf::~TgtFileIntf ()
+TgtFileIntf::TgtFileIntf(const TgtConnection &config)
+    : _tgtConnectionConfig(config)
+{
+}
+
+TgtFileIntf::~TgtFileIntf()
 {
 }
 
 void TgtFileIntf::TgtMakeConnection()
 {
-    m_fInput.open(m_sTgtConnection.m_szFileName.c_str(), std::ifstream::in | std::ifstream::binary);
-    if (m_fInput == NULL)
+    _inputFile.open(_tgtConnectionConfig._fileName.c_str(), std::ifstream::in | std::ifstream::binary);
+    if (_inputFile == NULL)
     {
-        throw std::exception(m_sTgtConnection.m_szFileName.c_str());
+        throw std::exception(_tgtConnectionConfig._fileName.c_str());
     }
 }
 
@@ -723,16 +728,16 @@ int TgtFileIntf::TgtDisconnect()
     return 0;
 }
 
-int TgtFileIntf::TgtRead(char *szReadData, int nMaxBytes)
+int TgtFileIntf::TgtRead(boost::asio::mutable_buffer b)
 {
-    int nLen = 0;
-    m_fInput.read((char*)&nLen, sizeof(int));
-    if (m_fInput)
+    int ret = 0;
+    if (_inputFile)
     {
-        m_fInput.read(szReadData, nLen);
-        return nLen;
+        char *data = boost::asio::buffer_cast<char*>(b);
+        _inputFile.read(data, boost::asio::buffer_size(b));
+        ret = _inputFile.gcount();
     }
-    return 0;
+    return ret;
 }
 
 int TgtFileIntf::TgtWrite(char *szWriteData, int nBytes)
@@ -747,5 +752,5 @@ bool TgtFileIntf::TgtConnected()
 
 void TgtFileIntf::TgtGetTitle(std::string *szTitle)
 {
-    *szTitle = m_sTgtConnection.m_szFileName;
+    *szTitle = _tgtConnectionConfig._fileName;
 }

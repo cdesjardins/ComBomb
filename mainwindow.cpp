@@ -28,10 +28,18 @@ void MainWindow::on_actionOpen_triggered()
         try
         {
             ChildForm *childForm = new ChildForm();
-            TgtSerialIntf::TgtConnection config(_openDialog->getSerialConfig());
-            boost::shared_ptr<TgtSerialIntf> intf = TgtSerialIntf::createSerialConnection(config);
-            childForm->setTargetInterface(intf);
+            boost::shared_ptr<TgtIntf> intf;
+            switch (_openDialog->getConnectionType())
+            {
+            case OpenDialog::CB_CONN_SERIAL:
+                intf = TgtSerialIntf::createSerialConnection(_openDialog->getSerialConfig());
+                break;
+            case OpenDialog::CB_CONN_FILE:
+                intf = TgtFileIntf::createFileConnection(_openDialog->getFileConfig());
+                break;
+            }
 
+            childForm->setTargetInterface(intf);
             QMdiSubWindow *subWindow = _mdiArea->addSubWindow(childForm);
             subWindow->show();
         }

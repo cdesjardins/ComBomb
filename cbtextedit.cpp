@@ -122,11 +122,12 @@ void CBTextEdit::char_out(char c)
 
 void CBTextEdit::readTarget()
 {
+    char buffer[128];
     boost::asio::mutable_buffer b;
     while (_runThread == true)
     {
-        _targetInterface->TgtRead(b);
-        int bytes = boost::asio::buffer_size(b);
+        b = boost::asio::buffer(buffer);
+        int bytes = _targetInterface->TgtRead(b);
         if (bytes > 0)
         {
             char *data = boost::asio::buffer_cast<char*>(b);
