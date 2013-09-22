@@ -124,6 +124,7 @@ void OpenDialog::addComPorts()
         portName.str("");
         portName << BASE_PORTNAME << i;
         boost::asio::serial_port port(ioService);
+        qDebug("Serial port: %s", portName.str().c_str());
         port.open(portName.str(), ec);
         if (port.is_open() == true)
         {
