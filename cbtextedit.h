@@ -3,12 +3,12 @@
 
 #include "TargetIntf.h"
 #include "vt100.h"
-#include <QTextEdit>
+#include <QPlainTextEdit>
 #ifndef Q_MOC_RUN
 #include <boost/thread.hpp>
 #endif
 
-class CBTextEdit : public QTextEdit, Terminal
+class CBTextEdit : public QPlainTextEdit, Terminal
 {
 public:
     CBTextEdit(QWidget *parent = 0);
@@ -20,9 +20,11 @@ protected:
     virtual void keyPressEvent(QKeyEvent *e);
     void readTarget();
     void paintScreen();
-    bool setCharColor(int *fg, int *bg, char_t *c, QPen *newPen);
+    bool setCharColor(int *fg, int *bg, char_t *c/*, QPen *newPen*/);
     void paintEvent(QPaintEvent *e);
     void mypaint();
+    void insertText();
+    QFont getFont();
     QSize sizeHint() const;
 
     void drawLineCharString(QPainter& painter, int x, int y, const QString& str);

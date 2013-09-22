@@ -1,4 +1,5 @@
 #include "TargetIntf.h"
+
 /*
 ** If telnet or ssh to a remote server and it is unix based and you see
 ** ^H every time you issue a backspace, then add stty erase ^H to your
@@ -422,7 +423,6 @@ void TgtTelnetIntf::TgtGetTitle(char *szTitle)
 **  Serial
 **
 ******************************************************************************/
-#if 1
 
 boost::shared_ptr<TgtSerialIntf> TgtSerialIntf::createSerialConnection(const TgtConnection &config)
 {
@@ -454,7 +454,7 @@ void TgtSerialIntf::TgtReadCallback(const boost::system::error_code& error, cons
     {
         if (bytesTransferred > 0)
         {
-            _incomingData.push_back(boost::asio::buffer(_buffer, bytesTransferred));
+            _incomingData.enqueue(boost::asio::buffer(_buffer, bytesTransferred));
         }
         _port.async_read_some(boost::asio::buffer(_buffer),
             boost::bind(&TgtSerialIntf::TgtReadCallback, this,
@@ -598,11 +598,10 @@ int TgtSerialIntf::TgtDisconnect()
 int TgtSerialIntf::TgtRead(boost::asio::mutable_buffer b)
 {
     int ret = 0;
-    if (_incomingData.size() > 0)
+    boost::asio::mutable_buffer f;
+    if (_incomingData.waitDequeue(f, 1) == true)
     {
-        boost::asio::mutable_buffer f = _incomingData.front();
         boost::asio::buffer_copy(b, f);
-        _incomingData.pop_front();
         ret = boost::asio::buffer_size(f);
     }
     return ret;
@@ -658,7 +657,6 @@ void TgtSerialIntf::TgtGetTitle(std::string *szTitle)
         m_sTgtConnection.m_byStopBits + 1);
     */
 }
-#endif
 
 /******************************************************************************
 **

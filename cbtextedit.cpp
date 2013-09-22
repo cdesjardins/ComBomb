@@ -1,6 +1,7 @@
 #include "cbtextedit.h"
 #include <QKeyEvent>
 #include <QScrollBar>
+#include <QTextBlock>
 #include <QtGui/QPainter>
 
 
@@ -28,9 +29,10 @@ static int _colormap[] =
 };
 
 CBTextEdit::CBTextEdit(QWidget *parent)
-    :QTextEdit(parent),
+    :QPlainTextEdit(parent),
       _runThread(true)
 {
+    qDebug("CBTextEdit");
     for (size_t i = 0; i < (sizeof(_colormap) / sizeof(_colormap[0])); i++)
     {
         _colors.push_back(QColor(QRgb(_colormap[i])));
@@ -41,6 +43,7 @@ CBTextEdit::CBTextEdit(QWidget *parent)
 
 CBTextEdit::~CBTextEdit()
 {
+    qDebug("~CBTextEdit");
     _runThread = false;
     _readTargetThread.join();
 }
@@ -50,7 +53,6 @@ void CBTextEdit::setTargetInterface(const boost::shared_ptr<TgtIntf> &targetInte
     _targetInterface = targetInterface;
     _targetInterface->TgtConnect();
     _readTargetThread = boost::thread(&CBTextEdit::readTarget, this);
-
 }
 
 void CBTextEdit::keyPressEvent(QKeyEvent *e)
@@ -135,12 +137,12 @@ void CBTextEdit::readTarget()
                 vt_out(data[i]);
             }
             b = boost::asio::mutable_buffer();
+            insertText();
         }
-        boost::this_thread::sleep(boost::posix_time::milliseconds(1));
     }
 }
 
-bool CBTextEdit::setCharColor(int *fg, int *bg, char_t *c, QPen *curPen)
+bool CBTextEdit::setCharColor(int *fg, int *bg, char_t *c)
 {
     bool ret = false;
     int newFg;
@@ -148,7 +150,6 @@ bool CBTextEdit::setCharColor(int *fg, int *bg, char_t *c, QPen *curPen)
 
     newBg = c->col & 0xf;
     newFg = (c->col >> 4) & 0xf;
-
     if (newBg != *bg)
     {
         ret = true;
@@ -156,7 +157,6 @@ bool CBTextEdit::setCharColor(int *fg, int *bg, char_t *c, QPen *curPen)
 
     if (newFg != *fg)
     {
-        curPen->setColor(_colors[newFg]);
         ret = true;
     }
     *fg = newFg;
@@ -164,28 +164,100 @@ bool CBTextEdit::setCharColor(int *fg, int *bg, char_t *c, QPen *curPen)
     return ret;
 }
 
-void CBTextEdit::paintEvent(QPaintEvent *)
+QFont CBTextEdit::getFont()
 {
+    QFont font("TypeWriter");
+    font.setStyleHint(QFont::TypeWriter);
+    return font;
+}
+
+void CBTextEdit::paintEvent(QPaintEvent *e)
+{
+    QPlainTextEdit::paintEvent(e);
+}
+
+void CBTextEdit::insertText()
+{
+    if (win->dirty == true)
+    {
+        int x = 0;
+        int y = 0;
+        int fg = -1;
+        int bg = -1;
+        bool draw = false;
+        QString text;
+        QTextCursor cursor = textCursor();
+        QTextCharFormat format;
+        setFont(getFont());
+        cursor.movePosition(QTextCursor::Start);
+        QTextBlock block = document()->begin();
+        if (block.isValid() == false)
+        {
+            cursor.insertBlock();
+        }
+
+        while (block.isValid())
+        {
+            QTextCursor cursor(block);
+            block = block.next();
+            cursor.select(QTextCursor::BlockUnderCursor);
+            cursor.removeSelectedText();
+        }
+        for (y = 0; y < win->ws_conf.ws_row; y++)
+        {
+            cursor.setPosition();
+            for (x = 0; x < win->ws_conf.ws_col; x++)
+            {
+                char_t *c = &(win->chars[x + (win->ws_conf.ws_col * y)]);
+                uchar code = c->text;
+
+                if (code != 0)
+                {
+                    draw = setCharColor(&fg, &bg, c);
+                    format.setForeground(QBrush(_colors[fg]));
+                    format.setBackground(QBrush(_colors[bg]));
+                }
+                else
+                {
+                    draw = true;
+                }
+                if ((text.length() > 0) && (draw == true))
+                {
+                    cursor.insertText(text, format);
+                    text.clear();
+                    draw = false;
+                }
+                if (code != 0)
+                {
+                    text.append(code);
+                }
+            }
+        }
+        win->dirty = false;
+    }
+#if 0
     int x = 0;
     int y = 0;
     int px = 0;
     int py = 0;
     int fg = -1;
     int bg = -1;
-    QPen curPen;
+    //QPen curPen;
     QString text;
     QPainter painter(this->viewport());
-    QFont f = painter.font();
-    QFontMetrics fm(f);
+    QFont f = getFont();
+    painter.setFont(f);
+    QFontMetrics fm(f, this);
     bool draw = false;
-    curPen = painter.pen();
-    setCharColor(&fg, &bg, &win->chars[0], &curPen);
-    painter.setPen(curPen);
+    int textHeight = fm.ascent() + fm.descent();
+    //curPen = painter.pen();
+    setCharColor(&fg, &bg, &win->chars[0]/*, &curPen*/);
+    //painter.setPen(curPen);
 
     for (y = 0; y < win->ws_conf.ws_row; y++)
     {
         px = 0;
-        py += fm.xHeight();
+        py += textHeight;
         draw = false;
         for (x = 0; x < win->ws_conf.ws_col; x++)
         {
@@ -194,7 +266,7 @@ void CBTextEdit::paintEvent(QPaintEvent *)
 
             if (code != 0)
             {
-                draw = setCharColor(&fg, &bg, c, &curPen);
+                draw = setCharColor(&fg, &bg, c/*, &curPen*/);
             }
             else
             {
@@ -203,14 +275,15 @@ void CBTextEdit::paintEvent(QPaintEvent *)
 
             if ((text.length() > 0) && (draw == true))
             {
-                QRect textRect = fm.boundingRect(text);
-                textRect.moveBottomLeft(QPoint(px - 1, py + 1));
-                painter.fillRect(textRect, QBrush(_colors[bg]));
+                QTextCharFormat format;
+                format.setBackground(QBrush(_colors[bg]));
+                format.setForeground(QBrush(_colors[fg]));
+                setCurrentCharFormat(format);
                 painter.drawText(QPoint(px, py), text);
                 px += fm.width(text);
                 text.clear();
                 draw = false;
-                painter.setPen(curPen);
+                //painter.setPen(curPen);
             }
 
             if (code != 0)
@@ -225,6 +298,7 @@ void CBTextEdit::paintEvent(QPaintEvent *)
     }
     viewport()->update();
     win->dirty = false;
+#endif
 }
 
 QSize CBTextEdit::sizeHint() const

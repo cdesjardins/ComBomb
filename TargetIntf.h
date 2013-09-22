@@ -5,6 +5,7 @@
 #include <list>
 #include <fstream>
 #include <string>
+#include "ThreadSafeQueue.h"
 #ifndef Q_MOC_RUN
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
@@ -33,7 +34,7 @@ protected:
     virtual void TgtMakeConnection() = 0;
     int m_nTotalTx;
     int m_nTotalRx;
-    std::list<boost::asio::mutable_buffer> _incomingData;
+    ThreadSafeQueue<boost::asio::mutable_buffer> _incomingData;
     std::vector<boost::asio::mutable_buffer> _outgoingData;
     boost::array<char, 4096> _buffer;
 };

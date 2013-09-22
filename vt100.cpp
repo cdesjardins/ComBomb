@@ -1534,6 +1534,7 @@ Terminal::Terminal(int w, int h)
 {
     term_t *pwin;
     win = new term_t;
+    memset(win, 0, sizeof(term_t));
     pwin = win;
     pwin->ws_conf.ws_col = w;
     pwin->ws_conf.ws_row = h;
