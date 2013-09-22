@@ -47,9 +47,7 @@ def copyJamFile(arch, toolsetsuffix, compilerVersion):
             else:
                 line = "using gcc : " + compiler + compilerVersion + " : g++-" + compilerVersion + " ;\n"
         elif (compiler == "arm"):
-            line = "using gcc : arm : arm-linux-gnueabi-g++ ;\n"
-        elif (compiler == "armhf"):
-            line = "using gcc : armhf : arm-linux-gnueabihf-g++ ;\n"
+            line = "using gcc : arm : arm-linux-gnueabihf-g++ ;\n"
         else:
             raise Exception("Inavlid compiler: " + compiler)
     target = "tools/build/v2/user-config.jam"
@@ -85,31 +83,27 @@ def runB2Linux(arch, toolsetsuffix, compilerVersion, extraArgs):
 def runB2Windows():
     batfilefd, batfilename = tempfile.mkstemp(suffix=".bat", text=True)
     file = os.fdopen(batfilefd, 'w')
-    visualStudioInstallDir = os.environ["VS100COMNTOOLS"];
-    if (len(visualStudioInstallDir) == 0):
-        print ("Error: Unable to find MSVC 2008 Express Install dir")
-    else:
-        file.write("call \"" + visualStudioInstallDir + "..\\..\\VC\\vcvarsall.bat\" x86\n")
-        file.write("call bootstrap.bat msvc\n")
-        cmd = "b2 --toolset=msvc-10.0 link=static -j 8 stage --layout=system -a variant="
-        file.write(cmd + "release\n")
-        file.write("move stage\\lib stage\\release\n")
-        file.write(cmd + "debug\n")
-        file.write("move stage\\lib stage\\debug\n")
-        file.close()
-        print batfilename
-        call([batfilename])
-
-def getLinuxCrossCompiler():
-    try:
-        file = open("../Spidr/Makefile.arm", "r")
-        for line in file:
-            m = re.match("(\sCROSS_COMPILE=)([a-zA-Z0-9-]*)", line)
-            if m:
-                return m.group(2)
-    except IOError:
-        return "nocross"
-    return ""
+    msvsfound = False
+    msvsvars = []
+    for ver in range (13, 8, -1):
+        envvar = "VS" + str(ver) + "0COMNTOOLS"
+        msvsvars.append(envvar)
+        if (envvar in os.environ):
+            visualStudioInstallDir = os.environ[envvar];
+            file.write("call \"" + visualStudioInstallDir + "..\\..\\VC\\vcvarsall.bat\" x86\n")
+            file.write("call bootstrap.bat msvc\n")
+            cmd = "b2 --toolset=msvc-" + str(ver) + ".0 link=static -j 8 stage --layout=system -a variant="
+            file.write(cmd + "release\n")
+            file.write("move stage\\lib stage\\release\n")
+            file.write(cmd + "debug\n")
+            file.write("move stage\\lib stage\\debug\n")
+            file.close()
+            print batfilename
+            call([batfilename])
+            msvsfound = True
+            break
+    if (msvsfound == False):
+        print("Unable to find env var for MSVS, tried: ", msvsvars)
 
 def runB2():
     if (platform.system() == "Windows"):
@@ -120,15 +114,6 @@ def runB2():
         #runB2Linux("x86", "", "4.6", ["cxxflags=-fPIC"])
         #runB2Linux("x86", "", "4.4", ["cxxflags=-fPIC"])
         runB2Linux("x86", "", "", ["cxxflags=-fPIC"])
-        crossPrefix = getLinuxCrossCompiler()
-        crossCompiler = crossPrefix + "g++"
-        if (which(crossCompiler) != None):
-            print ("Using cross compiler: " + crossCompiler)
-            if (crossCompiler.find("gnueabihf") != -1):
-                runB2Linux("arm", "hf", "", [])
-            else:
-                runB2Linux("arm", "", "", [])
-
     
 def main(argv):
     try:
