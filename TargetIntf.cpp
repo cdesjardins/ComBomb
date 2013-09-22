@@ -5,11 +5,9 @@
 ** startup script (.cshrc) or the like.
 */
 
-#define TGT_BACKSPACE       0x08
-
 TgtIntf::TgtIntf(void)
 {
-    for (int i = 0; i < sizeof(_buffer) / sizeof(_buffer[0]); i++)
+    for (size_t i = 0; i < sizeof(_buffer) / sizeof(_buffer[0]); i++)
     {
         _buffer[i] = 0;
     }
@@ -450,38 +448,6 @@ TgtSerialIntf::~TgtSerialIntf ()
     _serialThread->join();
 }
 
-char * TgtSerialIntf::TgtSetupPort()
-{
-    char *pRet = "Not implemented";
-    /*
-    DCB dDcb;
-
-    pRet = NULL;
-
-    memset(&dDcb, 0, sizeof(DCB));
-    dDcb.DCBlength = sizeof(DCB);
-    if (!GetCommState(m_hSerial, &dDcb))
-    {
-        pRet = "GetCommState failed";
-    }
-    else
-    {
-        dDcb.BaudRate = m_sTgtConnection.m_dwBaudRate;
-        dDcb.ByteSize = m_sTgtConnection.m_byByteSize;
-        dDcb.Parity = m_sTgtConnection.m_byParity;
-        dDcb.StopBits = m_sTgtConnection.m_byStopBits;
-        dDcb.fDsrSensitivity = 0;
-        dDcb.fDtrControl = DTR_CONTROL_ENABLE;
-        dDcb.fOutxDsrFlow = 0;
-        if (!SetCommState(m_hSerial, &dDcb))
-        {
-            pRet = "SetCommState failed";
-        }
-    }
-    */
-    return pRet;
-}
-
 void TgtSerialIntf::TgtReadCallback(const boost::system::error_code& error, const size_t bytesTransferred)
 {
     if (!error)
@@ -719,7 +685,7 @@ void TgtFileIntf::TgtMakeConnection()
     _inputFile.open(_tgtConnectionConfig._fileName.c_str(), std::ifstream::in | std::ifstream::binary);
     if (_inputFile == NULL)
     {
-        throw std::exception(_tgtConnectionConfig._fileName.c_str());
+        //throw std::exception(_tgtConnectionConfig._fileName.c_str());
     }
 }
 

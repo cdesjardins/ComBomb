@@ -188,7 +188,6 @@ public:
     virtual int TgtWrite(char *szWriteData, int nBytes);
     virtual bool TgtConnected();
     virtual void TgtGetTitle(std::string *szTitle);
-    virtual char * TgtSetupPort();
     virtual TgtConnection TgtGetConfig()
     {
         return _tgtConnectionConfig;

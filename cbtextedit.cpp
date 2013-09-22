@@ -28,11 +28,10 @@ static int _colormap[] =
 };
 
 CBTextEdit::CBTextEdit(QWidget *parent)
-    :QTextEdit(parent)
+    :QTextEdit(parent),
+      _runThread(true)
 {
-    _targetInterface = NULL;
-    _runThread = true;
-    for (int i = 0; i < (sizeof(_colormap) / sizeof(_colormap[0])); i++)
+    for (size_t i = 0; i < (sizeof(_colormap) / sizeof(_colormap[0])); i++)
     {
         _colors.push_back(QColor(QRgb(_colormap[i])));
     }

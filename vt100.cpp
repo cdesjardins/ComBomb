@@ -36,7 +36,7 @@
 #include "vt100.h"
 #ifndef Q_MOC_RUN
 #include <boost/thread.hpp>
-#include <Boost/format.hpp>
+#include <boost/format.hpp>
 #endif
 
 #define W ws_conf.ws_col

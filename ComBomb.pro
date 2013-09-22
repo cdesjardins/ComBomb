@@ -34,11 +34,13 @@ FORMS    += mainwindow.ui \
 RESOURCES += \
     ComBomb.qrc
 
-QMAKE_CXXFLAGS += -D_WIN32_WINNT=0x0501 -DBOOST_ALL_NO_LIB
+QMAKE_CXXFLAGS += -DBOOST_ALL_NO_LIB
+
+win32:QMAKE_CXXFLAGS += -D_WIN32_WINNT=0x0501
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/boost_1_54_0/stage/release/ -llibboost_system -llibboost_thread
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/boost_1_54_0/stage/debug/ -llibboost_system -llibboost_thread
-else:unix: LIBS += -L$$PWD/boost_1_54_0/stage/ -llibboost_system -llibboost_thread
+else:unix: LIBS +=  $$PWD/boost_1_54_0/stage/x86/lib/libboost_system.a $$PWD/boost_1_54_0/stage/x86/lib/libboost_thread.a
 
 INCLUDEPATH += $$PWD/boost_1_54_0
 DEPENDPATH += $$PWD/boost_1_54_0

@@ -25,7 +25,7 @@ protected:
     void mypaint();
     QSize sizeHint() const;
 
-    void CBTextEdit::drawLineCharString(QPainter& painter, int x, int y, const QString& str);
+    void drawLineCharString(QPainter& painter, int x, int y, const QString& str);
     boost::shared_ptr<TgtIntf> _targetInterface;
 
     volatile bool _runThread;
