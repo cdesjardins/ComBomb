@@ -24,19 +24,25 @@ public:
         TgtMakeConnection();
     };
     virtual int TgtDisconnect() = 0;
-    virtual int TgtRead(boost::asio::mutable_buffer b) = 0;
+    virtual int TgtRead(boost::asio::mutable_buffer &b);
     virtual int TgtWrite(char *szWriteData, int nBytes) = 0;
     virtual bool TgtConnected() = 0;
     virtual void TgtGetTitle(std::string *szTitle) = 0;
     virtual int TgtGetBytesRx() { return m_nTotalRx; };
     virtual int TgtGetBytesTx() { return m_nTotalTx; };
+    void TgtReturnReadBuffer(const boost::asio::mutable_buffer &b);
 protected:
     virtual void TgtMakeConnection() = 0;
+
     int m_nTotalTx;
     int m_nTotalRx;
     ThreadSafeQueue<boost::asio::mutable_buffer> _incomingData;
-    std::vector<boost::asio::mutable_buffer> _outgoingData;
-    boost::array<char, 4096> _buffer;
+    ThreadSafeQueue<boost::asio::mutable_buffer> _bufferPool;
+    boost::asio::mutable_buffer _currentBuffer;
+
+private:
+    static int deleteBuffersFunctor(std::list<boost::asio::mutable_buffer> &pool);
+
 };
 
 enum eTelnetState
@@ -185,7 +191,6 @@ public:
     static boost::shared_ptr<TgtSerialIntf> createSerialConnection(const TgtConnection &config);
     virtual ~TgtSerialIntf ();
     virtual int TgtDisconnect();
-    virtual int TgtRead(boost::asio::mutable_buffer b);
     virtual int TgtWrite(char *szWriteData, int nBytes);
     virtual bool TgtConnected();
     virtual void TgtGetTitle(std::string *szTitle);
@@ -225,7 +230,7 @@ public:
     virtual ~TgtFileIntf(void);
 
     virtual int TgtDisconnect();
-    virtual int TgtRead(boost::asio::mutable_buffer b);
+    virtual int TgtRead(boost::asio::mutable_buffer &b);
     virtual int TgtWrite(char *szWriteData, int nBytes);
     virtual bool TgtConnected();
     virtual void TgtGetTitle(std::string *szTitle);

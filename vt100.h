@@ -235,6 +235,10 @@ public:
     Terminal(int w = 80, int h = 25);
     ~Terminal();
 
+    const char_t* getChar(int x, int y);
+    unsigned short getWinSizeRow();
+    unsigned short getWinSizeCol();
+    void setDirty(bool dirty);
 protected:
     virtual void char_out(char c) = 0;
 

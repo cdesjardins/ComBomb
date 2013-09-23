@@ -8,16 +8,52 @@
 
 TgtIntf::TgtIntf(void)
 {
-    for (size_t i = 0; i < sizeof(_buffer) / sizeof(_buffer[0]); i++)
+    const int bufferSize = 512;
+    for (size_t i = 0; i < 4096; i++)
     {
-        _buffer[i] = 0;
+        char *buffer = new char[bufferSize];
+        _bufferPool.enqueue(boost::asio::mutable_buffer(buffer, bufferSize));
     }
+
+    _bufferPool.dequeue(_currentBuffer);
+
     m_nTotalTx = 0;
     m_nTotalRx = 0;
 }
 
 TgtIntf::~TgtIntf(void)
 {
+    _bufferPool.iterate(boost::bind(&TgtIntf::deleteBuffersFunctor, _1));
+}
+
+int TgtIntf::deleteBuffersFunctor(std::list<boost::asio::mutable_buffer> &pool)
+{
+    int ret = pool.size();
+    std::list<boost::asio::mutable_buffer>::iterator it;
+    for (it = pool.begin(); it != pool.end(); it++)
+    {
+        char *data = boost::asio::buffer_cast<char*>(*it);
+        delete data;
+    }
+    pool.clear();
+    return -ret;
+}
+
+void TgtIntf::TgtReturnReadBuffer(const boost::asio::mutable_buffer &b)
+{
+    _bufferPool.enqueue(b);
+}
+
+int TgtIntf::TgtRead(boost::asio::mutable_buffer &b)
+{
+    int ret = 0;
+    if (_incomingData.waitDequeue(b, 1) == true)
+    {
+        ret = boost::asio::buffer_size(b);
+        char *data = boost::asio::buffer_cast<char*>(b);
+        data[ret] = 0;
+    }
+    return ret;
 }
 
 /******************************************************************************
@@ -454,9 +490,10 @@ void TgtSerialIntf::TgtReadCallback(const boost::system::error_code& error, cons
     {
         if (bytesTransferred > 0)
         {
-            _incomingData.enqueue(boost::asio::buffer(_buffer, bytesTransferred));
+            _incomingData.enqueue(boost::asio::buffer(_currentBuffer, bytesTransferred));
+            _bufferPool.dequeue(_currentBuffer);
         }
-        _port.async_read_some(boost::asio::buffer(_buffer),
+        _port.async_read_some(boost::asio::buffer(_currentBuffer),
             boost::bind(&TgtSerialIntf::TgtReadCallback, this,
             boost::asio::placeholders::error,
             boost::asio::placeholders::bytes_transferred));
@@ -595,18 +632,6 @@ int TgtSerialIntf::TgtDisconnect()
     return 0;
 }
 
-int TgtSerialIntf::TgtRead(boost::asio::mutable_buffer b)
-{
-    int ret = 0;
-    boost::asio::mutable_buffer f;
-    if (_incomingData.waitDequeue(f, 1) == true)
-    {
-        boost::asio::buffer_copy(b, f);
-        ret = boost::asio::buffer_size(f);
-    }
-    return ret;
-}
-
 int TgtSerialIntf::TgtWrite(char *szWriteData, int nBytes)
 {
     int ret = _port.write_some(boost::asio::buffer(szWriteData, nBytes));
@@ -692,16 +717,21 @@ int TgtFileIntf::TgtDisconnect()
     return 0;
 }
 
-int TgtFileIntf::TgtRead(boost::asio::mutable_buffer b)
+int TgtFileIntf::TgtRead(boost::asio::mutable_buffer &b)
 {
     int ret = 0;
     if (_inputFile)
     {
-        char *data = boost::asio::buffer_cast<char*>(b);
-        _inputFile.read(data, boost::asio::buffer_size(b));
+        char *data = boost::asio::buffer_cast<char*>(_currentBuffer);
+        _inputFile.read(data, boost::asio::buffer_size(_currentBuffer));
         ret = _inputFile.gcount();
+        if (ret > 0)
+        {
+            _incomingData.enqueue(boost::asio::buffer(_currentBuffer, ret));
+            _bufferPool.dequeue(_currentBuffer);
+        }
     }
-    return ret;
+    return TgtIntf::TgtRead(b);
 }
 
 int TgtFileIntf::TgtWrite(char *szWriteData, int nBytes)

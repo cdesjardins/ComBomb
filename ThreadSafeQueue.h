@@ -6,10 +6,11 @@
 #define CJD_THREAD_SAFE_QUEUE_Hxx
 
 #include <list>
+#ifndef Q_MOC_RUN
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/condition_variable.hpp>
 #include <boost/chrono/chrono.hpp>
-
+#endif
 /*
 ** On the wait functions in this class if timeout == -1, then wait forever...
 ** When dequeing a batch of messages, the return code is the total number of bytes

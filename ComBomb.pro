@@ -18,7 +18,9 @@ SOURCES += main.cpp\
     cbtextedit.cpp \
     TargetIntf.cpp \
     opendialog.cpp \
-    vt100.cpp
+    vt100.cpp \
+    cbtextdocument.cpp \
+    tgtterminal.cpp
 
 HEADERS  += mainwindow.h \
     childform.h \
@@ -26,7 +28,9 @@ HEADERS  += mainwindow.h \
     TargetIntf.h \
     opendialog.h \
     vt100.h \
-    ThreadSafeQueue.h
+    ThreadSafeQueue.h \
+    cbtextdocument.h \
+    tgtterminal.h
 
 FORMS    += mainwindow.ui \
     childform.ui \
@@ -39,8 +43,8 @@ QMAKE_CXXFLAGS += -DBOOST_ALL_NO_LIB
 
 win32:QMAKE_CXXFLAGS += -D_WIN32_WINNT=0x0501
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/boost_1_54_0/stage/release/ -llibboost_system -llibboost_thread
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/boost_1_54_0/stage/debug/ -llibboost_system -llibboost_thread
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/boost_1_54_0/stage/release/ -llibboost_system -llibboost_thread -llibboost_chrono
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/boost_1_54_0/stage/debug/ -llibboost_system -llibboost_thread -llibboost_chrono
 else:unix: LIBS +=  $$PWD/boost_1_54_0/stage/x86/lib/libboost_system.a $$PWD/boost_1_54_0/stage/x86/lib/libboost_thread.a $$PWD/boost_1_54_0/stage/x86/lib/libboost_chrono.a
 
 INCLUDEPATH += $$PWD/boost_1_54_0

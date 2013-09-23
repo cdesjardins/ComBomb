@@ -50,8 +50,8 @@ CBTextEdit::~CBTextEdit()
 
 void CBTextEdit::setTargetInterface(const boost::shared_ptr<TgtIntf> &targetInterface)
 {
-    _targetInterface = targetInterface;
-    _targetInterface->TgtConnect();
+    targetInterface->TgtConnect();
+    _cbTextDocument.reset(new CBTextDocument(targetInterface));
     _readTargetThread = boost::thread(&CBTextEdit::readTarget, this);
 }
 
@@ -61,88 +61,79 @@ void CBTextEdit::keyPressEvent(QKeyEvent *e)
 
     if (ch.isPrint())
     {
-        vt_send(ch.toLatin1());
+        _cbTextDocument->_tgtTerminal.vt_send(ch.toLatin1());
     }
     else
     {
         switch (e->key())
         {
         case Qt::Key_Tab:
-            vt_send('\t');
+            _cbTextDocument->_tgtTerminal.vt_send('\t');
             break;
         case Qt::Key_Backspace:
-            vt_send(KEY_BACKSPACE);
+            _cbTextDocument->_tgtTerminal.vt_send(KEY_BACKSPACE);
             break;
         case Qt::Key_Escape:
-            vt_send('\33');
+            _cbTextDocument->_tgtTerminal.vt_send('\33');
             break;
         case Qt::Key_Return:
-            vt_send('\r');
+            _cbTextDocument->_tgtTerminal.vt_send('\r');
             break;
         case Qt::Key_Left:
-            vt_send(K_LT);
+            _cbTextDocument->_tgtTerminal.vt_send(K_LT);
             break;
         case Qt::Key_Right:
-            vt_send(K_RT);
+            _cbTextDocument->_tgtTerminal.vt_send(K_RT);
             break;
         case Qt::Key_Up:
-            vt_send(K_UP);
+            _cbTextDocument->_tgtTerminal.vt_send(K_UP);
             break;
         case Qt::Key_Down:
-            vt_send(K_DN);
+            _cbTextDocument->_tgtTerminal.vt_send(K_DN);
             break;
         case Qt::Key_PageUp:
-            vt_send(K_PGUP);
+            _cbTextDocument->_tgtTerminal.vt_send(K_PGUP);
             break;
         case Qt::Key_PageDown:
-            vt_send(K_PGDN);
+            _cbTextDocument->_tgtTerminal.vt_send(K_PGDN);
             break;
         case Qt::Key_Home:
-            vt_send(K_HOME);
+            _cbTextDocument->_tgtTerminal.vt_send(K_HOME);
             break;
         case Qt::Key_Insert:
-            vt_send(K_INS);
+            _cbTextDocument->_tgtTerminal.vt_send(K_INS);
             break;
         case Qt::Key_Delete:
-            vt_send(K_DEL);
+            _cbTextDocument->_tgtTerminal.vt_send(K_DEL);
             break;
         case Qt::Key_End:
-            vt_send(K_END);
+            _cbTextDocument->_tgtTerminal.vt_send(K_END);
             break;
         }
-    }
-}
-
-void CBTextEdit::char_out(char c)
-{
-    if (_targetInterface != NULL)
-    {
-        _targetInterface->TgtWrite(&c, 1);
     }
 }
 
 void CBTextEdit::readTarget()
 {
-    char buffer[128];
     boost::asio::mutable_buffer b;
     while (_runThread == true)
     {
-        b = boost::asio::buffer(buffer);
-        int bytes = _targetInterface->TgtRead(b);
+        int bytes = _cbTextDocument->_tgtTerminal._targetInterface->TgtRead(b);
         if (bytes > 0)
         {
-            char *data = boost::asio::buffer_cast<char*>(b);
+            const char *data = boost::asio::buffer_cast<const char*>(b);
+            qDebug("got: %i", bytes);
+            qDebug("[%s]", data);
             for (int i = 0; i < bytes; i++)
             {
-                vt_out(data[i]);
+                _cbTextDocument->_tgtTerminal.vt_out(data[i]);
             }
-            b = boost::asio::mutable_buffer();
-            insertText();
+            _cbTextDocument->_tgtTerminal._targetInterface->TgtReturnReadBuffer(b);
         }
     }
 }
 
-bool CBTextEdit::setCharColor(int *fg, int *bg, char_t *c)
+bool CBTextEdit::setCharColor(int *fg, int *bg, const char_t *c)
 {
     bool ret = false;
     int newFg;
@@ -166,18 +157,21 @@ bool CBTextEdit::setCharColor(int *fg, int *bg, char_t *c)
 
 QFont CBTextEdit::getFont()
 {
-    QFont font("TypeWriter");
+    QFont font("Monospace");
     font.setStyleHint(QFont::TypeWriter);
     return font;
 }
 
 void CBTextEdit::paintEvent(QPaintEvent *e)
 {
-    QPlainTextEdit::paintEvent(e);
+    insertText();
+
+//    QPlainTextEdit::paintEvent(e);
 }
 
 void CBTextEdit::insertText()
 {
+#if 0
     if (win->dirty == true)
     {
         int x = 0;
@@ -205,7 +199,7 @@ void CBTextEdit::insertText()
         }
         for (y = 0; y < win->ws_conf.ws_row; y++)
         {
-            cursor.setPosition();
+            //cursor.setPosition();
             for (x = 0; x < win->ws_conf.ws_col; x++)
             {
                 char_t *c = &(win->chars[x + (win->ws_conf.ws_col * y)]);
@@ -235,38 +229,39 @@ void CBTextEdit::insertText()
         }
         win->dirty = false;
     }
-#if 0
+#else
     int x = 0;
     int y = 0;
     int px = 0;
     int py = 0;
     int fg = -1;
     int bg = -1;
-    //QPen curPen;
     QString text;
     QPainter painter(this->viewport());
     QFont f = getFont();
     painter.setFont(f);
-    QFontMetrics fm(f, this);
+    QFontMetrics fm(f);
     bool draw = false;
     int textHeight = fm.ascent() + fm.descent();
-    //curPen = painter.pen();
-    setCharColor(&fg, &bg, &win->chars[0]/*, &curPen*/);
-    //painter.setPen(curPen);
+    QPen curPen = painter.pen();
+    const char_t *c = _cbTextDocument->_tgtTerminal.getChar(0, 0);
+    setCharColor(&fg, &bg, c);
+    curPen.setColor(QColor(_colors[fg]));
+    painter.setPen(curPen);
 
-    for (y = 0; y < win->ws_conf.ws_row; y++)
+    for (y = 0; y < _cbTextDocument->_tgtTerminal.getWinSizeRow(); y++)
     {
         px = 0;
         py += textHeight;
         draw = false;
-        for (x = 0; x < win->ws_conf.ws_col; x++)
+        for (x = 0; x < _cbTextDocument->_tgtTerminal.getWinSizeCol(); x++)
         {
-            char_t *c = &(win->chars[x + (win->ws_conf.ws_col * y)]);
+            c = _cbTextDocument->_tgtTerminal.getChar(x, y);
             uchar code = c->text;
 
             if (code != 0)
             {
-                draw = setCharColor(&fg, &bg, c/*, &curPen*/);
+                draw = setCharColor(&fg, &bg, c);
             }
             else
             {
@@ -275,15 +270,12 @@ void CBTextEdit::insertText()
 
             if ((text.length() > 0) && (draw == true))
             {
-                QTextCharFormat format;
-                format.setBackground(QBrush(_colors[bg]));
-                format.setForeground(QBrush(_colors[fg]));
-                setCurrentCharFormat(format);
                 painter.drawText(QPoint(px, py), text);
                 px += fm.width(text);
                 text.clear();
                 draw = false;
-                //painter.setPen(curPen);
+                curPen.setColor(QColor(_colors[fg]));
+                painter.setPen(curPen);
             }
 
             if (code != 0)
@@ -297,7 +289,7 @@ void CBTextEdit::insertText()
         }
     }
     viewport()->update();
-    win->dirty = false;
+    _cbTextDocument->_tgtTerminal.setDirty(false);
 #endif
 }
 

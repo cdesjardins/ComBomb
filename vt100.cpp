@@ -1552,6 +1552,26 @@ Terminal::Terminal(int w, int h)
     vt_init(ANSI, 0, 0, 1, 1);
 }
 
+const char_t* Terminal::getChar(int x, int y)
+{
+    return &win->chars[x + (win->ws_conf.ws_col * y)];
+}
+
+unsigned short Terminal::getWinSizeRow()
+{
+    return win->ws_conf.ws_row;
+}
+
+unsigned short Terminal::getWinSizeCol()
+{
+    return win->ws_conf.ws_col;
+}
+
+void Terminal::setDirty(bool dirty)
+{
+    win->dirty = dirty;
+}
+
 void Terminal::resize_term(int w, int h)
 {
     term_t *pwin = (term_t *)win;
