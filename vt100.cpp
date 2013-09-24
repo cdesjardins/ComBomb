@@ -1572,6 +1572,11 @@ void Terminal::setDirty(bool dirty)
     win->dirty = dirty;
 }
 
+bool Terminal::getDirty()
+{
+    return win->dirty;
+}
+
 void Terminal::resize_term(int w, int h)
 {
     term_t *pwin = (term_t *)win;

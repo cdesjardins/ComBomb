@@ -239,6 +239,7 @@ public:
     unsigned short getWinSizeRow();
     unsigned short getWinSizeCol();
     void setDirty(bool dirty);
+    bool getDirty();
 protected:
     virtual void char_out(char c) = 0;
 

@@ -19,7 +19,6 @@ SOURCES += main.cpp\
     TargetIntf.cpp \
     opendialog.cpp \
     vt100.cpp \
-    cbtextdocument.cpp \
     tgtterminal.cpp
 
 HEADERS  += mainwindow.h \
@@ -29,7 +28,6 @@ HEADERS  += mainwindow.h \
     opendialog.h \
     vt100.h \
     ThreadSafeQueue.h \
-    cbtextdocument.h \
     tgtterminal.h
 
 FORMS    += mainwindow.ui \

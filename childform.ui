@@ -128,8 +128,29 @@ font: 10pt &quot;Terminal&quot;;</string>
    <class>CBTextEdit</class>
    <extends>QPlainTextEdit</extends>
    <header>cbtextedit.h</header>
+   <slots>
+    <signal>textUpdatedSignal()</signal>
+    <slot>textUpdatedSlot()</slot>
+   </slots>
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>_textEdit</sender>
+   <signal>textUpdatedSignal()</signal>
+   <receiver>_textEdit</receiver>
+   <slot>textUpdatedSlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>412</x>
+     <y>207</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>389</x>
+     <y>199</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
