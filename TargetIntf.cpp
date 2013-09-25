@@ -12,7 +12,7 @@ TgtIntf::TgtIntf(void)
     for (size_t i = 0; i < 4096; i++)
     {
         char *buffer = new char[bufferSize];
-        _bufferPool.enqueue(boost::asio::mutable_buffer(buffer, bufferSize));
+        _bufferPool.enqueue(boost::asio::mutable_buffer(buffer, bufferSize - 1));
     }
 
     _bufferPool.dequeue(_currentBuffer);

@@ -1,7 +1,8 @@
 #include "tgtterminal.h"
 
-TgtTerminal::TgtTerminal(const boost::shared_ptr<TgtIntf> &tgtIntf)
-    :_targetInterface(tgtIntf)
+TgtTerminal::TgtTerminal(const boost::shared_ptr<TgtIntf> &tgtIntf, int w, int h)
+    : Terminal(w, h),
+      _targetInterface(tgtIntf)
 {
 }
 

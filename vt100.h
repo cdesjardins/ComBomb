@@ -223,7 +223,7 @@ struct term_t
     int sy1, sy2;
     state_t state;
     winsize_t ws_conf;
-    char_t *chars;
+    char_t *charMem;
     bool dirty;
 };
 
@@ -232,7 +232,7 @@ class Terminal
 public:
     void vt_out(unsigned int);
     void vt_send(unsigned int ch);
-    Terminal(int w = 80, int h = 25);
+    Terminal(int w, int h);
     ~Terminal();
 
     const char_t* getChar(int x, int y);
@@ -240,9 +240,12 @@ public:
     unsigned short getWinSizeCol();
     void setDirty(bool dirty);
     bool getDirty();
+    void resize_term(int w, int h);
+
 protected:
     virtual void char_out(char c) = 0;
 
+    char_t* getMutableChar(int x, int y);
     void term_wscroll(int dir);
     void term_wlocate(int x, int y);
     void term_wputs(const unsigned char *s);
@@ -261,7 +264,6 @@ protected:
     void term_wputc(unsigned char c);
     void term_wmove(int dir);
     void term_wredraw();
-    void resize_term(int w, int h);
 
     /* Prototypes from vt100.c */
 

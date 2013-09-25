@@ -6,7 +6,7 @@
 #ifndef Q_MOC_RUN
 #include <boost/thread.hpp>
 #endif
-
+//#define OUT_TO_DEBUG_FILE
 class CBTextEdit : public QPlainTextEdit
 {
     Q_OBJECT
@@ -31,7 +31,10 @@ protected:
     boost::thread _readTargetThread;
     std::vector<QColor> _colors;
     boost::scoped_ptr<TgtTerminal> _tgtTerminal;
-
+#ifdef OUT_TO_DEBUG_FILE
+    std::string _debugFileName;
+    std::ofstream _debugFile;
+#endif
 private slots:
     void insertText();
     void textUpdatedSlot();

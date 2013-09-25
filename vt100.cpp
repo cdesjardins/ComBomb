@@ -1128,16 +1128,20 @@ void Terminal::term_winschar(unsigned char c)
 #ifdef DEBUG
     printf("term_winschar\n");
 #endif
-
+    char_t *chars1;
+    char_t *chars;
     for (i = win->ws_conf.ws_col - 1; i != win->cursor_x; i--)
     {
-        win->chars[i + (win->cursor_y * win->ws_conf.ws_col) + 1].text = win->chars[i + (win->cursor_y * win->ws_conf.ws_col)].text;
-        win->chars[i + (win->cursor_y * win->ws_conf.ws_col) + 1].col = win->chars[i + (win->cursor_y * win->ws_conf.ws_col)].col;
-        win->chars[i + (win->cursor_y * win->ws_conf.ws_col) + 1].attrib = win->chars[i + (win->cursor_y * win->ws_conf.ws_col)].attrib;
+        chars1 = getMutableChar(i + 1, win->cursor_y);
+        chars =  getMutableChar(i, win->cursor_y);
+        chars1->text = chars->text;
+        chars1->col = chars->col;
+        chars1->attrib = chars->attrib;
     }
-    win->chars[win->cursor_x + (win->cursor_y * win->ws_conf.ws_col)].text = c;
-    win->chars[win->cursor_x + (win->cursor_y * win->ws_conf.ws_col)].col = win->color;
-    win->chars[win->cursor_x + (win->cursor_y * win->ws_conf.ws_col)].attrib = win->attr;
+    chars = getMutableChar(win->cursor_x, win->cursor_y);
+    chars->text = c;
+    chars->col = win->color;
+    chars->attrib = win->attr;
 
     term_wmove(RIGHT);
 }
@@ -1173,9 +1177,10 @@ void Terminal::term_wputc(unsigned char c)
         {
             break;
         }
-        win->chars[win->cursor_x + (win->cursor_y * win->ws_conf.ws_col)].text = c;
-        win->chars[win->cursor_x + (win->cursor_y * win->ws_conf.ws_col)].col = win->color;
-        win->chars[win->cursor_x + (win->cursor_y * win->ws_conf.ws_col)].attrib = win->attr;
+        char_t *chars = getMutableChar(win->cursor_x, win->cursor_y);
+        chars->text = c;
+        chars->col = win->color;
+        chars->attrib = win->attr;
         term_wmove(RIGHT);
         break;
     }
@@ -1265,15 +1270,20 @@ void Terminal::term_wflush()
 /* clear the window */
 void Terminal::term_winclr()
 {
-    int q;
+    int x, y;
 
 #ifdef DEBUG
     printf("term_winclr\n");
 #endif
 
-    for (q = 0; q < (win->ws_conf.ws_row * win->ws_conf.ws_col); q++)
+    //for (q = 0; q < (win->ws_conf.ws_row * win->ws_conf.ws_col); q++)
+    for (y = 0; y < win->ws_conf.ws_row; y++)
     {
-        win->chars[q].text = win->chars[q].col = win->chars[q].attrib = 0;
+        for (x = 0; x < win->ws_conf.ws_col; x++)
+        {
+            char_t *chars = getMutableChar(x, y);
+            chars->text = chars->col = chars->attrib = 0;
+        }
     }
 }
 
@@ -1282,6 +1292,9 @@ void Terminal::term_wscroll(int dir)
 {
     int x, y;
     int store;
+    char_t *chara;
+    char_t *charb;
+
 
 #ifdef DEBUG
     printf("term_wscroll\n");
@@ -1300,16 +1313,17 @@ void Terminal::term_wscroll(int dir)
         {
             for (x = 0; x < win->ws_conf.ws_col; x++)
             {
-                win->chars[x + (y * win->ws_conf.ws_col)].text = win->chars[x + ((y + 1) * win->ws_conf.ws_col)].text;
-                win->chars[x + (y * win->ws_conf.ws_col)].col =  win->chars[x + ((y + 1) * win->ws_conf.ws_col)].col;
-                win->chars[x + (y * win->ws_conf.ws_col)].attrib = win->chars[x + ((y + 1) * win->ws_conf.ws_col)].attrib;
+                chara = getMutableChar(x, y);
+                charb = getMutableChar(x, y + 1);
+                chara->text   = charb->text;
+                chara->col    = charb->col;
+                chara->attrib = charb->attrib;
             }
         }
         for (x = 0; x < win->ws_conf.ws_col; x++)
         {
-            win->chars[x + (win->ws_conf.ws_col * win->sy2)].text =
-                win->chars[x + (win->ws_conf.ws_col * win->sy2)].col =
-                    win->chars[x + (win->ws_conf.ws_col * win->sy2)].attrib = 0;
+            chara = getMutableChar(x, win->sy2);
+            chara->text = chara->col = chara->attrib = 0;
         }
     }
     else
@@ -1319,16 +1333,17 @@ void Terminal::term_wscroll(int dir)
         {
             for (x = 0; x < win->ws_conf.ws_col; x++)
             {
-                win->chars[x + (y * win->ws_conf.ws_col)].text = win->chars[x + ((y - 1) * win->ws_conf.ws_col)].text;
-                win->chars[x + (y * win->ws_conf.ws_col)].col = win->chars[x + ((y - 1) * win->ws_conf.ws_col)].col;
-                win->chars[x + (y * win->ws_conf.ws_col)].attrib =  win->chars[x + ((y - 1) * win->ws_conf.ws_col)].attrib;
+                chara = getMutableChar(x, y);
+                charb = getMutableChar(x, y - 1);
+                chara->text   = charb->text;
+                chara->col    = charb->col;
+                chara->attrib = charb->attrib;
             }
         }
         for (x = 0; x < win->ws_conf.ws_col; x++)
         {
-            win->chars[x + (win->ws_conf.ws_col * win->sy1)].text =
-                win->chars[x + (win->ws_conf.ws_col * win->sy1)].col =
-                    win->chars[x + (win->ws_conf.ws_col * win->sy1)].attrib = 0;
+            chara = getMutableChar(x, win->sy1);
+            chara->text = chara->col = chara->attrib = 0;
         }
     }
     win->dirty = true;
@@ -1338,16 +1353,15 @@ void Terminal::term_wscroll(int dir)
 void Terminal::term_wclreol()
 {
     int x;
-
+    char_t *chara;
 #ifdef DEBUG
     printf("term_wclreol\n");
 #endif
 
     for (x = win->cursor_x; x < win->ws_conf.ws_col; x++)
     {
-        win->chars[x + (win->cursor_y * win->ws_conf.ws_col)].text =
-            win->chars[x + (win->cursor_y * win->ws_conf.ws_col)].col =
-                win->chars[x + (win->cursor_y * win->ws_conf.ws_col)].attrib = 0;
+        chara = getMutableChar(x, win->cursor_y);
+        chara->text = chara->col = chara->attrib = 0;
     }
 }
 
@@ -1356,51 +1370,59 @@ void Terminal::term_wclreol()
 void Terminal::term_wclrbol()
 {
     int x;
+    char_t *chara;
 
 #ifdef DEBUG
     printf("term_wclrbol\n");
 #endif
 
-    for (x = win->ws_conf.ws_col; x > 0; x--)
+    for (x = win->cursor_x; x >= 0; x--)
     {
-        win->chars[x].text =
-            win->chars[x].col =
-                win->chars[x].attrib = 0;
+        chara = getMutableChar(x, win->cursor_y);
+        chara->text = chara->col = chara->attrib = 0;
     }
 }
 
 /* clear to end of screen */
 void Terminal::term_wclreos()
 {
-    int x;
+    int x, y;
+    char_t *chara;
 
 #ifdef DEBUG
     printf("term_wclreos\n");
 #endif
-
-    for (x = win->cursor_x + (win->cursor_y * win->ws_conf.ws_col);
-         x < (win->ws_conf.ws_row * win->ws_conf.ws_col); x++)
+    x = win->cursor_x;
+    for (y = win->cursor_y; y < win->ws_conf.ws_row; y++)
     {
-        win->chars[x].text =
-            win->chars[x].col =
-                win->chars[x].attrib = 0;
+        for (; x < win->ws_conf.ws_col; x++)
+        {
+            chara = getMutableChar(x, y);
+            chara->text = chara->col = chara->attrib = 0;
+        }
+        x = 0;
     }
 }
 
 /* clear to beginning of screen */
 void Terminal::term_wclrbos()
 {
-    int x;
+    int x, y;
+    char_t *chara;
 
 #ifdef DEBUG
     printf("term_wclrbos\n");
 #endif
 
-    for (x = win->cursor_x + (win->cursor_y * win->ws_conf.ws_col); x > 0; x--)
+    x = win->cursor_x;
+    for (y = win->cursor_y; y >= 0; y--)
     {
-        win->chars[x].text =
-            win->chars[x].col =
-                win->chars[x].attrib = 0;
+        for (; x >= 0; x--)
+        {
+            chara = getMutableChar(x, y);
+            chara->text = chara->col = chara->attrib = 0;
+        }
+        x = win->ws_conf.ws_col;
     }
 }
 
@@ -1408,6 +1430,7 @@ void Terminal::term_wclrbos()
 void Terminal::term_wclrel()
 {
     int x;
+    char_t *chara;
 
 #ifdef DEBUG
     printf("term_wclrel\n");
@@ -1415,9 +1438,8 @@ void Terminal::term_wclrel()
 
     for (x = 0; x < win->cursor_x; x++)
     {
-        win->chars[x].text =
-            win->chars[x].col =
-                win->chars[x].attrib = 0;
+        chara = getMutableChar(x, win->cursor_y);
+        chara->text = chara->col = chara->attrib = 0;
     }
 }
 
@@ -1462,20 +1484,23 @@ void Terminal::term_wdelline()
 void Terminal::term_wdelchar()
 {
     int i;
+    char_t *chara;
+    char_t *charb;
+
 #ifdef DEBUG
     printf("term_wdelchar\n");
 #endif
 
     for (i = win->cursor_x; i < win->ws_conf.ws_col - 1; i++)
     {
-        win->chars[i + (win->cursor_y * win->ws_conf.ws_col)].text = win->chars[i + (win->cursor_y * win->ws_conf.ws_col) + 1].text;
+        chara = getMutableChar(i, win->cursor_y);
+        charb = getMutableChar(i + 1, win->cursor_y);
+        chara->text = charb->text;
+        chara->col = charb->col;
+        chara->attrib = charb->attrib;
     }
-    win->chars[i + (win->cursor_y * win->ws_conf.ws_col)].col = win->chars[i + (win->cursor_y * win->ws_conf.ws_col) + 1].col;
-    win->chars[i + (win->cursor_y * win->ws_conf.ws_col)].attrib = win->chars[i + (win->cursor_y * win->ws_conf.ws_col) + 1].attrib;
-
-    win->chars[win->ws_conf.ws_col + (win->cursor_y * win->ws_conf.ws_col) - 1].text = 0;
-    win->chars[win->ws_conf.ws_col + (win->cursor_y * win->ws_conf.ws_col) - 1].col = 0;
-    win->chars[win->ws_conf.ws_col + (win->cursor_y * win->ws_conf.ws_row) - 1].attrib = 0;
+    chara = getMutableChar(win->ws_conf.ws_col, win->cursor_y);
+    chara->text = chara->col = chara->attrib = 0;
 }
 
 /* clear characters */
@@ -1538,8 +1563,8 @@ Terminal::Terminal(int w, int h)
     pwin = win;
     pwin->ws_conf.ws_col = w;
     pwin->ws_conf.ws_row = h;
-    pwin->chars = (char_t *)malloc(w * h * sizeof(char_t));
-    memset(pwin->chars, 0, w * h * sizeof(char_t));
+    pwin->charMem = (char_t *)malloc(w * h * sizeof(char_t));
+    memset(pwin->charMem, 0, w * h * sizeof(char_t));
     pwin->cursor_x = 0;
     pwin->cursor_y = 0;
     pwin->dirty = true;
@@ -1549,12 +1574,23 @@ Terminal::Terminal(int w, int h)
     pwin->color = 0;
     pwin->attr = 0;
 
-    vt_init(ANSI, 0, 0, 1, 1);
+    vt_init(ANSI, 0, 0, 1, 0);
 }
 
 const char_t* Terminal::getChar(int x, int y)
 {
-    return &win->chars[x + (win->ws_conf.ws_col * y)];
+    return getMutableChar(x, y);
+}
+
+char_t* Terminal::getMutableChar(int x, int y)
+{
+    int index = x + (win->ws_conf.ws_col * y);
+    int max = win->ws_conf.ws_col * win->ws_conf.ws_col;
+    if (index > max)
+    {
+        throw std::exception("getChar index error");
+    }
+    return &win->charMem[index];
 }
 
 unsigned short Terminal::getWinSizeRow()
@@ -1580,12 +1616,19 @@ bool Terminal::getDirty()
 void Terminal::resize_term(int w, int h)
 {
     term_t *pwin = (term_t *)win;
-    int x, y;
+    int x, y, old_w, old_h;
     char_t *old_chars;
+    char_t *chara;
     unsigned char text, col, attrib;
 
-    old_chars = pwin->chars;
-    pwin->chars = (char_t *)malloc(w * h * sizeof(char_t));
+    old_chars = pwin->charMem;
+    pwin->charMem = (char_t *)malloc(w * h * sizeof(char_t));
+    memset(pwin->charMem, 0, w * h * sizeof(char_t));
+
+    old_w = pwin->ws_conf.ws_col;
+    old_h = pwin->ws_conf.ws_row;
+    pwin->ws_conf.ws_col = w;
+    pwin->ws_conf.ws_row = h;
 
     for (y = 0; y < h; y++)
     {
@@ -1594,9 +1637,9 @@ void Terminal::resize_term(int w, int h)
             if ((x < pwin->ws_conf.ws_col) &&
                 (y < pwin->ws_conf.ws_row))
             {
-                text =   old_chars[x + (y * pwin->ws_conf.ws_col)].text;
-                col =    old_chars[x + (y * pwin->ws_conf.ws_col)].col;
-                attrib = old_chars[x + (y * pwin->ws_conf.ws_col)].attrib;
+                text =   old_chars[x + (y * old_w)].text;
+                col =    old_chars[x + (y * old_w)].col;
+                attrib = old_chars[x + (y * old_w)].attrib;
             }
             else
             {
@@ -1604,14 +1647,13 @@ void Terminal::resize_term(int w, int h)
                 col = 0;
                 attrib = 0;
             }
-            pwin->chars[x + (y * w)].text = text;
-            pwin->chars[x +  (y * w)].col = col;
-            pwin->chars[x + (y * w)].attrib = attrib;
+            chara = getMutableChar(x, y);
+            chara->text = text;
+            chara->col = col;
+            chara->attrib = attrib;
         }
     }
 
-    pwin->ws_conf.ws_col = w;
-    pwin->ws_conf.ws_row = h;
     free(old_chars);
     if (pwin->cursor_x > w)
     {
