@@ -150,7 +150,7 @@ void CBTextEdit::readTarget()
         if ( (_tgtTerminal->getDirty() == true))
         {
             _tgtTerminal->setDirty(false);
-            emit textUpdatedSignal();
+            emit textUpdatedSignal(_tgtTerminal->getScrollCnt());
         }
     }
 }
@@ -251,7 +251,7 @@ void CBTextEdit::insertLine(int y, int *fg, int *bg, QTextCursor &cursor)
     }
 }
 
-void CBTextEdit::insertText()
+void CBTextEdit::insertText(int scrollCnt)
 {
 
     int y;
@@ -259,6 +259,14 @@ void CBTextEdit::insertText()
     int bg = -1;
     QTextBlock block;
     int bc = document()->blockCount();
+
+    block = document()->lastBlock();
+    for (y = 0; y < scrollCnt; y++)
+    {
+        QTextCursor cursor(block);
+        cursor.insertBlock();
+    }
+
     if (bc < _tgtTerminal->getWinSizeRow())
     {
         block = document()->firstBlock();
@@ -300,7 +308,7 @@ QSize CBTextEdit::sizeHint() const
     return QSize(width, height);
 }
 
-void CBTextEdit::textUpdatedSlot()
+void CBTextEdit::textUpdatedSlot(int scrollCnt)
 {
-    insertText();
+    insertText(scrollCnt);
 }

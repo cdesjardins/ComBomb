@@ -37,6 +37,7 @@
 #ifndef Q_MOC_RUN
 #include <boost/thread.hpp>
 #include <boost/format.hpp>
+#include <boost/asio.hpp>
 #endif
 
 #define W ws_conf.ws_col
@@ -1269,7 +1270,11 @@ void Terminal::term_wscroll(int dir)
     int x, y;
     int store;
     char_t *chara;
-    char_t *charb;
+    boost::asio::mutable_buffer ba;
+    boost::asio::mutable_buffer bb;
+    int operation;
+    int start;
+    int end;
 
     if (win->sy1 > win->sy2)
     {
@@ -1279,42 +1284,27 @@ void Terminal::term_wscroll(int dir)
     }
     if (dir == S_DOWN)
     {
-        for (y = win->sy1; y < win->sy2; y++)
-        {
-            for (x = 0; x < win->ws_conf.ws_col; x++)
-            {
-                chara = getMutableChar(x, y);
-                charb = getMutableChar(x, y + 1);
-                chara->text   = charb->text;
-                chara->col    = charb->col;
-                chara->attrib = charb->attrib;
-            }
-        }
-        for (x = 0; x < win->ws_conf.ws_col; x++)
-        {
-            chara = getMutableChar(x, win->sy2);
-            chara->text = chara->col = chara->attrib = 0;
-        }
+        operation = 1;
+        start = win->sy1;
+        end = win->sy2;
+        win->scrollCnt++;
     }
     else
     {
-        /* scroll UP */
-        for (y = win->sy2; y > win->sy1; y--)
-        {
-            for (x = 0; x < win->ws_conf.ws_col; x++)
-            {
-                chara = getMutableChar(x, y);
-                charb = getMutableChar(x, y - 1);
-                chara->text   = charb->text;
-                chara->col    = charb->col;
-                chara->attrib = charb->attrib;
-            }
-        }
-        for (x = 0; x < win->ws_conf.ws_col; x++)
-        {
-            chara = getMutableChar(x, win->sy1);
-            chara->text = chara->col = chara->attrib = 0;
-        }
+        operation = -1;
+        start = win->sy2;
+        end = win->sy1;
+    }
+    for (y = start; y < end; y += operation)
+    {
+        ba = boost::asio::buffer(getMutableChar(0, y), win->ws_conf.ws_col * sizeof(char_t));
+        bb = boost::asio::buffer(getMutableChar(0, y + operation), win->ws_conf.ws_col * sizeof(char_t));
+        boost::asio::buffer_copy(ba, bb);
+    }
+    for (x = 0; x < win->ws_conf.ws_col; x++)
+    {
+        chara = getMutableChar(x, end);
+        chara->text = chara->col = chara->attrib = 0;
     }
     win->dirty = true;
 }
@@ -1506,8 +1496,16 @@ Terminal::Terminal(int w, int h)
 
     pwin->color = 0;
     pwin->attr = 0;
+    pwin->scrollCnt = 0;
 
     vt_init(ANSI, 0, 0, 1, 0);
+}
+
+int Terminal::getScrollCnt()
+{
+    int ret = win->scrollCnt;
+    win->scrollCnt = 0;
+    return ret;
 }
 
 const char_t* Terminal::getChar(int x, int y)

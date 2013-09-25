@@ -15,7 +15,7 @@ public:
     ~CBTextEdit();
     void setTargetInterface(const boost::shared_ptr<TgtIntf> &targetInterface);
 signals:
-    void textUpdatedSignal();
+    void textUpdatedSignal(int scrollCnt);
 protected:
     virtual void keyPressEvent(QKeyEvent *e);
     void readTarget();
@@ -37,8 +37,8 @@ protected:
     std::ofstream _debugFile;
 #endif
 private slots:
-    void insertText();
-    void textUpdatedSlot();
+    void insertText(int scrollCnt);
+    void textUpdatedSlot(int scrollCnt);
 };
 
 #endif // CBTEXTEDIT_H

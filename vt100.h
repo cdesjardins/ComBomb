@@ -225,6 +225,7 @@ struct term_t
     winsize_t ws_conf;
     char_t *charMem;
     bool dirty;
+    int scrollCnt;
 };
 
 class Terminal
@@ -241,6 +242,7 @@ public:
     void setDirty(bool dirty);
     bool getDirty();
     void resize_term(int w, int h);
+    int getScrollCnt();
 
 protected:
     virtual void char_out(char c) = 0;
