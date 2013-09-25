@@ -17,7 +17,7 @@ static int _colormap[] =
     0x00afaf,
     0xafafaf,
 
-    0x1f1f1f,
+    0x555555,
     0xff0000,
     0x00ff00,
     0xffff00,
@@ -59,7 +59,7 @@ void CBTextEdit::setTargetInterface(const boost::shared_ptr<TgtIntf> &targetInte
 {
     if (_tgtTerminal == NULL)
     {
-        _tgtTerminal.reset(new TgtTerminal(targetInterface, 200, 25));
+        _tgtTerminal.reset(new TgtTerminal(targetInterface, 80, 25));
         targetInterface->TgtConnect();
         _readTargetThread = boost::thread(&CBTextEdit::readTarget, this);
     }
@@ -135,7 +135,6 @@ void CBTextEdit::readTarget()
         int bytes = _tgtTerminal->_targetInterface->TgtRead(b);
         if (bytes > 0)
         {
-            //boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
             const char *data = boost::asio::buffer_cast<const char*>(b);
             //qDebug("got: %i", bytes);
             //qDebug("[%s]", data);
@@ -148,21 +147,26 @@ void CBTextEdit::readTarget()
             _debugFile.write(data, bytes);
 #endif
         }
-        if (_tgtTerminal->getDirty() == true)
+        if ( (_tgtTerminal->getDirty() == true))
         {
+            _tgtTerminal->setDirty(false);
             emit textUpdatedSignal();
         }
     }
 }
 
-bool CBTextEdit::setCharColor(int *fg, int *bg, const char_t *c)
+bool CBTextEdit::getCharColors(int *fg, int *bg, const char_t *c)
 {
     bool ret = false;
     int newFg;
     int newBg;
 
-    newBg = c->col & 0xf;
-    newFg = (c->col >> 4) & 0xf;
+    newBg = COLBG(c->col);
+    newFg = COLFG(c->col);
+    if (c->attrib & XA_BOLD)
+    {
+        newFg += 8;
+    }
     if (newBg != *bg)
     {
         ret = true;
@@ -189,6 +193,18 @@ void CBTextEdit::paintEvent(QPaintEvent *e)
     QPlainTextEdit::paintEvent(e);
 }
 
+void CBTextEdit::setFormatColors(QTextCharFormat &format, int fg, int bg)
+{
+    if (fg != -1)
+    {
+        format.setForeground(QBrush(_colors[fg]));
+    }
+    if (bg != -1)
+    {
+        format.setBackground(QBrush(_colors[bg]));
+    }
+}
+
 void CBTextEdit::insertLine(int y, int *fg, int *bg, QTextCursor &cursor)
 {
     int x;
@@ -197,26 +213,36 @@ void CBTextEdit::insertLine(int y, int *fg, int *bg, QTextCursor &cursor)
     QTextCharFormat format;
     cursor.select(QTextCursor::LineUnderCursor);
     cursor.removeSelectedText();
-    for (x = 0; x < _tgtTerminal->getWinSizeCol(); x++)
-    {
-        const char_t *c = _tgtTerminal->getChar(x, y);
-        const uchar code = c->text;
+    const char_t *c = _tgtTerminal->getChar(0, 0);
 
+    getCharColors(fg, bg, c);
+    setFormatColors(format, *fg, *bg);
+
+    for (x = 0; x <= _tgtTerminal->getWinSizeCol(); x++)
+    {
+        if (x < _tgtTerminal->getWinSizeCol())
+        {
+            c = _tgtTerminal->getChar(x, y);
+        }
+
+        const uchar code = c->text;
         if (code != 0)
         {
-            draw = setCharColor(fg, bg, c);
+            draw = getCharColors(fg, bg, c);
         }
         else
         {
             draw = true;
         }
-        if ((text.length() > 0) && (draw == true))
+        if ((draw == true) || (x == _tgtTerminal->getWinSizeCol()))
         {
-            cursor.insertText(text, format);
-            text.clear();
+            if (text.length() > 0)
+            {
+                cursor.insertText(text, format);
+                text.clear();
+            }
             draw = false;
-            format.setForeground(QBrush(_colors[*fg]));
-            format.setBackground(QBrush(_colors[*bg]));
+            setFormatColors(format, *fg, *bg);
         }
         if (code != 0)
         {
@@ -227,33 +253,40 @@ void CBTextEdit::insertLine(int y, int *fg, int *bg, QTextCursor &cursor)
 
 void CBTextEdit::insertText()
 {
-    if (_tgtTerminal->getDirty() == true)
+
+    int y;
+    int fg = -1;
+    int bg = -1;
+    QTextBlock block;
+    int bc = document()->blockCount();
+    if (bc < _tgtTerminal->getWinSizeRow())
     {
-        qDebug("insertText");
-        int y;
-        int fg = -1;
-        int bg = -1;
-        QTextBlock block = document()->firstBlock();
-        for (y = 0; y < _tgtTerminal->getWinSizeRow(); y++)
-        {
-            QTextCursor cursor(block);
-            insertLine(y, &fg, &bg, cursor);
-            block = block.next();
-            if (block.isValid() == false)
-            {
-                cursor.insertBlock();
-                block = document()->lastBlock();
-            }
-        }
-        _tgtTerminal->setDirty(false);
-        viewport()->update();
+        block = document()->firstBlock();
     }
+    else
+    {
+        block = document()->findBlockByNumber(bc - (_tgtTerminal->getWinSizeRow() + 1));
+    }
+
+    for (y = 0; y < _tgtTerminal->getWinSizeRow(); y++)
+    {
+        QTextCursor cursor(block);
+        insertLine(y, &fg, &bg, cursor);
+        block = block.next();
+        if (block.isValid() == false)
+        {
+            cursor.insertBlock();
+            block = document()->lastBlock();
+            qDebug("Adding block: %i", document()->blockCount());
+        }
+    }
+    viewport()->update();
 }
 
 QSize CBTextEdit::sizeHint() const
 {
-    int width = _tgtTerminal->getWinSizeCol() * fontMetrics().width('x');
-    int height = _tgtTerminal->getWinSizeRow() * fontMetrics().lineSpacing();
+    int width = (_tgtTerminal->getWinSizeCol() + 1) * fontMetrics().width('W');
+    int height = (_tgtTerminal->getWinSizeRow() + 1) * fontMetrics().lineSpacing();
     QScrollBar *q = verticalScrollBar();
     if (q)
     {

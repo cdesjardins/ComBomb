@@ -8,7 +8,7 @@
 
 TgtIntf::TgtIntf(void)
 {
-    const int bufferSize = 512;
+    const int bufferSize = (4 * 1024);
     for (size_t i = 0; i < 4096; i++)
     {
         char *buffer = new char[bufferSize];

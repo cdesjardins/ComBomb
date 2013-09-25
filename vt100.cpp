@@ -958,7 +958,6 @@ void Terminal::vt_out(unsigned int ch)
         }
         break;
     case '\t': /* Non - destructive TAB */
-//      printf("tab pants\n");
         /* Find next tab stop. */
         for (f = win->cursor_x + 1; f < 160; f++)
         {
@@ -1125,9 +1124,6 @@ void Terminal::term_winschar(unsigned char c)
 {
     int i;
 
-#ifdef DEBUG
-    printf("term_winschar\n");
-#endif
     char_t *chars1;
     char_t *chars;
     for (i = win->ws_conf.ws_col - 1; i != win->cursor_x; i--)
@@ -1149,10 +1145,6 @@ void Terminal::term_winschar(unsigned char c)
 /* print a character */
 void Terminal::term_wputc(unsigned char c)
 {
-#ifdef DEBUG
-    printf("term_wputc  %x\n", c);
-#endif
-
     switch (c)
     {
     /* XXX:vt_out you */
@@ -1189,10 +1181,6 @@ void Terminal::term_wputc(unsigned char c)
 
 void Terminal::term_wmove(int dir)
 {
-#ifdef DEBUG
-    printf("term_wmove\n");
-#endif
-
     switch (dir)
     {
     case LEFT:
@@ -1239,10 +1227,6 @@ void Terminal::term_wmove(int dir)
 /* locate the cursor */
 void Terminal::term_wlocate(int x, int y)
 {
-#ifdef DEBUG
-    printf("term_wlocate\n");
-#endif
-
     if ((x >= 0 || x <= win->ws_conf.ws_col) &&
         (y >= 0 || y <= win->ws_conf.ws_row))
     {
@@ -1255,26 +1239,18 @@ void Terminal::term_wlocate(int x, int y)
 /* redraw the term */
 void Terminal::term_wredraw()
 {
-    printf("wredraw\n");
     win->dirty = true;
 }
 
 /* flush output */
 void Terminal::term_wflush()
 {
-#ifdef DEBUG
-    printf("term_wflush\n");
-#endif
 }
 
 /* clear the window */
 void Terminal::term_winclr()
 {
     int x, y;
-
-#ifdef DEBUG
-    printf("term_winclr\n");
-#endif
 
     //for (q = 0; q < (win->ws_conf.ws_row * win->ws_conf.ws_col); q++)
     for (y = 0; y < win->ws_conf.ws_row; y++)
@@ -1294,12 +1270,6 @@ void Terminal::term_wscroll(int dir)
     int store;
     char_t *chara;
     char_t *charb;
-
-
-#ifdef DEBUG
-    printf("term_wscroll\n");
-#endif
-    printf("%d %d %d %d\n", win->cursor_x, win->cursor_y, win->sy1, win->sy2);
 
     if (win->sy1 > win->sy2)
     {
@@ -1354,9 +1324,6 @@ void Terminal::term_wclreol()
 {
     int x;
     char_t *chara;
-#ifdef DEBUG
-    printf("term_wclreol\n");
-#endif
 
     for (x = win->cursor_x; x < win->ws_conf.ws_col; x++)
     {
@@ -1372,10 +1339,6 @@ void Terminal::term_wclrbol()
     int x;
     char_t *chara;
 
-#ifdef DEBUG
-    printf("term_wclrbol\n");
-#endif
-
     for (x = win->cursor_x; x >= 0; x--)
     {
         chara = getMutableChar(x, win->cursor_y);
@@ -1389,9 +1352,6 @@ void Terminal::term_wclreos()
     int x, y;
     char_t *chara;
 
-#ifdef DEBUG
-    printf("term_wclreos\n");
-#endif
     x = win->cursor_x;
     for (y = win->cursor_y; y < win->ws_conf.ws_row; y++)
     {
@@ -1409,10 +1369,6 @@ void Terminal::term_wclrbos()
 {
     int x, y;
     char_t *chara;
-
-#ifdef DEBUG
-    printf("term_wclrbos\n");
-#endif
 
     x = win->cursor_x;
     for (y = win->cursor_y; y >= 0; y--)
@@ -1432,10 +1388,6 @@ void Terminal::term_wclrel()
     int x;
     char_t *chara;
 
-#ifdef DEBUG
-    printf("term_wclrel\n");
-#endif
-
     for (x = 0; x < win->cursor_x; x++)
     {
         chara = getMutableChar(x, win->cursor_y);
@@ -1447,10 +1399,6 @@ void Terminal::term_wclrel()
 void Terminal::term_winsline()
 {
     int store;
-
-#ifdef DEBUG
-    printf("term_winsline\n");
-#endif
 
     if (win->cursor_y >= win->sy2)
     {
@@ -1466,10 +1414,6 @@ void Terminal::term_winsline()
 void Terminal::term_wdelline()
 {
     int store;
-#ifdef DEBUG
-    printf("term_wdelline\n");
-#endif
-
     if (win->cursor_y >= win->sy2)
     {
         return;
@@ -1487,10 +1431,6 @@ void Terminal::term_wdelchar()
     char_t *chara;
     char_t *charb;
 
-#ifdef DEBUG
-    printf("term_wdelchar\n");
-#endif
-
     for (i = win->cursor_x; i < win->ws_conf.ws_col - 1; i++)
     {
         chara = getMutableChar(i, win->cursor_y);
@@ -1506,16 +1446,12 @@ void Terminal::term_wdelchar()
 /* clear characters */
 void Terminal::term_wclrch(int n)
 {
-    printf("wclrch\n");
     n = n;
 }
 
 /* set cursor type */
 void Terminal::term_wcursor(int type)
 {
-#ifdef DEBUG
-    printf("term_wcursor\n");
-#endif
 
     /* XXX not sure what this does we have
      * CNONE and CNORMAL */
@@ -1532,9 +1468,6 @@ void Terminal::term_wcursor(int type)
 /* print a string */
 void Terminal::term_wputs(const unsigned char *s)
 {
-#ifdef DEBUG
-    printf("term_wputs %s\n", s);
-#endif
     unsigned char d;
     for (;; )
     {
