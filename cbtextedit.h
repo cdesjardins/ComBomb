@@ -20,7 +20,7 @@ protected:
     virtual void keyPressEvent(QKeyEvent *e);
     void readTarget();
     void paintScreen();
-    bool getCharColors(int *fg, int *bg, const char_t *c);
+    bool getCharColors(int *fg, int *bg, const char_t &c);
     void setFormatColors(QTextCharFormat &format, int fg, int bg);
     void paintEvent(QPaintEvent *e);
     void mypaint();

@@ -26,19 +26,15 @@
 #ifndef CJD_VT100_H
 #define CJD_VT100_H
 
-#include <stdio.h>
-
-#define ANSWERBACK_LEN  89
-#define CONVCAP_LEN     80
-
-#define P_ANSWERBACK    answerback
-#define P_CONVCAP       convcap
-
+#include <deque>
+#ifndef Q_MOC_RUN
+#include <boost/shared_array.hpp>
+#include <boost/thread/mutex.hpp>
+#endif
 /* Keypad and cursor key modes. */
 #define NORMAL          1
 #define APPL            2
 
-/* Don't change - hardcoded in minicom's dial.c */
 #define VT100           1
 #define ANSI            3
 #define RAW             4
@@ -67,9 +63,6 @@ struct state_t
     short newy2;
     short savex, savey, saveattr, savecol;
 };
-
-
-#endif /* ! __MINICOM__SRC__VT100_H__ */
 
 /*
  * Possible attributes.
@@ -130,6 +123,8 @@ struct state_t
  */
 
 #define K_BS        8
+#define K_CTRLC     3
+#define K_CTRLZ     26
 #define K_ESC       27
 #define K_STOP      256
 #define K_F1        257
@@ -168,13 +163,6 @@ struct state_t
 #define K_ERA       '\b'
 #define K_KILL      ((int) -2)
 
-#define term_wsetfgcol(w, fg) ((w)->color = ((w)->color & 15) + ((fg) << 4))
-#define term_wsetbgcol(w, bg) ((w)->color = ((w)->color & 240) + (bg))
-#define term_wsetattr(w, a) ((w)->attr = (a))
-#define term_wgetattr(w) ((w)->attr)
-
-#define term_wsetregion(w, z1, z2) (((w)->sy1 = z1), ((w)->sy2 = z2))
-#define term_wresetregion(w) ((w)->sy1 = 0, (w)->sy2 = ((w)->ws_conf.ws_row - 1))
 
 #define LEFT        0
 #define RIGHT       1
@@ -184,8 +172,6 @@ struct state_t
 #define BELL        7
 #define KEY_BACKSPACE   8
 #define QUIT        3
-
-#define MAX_AGE     4
 
 enum
 {
@@ -203,6 +189,21 @@ struct char_t
     unsigned char text, col, attrib;
 };
 
+class row_t
+{
+public:
+    row_t(int width)
+        : _rowData(new char_t[width]),
+        _rowDirty(true),
+        _width(width)
+    {
+        clearChars();
+    }
+    void clearChars(int x = 0, int direction = 1);
+    boost::shared_array<char_t> _rowData;
+    bool _rowDirty;
+    int _width;
+};
 
 struct winsize_t
 {
@@ -216,16 +217,13 @@ struct term_t
 {
     int cursor_on;
     int dec_mode[DEC_SIZE];
-    //unsigned char control_keys[CONTROL_SIZE];
     int color, attr;
     int cursor_x, cursor_y;
     int wrap, doscroll;
     int sy1, sy2;
     state_t state;
     winsize_t ws_conf;
-    char_t *charMem;
-    bool dirty;
-    int scrollCnt;
+    bool _winDirty;
 };
 
 class Terminal
@@ -236,18 +234,16 @@ public:
     Terminal(int w, int h);
     ~Terminal();
 
-    const char_t* getChar(int x, int y);
+    char_t getChar(int x, int y);
     unsigned short getWinSizeRow();
     unsigned short getWinSizeCol();
-    void setDirty(bool dirty);
-    bool getDirty();
+    bool isWinDirty();
+    bool isRowDirty(int y);
     void resize_term(int w, int h);
-    int getScrollCnt();
-
 protected:
+    void setDirty(int y);
     virtual void char_out(char c) = 0;
 
-    char_t* getMutableChar(int x, int y);
     void term_wscroll(int dir);
     void term_wlocate(int x, int y);
     void term_wputs(const unsigned char *s);
@@ -266,7 +262,7 @@ protected:
     void term_wputc(unsigned char c);
     void term_wmove(int dir);
     void term_wredraw();
-
+    void clearChars(int x, int y, int direction);
     /* Prototypes from vt100.c */
 
     void vt_init(int, int, int, int, int);
@@ -290,4 +286,8 @@ protected:
     void term_wflush();
 
     term_t *win;
+    std::deque<boost::shared_ptr<row_t> > _charRows;
+    boost::mutex _charRowsMutex;
 };
+
+#endif

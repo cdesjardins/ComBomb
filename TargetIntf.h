@@ -206,11 +206,13 @@ protected:
     virtual void TgtSendToPort();
     virtual void TgtWritePortData(char *szData, int nBytes);
     void TgtReadCallback(const boost::system::error_code& error, const size_t bytesTransferred);
+    void serviceThread();
 
     TgtConnection _tgtConnectionConfig;
     boost::asio::io_service _service;
     boost::asio::serial_port _port;
     boost::scoped_ptr<boost::thread> _serialThread;
+    volatile bool _serviceThreadRun;
 };
 
 

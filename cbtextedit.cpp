@@ -77,6 +77,14 @@ void CBTextEdit::keyPressEvent(QKeyEvent *e)
     {
         _tgtTerminal->vt_send(ch.toLatin1());
     }
+    else if (e->matches(QKeySequence::Copy))
+    {
+        _tgtTerminal->vt_send(K_CTRLC);
+    }
+    else if (e->matches(QKeySequence::Undo))
+    {
+        _tgtTerminal->vt_send(K_CTRLZ);
+    }
     else
     {
         switch (e->key())
@@ -91,6 +99,7 @@ void CBTextEdit::keyPressEvent(QKeyEvent *e)
             _tgtTerminal->vt_send('\33');
             break;
         case Qt::Key_Return:
+        case Qt::Key_Enter:
             _tgtTerminal->vt_send('\r');
             break;
         case Qt::Key_Left:
@@ -147,23 +156,22 @@ void CBTextEdit::readTarget()
             _debugFile.write(data, bytes);
 #endif
         }
-        if ( (_tgtTerminal->getDirty() == true))
+        if ( (_tgtTerminal->isWinDirty() == true))
         {
-            _tgtTerminal->setDirty(false);
-            emit textUpdatedSignal(_tgtTerminal->getScrollCnt());
+            emit textUpdatedSignal(0);
         }
     }
 }
 
-bool CBTextEdit::getCharColors(int *fg, int *bg, const char_t *c)
+bool CBTextEdit::getCharColors(int *fg, int *bg, const char_t &c)
 {
     bool ret = false;
     int newFg;
     int newBg;
 
-    newBg = COLBG(c->col);
-    newFg = COLFG(c->col);
-    if (c->attrib & XA_BOLD)
+    newBg = COLBG(c.col);
+    newFg = COLFG(c.col);
+    if (c.attrib & XA_BOLD)
     {
         newFg += 8;
     }
@@ -211,9 +219,11 @@ void CBTextEdit::insertLine(int y, int *fg, int *bg, QTextCursor &cursor)
     QString text;
     bool draw = false;
     QTextCharFormat format;
+    char_t c = _tgtTerminal->getChar(0, 0);
+    int insertCnt = 0;
+
     cursor.select(QTextCursor::LineUnderCursor);
     cursor.removeSelectedText();
-    const char_t *c = _tgtTerminal->getChar(0, 0);
 
     getCharColors(fg, bg, c);
     setFormatColors(format, *fg, *bg);
@@ -225,7 +235,7 @@ void CBTextEdit::insertLine(int y, int *fg, int *bg, QTextCursor &cursor)
             c = _tgtTerminal->getChar(x, y);
         }
 
-        const uchar code = c->text;
+        const uchar code = c.text;
         if (code != 0)
         {
             draw = getCharColors(fg, bg, c);
@@ -236,10 +246,18 @@ void CBTextEdit::insertLine(int y, int *fg, int *bg, QTextCursor &cursor)
         }
         if ((draw == true) || (x == _tgtTerminal->getWinSizeCol()))
         {
-            if (text.length() > 0)
+            int textLen = text.length();
+            if (textLen > 0)
             {
+                if (insertCnt < (x - 1))
+                {
+                    QString padding(x - 1 - textLen - insertCnt, QChar(' '));
+                    cursor.insertText(padding, format);
+                    insertCnt += padding.length();
+                }
                 cursor.insertText(text, format);
                 text.clear();
+                insertCnt += textLen;
             }
             draw = false;
             setFormatColors(format, *fg, *bg);
@@ -253,7 +271,6 @@ void CBTextEdit::insertLine(int y, int *fg, int *bg, QTextCursor &cursor)
 
 void CBTextEdit::insertText(int scrollCnt)
 {
-
     int y;
     int fg = -1;
     int bg = -1;
@@ -279,7 +296,10 @@ void CBTextEdit::insertText(int scrollCnt)
     for (y = 0; y < _tgtTerminal->getWinSizeRow(); y++)
     {
         QTextCursor cursor(block);
-        insertLine(y, &fg, &bg, cursor);
+        if (_tgtTerminal->isRowDirty(y))
+        {
+            insertLine(y, &fg, &bg, cursor);
+        }
         block = block.next();
         if (block.isValid() == false)
         {
@@ -288,6 +308,7 @@ void CBTextEdit::insertText(int scrollCnt)
             qDebug("Adding block: %i", document()->blockCount());
         }
     }
+
     viewport()->update();
 }
 

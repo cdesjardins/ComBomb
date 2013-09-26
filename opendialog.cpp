@@ -24,7 +24,7 @@ OpenDialog::OpenDialog(QWidget *parent) :
     addStopBits();
     addByteSize();
     addFlowControl();
-    ui->_fileNameTextBox->setText("C:/Users/ChrisD/software_devel/ComBomb-build-Desktop_Qt_5_0_1_MSVC2010_32bit-Debug/test.dat");
+    ui->_fileNameTextBox->setText("C:/Users/ChrisD/software_devel/ComBomb-build-Desktop_Qt_5_0_1_MSVC2010_32bit-Debug/test.cbd");
 }
 
 OpenDialog::ConnectionType OpenDialog::getConnectionType()

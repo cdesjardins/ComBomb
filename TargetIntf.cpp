@@ -463,8 +463,18 @@ void TgtTelnetIntf::TgtGetTitle(char *szTitle)
 boost::shared_ptr<TgtSerialIntf> TgtSerialIntf::createSerialConnection(const TgtConnection &config)
 {
     boost::shared_ptr<TgtSerialIntf> ret(new TgtSerialIntf(config));
-    ret->_serialThread.reset(new boost::thread(boost::bind(&boost::asio::io_service::run, &ret->_service)));
+    ret->_serviceThreadRun = true;
+    ret->_serialThread.reset(new boost::thread(boost::bind(&TgtSerialIntf::serviceThread, ret.get())));
     return ret;
+}
+
+void TgtSerialIntf::serviceThread()
+{
+    do
+    {
+        _service.run();
+        _service.reset();
+    } while (_serviceThreadRun == true);
 }
 
 TgtSerialIntf::TgtSerialIntf (const TgtConnection &config)
@@ -480,6 +490,7 @@ TgtSerialIntf::TgtSerialIntf (const TgtConnection &config)
 
 TgtSerialIntf::~TgtSerialIntf ()
 {
+    _serviceThreadRun = false;
     _service.stop();
     _serialThread->join();
 }
