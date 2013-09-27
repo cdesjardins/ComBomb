@@ -241,12 +241,13 @@ public:
     bool isRowDirty(int y);
     void resize_term(int w, int h);
 protected:
-    void setDirty(int y);
-    virtual void char_out(char c) = 0;
+    virtual void char_out(const char c) = 0;
+    virtual void str_out(const char *s) = 0;
 
+    void setDirty(int y);
     void term_wscroll(int dir);
     void term_wlocate(int x, int y);
-    void term_wputs(const unsigned char *s);
+    void term_wputs(const char *s);
     void term_wclrch(int n);
     void term_wclreol();
     void term_wclrbol();

@@ -79,28 +79,28 @@ struct escseq
 
 /* Escape sequences for different terminal types. */
 static struct escseq vt_keys[] = {
-    { K_F1,  "OP",   "OP",   "OP" },
-    { K_F2,  "OQ",   "OQ",   "OQ" },
-    { K_F3,  "OR",   "OR",   "OR" },
-    { K_F4,  "OS",   "OS",   "OS" },
-    { K_F5,  "[16~", "[16~", "OT" },
-    { K_F6,  "[17~", "[17~", "OU" },
-    { K_F7,  "[18~", "[18~", "OV" },
-    { K_F8,  "[19~", "[19~", "OW" },
-    { K_F9,  "[20~", "[20~", "OX" },
-    { K_F10, "[21~", "[21~", "OY" },
-    { K_F11, "[23~", "[23~", "OY" },
-    { K_F12, "[24~", "[24~", "OY" },
-    { K_HOME,    "[1~",  "[1~",  "[H" },
-    { K_PGUP,    "[5~",  "[5~",  "[V" },
-    { K_UP,  "[A",   "OA",   "[A" },
-    { K_LT,  "[D",   "OD",   "[D" },
-    { K_RT,  "[C",   "OC",   "[C" },
-    { K_DN,  "[B",   "OB",   "[B" },
-    { K_END, "[4~",  "[4~",  "[Y" },
-    { K_PGDN,    "[6~",  "[6~",  "[U" },
-    { K_INS, "[2~",  "[2~",  "[@" },
-    { K_DEL, "[3~",  "[3~",  "\177" },
+    { K_F1,  "\033OP",   "\33OP",   "\33OP" },
+    { K_F2,  "\033OQ",   "\33OQ",   "\33OQ" },
+    { K_F3,  "\033OR",   "\33OR",   "\33OR" },
+    { K_F4,  "\033OS",   "\33OS",   "\33OS" },
+    { K_F5,  "\033[16~", "\33[16~", "\33OT" },
+    { K_F6,  "\033[17~", "\33[17~", "\33OU" },
+    { K_F7,  "\033[18~", "\33[18~", "\33OV" },
+    { K_F8,  "\033[19~", "\33[19~", "\33OW" },
+    { K_F9,  "\033[20~", "\33[20~", "\33OX" },
+    { K_F10, "\033[21~", "\33[21~", "\33OY" },
+    { K_F11, "\033[23~", "\33[23~", "\33OY" },
+    { K_F12, "\033[24~", "\33[24~", "\33OY" },
+    { K_HOME,"\033[1~",  "\33[1~",  "\33[H" },
+    { K_PGUP,"\033[5~",  "\33[5~",  "\33[V" },
+    { K_UP,  "\033[A",   "\33OA",   "\33[A" },
+    { K_LT,  "\033[D",   "\33OD",   "\33[D" },
+    { K_RT,  "\033[C",   "\33OC",   "\33[C" },
+    { K_DN,  "\033[B",   "\33OB",   "\33[B" },
+    { K_END, "\033[4~",  "\33[4~",  "\33[Y" },
+    { K_PGDN,"\033[6~",  "\33[6~",  "\33[U" },
+    { K_INS, "\033[2~",  "\33[2~",  "\33[@" },
+    { K_DEL, "\033[3~",  "\33[3~",  "\33\177" },
     { 0,     NULL,   NULL,   NULL }
 };
 
@@ -246,7 +246,7 @@ void Terminal::v_termout(const char *s)
             }
         }
     }
-    term_wputs((const unsigned char*)s);
+    term_wputs(s);
 }
 
 /*
@@ -306,7 +306,7 @@ void Terminal::state1(int c)
         }
         break;
     case 'E': /* CR + NL */
-        term_wputs((unsigned char *)"\r\n");
+        term_wputs("\r\n");
         break;
     case '7': /* Save attributes and cursor position */
     case 's':
@@ -1100,7 +1100,7 @@ void Terminal::vt_send(unsigned int c)
     }
 
     /* Now send appropriate escape code. */
-    v_termout("\33");
+
     if (win->state.vt_type == VT100)
     {
         if (win->state.vt_cursor == NORMAL)
@@ -1425,17 +1425,9 @@ void Terminal::term_wcursor(int type)
 }
 
 /* print a string */
-void Terminal::term_wputs(const unsigned char *s)
+void Terminal::term_wputs(const char *s)
 {
-    unsigned char d;
-    for (;; )
-    {
-        if ((d = *s++) == 0)
-        {
-            break;
-        }
-        char_out((char )d);
-    }
+    str_out(s);
 }
 
 Terminal::~Terminal()

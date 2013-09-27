@@ -5,17 +5,16 @@
 ** ^H every time you issue a backspace, then add stty erase ^H to your
 ** startup script (.cshrc) or the like.
 */
-
+#define TGT_BUFFER_SIZE   4096
 TgtIntf::TgtIntf(void)
 {
-    const int bufferSize = (4 * 1024);
     for (size_t i = 0; i < 4096; i++)
     {
-        char *buffer = new char[bufferSize];
-        _bufferPool.enqueue(boost::asio::mutable_buffer(buffer, bufferSize - 1));
+        char *buffer = new char[TGT_BUFFER_SIZE];
+        _bufferPool.enqueue(boost::asio::mutable_buffer(buffer, TGT_BUFFER_SIZE - 1));
     }
 
-    _bufferPool.dequeue(_currentBuffer);
+    _bufferPool.dequeue(_currentIncomingBuffer);
 
     m_nTotalTx = 0;
     m_nTotalRx = 0;
@@ -41,7 +40,7 @@ int TgtIntf::deleteBuffersFunctor(std::list<boost::asio::mutable_buffer> &pool)
 
 void TgtIntf::TgtReturnReadBuffer(const boost::asio::mutable_buffer &b)
 {
-    _bufferPool.enqueue(b);
+    _bufferPool.enqueue(boost::asio::buffer(b, TGT_BUFFER_SIZE - 1));
 }
 
 int TgtIntf::TgtRead(boost::asio::mutable_buffer &b)
@@ -56,6 +55,15 @@ int TgtIntf::TgtRead(boost::asio::mutable_buffer &b)
     return ret;
 }
 
+int TgtIntf::TgtWrite(const char *szWriteData, int nBytes)
+{
+    int ret = 0;
+    boost::asio::mutable_buffer b;
+    _bufferPool.dequeue(b);
+    boost::asio::buffer_copy(b, boost::asio::buffer(szWriteData, nBytes));
+    _outgoingData.enqueue(boost::asio::buffer(b, nBytes));
+    return ret;
+}
 /******************************************************************************
 **
 **  Telnet
@@ -464,7 +472,8 @@ boost::shared_ptr<TgtSerialIntf> TgtSerialIntf::createSerialConnection(const Tgt
 {
     boost::shared_ptr<TgtSerialIntf> ret(new TgtSerialIntf(config));
     ret->_serviceThreadRun = true;
-    ret->_serialThread.reset(new boost::thread(boost::bind(&TgtSerialIntf::serviceThread, ret.get())));
+    ret->_serialServiceThread.reset(new boost::thread(boost::bind(&TgtSerialIntf::serviceThread, ret.get())));
+    ret->_serialWriterThread.reset(new  boost::thread(boost::bind(&TgtSerialIntf::writerThread, ret.get())));
     return ret;
 }
 
@@ -474,6 +483,21 @@ void TgtSerialIntf::serviceThread()
     {
         _service.run();
         _service.reset();
+    } while (_serviceThreadRun == true);
+}
+
+void TgtSerialIntf::writerThread()
+{
+    boost::asio::mutable_buffer b;
+    do
+    {
+        if (_outgoingData.dequeue(b) == true)
+        {
+            //int ret = _port.write_some(boost::asio::buffer(b));
+            boost::asio::write(_port, boost::asio::buffer(b));
+            TgtReturnReadBuffer(b);
+        }
+        boost::this_thread::sleep(boost::posix_time::milliseconds(1));
     } while (_serviceThreadRun == true);
 }
 
@@ -492,7 +516,8 @@ TgtSerialIntf::~TgtSerialIntf ()
 {
     _serviceThreadRun = false;
     _service.stop();
-    _serialThread->join();
+    _serialServiceThread->join();
+    _serialWriterThread->join();
 }
 
 void TgtSerialIntf::TgtReadCallback(const boost::system::error_code& error, const size_t bytesTransferred)
@@ -501,10 +526,10 @@ void TgtSerialIntf::TgtReadCallback(const boost::system::error_code& error, cons
     {
         if (bytesTransferred > 0)
         {
-            _incomingData.enqueue(boost::asio::buffer(_currentBuffer, bytesTransferred));
-            _bufferPool.dequeue(_currentBuffer);
+            _incomingData.enqueue(boost::asio::buffer(_currentIncomingBuffer, bytesTransferred));
+            _bufferPool.dequeue(_currentIncomingBuffer);
         }
-        _port.async_read_some(boost::asio::buffer(_currentBuffer),
+        _port.async_read_some(boost::asio::buffer(_currentIncomingBuffer),
             boost::bind(&TgtSerialIntf::TgtReadCallback, this,
             boost::asio::placeholders::error,
             boost::asio::placeholders::bytes_transferred));
@@ -515,112 +540,6 @@ void TgtSerialIntf::TgtMakeConnection()
 {
     boost::system::error_code err;
     TgtReadCallback(err, 0);
-}
-
-void TgtSerialIntf::TgtWritePortData(char *szData, int nBytes)
-{
-    /*
-    DWORD dwTotalBytesWrote;
-    DWORD dwBytesWrote;
-    OVERLAPPED ovWrite;
-    DWORD dwMask;
-    BOOL bRet;
-    HANDLE arHandles[2];
-    DWORD dwErrors;
-
-    dwTotalBytesWrote = 0;
-    do
-    {
-        GetCommMask(m_hSerial, &dwMask);
-
-        if (dwMask & EV_TXEMPTY)
-        {
-            memset(&ovWrite, 0, sizeof(ovWrite));
-            ovWrite.hEvent = CreateEvent(0, true, 0, 0);
-            bRet = WriteFile(m_hSerial, szData, nBytes, &dwBytesWrote, &ovWrite);
-            if (!bRet)
-            {
-                arHandles[0] = m_hThreadTerm;
-                arHandles[1] = ovWrite.hEvent;
-                if (GetLastError() == ERROR_IO_PENDING)
-                {
-                    switch (WaitForMultipleObjects(2, arHandles, FALSE, 1000))
-                    {
-                    case WAIT_OBJECT_0:
-                        _endthread();
-                        break;
-                    case WAIT_OBJECT_0 + 1:
-                        GetOverlappedResult(m_hSerial, &ovWrite, &dwBytesWrote, FALSE);
-                        dwTotalBytesWrote += dwBytesWrote;
-                        break;
-                    }
-                }
-                else
-                {
-                    ClearCommError(m_hSerial, &dwErrors, NULL);
-                    dwBytesWrote = 0;
-                }
-            }
-            else
-            {
-                dwTotalBytesWrote += dwBytesWrote;
-            }
-            CloseHandle(ovWrite.hEvent);
-        }
-        else
-        {
-            Sleep(1);
-        }
-    } while (dwTotalBytesWrote < nBytes);
-    */
-}
-
-void TgtSerialIntf::TgtSendToPort()
-{
-    /*
-    char szData[64];
-    DWORD nBytes = 0;
-    do
-    {
-        EnterCriticalSection(&m_csOutProtector);
-        nBytes = Vec2Char(szData, &m_dataOutgoing, sizeof(szData));
-        LeaveCriticalSection(&m_csOutProtector);
-        TgtWritePortData(szData, nBytes);
-        m_nTotalTx += nBytes;
-    } while (m_dataOutgoing.size() > 0);
-    */
-}
-
-void TgtSerialIntf::TgtReadFromPort()
-{
-    /*
-    OVERLAPPED ovRead;
-    DWORD dwBytesRead;
-    DWORD dwErrors;
-    char buf;
-    BOOL bRet;
-
-    memset(&ovRead, 0, sizeof(ovRead));
-    ovRead.hEvent = CreateEvent(0, true, 0, 0);
-
-    do
-    {
-        ResetEvent(ovRead.hEvent);
-        bRet = ReadFile(m_hSerial, &buf, sizeof(buf), &dwBytesRead, &ovRead);
-        if (dwBytesRead > 0)
-        {
-            EnterCriticalSection(&m_csInProtector);
-            m_dataIncoming.push_back(buf);
-            LeaveCriticalSection(&m_csInProtector);
-        }
-        m_nTotalRx += dwBytesRead;
-    } while ((bRet) && (dwBytesRead));
-    if (!bRet)
-    {
-        ClearCommError(m_hSerial, &dwErrors, NULL);
-    }
-    CloseHandle(ovRead.hEvent);
-    */
 }
 
 int TgtSerialIntf::TgtDisconnect()
@@ -641,22 +560,6 @@ int TgtSerialIntf::TgtDisconnect()
     }
     */
     return 0;
-}
-
-int TgtSerialIntf::TgtWrite(char *szWriteData, int nBytes)
-{
-    int ret = _port.write_some(boost::asio::buffer(szWriteData, nBytes));
-    /*
-    int nIndex;
-    EnterCriticalSection(&m_csOutProtector);
-    for (nIndex = 0; nIndex < nBytes; nIndex++)
-    {
-        m_dataOutgoing.push_back(szWriteData[nIndex]);
-    }
-    LeaveCriticalSection(&m_csOutProtector);
-    SetEvent(m_hOutput);
-    */
-    return ret;
 }
 
 bool TgtSerialIntf::TgtConnected()
@@ -733,21 +636,16 @@ int TgtFileIntf::TgtRead(boost::asio::mutable_buffer &b)
     int ret = 0;
     if (_inputFile)
     {
-        char *data = boost::asio::buffer_cast<char*>(_currentBuffer);
-        _inputFile.read(data, boost::asio::buffer_size(_currentBuffer));
+        char *data = boost::asio::buffer_cast<char*>(_currentIncomingBuffer);
+        _inputFile.read(data, boost::asio::buffer_size(_currentIncomingBuffer));
         ret = _inputFile.gcount();
         if (ret > 0)
         {
-            _incomingData.enqueue(boost::asio::buffer(_currentBuffer, ret));
-            _bufferPool.dequeue(_currentBuffer);
+            _incomingData.enqueue(boost::asio::buffer(_currentIncomingBuffer, ret));
+            _bufferPool.dequeue(_currentIncomingBuffer);
         }
     }
     return TgtIntf::TgtRead(b);
-}
-
-int TgtFileIntf::TgtWrite(char *szWriteData, int nBytes)
-{
-    return 0;
 }
 
 bool TgtFileIntf::TgtConnected()

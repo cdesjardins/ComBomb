@@ -25,7 +25,7 @@ public:
     };
     virtual int TgtDisconnect() = 0;
     virtual int TgtRead(boost::asio::mutable_buffer &b);
-    virtual int TgtWrite(char *szWriteData, int nBytes) = 0;
+    virtual int TgtWrite(const char *szWriteData, int nBytes);
     virtual bool TgtConnected() = 0;
     virtual void TgtGetTitle(std::string *szTitle) = 0;
     virtual int TgtGetBytesRx() { return m_nTotalRx; };
@@ -37,8 +37,9 @@ protected:
     int m_nTotalTx;
     int m_nTotalRx;
     ThreadSafeQueue<boost::asio::mutable_buffer> _incomingData;
+    ThreadSafeQueue<boost::asio::mutable_buffer> _outgoingData;
     ThreadSafeQueue<boost::asio::mutable_buffer> _bufferPool;
-    boost::asio::mutable_buffer _currentBuffer;
+    boost::asio::mutable_buffer _currentIncomingBuffer;
 
 private:
     static int deleteBuffersFunctor(std::list<boost::asio::mutable_buffer> &pool);
@@ -191,7 +192,6 @@ public:
     static boost::shared_ptr<TgtSerialIntf> createSerialConnection(const TgtConnection &config);
     virtual ~TgtSerialIntf ();
     virtual int TgtDisconnect();
-    virtual int TgtWrite(char *szWriteData, int nBytes);
     virtual bool TgtConnected();
     virtual void TgtGetTitle(std::string *szTitle);
     virtual TgtConnection TgtGetConfig()
@@ -202,16 +202,15 @@ public:
 protected:
     TgtSerialIntf (const TgtConnection &config);
     virtual void TgtMakeConnection();
-    virtual void TgtReadFromPort();
-    virtual void TgtSendToPort();
-    virtual void TgtWritePortData(char *szData, int nBytes);
     void TgtReadCallback(const boost::system::error_code& error, const size_t bytesTransferred);
     void serviceThread();
+    void writerThread();
 
     TgtConnection _tgtConnectionConfig;
     boost::asio::io_service _service;
     boost::asio::serial_port _port;
-    boost::scoped_ptr<boost::thread> _serialThread;
+    boost::scoped_ptr<boost::thread> _serialServiceThread;
+    boost::scoped_ptr<boost::thread> _serialWriterThread;
     volatile bool _serviceThreadRun;
 };
 
@@ -233,7 +232,6 @@ public:
 
     virtual int TgtDisconnect();
     virtual int TgtRead(boost::asio::mutable_buffer &b);
-    virtual int TgtWrite(char *szWriteData, int nBytes);
     virtual bool TgtConnected();
     virtual void TgtGetTitle(std::string *szTitle);
 
