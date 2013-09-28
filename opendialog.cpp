@@ -7,9 +7,10 @@
 #endif
 
 #ifdef WIN32
-#define BASE_PORTNAME "COM"
+#define BASE_PORTNAME_1 "COM"
 #else
-#define BASE_PORTNAME "/dev/ttyS"
+#define BASE_PORTNAME_1 "/dev/ttyS"
+#define BASE_PORTNAME_2 "/dev/ttyUSB"
 #endif
 
 
@@ -18,7 +19,10 @@ OpenDialog::OpenDialog(QWidget *parent) :
     ui(new Ui::OpenDialog)
 {
     ui->setupUi(this);
-    addComPorts();
+    addComPorts(BASE_PORTNAME_1);
+#ifdef BASE_PORTNAME_2
+    addComPorts(BASE_PORTNAME_2);
+#endif
     addBaudRates();
     addParity();
     addStopBits();
@@ -115,7 +119,7 @@ void OpenDialog::addBaudRates()
     }
 }
 
-void OpenDialog::addComPorts()
+void OpenDialog::addComPorts(const std::string &basePortName)
 {
     std::stringstream portName;
     boost::asio::io_service ioService;
@@ -123,7 +127,7 @@ void OpenDialog::addComPorts()
     for (int i = 0; i < 16; i++)
     {
         portName.str("");
-        portName << BASE_PORTNAME << i;
+        portName << basePortName << i;
         boost::asio::serial_port port(ioService);
         qDebug("Serial port: %s", portName.str().c_str());
         port.open(portName.str(), ec);
