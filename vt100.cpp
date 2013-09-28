@@ -1282,13 +1282,13 @@ void Terminal::term_wscroll(int dir)
     }
     if (dir == S_DOWN)
     {
-        start = win->ws_conf.ws_row - win->sy2 - 1;
-        end = win->ws_conf.ws_row - win->sy1 - 1;
+        start = win->sy1;
+        end = win->sy2;
     }
     else
     {
-        start = win->ws_conf.ws_row - win->sy1 - 1;
-        end = win->ws_conf.ws_row - win->sy2 - 1;
+        start = win->sy2;
+        end = win->sy1;
     }
 
     _charRows.erase(_charRows.begin() + start);
