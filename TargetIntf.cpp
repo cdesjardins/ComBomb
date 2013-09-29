@@ -489,7 +489,7 @@ void TgtSerialIntf::serviceThread()
 void TgtSerialIntf::writerThread()
 {
     boost::asio::mutable_buffer b;
-    do
+    while (_serviceThreadRun == true)
     {
         if (_outgoingData.dequeue(b) == true)
         {
@@ -497,8 +497,11 @@ void TgtSerialIntf::writerThread()
             boost::asio::write(_port, boost::asio::buffer(b));
             TgtReturnReadBuffer(b);
         }
-        boost::this_thread::sleep(boost::posix_time::milliseconds(1));
-    } while (_serviceThreadRun == true);
+        else
+        {
+            boost::this_thread::sleep(boost::posix_time::milliseconds(1));
+        }
+    }
 }
 
 TgtSerialIntf::TgtSerialIntf (const TgtConnection &config)

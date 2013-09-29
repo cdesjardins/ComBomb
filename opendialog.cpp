@@ -31,6 +31,7 @@ OpenDialog::OpenDialog(QWidget *parent) :
     addFlowControl();
     ui->_fileNameTextBox->setText("C:/Users/ChrisD/software_devel/ComBomb-build-Desktop_Qt_5_0_1_MSVC2010_32bit-Debug/test.cbd");
     ui->_portNumLineEdit->setValidator(new QIntValidator(0, 65536, this));
+    ui->_passwordLineEdit->setEchoMode(QLineEdit::Password);
 }
 
 OpenDialog::ConnectionType OpenDialog::getConnectionType()
@@ -47,7 +48,10 @@ const TgtFileIntf::TgtConnection OpenDialog::getFileConfig() const
 
 const TgtSshIntf::TgtConnection OpenDialog::getSshConfig() const
 {
-    TgtSshIntf::TgtConnection ret(ui->_hostNameComboBox->currentText().toLocal8Bit().constData(), ui->_portNumLineEdit->text().toInt());
+    TgtSshIntf::TgtConnection ret(ui->_hostNameComboBox->currentText().toLocal8Bit().constData(),
+                                  ui->_portNumLineEdit->text().toInt(),
+                                  ui->_userNameComboBox->currentText().toLocal8Bit().constData(),
+                                  ui->_passwordLineEdit->text().toLocal8Bit().constData());
     return ret;
 }
 
@@ -119,7 +123,7 @@ void OpenDialog::addBaudRates()
         110
     };
     std::stringstream baudRate;
-    for (int i = 0; i < (sizeof(bauds) / sizeof(bauds[0])); i++)
+    for (size_t i = 0; i < (sizeof(bauds) / sizeof(bauds[0])); i++)
     {
         baudRate.str("");
         baudRate << bauds[i];

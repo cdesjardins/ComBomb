@@ -249,13 +249,17 @@ class TgtSshIntf : public TgtIntf
 public:
     struct TgtConnection
     {
-        TgtConnection(const std::string &hostName, const int portNum)
+        TgtConnection(const std::string &hostName, const int portNum, const std::string &userName, const std::string &password)
             : _hostName(hostName),
-            _portNum(portNum)
+            _portNum(portNum),
+            _userName(userName),
+            _password(password)
         {
         }
         std::string _hostName;
         int _portNum;
+        std::string _userName;
+        std::string _password;
     };
     static boost::shared_ptr<TgtSshIntf> createSshConnection(const TgtConnection &config);
     virtual ~TgtSshIntf ();
@@ -270,10 +274,14 @@ public:
 protected:
     TgtSshIntf (const TgtConnection &config);
     virtual void TgtMakeConnection();
+    void sshSendThread();
+    void sshRecvThread();
 
     TgtConnection _tgtConnectionConfig;
     CRYPT_SESSION _cryptSession;
-
+    volatile bool _sshThreadRun;
+    boost::scoped_ptr<boost::thread> _sshSendThread;
+    boost::scoped_ptr<boost::thread> _sshRecvThread;
 };
 
 #endif
