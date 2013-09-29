@@ -6,6 +6,7 @@
 #include <fstream>
 #include <string>
 #include "ThreadSafeQueue.h"
+#include "cryptlib.h"
 #ifndef Q_MOC_RUN
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
@@ -271,6 +272,8 @@ protected:
     virtual void TgtMakeConnection();
 
     TgtConnection _tgtConnectionConfig;
+    CRYPT_SESSION _cryptSession;
+
 };
 
 #endif

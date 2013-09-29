@@ -1,5 +1,5 @@
 #include "TargetIntf.h"
-
+#include <QDebug>
 
 boost::shared_ptr<TgtSshIntf> TgtSshIntf::createSshConnection(const TgtConnection &config)
 {
@@ -15,7 +15,23 @@ TgtSshIntf::TgtSshIntf(const TgtConnection &config)
 
 void TgtSshIntf::TgtMakeConnection()
 {
-
+    int status;
+    status = cryptCreateSession(&_cryptSession, CRYPT_UNUSED, CRYPT_SESSION_SSH);
+    if (cryptStatusError(status))
+    {
+        qDebug("Unable to create SSH session");
+    }
+    else
+    {
+        status = cryptSetAttributeString(_cryptSession,
+                                         CRYPT_SESSINFO_SERVER_NAME,
+                                         _tgtConnectionConfig._hostName.c_str(),
+                                         _tgtConnectionConfig._hostName.length());
+        if (cryptStatusError(status))
+        {
+            qDebug("cryptSetAttribute/AttributeString() failed with error code %d, line %d.\n", status, __LINE__);
+        }
+    }
 }
 
 TgtSshIntf::~TgtSshIntf ()
