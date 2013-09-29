@@ -64,18 +64,10 @@ void TgtSshIntf::TgtMakeConnection()
                     }
                     else
                     {
-                        //status = cryptSetAttribute(_cryptSession, CRYPT_OPTION_NET_READTIMEOUT, 10);
+                        status = cryptSetAttribute(_cryptSession, CRYPT_SESSINFO_ACTIVE, true);
                         if (cryptStatusError(status))
                         {
                             qDebug("Unable to activate session");
-                        }
-                        else
-                        {
-                            status = cryptSetAttribute(_cryptSession, CRYPT_SESSINFO_ACTIVE, true);
-                            if (cryptStatusError(status))
-                            {
-                                qDebug("Unable to activate session");
-                            }
                         }
                     }
                 }
@@ -86,15 +78,17 @@ void TgtSshIntf::TgtMakeConnection()
 
 TgtSshIntf::~TgtSshIntf ()
 {
-    TgtDisconnect();
 }
 
 int TgtSshIntf::TgtDisconnect()
 {
-    _sshThreadRun = false;
-    _sshSendThread->join();
-    _sshRecvThread->join();
-    cryptDestroySession(_cryptSession);
+    if (_sshThreadRun == true)
+    {
+        _sshThreadRun = false;
+        _sshSendThread->join();
+        _sshRecvThread->join();
+        cryptDestroySession(_cryptSession);
+    }
     return 0;
 }
 
@@ -120,6 +114,7 @@ void TgtSshIntf::sshSendThread()
         if (_outgoingData.dequeue(b) == true)
         {
             char *data = boost::asio::buffer_cast<char*>(b);
+            bytesCopied = 0;
             status = cryptPushData(_cryptSession, data, boost::asio::buffer_size(b), &bytesCopied);
             if (cryptStatusError(status))
             {
@@ -146,11 +141,12 @@ void TgtSshIntf::sshSendThread()
 
 void TgtSshIntf::sshRecvThread()
 {
-    int outDataLength = 0;
+    int outDataLength;
     int status;
     while (_sshThreadRun == true)
     {
         char *data = boost::asio::buffer_cast<char*>(_currentIncomingBuffer);
+        outDataLength = 0;
         status = cryptPopData(_cryptSession, data, boost::asio::buffer_size(_currentIncomingBuffer), &outDataLength);
         if (cryptStatusError(status))
         {

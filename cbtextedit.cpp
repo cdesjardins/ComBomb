@@ -43,6 +43,7 @@ CBTextEdit::CBTextEdit(QWidget *parent)
     }
     textCursor().insertBlock();
     setAttribute(Qt::WA_OpaquePaintEvent);
+    setAttribute(Qt::WA_DeleteOnClose);
 }
 
 CBTextEdit::~CBTextEdit()
@@ -50,6 +51,7 @@ CBTextEdit::~CBTextEdit()
     qDebug("~CBTextEdit");
     _runThread = false;
     _readTargetThread.join();
+    _tgtTerminal->_targetInterface->TgtDisconnect();
 #ifdef OUT_TO_DEBUG_FILE
     _debugFile.close();
 #endif
