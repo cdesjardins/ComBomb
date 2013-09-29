@@ -517,10 +517,7 @@ TgtSerialIntf::TgtSerialIntf (const TgtConnection &config)
 
 TgtSerialIntf::~TgtSerialIntf ()
 {
-    _serviceThreadRun = false;
-    _service.stop();
-    _serialServiceThread->join();
-    _serialWriterThread->join();
+
 }
 
 void TgtSerialIntf::TgtReadCallback(const boost::system::error_code& error, const size_t bytesTransferred)
@@ -547,6 +544,13 @@ void TgtSerialIntf::TgtMakeConnection()
 
 int TgtSerialIntf::TgtDisconnect()
 {
+    if (_serviceThreadRun == true)
+    {
+        _serviceThreadRun = false;
+        _service.stop();
+        _serialServiceThread->join();
+        _serialWriterThread->join();
+    }
     return 0;
 }
 
