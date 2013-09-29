@@ -544,21 +544,6 @@ void TgtSerialIntf::TgtMakeConnection()
 
 int TgtSerialIntf::TgtDisconnect()
 {
-    /*
-    if (m_hThreadTerm)
-    {
-        SignalObjectAndWait(m_hThreadTerm, m_hSerialMonitor, 1000, FALSE);
-        CloseHandle(m_hThreadTerm);
-    }
-    if (m_hOutput)
-    {
-        CloseHandle(m_hOutput);
-    }
-    if (m_hSerial)
-    {
-        CloseHandle(m_hSerial);
-    }
-    */
     return 0;
 }
 
@@ -569,32 +554,41 @@ bool TgtSerialIntf::TgtConnected()
 
 void TgtSerialIntf::TgtGetTitle(std::string *szTitle)
 {
-    /*
-    char parity;
-    switch (m_sTgtConnection.m_byParity)
+    std::string parity;
+    std::string stopbits;
+
+    switch (_tgtConnectionConfig._parity.value())
     {
-    case NOPARITY:
-        parity = 'N';
+    case boost::asio::serial_port_base::parity::even:
+        parity = "e";
         break;
-    case ODDPARITY:
-        parity = 'O';
+    case boost::asio::serial_port_base::parity::none:
+        parity = "n";
         break;
-    case EVENPARITY:
-        parity = 'E';
-        break;
-    case MARKPARITY:
-        parity = 'M';
-        break;
-    case SPACEPARITY:
-        parity = 'S';
+    case boost::asio::serial_port_base::parity::odd:
+        parity = "o";
         break;
     }
-    sprintf(szTitle, "SERIAL %s %i %c-%i-%i",
-        m_sTgtConnection.m_szPortName,
-        m_sTgtConnection.m_dwBaudRate,
-        parity, m_sTgtConnection.m_byByteSize,
-        m_sTgtConnection.m_byStopBits + 1);
-    */
+    switch (_tgtConnectionConfig._stopBits.value())
+    {
+    case boost::asio::serial_port_base::stop_bits::one:
+        stopbits = "1";
+        break;
+    case boost::asio::serial_port_base::stop_bits::onepointfive:
+        stopbits = "1.5";
+        break;
+    case boost::asio::serial_port_base::stop_bits::two:
+        stopbits = "2";
+        break;
+    }
+
+    std::stringstream t;
+    t << _tgtConnectionConfig._portName << " "
+      << _tgtConnectionConfig._baudRate.value() << " "
+      << parity
+      << _tgtConnectionConfig._byteSize.value()
+      << stopbits;
+    *szTitle = t.str();
 }
 
 /******************************************************************************

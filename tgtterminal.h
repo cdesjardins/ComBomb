@@ -7,6 +7,7 @@ class TgtTerminal : public Terminal
 {
 public:
     TgtTerminal(const boost::shared_ptr<TgtIntf> &tgtIntf, int w, int h);
+    virtual ~TgtTerminal(){};
     virtual void char_out(const char c);
     virtual void str_out(const char *s);
     boost::shared_ptr<TgtIntf> _targetInterface;

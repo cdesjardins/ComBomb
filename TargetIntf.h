@@ -242,4 +242,31 @@ protected:
     std::ifstream _inputFile;
     TgtConnection _tgtConnectionConfig;
 };
+
+class TgtSshIntf : public TgtIntf
+{
+public:
+    struct TgtConnection
+    {
+        TgtConnection()
+        {
+        }
+    };
+    static boost::shared_ptr<TgtSerialIntf> createSshConnection(const TgtConnection &config);
+    virtual ~TgtSshIntf ();
+    virtual int TgtDisconnect();
+    virtual bool TgtConnected();
+    virtual void TgtGetTitle(std::string *szTitle);
+    virtual TgtConnection TgtGetConfig()
+    {
+        return _tgtConnectionConfig;
+    }
+
+protected:
+    TgtSshIntf (const TgtConnection &config);
+    virtual void TgtMakeConnection();
+
+    TgtConnection _tgtConnectionConfig;
+};
+
 #endif

@@ -59,6 +59,7 @@ void CBTextEdit::setTargetInterface(const boost::shared_ptr<TgtIntf> &targetInte
 {
     if (_tgtTerminal == NULL)
     {
+        std::string szTitle;
         _tgtTerminal.reset(new TgtTerminal(targetInterface, 80, 25));
         targetInterface->TgtConnect();
         _readTargetThread = boost::thread(&CBTextEdit::readTarget, this);

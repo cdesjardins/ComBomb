@@ -15,5 +15,8 @@ ChildForm::~ChildForm()
 
 void ChildForm::setTargetInterface(const boost::shared_ptr<TgtIntf> &targetInterface)
 {
+    std::string szTitle;
     ui->_textEdit->setTargetInterface(targetInterface);
+    targetInterface->TgtGetTitle(&szTitle);
+    setWindowTitle(szTitle.c_str());
 }
