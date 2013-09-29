@@ -2,6 +2,7 @@
 #include "ui_opendialog.h"
 #include <sstream>
 #include <QFileDialog>
+#include <QIntValidator>
 #ifndef Q_MOC_RUN
 #include <boost/asio/serial_port.hpp>
 #endif
@@ -29,6 +30,7 @@ OpenDialog::OpenDialog(QWidget *parent) :
     addByteSize();
     addFlowControl();
     ui->_fileNameTextBox->setText("C:/Users/ChrisD/software_devel/ComBomb-build-Desktop_Qt_5_0_1_MSVC2010_32bit-Debug/test.cbd");
+    ui->_portNumLineEdit->setValidator(new QIntValidator(0, 65536, this));
 }
 
 OpenDialog::ConnectionType OpenDialog::getConnectionType()
@@ -40,6 +42,12 @@ OpenDialog::ConnectionType OpenDialog::getConnectionType()
 const TgtFileIntf::TgtConnection OpenDialog::getFileConfig() const
 {
     TgtFileIntf::TgtConnection ret(ui->_fileNameTextBox->text().toLocal8Bit().constData());
+    return ret;
+}
+
+const TgtSshIntf::TgtConnection OpenDialog::getSshConfig() const
+{
+    TgtSshIntf::TgtConnection ret(ui->_hostNameComboBox->currentText().toLocal8Bit().constData(), ui->_portNumLineEdit->text().toInt());
     return ret;
 }
 

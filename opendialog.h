@@ -15,14 +15,16 @@ class OpenDialog : public QDialog
 public:
     enum ConnectionType
     {
+        CB_CONN_SSH,
         CB_CONN_SERIAL,
-        CB_CONN_FILE
+        CB_CONN_FILE,
     };
 
     explicit OpenDialog(QWidget *parent = 0);
     ~OpenDialog();
     const TgtSerialIntf::TgtConnection getSerialConfig() const;
     const TgtFileIntf::TgtConnection getFileConfig() const;
+    const TgtSshIntf::TgtConnection getSshConfig() const;
 
     ConnectionType getConnectionType();
 private slots:

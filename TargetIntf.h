@@ -248,11 +248,15 @@ class TgtSshIntf : public TgtIntf
 public:
     struct TgtConnection
     {
-        TgtConnection()
+        TgtConnection(const std::string &hostName, const int portNum)
+            : _hostName(hostName),
+            _portNum(portNum)
         {
         }
+        std::string _hostName;
+        int _portNum;
     };
-    static boost::shared_ptr<TgtSerialIntf> createSshConnection(const TgtConnection &config);
+    static boost::shared_ptr<TgtSshIntf> createSshConnection(const TgtConnection &config);
     virtual ~TgtSshIntf ();
     virtual int TgtDisconnect();
     virtual bool TgtConnected();

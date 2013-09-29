@@ -37,6 +37,9 @@ void MainWindow::on_actionOpen_triggered()
             case OpenDialog::CB_CONN_FILE:
                 intf = TgtFileIntf::createFileConnection(_openDialog->getFileConfig());
                 break;
+            case OpenDialog::CB_CONN_SSH:
+                intf = TgtSshIntf::createSshConnection(_openDialog->getSshConfig());
+                break;
             }
 
             childForm->setTargetInterface(intf);
