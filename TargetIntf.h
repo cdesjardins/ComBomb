@@ -274,14 +274,14 @@ public:
 protected:
     TgtSshIntf (const TgtConnection &config);
     virtual void TgtMakeConnection();
-    void sshSendThread();
-    void sshRecvThread();
+    void sshThread();
+    void sshRecv();
+    void sshSend();
 
     TgtConnection _tgtConnectionConfig;
     CRYPT_SESSION _cryptSession;
     volatile bool _sshThreadRun;
-    boost::scoped_ptr<boost::thread> _sshSendThread;
-    boost::scoped_ptr<boost::thread> _sshRecvThread;
+    boost::scoped_ptr<boost::thread> _sshThread;
 };
 
 #endif

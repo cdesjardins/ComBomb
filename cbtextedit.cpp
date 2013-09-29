@@ -43,18 +43,27 @@ CBTextEdit::CBTextEdit(QWidget *parent)
     }
     textCursor().insertBlock();
     setAttribute(Qt::WA_OpaquePaintEvent);
-    setAttribute(Qt::WA_DeleteOnClose);
+    //setAttribute(Qt::WA_DeleteOnClose);
 }
 
 CBTextEdit::~CBTextEdit()
 {
     qDebug("~CBTextEdit");
-    _runThread = false;
-    _readTargetThread.join();
-    _tgtTerminal->_targetInterface->TgtDisconnect();
+    tgtDisconnect();
+}
+
+void CBTextEdit::tgtDisconnect()
+{
+    if (_runThread == true)
+    {
+        _runThread = false;
+        _readTargetThread.join();
+        _tgtTerminal->_targetInterface->TgtDisconnect();
+        _tgtTerminal.reset();
 #ifdef OUT_TO_DEBUG_FILE
-    _debugFile.close();
+        _debugFile.close();
 #endif
+    }
 }
 
 void CBTextEdit::setTargetInterface(const boost::shared_ptr<TgtIntf> &targetInterface)

@@ -2,6 +2,7 @@
 #include <QMessageBox>
 #include "mainwindow.h"
 #include "childform.h"
+#include "cbtextedit.h"
 #include "TargetIntf.h"
 #include "ui_mainwindow.h"
 
@@ -14,11 +15,28 @@ MainWindow::MainWindow(QWidget *parent) :
     _mdiArea = new QMdiArea;
     setCentralWidget(_mdiArea);
     _openDialog = new OpenDialog();
+
+    int status = cryptInit();
+    if (cryptStatusError(status))
+    {
+        QMessageBox msgBox;
+        msgBox.setText("Unable to init crypt lib");
+        msgBox.setStandardButtons(QMessageBox::Ok);
+        msgBox.setIcon(QMessageBox::Critical);
+        msgBox.exec();
+    }
 }
 
 MainWindow::~MainWindow()
 {
+    QList<CBTextEdit*> list = this->findChildren<CBTextEdit *>();
+    foreach(CBTextEdit *w, list)
+    {
+        w->tgtDisconnect();
+    }
     delete _ui;
+    cryptEnd();
+    qDebug("~mainwindow");
 }
 
 void MainWindow::on_actionOpen_triggered()
@@ -56,6 +74,5 @@ void MainWindow::on_actionOpen_triggered()
         }
     }
 }
-
 
 

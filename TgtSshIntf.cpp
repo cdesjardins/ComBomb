@@ -5,8 +5,6 @@ boost::shared_ptr<TgtSshIntf> TgtSshIntf::createSshConnection(const TgtConnectio
 {
     boost::shared_ptr<TgtSshIntf> ret(new TgtSshIntf(config));
     ret->_sshThreadRun = true;
-    ret->_sshSendThread.reset(new boost::thread(boost::bind(&TgtSshIntf::sshSendThread, ret.get())));
-    ret->_sshRecvThread.reset(new boost::thread(boost::bind(&TgtSshIntf::sshRecvThread, ret.get())));
 
     return ret;
 }
@@ -69,6 +67,10 @@ void TgtSshIntf::TgtMakeConnection()
                         {
                             qDebug("Unable to activate session");
                         }
+                        else
+                        {
+                            _sshThread.reset(new boost::thread(boost::bind(&TgtSshIntf::sshThread, this)));
+                        }
                     }
                 }
             }
@@ -78,6 +80,8 @@ void TgtSshIntf::TgtMakeConnection()
 
 TgtSshIntf::~TgtSshIntf ()
 {
+    qDebug("Destroyed");
+    TgtDisconnect();
 }
 
 int TgtSshIntf::TgtDisconnect()
@@ -85,9 +89,11 @@ int TgtSshIntf::TgtDisconnect()
     if (_sshThreadRun == true)
     {
         _sshThreadRun = false;
-        _sshSendThread->join();
-        _sshRecvThread->join();
-        cryptDestroySession(_cryptSession);
+        if (_sshThread->joinable())
+        {
+            _sshThread->join();
+            _sshThread.reset();
+        }
     }
     return 0;
 }
@@ -104,46 +110,52 @@ void TgtSshIntf::TgtGetTitle(std::string *szTitle)
     *szTitle = t.str();
 }
 
-void TgtSshIntf::sshSendThread()
+void TgtSshIntf::sshSend()
 {
     boost::asio::mutable_buffer b;
     int status;
     int bytesCopied;
-    while (_sshThreadRun == true)
+    while (_outgoingData.dequeue(b) == true)
     {
-        if (_outgoingData.dequeue(b) == true)
+        char *data = boost::asio::buffer_cast<char*>(b);
+        bytesCopied = 0;
+        status = cryptPushData(_cryptSession, data, boost::asio::buffer_size(b), &bytesCopied);
+        if (cryptStatusError(status))
         {
-            char *data = boost::asio::buffer_cast<char*>(b);
-            bytesCopied = 0;
-            status = cryptPushData(_cryptSession, data, boost::asio::buffer_size(b), &bytesCopied);
-            if (cryptStatusError(status))
-            {
-                char errorMessage[512];
-                int errorMessageLength;
-
-                status = cryptGetAttributeString(_cryptSession, CRYPT_ATTRIBUTE_ERRORMESSAGE,
-                                                 errorMessage, &errorMessageLength);
-                qDebug("Unable to send data %s", errorMessage);
-
-            }
-            else if (bytesCopied < (int)boost::asio::buffer_size(b))
-            {
-                qDebug("Didnt write everything");
-            }
-            TgtReturnReadBuffer(b);
+            qDebug("Unable to send data");
+        }
+        else if (bytesCopied < (int)boost::asio::buffer_size(b))
+        {
+            qDebug("Didnt write everything");
         }
         else
         {
-            boost::this_thread::sleep(boost::posix_time::milliseconds(1));
+            status = cryptFlushData(_cryptSession);
+            if (cryptStatusError(status))
+            {
+                qDebug("Unable to flush data");
+            }
         }
+        TgtReturnReadBuffer(b);
     }
 }
 
-void TgtSshIntf::sshRecvThread()
+void TgtSshIntf::sshThread()
+{
+    while (_sshThreadRun == true)
+    {
+        sshSend();
+        sshRecv();
+    }
+    cryptDestroySession(_cryptSession);
+    qDebug("ssh done");
+}
+
+void TgtSshIntf::sshRecv()
 {
     int outDataLength;
     int status;
-    while (_sshThreadRun == true)
+    do
     {
         char *data = boost::asio::buffer_cast<char*>(_currentIncomingBuffer);
         outDataLength = 0;
@@ -157,5 +169,5 @@ void TgtSshIntf::sshRecvThread()
             _incomingData.enqueue(boost::asio::buffer(_currentIncomingBuffer, outDataLength));
             _bufferPool.dequeue(_currentIncomingBuffer);
         }
-    }
+    } while ((outDataLength > 0) && (cryptStatusOK(status)));
 }

@@ -277,6 +277,9 @@ void Terminal::state1(int c)
     case 'P': /* ESC P (DCS, Device Control String) */
         esc_s = 7;
         return;
+    case ']':
+        esc_s = 8;
+        return;
     case 'D': /* Cursor down */
     case 'M': /* Cursor up */
         x = win->cursor_x;
@@ -934,6 +937,11 @@ void Terminal::state7(int c)
     buf[pos++] = c;
 }
 
+void Terminal::state8(int c)
+{
+    // throw away until the bell
+}
+
 void Terminal::vt_out(unsigned int ch)
 {
     int f;
@@ -996,7 +1004,14 @@ void Terminal::vt_out(unsigned int ch)
     case '\n':
     case '\b':
     case 7: /* Bell */
-        term_wputc(c);
+        if (esc_s != 8)
+        {
+            term_wputc(c);
+        }
+        else
+        {
+            esc_s = 0;
+        }
         break;
     default:
         go_on = 1;
@@ -1052,6 +1067,9 @@ void Terminal::vt_out(unsigned int ch)
         break;
     case 7:
         state7(c);
+        break;
+    case 8:
+        state8(c);
         break;
     }
 }
@@ -1232,13 +1250,28 @@ void Terminal::term_wmove(int dir)
 /* locate the cursor */
 void Terminal::term_wlocate(int x, int y)
 {
-    if ((x >= 0 || x <= win->ws_conf.ws_col) &&
-        (y >= 0 || y <= win->ws_conf.ws_row))
+    if (x >= 0)
     {
-        win->cursor_x = x;
-        win->cursor_y = y;
+        if (x < win->ws_conf.ws_col)
+        {
+            win->cursor_x = x;
+        }
+        else
+        {
+            win->cursor_x = win->ws_conf.ws_col - 1;
+        }
     }
-    setDirty(win->cursor_y);
+    if (y >= 0)
+    {
+        if (y < win->ws_conf.ws_row)
+        {
+            win->cursor_y = y;
+        }
+        else
+        {
+            win->cursor_y = win->ws_conf.ws_row - 1;
+        }
+    }
 }
 
 /* redraw the term */
@@ -1263,7 +1296,7 @@ void Terminal::term_winclr()
 
     for (y = 0; y < win->ws_conf.ws_row; y++)
     {
-        _charRows[win->cursor_y]->clearChars();
+        _charRows[y]->clearChars();
         setDirty(y);
     }
 }

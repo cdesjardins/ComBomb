@@ -20,6 +20,7 @@ public:
 private slots:
     void on_actionOpen_triggered();
 
+
 private:
 
     OpenDialog *_openDialog;

@@ -283,6 +283,7 @@ protected:
     void state5(int c);
     void state6(int c);
     void state7(int c);
+    void state8(int c);
 
     void term_wflush();
 

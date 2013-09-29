@@ -14,6 +14,7 @@ public:
     CBTextEdit(QWidget *parent = 0);
     ~CBTextEdit();
     void setTargetInterface(const boost::shared_ptr<TgtIntf> &targetInterface);
+    void tgtDisconnect();
 signals:
     void textUpdatedSignal(int scrollCnt);
 protected:
