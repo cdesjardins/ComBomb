@@ -627,7 +627,7 @@ int TgtFileIntf::TgtDisconnect()
 
 int TgtFileIntf::TgtRead(boost::asio::mutable_buffer &b)
 {
-    int ret = 0;
+    std::streamsize ret = 0;
     if (_inputFile)
     {
         char *data = boost::asio::buffer_cast<char*>(_currentIncomingBuffer);
