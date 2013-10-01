@@ -43,7 +43,6 @@ CBTextEdit::CBTextEdit(QWidget *parent)
     }
     textCursor().insertBlock();
     setAttribute(Qt::WA_OpaquePaintEvent);
-    //setAttribute(Qt::WA_DeleteOnClose);
 }
 
 CBTextEdit::~CBTextEdit()
