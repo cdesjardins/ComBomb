@@ -71,7 +71,7 @@ static int esc_s = 0;
 /* Structure to hold escape sequences. */
 struct escseq
 {
-    int code;
+    unsigned int code;
     const char *vt100_st;
     const char *vt100_app;
     const char *ansi;
@@ -940,6 +940,7 @@ void Terminal::state7(int c)
 void Terminal::state8(int c)
 {
     // throw away until the bell
+    c = c;
 }
 
 void Terminal::vt_out(unsigned int ch)
@@ -1284,7 +1285,7 @@ void Terminal::term_wflush()
 /* clear the window */
 void Terminal::term_winclr()
 {
-    int x, y;
+    int y;
 
     for (y = 0; y < win->ws_conf.ws_row; y++)
     {
@@ -1525,7 +1526,7 @@ bool Terminal::isWinDirty()
     win->_winDirty = false;
     return ret;
 }
-
+#if 0
 void Terminal::resize_term(int w, int h)
 {
     /*
@@ -1582,4 +1583,4 @@ void Terminal::resize_term(int w, int h)
     pwin->sy2 = h - 1;
     */
 }
-
+#endif

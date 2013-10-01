@@ -29,7 +29,7 @@ OpenDialog::OpenDialog(QWidget *parent) :
     addStopBits();
     addByteSize();
     addFlowControl();
-    ui->_fileNameTextBox->setText("C:/Users/ChrisD/software_devel/ComBomb-build-Desktop_Qt_5_0_1_MSVC2010_32bit-Debug/test.cbd");
+    ui->_fileNameComboBox->addItem("C:/Users/ChrisD/software_devel/ComBomb-build-Desktop_Qt_5_0_1_MSVC2010_32bit-Debug/test.cbd");
     ui->_portNumLineEdit->setValidator(new QIntValidator(0, 65536, this));
     ui->_passwordLineEdit->setEchoMode(QLineEdit::Password);
 }
@@ -42,7 +42,7 @@ OpenDialog::ConnectionType OpenDialog::getConnectionType()
 
 const TgtFileIntf::TgtConnection OpenDialog::getFileConfig() const
 {
-    TgtFileIntf::TgtConnection ret(ui->_fileNameTextBox->text().toLocal8Bit().constData());
+    TgtFileIntf::TgtConnection ret(ui->_fileNameComboBox->currentText().toLocal8Bit().constData());
     return ret;
 }
 
@@ -154,6 +154,7 @@ void OpenDialog::on__browseButton_clicked()
 {
     QString fileName;
     fileName = QFileDialog::getOpenFileName(this, tr("All files"), NULL, tr("All files (*.*)"));
-    ui->_fileNameTextBox->setText(fileName);
+    ui->_fileNameComboBox->insertItem(0, fileName);
+    ui->_fileNameComboBox->setCurrentIndex(0);
 
 }

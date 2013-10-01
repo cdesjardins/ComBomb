@@ -10,6 +10,13 @@
     <height>637</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <family>Sans Serif</family>
+    <pointsize>10</pointsize>
+    <italic>true</italic>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
@@ -24,7 +31,7 @@
      <x>0</x>
      <y>0</y>
      <width>917</width>
-     <height>21</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="_menuFile">

@@ -289,6 +289,7 @@ void CBTextEdit::insertText(int scrollCnt)
     int bg = -1;
     QTextBlock block;
     int bc = document()->blockCount();
+    setFont(getFont());
 
     block = document()->lastBlock();
     for (y = 0; y < scrollCnt; y++)
@@ -309,6 +310,7 @@ void CBTextEdit::insertText(int scrollCnt)
     for (y = 0; y < _tgtTerminal->getWinSizeRow(); y++)
     {
         QTextCursor cursor(block);
+
         if (_tgtTerminal->isRowDirty(y))
         {
             insertLine(y, &fg, &bg, cursor);
