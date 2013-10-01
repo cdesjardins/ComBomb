@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>461</width>
-    <height>202</height>
+    <height>250</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -24,6 +24,16 @@
     <normaloff>:/images/ComBomb16.png</normaloff>:/images/ComBomb16.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <item row="1" column="0">
+    <widget class="QDialogButtonBox" name="_buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
    <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
@@ -36,8 +46,8 @@
       <attribute name="title">
        <string>SSH</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
+      <layout class="QGridLayout" name="gridLayout_5">
+       <item row="0" column="0">
         <widget class="QWidget" name="widget" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -46,42 +56,10 @@
           </sizepolicy>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
-          <item row="0" column="0" colspan="3">
-           <widget class="QLabel" name="label_8">
-            <property name="text">
-             <string>Hostname</string>
-            </property>
-           </widget>
+          <item row="7" column="2">
+           <widget class="QLineEdit" name="_passwordLineEdit"/>
           </item>
-          <item row="1" column="0" colspan="3">
-           <widget class="QComboBox" name="_hostNameComboBox">
-            <property name="editable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_9">
-            <property name="text">
-             <string>Port</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QLabel" name="label_10">
-            <property name="text">
-             <string>Username</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="2">
-           <widget class="QLabel" name="label_11">
-            <property name="text">
-             <string>Password</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
+          <item row="9" column="0">
            <widget class="QLineEdit" name="_portNumLineEdit">
             <property name="inputMethodHints">
              <set>Qt::ImhDigitsOnly</set>
@@ -91,7 +69,14 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
+          <item row="8" column="0">
+           <widget class="QLabel" name="label_9">
+            <property name="text">
+             <string>Port</string>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="0">
            <widget class="QComboBox" name="_userNameComboBox">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -104,8 +89,33 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="2">
-           <widget class="QLineEdit" name="_passwordLineEdit"/>
+          <item row="6" column="2">
+           <widget class="QLabel" name="label_11">
+            <property name="text">
+             <string>Password</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0">
+           <widget class="QLabel" name="label_10">
+            <property name="text">
+             <string>Username</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_8">
+            <property name="text">
+             <string>Hostname</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0" colspan="3">
+           <widget class="QComboBox" name="_hostNameComboBox">
+            <property name="editable">
+             <bool>true</bool>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -116,8 +126,8 @@
       <attribute name="title">
        <string>Serial</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
+      <layout class="QGridLayout" name="gridLayout_6">
+       <item row="0" column="0">
         <widget class="QWidget" name="widget_2" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -140,10 +150,10 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="2">
-           <widget class="QLabel" name="label_3">
-            <property name="text">
-             <string>Parity</string>
+          <item row="3" column="0">
+           <widget class="QComboBox" name="_parityComboBox">
+            <property name="currentText">
+             <string/>
             </property>
            </widget>
           </item>
@@ -157,49 +167,49 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="2">
-           <widget class="QComboBox" name="_parityComboBox">
-            <property name="currentText">
-             <string/>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>Parity</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
+          <item row="2" column="1">
            <widget class="QLabel" name="label_4">
             <property name="text">
              <string>Stop bits</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
-           <widget class="QLabel" name="label_5">
-            <property name="text">
-             <string>Byte size</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="2">
-           <widget class="QLabel" name="label_6">
-            <property name="text">
-             <string>Flow control</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
+          <item row="3" column="1">
            <widget class="QComboBox" name="_stopBitsComboBox">
             <property name="currentText">
              <string/>
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_5">
+            <property name="text">
+             <string>Byte size</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
            <widget class="QComboBox" name="_byteSizeComboBox">
             <property name="currentText">
              <string/>
             </property>
            </widget>
           </item>
-          <item row="3" column="2">
+          <item row="4" column="1">
+           <widget class="QLabel" name="label_6">
+            <property name="text">
+             <string>Flow control</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
            <widget class="QComboBox" name="_flowControlComboBox">
             <property name="currentText">
              <string/>
@@ -207,18 +217,18 @@
            </widget>
           </item>
          </layout>
-         <zorder>_flowControlComboBox</zorder>
-         <zorder>_byteSizeComboBox</zorder>
          <zorder>label_2</zorder>
-         <zorder>_parityComboBox</zorder>
-         <zorder>label_5</zorder>
          <zorder>_comPortComboBox</zorder>
-         <zorder>label_6</zorder>
          <zorder>_baudRateComboBox</zorder>
          <zorder>label</zorder>
+         <zorder>_parityComboBox</zorder>
          <zorder>label_3</zorder>
-         <zorder>_stopBitsComboBox</zorder>
          <zorder>label_4</zorder>
+         <zorder>_stopBitsComboBox</zorder>
+         <zorder>label_5</zorder>
+         <zorder>_byteSizeComboBox</zorder>
+         <zorder>label_6</zorder>
+         <zorder>_flowControlComboBox</zorder>
         </widget>
        </item>
       </layout>
@@ -227,8 +237,8 @@
       <attribute name="title">
        <string>File</string>
       </attribute>
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
+      <layout class="QGridLayout" name="gridLayout_7">
+       <item row="0" column="0">
         <widget class="QWidget" name="widget_3" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -237,31 +247,31 @@
           </sizepolicy>
          </property>
          <layout class="QGridLayout" name="gridLayout_4">
-          <item row="3" column="1">
-           <widget class="QPushButton" name="_browseButton">
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_12">
             <property name="text">
-             <string>Browse</string>
+             <string/>
             </property>
            </widget>
           </item>
-          <item row="1" column="0" colspan="2">
-           <widget class="QComboBox" name="_fileNameComboBox">
-            <property name="editable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
+          <item row="1" column="0">
            <widget class="QLabel" name="label_7">
             <property name="text">
              <string>Filename</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_12">
+          <item row="4" column="1">
+           <widget class="QPushButton" name="_browseButton">
             <property name="text">
-             <string/>
+             <string>Browse</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0" colspan="2">
+           <widget class="QComboBox" name="_fileNameComboBox">
+            <property name="editable">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -270,16 +280,6 @@
        </item>
       </layout>
      </widget>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QDialogButtonBox" name="_buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
     </widget>
    </item>
   </layout>
