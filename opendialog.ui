@@ -284,6 +284,22 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>_hostNameComboBox</tabstop>
+  <tabstop>_userNameComboBox</tabstop>
+  <tabstop>_passwordLineEdit</tabstop>
+  <tabstop>_portNumLineEdit</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>_comPortComboBox</tabstop>
+  <tabstop>_baudRateComboBox</tabstop>
+  <tabstop>_parityComboBox</tabstop>
+  <tabstop>_stopBitsComboBox</tabstop>
+  <tabstop>_byteSizeComboBox</tabstop>
+  <tabstop>_flowControlComboBox</tabstop>
+  <tabstop>_fileNameComboBox</tabstop>
+  <tabstop>_browseButton</tabstop>
+  <tabstop>_buttonBox</tabstop>
+ </tabstops>
  <resources>
   <include location="ComBomb.qrc"/>
  </resources>

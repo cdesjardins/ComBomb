@@ -6,7 +6,7 @@
 #ifndef Q_MOC_RUN
 #include <boost/thread.hpp>
 #endif
-//#define OUT_TO_DEBUG_FILE
+#define OUT_TO_DEBUG_FILE
 class CBTextEdit : public QPlainTextEdit
 {
     Q_OBJECT

@@ -418,6 +418,11 @@ void Terminal::state2(int c)
         esc_s = 3;
         return;
     }
+    if (c == '>')
+    {
+        esc_s = 9;
+        return;
+    }
 
     /* Process functions with zero, one, two or more arguments */
     switch (c)
@@ -943,6 +948,13 @@ void Terminal::state8(int c)
     c = c;
 }
 
+void Terminal::state9(int c)
+{
+    // esc[> seen so far...
+    c = c;
+    esc_s = 0;
+}
+
 void Terminal::vt_out(unsigned int ch)
 {
     int f;
@@ -1071,6 +1083,9 @@ void Terminal::vt_out(unsigned int ch)
         break;
     case 8:
         state8(c);
+        break;
+    case 9:
+        state9(c);
         break;
     }
 }
@@ -1344,6 +1359,7 @@ void row_t::clearChars(int x, int direction)
 void Terminal::term_wclreol()
 {
     _charRows[win->cursor_y]->clearChars(win->cursor_x);
+    setDirty(win->cursor_y);
 }
 
 /* clear to beginning of line */
@@ -1351,6 +1367,7 @@ void Terminal::term_wclreol()
 void Terminal::term_wclrbol()
 {
     _charRows[win->cursor_y]->clearChars(win->cursor_x, -1);
+    setDirty(win->cursor_y);
 }
 
 /* clear to end of screen */
@@ -1363,6 +1380,7 @@ void Terminal::term_wclreos()
     {
         _charRows[y]->clearChars(x);
         x = 0;
+        setDirty(y);
     }
 }
 
@@ -1376,6 +1394,7 @@ void Terminal::term_wclrbos()
     {
         _charRows[y]->clearChars(x, -1);
         x = win->ws_conf.ws_col;
+        setDirty(y);
     }
 }
 
@@ -1383,6 +1402,7 @@ void Terminal::term_wclrbos()
 void Terminal::term_wclrel()
 {
     _charRows[win->cursor_y]->clearChars();
+    setDirty(win->cursor_y);
 }
 
 /* insert? */
@@ -1426,6 +1446,7 @@ void Terminal::term_wdelchar()
     _charRows[win->cursor_y]->_rowData[i].text = 0;
     _charRows[win->cursor_y]->_rowData[i].col = 0;
     _charRows[win->cursor_y]->_rowData[i].attrib = 0;
+    setDirty(win->cursor_y);
 }
 
 /* clear characters */
