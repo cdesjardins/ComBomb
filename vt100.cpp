@@ -1141,29 +1141,13 @@ void Terminal::vt_send(unsigned int c)
 void Terminal::term_winschar(unsigned char c)
 {
     int x;
-    //boost::shared_array<char_t> charRow = getRow(win->cursor_y);
-    //char_t *chara;
-    //char_t *charb;
     for (x = win->ws_conf.ws_col - 1; x != win->cursor_x; x--)
     {
         _charRows[win->cursor_y]->_rowData[x + 1] = _charRows[win->cursor_y]->_rowData[x];
-        /*
-        chara = charRow[i + 1];
-        charb = charRow[i];
-        chara->text = charb->text;
-        chara->col = charb->col;
-        chara->attrib = charb->attrib;
-        */
     }
     _charRows[win->cursor_y]->_rowData[win->cursor_x].text = c;
     _charRows[win->cursor_y]->_rowData[win->cursor_x].col = win->color;
     _charRows[win->cursor_y]->_rowData[win->cursor_x].attrib = win->attr;
-    /*
-    chara = charRow[win->cursor_x].get();
-    chara->text = c;
-    chara->col = win->color;
-    chara->attrib = win->attr;
-*/
     term_wmove(RIGHT);
 }
 
@@ -1261,6 +1245,10 @@ void Terminal::term_wlocate(int x, int y)
             win->cursor_x = win->ws_conf.ws_col - 1;
         }
     }
+    else
+    {
+        win->cursor_x = 0;
+    }
     if (y >= 0)
     {
         if (y < win->ws_conf.ws_row)
@@ -1271,6 +1259,10 @@ void Terminal::term_wlocate(int x, int y)
         {
             win->cursor_y = win->ws_conf.ws_row - 1;
         }
+    }
+    else
+    {
+        win->cursor_y = 0;
     }
 }
 

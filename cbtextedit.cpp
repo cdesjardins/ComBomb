@@ -151,6 +151,7 @@ void CBTextEdit::keyPressEvent(QKeyEvent *e)
 void CBTextEdit::readTarget()
 {
     boost::asio::mutable_buffer b;
+
     while (_runThread == true)
     {
         int bytes = _tgtTerminal->_targetInterface->TgtRead(b);
