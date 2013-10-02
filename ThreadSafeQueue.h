@@ -51,6 +51,16 @@ public:
         return ret;
     }
 
+    virtual std::size_t dequeueBatch(std::vector<T> &dataVec)
+    {
+        std::size_t size = 0;
+        { // create a new scope for the mutex
+            boost::mutex::scoped_lock lock(_queueMutex);
+            size = popDataBatch(dataVec);
+        }
+        return size;
+    }
+
     virtual bool waitDequeue(T &data, const int msTimeout = -1)
     {
         bool ret = false;
@@ -144,6 +154,19 @@ protected:
             ret = true;
         }
         return ret;
+    }
+
+    std::size_t popDataBatch(std::vector<T>& dataVec)
+    {
+        // This function assumes that _queueMutex is locked already!
+        std::size_t size = 0;
+        T data;
+        while (popData(data) == true)
+        {
+            size += sizeOfData(data);
+            dataVec.push_back(data);
+        }
+        return size;
     }
 
     bool frontData(T &data)

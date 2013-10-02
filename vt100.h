@@ -27,6 +27,7 @@
 #define CJD_VT100_H
 
 #include <deque>
+#include "ThreadSafeQueue.h"
 #ifndef Q_MOC_RUN
 #include <boost/shared_array.hpp>
 #include <boost/thread/mutex.hpp>
@@ -200,6 +201,30 @@ public:
         clearChars();
     }
     void clearChars(int x = 0, int direction = 1);
+    char_t getChar(int x)
+    {
+        return _rowData[x];
+    }
+    void setChar(int x, const char_t & ch)
+    {
+        _rowData[x] = ch;
+    }
+    void setChar(int x, const char text, const char col, const char attrib)
+    {
+        _rowData[x].text = text;
+        _rowData[x].col = col;
+        _rowData[x].attrib = attrib;
+    }
+    void setRowDirty(bool d)
+    {
+        _rowDirty = d;
+    }
+    bool isRowDirty()
+    {
+        return _rowDirty;
+    }
+
+protected:
     boost::shared_array<char_t> _rowData;
     bool _rowDirty;
     int _width;
@@ -235,11 +260,13 @@ public:
     ~Terminal();
 
     char_t getChar(int x, int y);
+    boost::shared_ptr<row_t> getRow(int y);
     unsigned short getWinSizeRow();
     unsigned short getWinSizeCol();
     bool isWinDirty();
     bool isRowDirty(int y);
     void resize_term(int w, int h);
+    ThreadSafeQueue<boost::shared_ptr<row_t> > _scrollOffRows;
 protected:
     virtual void char_out(const char c) = 0;
     virtual void str_out(const char *s) = 0;

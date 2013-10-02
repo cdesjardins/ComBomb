@@ -634,12 +634,12 @@ int TgtFileIntf::TgtDisconnect()
 
 int TgtFileIntf::TgtRead(boost::asio::mutable_buffer &b)
 {
-    std::streamsize ret = 0;
+    size_t ret = 0;
     if (_inputFile)
     {
         char *data = boost::asio::buffer_cast<char*>(_currentIncomingBuffer);
         _inputFile.read(data, boost::asio::buffer_size(_currentIncomingBuffer));
-        ret = _inputFile.gcount();
+        ret = (size_t)_inputFile.gcount();
         if (ret > 0)
         {
             _incomingData.enqueue(boost::asio::buffer(_currentIncomingBuffer, ret));

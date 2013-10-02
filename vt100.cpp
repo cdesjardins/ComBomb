@@ -1047,11 +1047,11 @@ void Terminal::vt_out(unsigned int ch)
             one_mbtowc ((char *)&wc, (char *)&c, 1);
             if (win->state.vt_insert)
             {
-                term_winschar(wc);
+                term_winschar((unsigned char)wc);
             }
             else
             {
-                term_wputc(wc);
+                term_wputc((unsigned char)wc);
             }
         }
         else
@@ -1159,11 +1159,9 @@ void Terminal::term_winschar(unsigned char c)
     int x;
     for (x = win->ws_conf.ws_col - 1; x != win->cursor_x; x--)
     {
-        _charRows[win->cursor_y]->_rowData[x + 1] = _charRows[win->cursor_y]->_rowData[x];
+        _charRows[win->cursor_y]->setChar(x + 1, _charRows[win->cursor_y]->getChar(x));
     }
-    _charRows[win->cursor_y]->_rowData[win->cursor_x].text = c;
-    _charRows[win->cursor_y]->_rowData[win->cursor_x].col = win->color;
-    _charRows[win->cursor_y]->_rowData[win->cursor_x].attrib = win->attr;
+    _charRows[win->cursor_y]->setChar(win->cursor_x, c, win->color, win->attr);
     term_wmove(RIGHT);
 }
 
@@ -1193,9 +1191,7 @@ void Terminal::term_wputc(unsigned char c)
         {
             break;
         }
-        _charRows[win->cursor_y]->_rowData[win->cursor_x].text = c;
-        _charRows[win->cursor_y]->_rowData[win->cursor_x].col = win->color;
-        _charRows[win->cursor_y]->_rowData[win->cursor_x].attrib = win->attr;
+        _charRows[win->cursor_y]->setChar(win->cursor_x, c, win->color, win->attr);
         setDirty(win->cursor_y);
         term_wmove(RIGHT);
         break;
@@ -1332,6 +1328,10 @@ void Terminal::term_wscroll(int dir)
         end = win->sy1;
     }
 
+    if (start == 0)
+    {
+        _scrollOffRows.enqueue(*_charRows.begin());
+    }
     _charRows.erase(_charRows.begin() + start);
     _charRows.insert(_charRows.begin() + end, rowData);
 
@@ -1441,11 +1441,9 @@ void Terminal::term_wdelchar()
 
     for (i = win->cursor_x; i < win->ws_conf.ws_col - 1; i++)
     {
-        _charRows[win->cursor_y]->_rowData[i] = _charRows[win->cursor_y]->_rowData[i + 1];
+        _charRows[win->cursor_y]->setChar(i, _charRows[win->cursor_y]->getChar(i + 1));
     }
-    _charRows[win->cursor_y]->_rowData[i].text = 0;
-    _charRows[win->cursor_y]->_rowData[i].col = 0;
-    _charRows[win->cursor_y]->_rowData[i].attrib = 0;
+    _charRows[win->cursor_y]->setChar(i, 0, 0, 0);
     setDirty(win->cursor_y);
 }
 
@@ -1514,7 +1512,12 @@ Terminal::Terminal(int w, int h)
 char_t Terminal::getChar(int x, int y)
 {
     boost::unique_lock<boost::mutex> lock(_charRowsMutex);
-    return _charRows[y]->_rowData[x];
+    return _charRows[y]->getChar(x);
+}
+
+boost::shared_ptr<row_t> Terminal::getRow(int y)
+{
+    return _charRows[y];
 }
 
 unsigned short Terminal::getWinSizeRow()
@@ -1530,14 +1533,14 @@ unsigned short Terminal::getWinSizeCol()
 void Terminal::setDirty(int y)
 {
     win->_winDirty = true;
-    _charRows[y]->_rowDirty = true;
+    _charRows[y]->setRowDirty(true);
 }
 
 bool Terminal::isRowDirty(int y)
 {
     boost::unique_lock<boost::mutex> lock(_charRowsMutex);
-    bool ret = _charRows[y]->_rowDirty;
-    _charRows[y]->_rowDirty = false;
+    bool ret = _charRows[y]->isRowDirty();
+    _charRows[y]->setRowDirty(false);
     return ret;
 }
 

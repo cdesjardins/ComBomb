@@ -225,7 +225,7 @@ void CBTextEdit::setFormatColors(QTextCharFormat &format, int fg, int bg)
     }
 }
 
-void CBTextEdit::insertLine(int y, int *fg, int *bg, QTextCursor &cursor)
+void CBTextEdit::insertLine(const boost::shared_ptr<row_t> &row, int *fg, int *bg, QTextCursor &cursor)
 {
     int x;
     QString text;
@@ -244,7 +244,7 @@ void CBTextEdit::insertLine(int y, int *fg, int *bg, QTextCursor &cursor)
     {
         if (x < _tgtTerminal->getWinSizeCol())
         {
-            c = _tgtTerminal->getChar(x, y);
+            c = row->getChar(x);
         }
 
         const uchar code = c.text;
@@ -281,21 +281,33 @@ void CBTextEdit::insertLine(int y, int *fg, int *bg, QTextCursor &cursor)
     }
 }
 
-void CBTextEdit::insertText(int scrollCnt)
+void CBTextEdit::handleScrollOff(int *fg, int *bg)
 {
-    int y;
-    int fg = -1;
-    int bg = -1;
     QTextBlock block;
-    int bc = document()->blockCount();
-    setFont(getFont());
-
-    block = document()->lastBlock();
-    for (y = 0; y < scrollCnt; y++)
+    std::vector<boost::shared_ptr<row_t> > rows;
+    size_t bytes = _tgtTerminal->_scrollOffRows.dequeueBatch(rows);
+    if (bytes > 0)
     {
-        QTextCursor cursor(block);
-        cursor.insertBlock();
+        std::vector<boost::shared_ptr<row_t> >::iterator it;
+        for (it = rows.begin(); it != rows.end(); it++)
+        {
+            getTopBlock(block);
+            QTextCursor cursor(block);
+            insertLine(*it, fg, bg, cursor);
+            {
+                block = document()->lastBlock();
+                QTextCursor c(block);
+                c.insertBlock();
+                verticalScrollBar()->setSliderPosition(verticalScrollBar()->maximum());
+            }
+        }
     }
+}
+
+void CBTextEdit::getTopBlock(QTextBlock &block)
+{
+    int bc = document()->blockCount();
+    block = document()->lastBlock();
 
     if (bc < _tgtTerminal->getWinSizeRow())
     {
@@ -305,6 +317,18 @@ void CBTextEdit::insertText(int scrollCnt)
     {
         block = document()->findBlockByNumber(bc - (_tgtTerminal->getWinSizeRow() + 1));
     }
+}
+
+void CBTextEdit::insertText(int scrollCnt)
+{
+    int y;
+    int fg = -1;
+    int bg = -1;
+    QTextBlock block;
+    setFont(getFont());
+
+    handleScrollOff(&fg, &bg);
+    getTopBlock(block);
 
     for (y = 0; y < _tgtTerminal->getWinSizeRow(); y++)
     {
@@ -312,7 +336,7 @@ void CBTextEdit::insertText(int scrollCnt)
 
         if (_tgtTerminal->isRowDirty(y))
         {
-            insertLine(y, &fg, &bg, cursor);
+            insertLine(_tgtTerminal->getRow(y), &fg, &bg, cursor);
         }
         block = block.next();
         if (block.isValid() == false)

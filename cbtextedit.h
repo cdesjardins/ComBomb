@@ -6,7 +6,7 @@
 #ifndef Q_MOC_RUN
 #include <boost/thread.hpp>
 #endif
-#define OUT_TO_DEBUG_FILE
+//#define OUT_TO_DEBUG_FILE
 class CBTextEdit : public QPlainTextEdit
 {
     Q_OBJECT
@@ -27,7 +27,9 @@ protected:
     void mypaint();
     QFont getFont();
     QSize sizeHint() const;
-    void insertLine(int y, int *fg, int *bg, QTextCursor &cursor);
+    void insertLine(const boost::shared_ptr<row_t> &row, int *fg, int *bg, QTextCursor &cursor);
+    void handleScrollOff(int *fg, int *bg);
+    void getTopBlock(QTextBlock &block);
 
     volatile bool _runThread;
     boost::thread _readTargetThread;
