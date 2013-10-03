@@ -19,7 +19,7 @@
 
 #include <QDebug>
 
-#include "impl/QTerminalImpl.h"
+#include "QTerminalImpl.h"
 
 
 QTerminalImpl::QTerminalImpl(QWidget *parent)

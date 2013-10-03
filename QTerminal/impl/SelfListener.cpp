@@ -15,7 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "impl/SelfListener.h"
+#include "SelfListener.h"
 
 SelfListener::SelfListener(int a, QObject *parent) :
     QThread(parent) {

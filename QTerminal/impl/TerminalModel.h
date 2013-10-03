@@ -31,10 +31,10 @@
 #include <QtCore>
 #include <QWidget>
 
-#include "impl/SelfListener.h"
+#include "SelfListener.h"
 
 // Konsole
-#include "impl/History.h"
+#include "History.h"
 
 
 class Emulation;

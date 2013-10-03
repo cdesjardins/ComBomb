@@ -29,7 +29,7 @@
 #include <QtCore/QPointer>
 #include <QWidget>
 
-#include "impl/Character.h"
+#include "Character.h"
 
 class QDrag;
 class QDragEnterEvent;

@@ -2,10 +2,11 @@
 #include "ui_childform.h"
 
 ChildForm::ChildForm(QWidget *parent) :
-    QWidget(parent),
+    QTerminal(parent),
     ui(new Ui::ChildForm)
 {
     ui->setupUi(this);
+    //setCentralWidget(new QTerminal());
 }
 
 ChildForm::~ChildForm()
@@ -16,7 +17,8 @@ ChildForm::~ChildForm()
 void ChildForm::setTargetInterface(const boost::shared_ptr<TgtIntf> &targetInterface)
 {
     std::string szTitle;
-    ui->_textEdit->setTargetInterface(targetInterface);
+
+    //ui->_textEdit->setTargetInterface(targetInterface);
     targetInterface->TgtGetTitle(&szTitle);
     setWindowTitle(szTitle.c_str());
 }

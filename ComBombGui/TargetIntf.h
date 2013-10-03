@@ -6,7 +6,6 @@
 #include <fstream>
 #include <string>
 #include "ThreadSafeQueue.h"
-#include "cryptlib.h"
 #ifndef Q_MOC_RUN
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
@@ -244,6 +243,8 @@ protected:
     TgtConnection _tgtConnectionConfig;
 };
 
+struct TgtSshImpl;
+
 class TgtSshIntf : public TgtIntf
 {
 public:
@@ -266,10 +267,8 @@ public:
     virtual int TgtDisconnect();
     virtual bool TgtConnected();
     virtual void TgtGetTitle(std::string *szTitle);
-    virtual TgtConnection TgtGetConfig()
-    {
-        return _tgtConnectionConfig;
-    }
+    virtual TgtConnection TgtGetConfig();
+
 
 protected:
     TgtSshIntf (const TgtConnection &config);
@@ -278,10 +277,8 @@ protected:
     void sshRecv();
     void sshSend();
 
-    TgtConnection _tgtConnectionConfig;
-    CRYPT_SESSION _cryptSession;
-    volatile bool _sshThreadRun;
-    boost::scoped_ptr<boost::thread> _sshThread;
+    boost::scoped_ptr<TgtSshImpl> _sshData;
+
 };
 
 #endif

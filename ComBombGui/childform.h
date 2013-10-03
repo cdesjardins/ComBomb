@@ -3,12 +3,13 @@
 
 #include <QWidget>
 #include "TargetIntf.h"
+#include "QTerminal"
 
 namespace Ui {
 class ChildForm;
 }
 
-class ChildForm : public QWidget
+class ChildForm : public QTerminal
 {
     Q_OBJECT
     

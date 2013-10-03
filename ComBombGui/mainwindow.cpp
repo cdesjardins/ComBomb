@@ -2,9 +2,9 @@
 #include <QMessageBox>
 #include "mainwindow.h"
 #include "childform.h"
-#include "cbtextedit.h"
 #include "TargetIntf.h"
 #include "ui_mainwindow.h"
+#include "cryptlib.h"
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -29,11 +29,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    /*
     QList<CBTextEdit*> list = this->findChildren<CBTextEdit *>();
     foreach(CBTextEdit *w, list)
     {
         w->tgtDisconnect();
     }
+    */
     delete _ui;
     cryptEnd();
     qDebug("~mainwindow");

@@ -22,9 +22,9 @@
 #define Q_UNIXTERMINALIMPL
 
 #include <QtGui>
-#include "impl/TerminalModel.h"
-#include "impl/TerminalView.h"
-#include "QTerminalInterface.h"
+#include "TerminalModel.h"
+#include "TerminalView.h"
+#include "../QTerminalInterface.h"
 
 class QTerminalImpl : public QTerminalInterface
 {

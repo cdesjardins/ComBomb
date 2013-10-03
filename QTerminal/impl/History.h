@@ -29,7 +29,7 @@
 #include <QtCore>
 
 // Konsole
-#include "impl/Character.h"
+#include "Character.h"
 
 
 

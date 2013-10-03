@@ -22,7 +22,7 @@
 */
 
 // Own
-#include "impl/TerminalCharacterDecoder.h"
+#include "TerminalCharacterDecoder.h"
 
 // Qt
 #include <QtCore/QTextStream>

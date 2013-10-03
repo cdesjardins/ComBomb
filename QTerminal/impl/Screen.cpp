@@ -21,7 +21,7 @@
 */
 
 // Own
-#include "impl/Screen.h"
+#include "Screen.h"
 
 // Standard
 #include <stdio.h>
@@ -35,8 +35,8 @@
 #include <QtCore/QDate>
 
 // Konsole
-#include "impl/konsole_wcwidth.h"
-#include "impl/TerminalCharacterDecoder.h"
+#include "konsole_wcwidth.h"
+#include "TerminalCharacterDecoder.h"
 
 //FIXME: this is emulation specific. Use false for xterm, true for ANSI.
 //FIXME: see if we can get this from terminfo.

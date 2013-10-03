@@ -34,8 +34,8 @@
 #include <QtCore/QTimer>
 
 // Konsole
-#include "impl/Emulation.h"
-#include "impl/Screen.h"
+#include "Emulation.h"
+#include "Screen.h"
 
 #define MODE_AppScreen (MODES_SCREEN+0)
 #define MODE_AppCuKeys (MODES_SCREEN+1)

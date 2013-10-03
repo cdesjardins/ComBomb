@@ -21,7 +21,7 @@
 */
 
 // Own
-#include "impl/Vt102Emulation.h"
+#include "Vt102Emulation.h"
 
 #if defined(__osf__) || defined(__APPLE__)
 #define AVOID_XKB
@@ -43,7 +43,7 @@
 #include <QtCore/QByteRef>
 
 // Konsole
-#include "impl/Screen.h"
+#include "Screen.h"
 
 #if defined(HAVE_XKB)
 void scrolllock_set_off();

@@ -28,7 +28,7 @@
 #include <QtCore/QRect>
 
 // Konsole
-#include "impl/Character.h"
+#include "Character.h"
 
 class Screen;
 

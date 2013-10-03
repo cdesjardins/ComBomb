@@ -20,13 +20,13 @@
 */
 
 // Own
-#include "impl/ScreenWindow.h"
+#include "ScreenWindow.h"
 
 // Qt
 #include <QtCore>
 
 // Konsole
-#include "impl/Screen.h"
+#include "Screen.h"
 
 ScreenWindow::ScreenWindow(QObject* parent)
     : QObject(parent)

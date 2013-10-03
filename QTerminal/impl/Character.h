@@ -29,7 +29,7 @@
 #include <QtCore/QHash>
 
 // Local
-#include "impl/CharacterColor.h"
+#include "CharacterColor.h"
 
 typedef unsigned char LineProperty;
 

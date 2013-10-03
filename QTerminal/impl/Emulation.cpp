@@ -24,7 +24,7 @@
 */
 
 // Own
-#include "impl/Emulation.h"
+#include "Emulation.h"
 
 // System
 #include <assert.h>
@@ -43,9 +43,9 @@
 #include <QtCore/QTime>
 
 // Konsole
-#include "impl/Screen.h"
-#include "impl/TerminalCharacterDecoder.h"
-#include "impl/ScreenWindow.h"
+#include "Screen.h"
+#include "TerminalCharacterDecoder.h"
+#include "ScreenWindow.h"
 
 Emulation::Emulation() :
   _currentScreen(0),
