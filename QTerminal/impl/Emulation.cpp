@@ -171,12 +171,12 @@ void Emulation::setCodec(EmulationCodec codec)
 
 void Emulation::setKeyBindings(const QString& name)
 {
-  _keyTranslator = KeyboardTranslatorManager::instance()->findTranslator(name);
+    _keyTranslator = KeyboardTranslatorManager::instance()->findTranslator(name);
 }
 
 QString Emulation::keyBindings()
 {
-  return _keyTranslator->name();
+    return _keyTranslator->name();
 }
 
 // Interpreting Codes ---------------------------------------------------------
