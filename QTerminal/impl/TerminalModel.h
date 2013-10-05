@@ -56,7 +56,7 @@ class TerminalModel : public QObject {
     Q_OBJECT
 
 public:
-    //Q_PROPERTY(QString keyBindings READ keyBindings WRITE setKeyBindings)
+    Q_PROPERTY(QString keyBindings READ keyBindings WRITE setKeyBindings)
     Q_PROPERTY(QSize size READ size WRITE setSize)
 
     /**
@@ -171,9 +171,9 @@ public:
      * names of available key bindings can be determined using the
      * KeyboardTranslatorManager class.
      */
-    //void setKeyBindings(const QString& id);
+    void setKeyBindings(const QString& id);
     /** Returns the name of the key bindings used by this session. */
-    //QString keyBindings() const;
+    QString keyBindings() const;
 
     /** Specifies whether a utmp entry should be created for the pty used by this session. */
     void setAddToUtmp(bool);

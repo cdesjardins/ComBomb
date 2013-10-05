@@ -58,10 +58,13 @@ int TgtIntf::TgtRead(boost::asio::mutable_buffer &b)
 int TgtIntf::TgtWrite(const char* szWriteData, int nBytes)
 {
     int ret = 0;
-    boost::asio::mutable_buffer b;
-    _bufferPool.dequeue(b);
-    boost::asio::buffer_copy(b, boost::asio::buffer(szWriteData, nBytes));
-    _outgoingData.enqueue(boost::asio::buffer(b, nBytes));
+    if (nBytes > 0)
+    {
+        boost::asio::mutable_buffer b;
+        _bufferPool.dequeue(b);
+        boost::asio::buffer_copy(b, boost::asio::buffer(szWriteData, nBytes));
+        _outgoingData.enqueue(boost::asio::buffer(b, nBytes));
+    }
     return ret;
 }
 

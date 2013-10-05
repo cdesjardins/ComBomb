@@ -96,8 +96,8 @@ public:
 #define INTENSITIES   2
 #define TABLE_COLORS  (INTENSITIES * BASE_COLORS)
 
-#define DEFAULT_FORE_COLOR 0
-#define DEFAULT_BACK_COLOR 1
+#define DEFAULT_FORE_COLOR 1
+#define DEFAULT_BACK_COLOR 0
 
 //a standard set of colors using black text on a white background.
 //defined in TerminalDisplay.cpp

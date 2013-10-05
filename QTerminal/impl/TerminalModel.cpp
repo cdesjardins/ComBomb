@@ -332,6 +332,16 @@ Emulation* TerminalModel::emulation() const
     return _emulation;
 }
 
+QString TerminalModel::keyBindings() const
+{
+    return _emulation->keyBindings();
+}
+
+void TerminalModel::setKeyBindings(const QString &id)
+{
+    _emulation->setKeyBindings(id);
+}
+
 void TerminalModel::setHistoryType(const HistoryType &hType)
 {
     _emulation->setHistory(hType);

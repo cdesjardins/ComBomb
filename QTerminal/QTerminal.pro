@@ -21,7 +21,8 @@ SOURCES += \
     impl/QTerminalImpl.cpp \
     impl/konsole_wcwidth.cpp \
     impl/History.cpp \
-    impl/Emulation.cpp
+    impl/Emulation.cpp \
+    impl/KeyboardTranslator.cpp
 
 HEADERS += qterminal.h \
     QTerminalInterface.h \
@@ -42,7 +43,9 @@ HEADERS += qterminal.h \
     impl/CharacterColor.h \
     impl/Character.h \
     TgtIntf.h \
-    impl/ThreadSafeQueue.h
+    impl/ThreadSafeQueue.h \
+    impl/KeyboardTranslator.h \
+    impl/ExtendedDefaultTranslator.h
 unix:!symbian {
     maemo5 {
         target.path = /opt/usr/lib

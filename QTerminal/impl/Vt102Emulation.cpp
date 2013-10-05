@@ -43,6 +43,7 @@
 #include <QtCore/QByteRef>
 
 // Konsole
+#include "KeyboardTranslator.h"
 #include "Screen.h"
 
 #if defined(HAVE_XKB)
@@ -1081,10 +1082,58 @@ void Vt102Emulation::sendText(const QString& text)
 
 void Vt102Emulation::sendKeyEvent(QKeyEvent* event)
 {
-    QByteArray textToSend;
-    textToSend += _codec->fromUnicode(event->text());
+    Qt::KeyboardModifiers modifiers = event->modifiers();
+    KeyboardTranslator::States states = KeyboardTranslator::NoState;
 
-    sendData(textToSend.constData(), textToSend.length());
+    // get current states
+    if ( getMode(MODE_NewLine)  ) states |= KeyboardTranslator::NewLineState;
+    if ( getMode(MODE_Ansi)     ) states |= KeyboardTranslator::AnsiState;
+    if ( getMode(MODE_AppCuKeys)) states |= KeyboardTranslator::CursorKeysState;
+    if ( getMode(MODE_AppScreen)) states |= KeyboardTranslator::AlternateScreenState;
+
+    // lookup key binding
+    if ( _keyTranslator )
+    {
+        KeyboardTranslator::Entry entry = _keyTranslator->findEntry(
+                    event->key() ,
+                    modifiers,
+                    states );
+
+        // send result to terminal
+        QByteArray textToSend;
+
+        // special handling for the Alt (aka. Meta) modifier.  pressing
+        // Alt+[Character] results in Esc+[Character] being sent
+        // (unless there is an entry defined for this particular combination
+        //  in the keyboard modifier)
+        bool wantsAltModifier = entry.modifiers() & entry.modifierMask() & Qt::AltModifier;
+        bool wantsAnyModifier = entry.state() & entry.stateMask() & KeyboardTranslator::AnyModifierState;
+
+        if ( modifiers & Qt::AltModifier && !(wantsAltModifier || wantsAnyModifier)
+             && !event->text().isEmpty() )
+        {
+            textToSend.prepend("\033");
+        }
+
+        if ( entry.command() != KeyboardTranslator::NoCommand )
+        {
+            if (entry.command() & KeyboardTranslator::EraseCommand)
+                textToSend += getErase();
+            // TODO command handling
+        }
+        else if ( !entry.text().isEmpty() )
+        {
+            textToSend += _codec->fromUnicode(entry.text(true,modifiers));
+        }
+        else
+            textToSend += _codec->fromUnicode(event->text());
+
+        sendData( textToSend.constData() , textToSend.length() );
+    }
+    else
+    {
+        // FIXME: error message.. status bar...
+    }
 }
 
 /* ------------------------------------------------------------------------- */

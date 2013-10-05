@@ -63,7 +63,7 @@ void QTerminalImpl::initialize(const boost::shared_ptr<TgtIntf> &targetInterface
     m_terminalModel->setCodec(QTextCodec::codecForName("UTF-8"));
     m_terminalModel->setHistoryType(HistoryTypeBuffer(100000));
     m_terminalModel->setDarkBackground(true);
-    //m_terminalModel->setKeyBindings("");
+    m_terminalModel->setKeyBindings("");
     m_terminalModel->run();
     m_terminalModel->addView(m_terminalView);
 }

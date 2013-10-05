@@ -43,6 +43,7 @@
 #include <QtCore/QTime>
 
 // Konsole
+#include "KeyboardTranslator.h"
 #include "Screen.h"
 #include "TerminalCharacterDecoder.h"
 #include "ScreenWindow.h"
@@ -51,6 +52,7 @@ Emulation::Emulation() :
     _currentScreen(0),
     _codec(0),
     _decoder(0),
+    _keyTranslator(0),
     _usesMouse(false)
 {
     // create screens with a default size
@@ -165,6 +167,16 @@ void Emulation::setCodec(EmulationCodec codec)
     {
         setCodec(QTextCodec::codecForLocale());
     }
+}
+
+void Emulation::setKeyBindings(const QString& name)
+{
+  _keyTranslator = KeyboardTranslatorManager::instance()->findTranslator(name);
+}
+
+QString Emulation::keyBindings()
+{
+  return _keyTranslator->name();
 }
 
 // Interpreting Codes ---------------------------------------------------------

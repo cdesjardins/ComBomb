@@ -40,7 +40,7 @@ class HistoryType;
 class Screen;
 class ScreenWindow;
 class TerminalCharacterDecoder;
-
+class KeyboardTranslator;
 /**
  * This enum describes the available states which
  * the terminal emulation may be set to.
@@ -193,12 +193,12 @@ public:
      * ( received through sendKeyEvent() ) into character
      * streams to send to the terminal.
      */
-    //void setKeyBindings(const QString& name);
+    void setKeyBindings(const QString& name);
     /**
      * Returns the name of the emulation's current key bindings.
      * See setKeyBindings()
      */
-    //QString keyBindings();
+    QString keyBindings();
 
     /**
      * Copies the current image into the history and clears the screen.
@@ -427,7 +427,7 @@ protected:
     //the current text codec.  (this allows for rendering of non-ASCII characters in text files etc.)
     const QTextCodec* _codec;
     QTextDecoder* _decoder;
-
+    const KeyboardTranslator* _keyTranslator; // the keyboard layout
 protected slots:
     /**
      * Schedules an update of attached views.
