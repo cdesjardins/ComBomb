@@ -894,7 +894,7 @@ void TerminalView::updateImage()
         const Character* currentLine = &_image[y * this->_columns];
         const Character* const newLine = &newimg[y * columns];
 
-        bool updateLine = false;
+        int updateLine = 0;
 
         // The dirty mask indicates which characters need repainting. We also
         // mark surrounding neighbours dirty, in case the character exceeds
@@ -2611,13 +2611,9 @@ void TerminalView::makeImage()
 // calculate the needed size
 void TerminalView::setSize(int columns, int lines)
 {
-    //FIXME - Not quite correct, a small amount of additional space
-    // will be used for margins, the scrollbar etc.
-    // we need to allow for this so that '_size' does allow
-    // enough room for the specified number of columns and lines to fit
-
-    QSize newSize = QSize(columns * _fontWidth,
-                          lines * _fontHeight);
+    int scrollBarWidth = _scrollBar->style()->pixelMetric(QStyle::PM_ScrollBarExtent) +
+            style()->pixelMetric(QStyle::PM_MDIFrameWidth);
+    QSize newSize = QSize((columns * _fontWidth) + scrollBarWidth, lines * _fontHeight);
 
     if (newSize != size())
     {

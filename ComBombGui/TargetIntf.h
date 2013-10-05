@@ -166,6 +166,7 @@ protected:
     void TgtReadCallback(const boost::system::error_code& error, const size_t bytesTransferred);
     void serviceThread();
     void writerThread();
+    virtual void TgtMakeConnection();
 
     TgtConnection _tgtConnectionConfig;
     boost::asio::io_service _service;
@@ -198,6 +199,7 @@ public:
 
 protected:
     TgtFileIntf(const TgtConnection &config);
+    virtual void TgtMakeConnection();
 
     std::ifstream _inputFile;
     TgtConnection _tgtConnectionConfig;
@@ -231,10 +233,11 @@ public:
     virtual TgtConnection TgtGetConfig();
 
 protected:
+    void TgtGetErrorMsg(std::string *errmsg, int status, const std::string &defaultErrMsg);
     TgtSshIntf (const TgtConnection &config);
     void sshThread();
-    void sshRecv();
-    void sshSend();
+    bool sshRecv();
+    bool sshSend();
     virtual void TgtMakeConnection();
 
     boost::scoped_ptr<TgtSshImpl> _sshData;

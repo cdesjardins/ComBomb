@@ -16,7 +16,6 @@ class ChildForm : public QTerminal
 public:
     explicit ChildForm(const boost::shared_ptr<TgtIntf> &targetInterface, QWidget* parent = 0);
     ~ChildForm();
-    //void setTargetInterface(const boost::shared_ptr<TgtIntf> &targetInterface);
 
 private:
     Ui::ChildForm* ui;

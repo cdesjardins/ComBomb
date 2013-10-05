@@ -46,6 +46,10 @@
 #include "KeyboardTranslator.h"
 #include "Screen.h"
 
+#ifndef Q_MOC_RUN
+#include <boost/format.hpp>
+#endif
+
 #if defined(HAVE_XKB)
 void scrolllock_set_off();
 void scrolllock_set_on();
@@ -952,9 +956,8 @@ void Vt102Emulation::sendString(const char* s, int length)
 
 void Vt102Emulation::reportCursorPosition()
 {
-    char tmp[20];
-    sprintf(tmp, "\033[%d;%dR", _currentScreen->getCursorY() + 1, _currentScreen->getCursorX() + 1);
-    sendString(tmp);
+    boost::format f("\033[%d;%dR");
+    sendString(str(f % (_currentScreen->getCursorY() + 1) % (_currentScreen->getCursorX() + 1)).c_str());
 }
 
 /*
@@ -999,9 +1002,8 @@ void Vt102Emulation::reportSecondaryAttributes()
 void Vt102Emulation::reportTerminalParms(int p)
 // DECREPTPARM
 {
-    char tmp[100];
-    sprintf(tmp, "\033[%d;1;1;112;112;1;0x", p); // not really true.
-    sendString(tmp);
+    boost::format f("\033[%d;1;1;112;112;1;0x"); // not really true.
+    sendString(str(f % p).c_str());
 }
 
 /*!
@@ -1042,7 +1044,6 @@ void Vt102Emulation::reportAnswerBack()
 
 void Vt102Emulation::sendMouseEvent(int cb, int cx, int cy, int eventType)
 {
-    char tmp[20];
     if (cx < 1 || cy < 1)
     {
         return;
@@ -1059,8 +1060,8 @@ void Vt102Emulation::sendMouseEvent(int cb, int cx, int cy, int eventType)
     {
         cb += 0x20; //add 32 to signify motion event
     }
-    sprintf(tmp, "\033[M%c%c%c", cb + 0x20, cx + 0x20, cy + 0x20);
-    sendString(tmp);
+    boost::format f("\033[M%c%c%c");
+    sendString(str(f % (cb + 0x20) % (cx + 0x20) % (cy + 0x20)).c_str());
 }
 
 // Keyboard Handling ------------------------------------------------------- --
@@ -1204,7 +1205,7 @@ unsigned short Vt102Emulation::applyCharset(unsigned short c)
 void Vt102Emulation::resetCharset(int scrno)
 {
     _charset[scrno].cu_cs   = 0;
-    strncpy(_charset[scrno].charset, "BBBB", 4);
+    memset(_charset[scrno].charset, 'B', sizeof(_charset[scrno].charset));
     _charset[scrno].sa_graphic = false;
     _charset[scrno].sa_pound   = false;
     _charset[scrno].graphic = false;

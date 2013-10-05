@@ -51,7 +51,7 @@ protected:
     void focusInEvent(QFocusEvent* focusEvent);
     void showEvent(QShowEvent*);
     virtual void resizeEvent(QResizeEvent*);
-
+    QSize sizeHint() const;
 private:
     void initialize(const boost::shared_ptr<TgtIntf> &targetInterface);
 

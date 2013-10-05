@@ -39,7 +39,6 @@ void QTerminalImpl::initialize(const boost::shared_ptr<TgtIntf> &targetInterface
     m_terminalView->setContextMenuPolicy(Qt::CustomContextMenu);
     m_terminalView->setTripleClickMode(TerminalView::SelectWholeLine);
     m_terminalView->setTerminalSizeStartup(true);
-    m_terminalView->setSize(80, 40);
     m_terminalView->setScrollBarPosition(TerminalView::ScrollBarRight);
 
     connect(m_terminalView, SIGNAL(customContextMenuRequested(QPoint)),
@@ -65,6 +64,7 @@ void QTerminalImpl::initialize(const boost::shared_ptr<TgtIntf> &targetInterface
     m_terminalModel->setDarkBackground(true);
     m_terminalModel->setKeyBindings("");
     m_terminalModel->run();
+    m_terminalView->setSize(80, 25);
     m_terminalModel->addView(m_terminalView);
 }
 
@@ -94,6 +94,11 @@ void QTerminalImpl::setSize(int h, int v)
 void QTerminalImpl::sendText(const QString& text)
 {
     m_terminalModel->sendText(text);
+}
+
+QSize QTerminalImpl::sizeHint() const
+{
+    return m_terminalView->sizeHint();
 }
 
 void QTerminalImpl::setCursorType(CursorType type, bool blinking)

@@ -18,11 +18,7 @@ MainWindow::MainWindow(QWidget* parent) :
     int status = cryptInit();
     if (cryptStatusError(status))
     {
-        QMessageBox msgBox;
-        msgBox.setText("Unable to init crypt lib");
-        msgBox.setStandardButtons(QMessageBox::Ok);
-        msgBox.setIcon(QMessageBox::Critical);
-        msgBox.exec();
+        MainWindow::errorBox("Unable to init crypt lib");
     }
 }
 
@@ -38,6 +34,17 @@ MainWindow::~MainWindow()
     delete _ui;
     cryptEnd();
     qDebug("~mainwindow");
+}
+
+void MainWindow::errorBox(QString errMsg)
+{
+    QMessageBox msgBox;
+    msgBox.setText(errMsg);
+    msgBox.setStandardButtons(QMessageBox::Ok);
+    msgBox.setIcon(QMessageBox::Critical);
+    msgBox.setWindowIcon(QIcon(":/images/ComBomb16.png"));
+    msgBox.setWindowTitle("Error");
+    msgBox.exec();
 }
 
 void MainWindow::on_actionOpen_triggered()
@@ -64,14 +71,11 @@ void MainWindow::on_actionOpen_triggered()
             QMdiSubWindow* subWindow = _mdiArea->addSubWindow(childForm);
             _connections.push_back(intf);
             subWindow->show();
+            _ui->_statusBar->showMessage("Opened connection", 5000);
         }
         catch (const std::exception &e)
         {
-            QMessageBox messageBox;
-            QString err = "Unable to open connection to: ";
-            err.append(e.what());
-            messageBox.critical(0, "Error", err);
-            messageBox.setFixedSize(500, 200);
+            MainWindow::errorBox(e.what());
         }
     }
 }

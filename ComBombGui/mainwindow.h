@@ -16,7 +16,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget* parent = 0);
     ~MainWindow();
-
+    static void errorBox(QString errMsg);
 private slots:
     void on_actionOpen_triggered();
 

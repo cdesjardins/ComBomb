@@ -27,6 +27,7 @@ public:
     const TgtSshIntf::TgtConnection getSshConfig() const;
 
     ConnectionType getConnectionType();
+
 private slots:
     void on__browseButton_clicked();
 

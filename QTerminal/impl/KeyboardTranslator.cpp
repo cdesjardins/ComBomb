@@ -803,7 +803,9 @@ QByteArray KeyboardTranslator::Entry::unescape(const QByteArray& input) const
                     }
 
                     int charValue = 0;
-                    sscanf(hexDigits, "%x", &charValue);
+                    std::stringstream s;
+                    s << hexDigits;
+                    s >> std::hex >> charValue;
 
                     replacement[0] = (char)charValue;
 

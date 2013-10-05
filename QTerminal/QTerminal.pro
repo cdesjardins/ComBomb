@@ -22,7 +22,8 @@ SOURCES += \
     impl/konsole_wcwidth.cpp \
     impl/History.cpp \
     impl/Emulation.cpp \
-    impl/KeyboardTranslator.cpp
+    impl/KeyboardTranslator.cpp \
+    impl/TgtIntf.cpp
 
 HEADERS += qterminal.h \
     QTerminalInterface.h \

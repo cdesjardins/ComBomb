@@ -674,7 +674,7 @@ private:
     int _bellMode;
 
     bool _blinking;   // hide text in paintEvent
-    bool _hasBlinker; // has characters to blink
+    int _hasBlinker; // has characters to blink
     bool _cursorBlinking;     // hide cursor in paintEvent
     bool _hasBlinkingCursor;  // has blinking cursor enabled
     bool _ctrlDrag;           // require Ctrl key for drag

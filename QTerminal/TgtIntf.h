@@ -26,15 +26,19 @@ public:
         return m_nTotalTx;
     };
     void TgtReturnReadBuffer(const boost::asio::mutable_buffer &b);
+
 protected:
+    void TgtAttemptReconnect();
+    virtual void TgtMakeConnection() = 0;
+
     int m_nTotalTx;
     int m_nTotalRx;
     ThreadSafeQueue<boost::asio::mutable_buffer> _incomingData;
     ThreadSafeQueue<boost::asio::mutable_buffer> _outgoingData;
     ThreadSafeQueue<boost::asio::mutable_buffer> _bufferPool;
     boost::asio::mutable_buffer _currentIncomingBuffer;
-
 private:
+    bool _running;
     static int deleteBuffersFunctor(std::list<boost::asio::mutable_buffer> &pool);
 };
 
