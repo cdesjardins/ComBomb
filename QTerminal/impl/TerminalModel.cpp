@@ -42,7 +42,7 @@
 #include "TerminalView.h"
 #include "Vt102Emulation.h"
 
-TerminalModel::TerminalModel() :
+TerminalModel::TerminalModel(const boost::shared_ptr<TgtIntf> &targetInterface) :
     _shellProcess(0)
   , _emulation(0)
   , _monitorActivity(false)
@@ -54,6 +54,7 @@ TerminalModel::TerminalModel() :
   , _addToUtmp(false)
   , _fullScripting(false)
   , _hasDarkBackground(false)
+  , _targetInterface(targetInterface)
 {
     //create emulation backend
     _emulation = new Vt102Emulation();
@@ -67,8 +68,7 @@ TerminalModel::TerminalModel() :
     // connect( _emulation,SIGNAL(imageSizeChanged(int,int)) , this ,
     //        SLOT(onEmulationSizeChange(int,int)) );
 
-    int fd = 0;
-    _selfListener = new SelfListener(fd);
+    _selfListener = new SelfListener(targetInterface);
     _selfListener->start();
     connect( _selfListener, SIGNAL(recvData(const char*,int)),
              this, SLOT(onReceiveBlock(const char*,int)), Qt::BlockingQueuedConnection);
@@ -76,12 +76,6 @@ TerminalModel::TerminalModel() :
 
     connect( _emulation, SIGNAL(sendData(const char*,int))
              ,this,SLOT(sendData(const char*,int)));
-
-    //connect( _emulation,SIGNAL(lockPtyRequest(bool)),_shellProcess,SLOT(lockPty(bool)) );
-    //connect( _emulation,SIGNAL(useUtf8Request(bool)),_shellProcess,SLOT(setUtf8Mode(bool)) );
-
-
-    //connect( _shellProcess,SIGNAL(done(int)), this, SLOT(done(int)) );
 
     //setup timer for monitoring session activity
     _monitorTimer = new QTimer(this);
@@ -155,10 +149,7 @@ void TerminalModel::viewDestroyed(QObject* view)
 
 void TerminalModel::sendData(const char *buf, int len)
 {
-    /*
-    size_t bytesWritten = ::write(_kpty->masterFd(), buf, len);
-    (void)bytesWritten;
-    */
+    _targetInterface->TgtWrite(buf, len);
 }
 
 void TerminalModel::removeView(TerminalView* widget)

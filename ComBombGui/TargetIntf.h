@@ -5,46 +5,14 @@
 #include <list>
 #include <fstream>
 #include <string>
-#include "ThreadSafeQueue.h"
+
 #ifndef Q_MOC_RUN
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
 #include <boost/array.hpp>
-#include <boost/enable_shared_from_this.hpp>
 #endif
 
-class TgtIntf
-{
-public:
-    TgtIntf(void);
-    virtual ~TgtIntf(void);
-
-    virtual void TgtConnect()
-    {
-        TgtMakeConnection();
-    };
-    virtual int TgtDisconnect() = 0;
-    virtual int TgtRead(boost::asio::mutable_buffer &b);
-    virtual int TgtWrite(const char *szWriteData, int nBytes);
-    virtual bool TgtConnected() = 0;
-    virtual void TgtGetTitle(std::string *szTitle) = 0;
-    virtual int TgtGetBytesRx() { return m_nTotalRx; };
-    virtual int TgtGetBytesTx() { return m_nTotalTx; };
-    void TgtReturnReadBuffer(const boost::asio::mutable_buffer &b);
-protected:
-    virtual void TgtMakeConnection() = 0;
-
-    int m_nTotalTx;
-    int m_nTotalRx;
-    ThreadSafeQueue<boost::asio::mutable_buffer> _incomingData;
-    ThreadSafeQueue<boost::asio::mutable_buffer> _outgoingData;
-    ThreadSafeQueue<boost::asio::mutable_buffer> _bufferPool;
-    boost::asio::mutable_buffer _currentIncomingBuffer;
-
-private:
-    static int deleteBuffersFunctor(std::list<boost::asio::mutable_buffer> &pool);
-
-};
+#include "TgtIntf.h"
 
 enum eTelnetState
 {
@@ -151,7 +119,6 @@ protected:
     int TgtDeny(eTelnetOption eOpt);
     int TgtConfirm(eTelnetOption eOpt);
     int TgtSendCommand(eTelnetCommand eCmd, eTelnetOption eOpt);
-    virtual void TgtMakeConnection();
 
     int m_nSocket;
     char m_sTelnetRx[512];
@@ -201,7 +168,6 @@ public:
 
 protected:
     TgtSerialIntf (const TgtConnection &config);
-    virtual void TgtMakeConnection();
     void TgtReadCallback(const boost::system::error_code& error, const size_t bytesTransferred);
     void serviceThread();
     void writerThread();
@@ -237,7 +203,6 @@ public:
 
 protected:
     TgtFileIntf(const TgtConnection &config);
-    virtual void TgtMakeConnection();
 
     std::ifstream _inputFile;
     TgtConnection _tgtConnectionConfig;
@@ -272,10 +237,10 @@ public:
 
 protected:
     TgtSshIntf (const TgtConnection &config);
-    virtual void TgtMakeConnection();
     void sshThread();
     void sshRecv();
     void sshSend();
+    virtual void TgtMakeConnection();
 
     boost::scoped_ptr<TgtSshImpl> _sshData;
 

@@ -19,7 +19,7 @@ struct TgtSshImpl
 boost::shared_ptr<TgtSshIntf> TgtSshIntf::createSshConnection(const TgtConnection &config)
 {
     boost::shared_ptr<TgtSshIntf> ret(new TgtSshIntf(config));
-
+    ret->TgtMakeConnection();
     return ret;
 }
 

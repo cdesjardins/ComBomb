@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include "TargetIntf.h"
-#include "QTerminal"
+#include "QTerminal/QTerminal"
 
 namespace Ui {
 class ChildForm;
@@ -14,9 +14,9 @@ class ChildForm : public QTerminal
     Q_OBJECT
     
 public:
-    explicit ChildForm(QWidget *parent = 0);
+    explicit ChildForm(const boost::shared_ptr<TgtIntf> &targetInterface, QWidget *parent = 0);
     ~ChildForm();
-    void setTargetInterface(const boost::shared_ptr<TgtIntf> &targetInterface);
+    //void setTargetInterface(const boost::shared_ptr<TgtIntf> &targetInterface);
 
 private:
     Ui::ChildForm *ui;

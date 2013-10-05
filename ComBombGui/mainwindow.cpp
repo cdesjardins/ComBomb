@@ -29,13 +29,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    /*
-    QList<CBTextEdit*> list = this->findChildren<CBTextEdit *>();
-    foreach(CBTextEdit *w, list)
+    std::vector<boost::shared_ptr<TgtIntf> >::iterator it;
+    for (it = _connections.begin(); it < _connections.end(); it++)
     {
-        w->tgtDisconnect();
+        boost::shared_ptr<TgtIntf> connection = *it;
+        connection->TgtDisconnect();
     }
-    */
+    _connections.clear();
     delete _ui;
     cryptEnd();
     qDebug("~mainwindow");
@@ -47,7 +47,6 @@ void MainWindow::on_actionOpen_triggered()
     {
         try
         {
-            ChildForm *childForm = new ChildForm();
             boost::shared_ptr<TgtIntf> intf;
             switch (_openDialog->getConnectionType())
             {
@@ -62,8 +61,9 @@ void MainWindow::on_actionOpen_triggered()
                 break;
             }
 
-            childForm->setTargetInterface(intf);
+            ChildForm *childForm = new ChildForm(intf);
             QMdiSubWindow *subWindow = _mdiArea->addSubWindow(childForm);
+            _connections.push_back(intf);
             subWindow->show();
         }
         catch (const std::exception &e)

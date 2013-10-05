@@ -30,8 +30,8 @@ class QTerminal : public QTerminalImpl
 {
     Q_OBJECT
 public:
-    QTerminal(QWidget *parent = 0)
-        : QTerminalImpl(parent) { }
+    QTerminal(const boost::shared_ptr<TgtIntf> &targetInterface, QWidget *parent = 0)
+        : QTerminalImpl(targetInterface, parent) { }
     ~QTerminal() { }
 };
 

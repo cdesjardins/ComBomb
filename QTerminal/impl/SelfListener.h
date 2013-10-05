@@ -19,12 +19,13 @@
 #define SELFLISTENER_H
 
 #include <QThread>
+#include "QTerminal/TgtIntf.h"
 
 class SelfListener : public QThread
 {
     Q_OBJECT
 public:
-    explicit SelfListener(int a, QObject *parent = 0);
+    explicit SelfListener(const boost::shared_ptr<TgtIntf> &targetInterface, QObject *parent = 0);
 
 signals:
     void recvData(const char* stdOutBuffer, int stdOutlen);
@@ -33,7 +34,7 @@ public slots:
 
 protected:
     void run();
-    int _a;
+    boost::shared_ptr<TgtIntf> _targetInterface;
 };
 
 #endif // SELFLISTENER_H

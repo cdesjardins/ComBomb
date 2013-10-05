@@ -22,8 +22,7 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h \
     childform.h \
     TargetIntf.h \
-    opendialog.h \
-    ThreadSafeQueue.h
+    opendialog.h
 
 FORMS    += mainwindow.ui \
     childform.ui \
@@ -52,13 +51,16 @@ win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../cl/release/ -lcl32 -lad
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../cl/debug/ -lcl32 -ladvapi32
 else:unix: LIBS += $$PWD/../cl/libcl.a
 
-INCLUDEPATH += $$PWD/../cl
-DEPENDPATH += $$PWD/../cl
+INCLUDEPATH += $$PWD/../cl $$PWD/..
+DEPENDPATH += $$PWD/../cl $$PWD/..
 
 win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../cl/release/cl32.lib
 else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../cl/debug/cl32.lib
 
 win32: QMAKE_CXXFLAGS += -D_WINDOWS -DSTATIC_LIB
+
+#QTerminal
+
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../QTerminal/release/ -lQTerminal
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../QTerminal/debug/ -lQTerminal

@@ -17,46 +17,29 @@
 
 #include "SelfListener.h"
 
-SelfListener::SelfListener(int a, QObject *parent) :
-    QThread(parent) {
-    _a = a;
+SelfListener::SelfListener(const boost::shared_ptr<TgtIntf> &targetInterface, QObject *parent) :
+    QThread(parent),
+    _targetInterface(targetInterface)
+{
 }
-#include <fstream>
 
 void SelfListener::run()
 {
-#if 0
-    char buf[4096];
-    int len;
+
+    boost::asio::mutable_buffer b;
+
     bool running = true;
-    while(running) {
-         while((len = ::read(_a, buf, 4096)) > 0) {
-            buf[len] = 0; // Just in case.
-            emit recvData(buf, len);
-            msleep(30);
-         }
-         if(len < 0)
-           running = false;
-    }
-#else
-    char buf[4096];
-    int len;
-    bool running = true;
-    static int x = 0;
-    len = sprintf(buf, "start");
-    emit recvData(buf, len);
-    std::ifstream _inputFile;
-    _inputFile.open("C:/Users/ChrisD/software_devel/ComBomb-build-Desktop_Qt_5_0_1_MSVC2010_32bit-Debug/test.cbd", std::ifstream::in | std::ifstream::binary);
     while(running)
     {
-        _inputFile.read(buf, sizeof(buf));
-        len = (size_t)_inputFile.gcount();
-        emit recvData(buf, len);
-        if (x++ > 100000)
+        int bytes = _targetInterface->TgtRead(b);
+        if (bytes > 0)
         {
-            running = false;
+            const char *data = boost::asio::buffer_cast<const char*>(b);
+            emit recvData(data, bytes);
+            _targetInterface->TgtReturnReadBuffer(b);
+#ifdef OUT_TO_DEBUG_FILE
+            _debugFile.write(data, bytes);
+#endif
         }
     }
-
-#endif
 }

@@ -26,6 +26,7 @@ private:
     OpenDialog *_openDialog;
     Ui::MainWindow *_ui;
     QMdiArea *_mdiArea;
+    std::vector<boost::shared_ptr<TgtIntf> > _connections;
 };
 
 #endif // MAINWINDOW_H

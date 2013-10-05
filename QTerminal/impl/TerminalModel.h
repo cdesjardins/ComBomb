@@ -32,6 +32,7 @@
 #include <QWidget>
 
 #include "SelfListener.h"
+#include "QTerminal/TgtIntf.h"
 
 // Konsole
 #include "History.h"
@@ -70,7 +71,7 @@ public:
    * falls back to using the program specified in the SHELL environment
    * variable.
    */
-  TerminalModel(/*KPty *kpty*/);
+  TerminalModel(const boost::shared_ptr<TgtIntf> &targetInterface);
   ~TerminalModel();
 
 
@@ -361,6 +362,7 @@ private:
   QString        _profileKey;
 
   bool _hasDarkBackground;
+  boost::shared_ptr<TgtIntf> _targetInterface;
 };
 
 

@@ -474,6 +474,10 @@ boost::shared_ptr<TgtSerialIntf> TgtSerialIntf::createSerialConnection(const Tgt
     ret->_serviceThreadRun = true;
     ret->_serialServiceThread.reset(new boost::thread(boost::bind(&TgtSerialIntf::serviceThread, ret.get())));
     ret->_serialWriterThread.reset(new  boost::thread(boost::bind(&TgtSerialIntf::writerThread, ret.get())));
+
+    boost::system::error_code err;
+    ret->TgtReadCallback(err, 0);
+
     return ret;
 }
 
@@ -534,12 +538,6 @@ void TgtSerialIntf::TgtReadCallback(const boost::system::error_code& error, cons
             boost::asio::placeholders::error,
             boost::asio::placeholders::bytes_transferred));
     }
-}
-
-void TgtSerialIntf::TgtMakeConnection()
-{
-    boost::system::error_code err;
-    TgtReadCallback(err, 0);
 }
 
 int TgtSerialIntf::TgtDisconnect()
@@ -606,6 +604,11 @@ void TgtSerialIntf::TgtGetTitle(std::string *szTitle)
 boost::shared_ptr<TgtFileIntf> TgtFileIntf::createFileConnection(const TgtConnection &config)
 {
     boost::shared_ptr<TgtFileIntf> ret(new TgtFileIntf(config));
+    ret->_inputFile.open(config._fileName.c_str(), std::ifstream::in | std::ifstream::binary);
+    if (ret->_inputFile == NULL)
+    {
+        //throw std::exception(_tgtConnectionConfig._fileName.c_str());
+    }
     return ret;
 }
 
@@ -616,15 +619,6 @@ TgtFileIntf::TgtFileIntf(const TgtConnection &config)
 
 TgtFileIntf::~TgtFileIntf()
 {
-}
-
-void TgtFileIntf::TgtMakeConnection()
-{
-    _inputFile.open(_tgtConnectionConfig._fileName.c_str(), std::ifstream::in | std::ifstream::binary);
-    if (_inputFile == NULL)
-    {
-        //throw std::exception(_tgtConnectionConfig._fileName.c_str());
-    }
 }
 
 int TgtFileIntf::TgtDisconnect()

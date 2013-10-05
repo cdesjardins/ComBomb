@@ -25,12 +25,17 @@
 #include "TerminalModel.h"
 #include "TerminalView.h"
 #include "../QTerminalInterface.h"
+#ifndef Q_MOC_RUN
+#include "boost/smart_ptr.hpp"
+#endif
+
+class TgtIntf;
 
 class QTerminalImpl : public QTerminalInterface
 {
     Q_OBJECT
 public:
-    QTerminalImpl(QWidget *parent = 0);
+    QTerminalImpl(const boost::shared_ptr<TgtIntf> &targetInterface, QWidget *parent = 0);
     virtual ~QTerminalImpl();
     
     void setTerminalFont(const QFont &font); 
@@ -49,8 +54,7 @@ protected:
     virtual void resizeEvent(QResizeEvent *);   
     
 private:
-    void initialize();
-    void connectToPty();
+    void initialize(const boost::shared_ptr<TgtIntf> &targetInterface);
 
     TerminalView *m_terminalView;
     TerminalModel *m_terminalModel;

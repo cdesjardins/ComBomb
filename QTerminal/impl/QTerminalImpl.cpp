@@ -17,18 +17,18 @@
     Boston, MA 02110-1301, USA.
 */
 
+#include "QTerminal/TgtIntf.h"
 #include <QDebug>
 
 #include "QTerminalImpl.h"
 
-
-QTerminalImpl::QTerminalImpl(QWidget *parent)
+QTerminalImpl::QTerminalImpl(const boost::shared_ptr<TgtIntf> &targetInterface, QWidget *parent)
     : QTerminalInterface(parent) {
     setMinimumSize(600, 400);
-    initialize();
+    initialize(targetInterface);
 }
 
-void QTerminalImpl::initialize()
+void QTerminalImpl::initialize(const boost::shared_ptr<TgtIntf> &targetInterface)
 {
     m_terminalView = new TerminalView(this);
     m_terminalView->setKeyboardCursorShape(TerminalView::UnderlineCursor);
@@ -56,11 +56,8 @@ void QTerminalImpl::initialize()
     setTerminalFont(font);
     setFocusProxy(m_terminalView);
     setFocus(Qt::OtherFocusReason);
-/*
-    m_kpty = new KPty();
-    m_kpty->open();
-*/
-    m_terminalModel = new TerminalModel(/*m_kpty*/);
+
+    m_terminalModel = new TerminalModel(targetInterface);
     m_terminalModel->setAutoClose(true);
     m_terminalModel->setCodec(QTextCodec::codecForName("UTF-8"));
     m_terminalModel->setHistoryType(HistoryTypeBuffer(100000));
@@ -68,30 +65,6 @@ void QTerminalImpl::initialize()
     //m_terminalModel->setKeyBindings("");
     m_terminalModel->run();
     m_terminalModel->addView(m_terminalView);
-    connectToPty();
-}
-
-void QTerminalImpl::connectToPty()
-{
-    /*
-    int fds = m_kpty->slaveFd();
-
-    dup2 (fds, STDIN_FILENO);
-    dup2 (fds, STDOUT_FILENO);
-    dup2 (fds, STDERR_FILENO);
-
-    if(!isatty(STDIN_FILENO)) {
-        qDebug("Error: stdin is not a tty.");
-    }
-
-    if(!isatty(STDOUT_FILENO)) {
-        qDebug("Error: stdout is not a tty.");
-    }
-
-    if(!isatty(STDERR_FILENO)) {
-        qDebug("Error: stderr is not a tty.");
-    }
-    */
 }
 
 QTerminalImpl::~QTerminalImpl()
