@@ -11,7 +11,7 @@ class OpenDialog;
 class OpenDialog : public QDialog
 {
     Q_OBJECT
-    
+
 public:
     enum ConnectionType
     {
@@ -20,7 +20,7 @@ public:
         CB_CONN_FILE,
     };
 
-    explicit OpenDialog(QWidget *parent = 0);
+    explicit OpenDialog(QWidget* parent = 0);
     ~OpenDialog();
     const TgtSerialIntf::TgtConnection getSerialConfig() const;
     const TgtFileIntf::TgtConnection getFileConfig() const;
@@ -38,7 +38,7 @@ private:
     void addByteSize();
     void addFlowControl();
 
-    Ui::OpenDialog *ui;
+    Ui::OpenDialog* ui;
 };
 
 #endif // OPENDIALOG_H

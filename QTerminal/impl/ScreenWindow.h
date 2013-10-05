@@ -36,7 +36,7 @@ class Screen;
  * Provides a window onto a section of a terminal screen.
  * This window can then be rendered by a terminal display widget ( TerminalDisplay ).
  *
- * To use the screen window, create a new ScreenWindow() instance and associated it with 
+ * To use the screen window, create a new ScreenWindow() instance and associated it with
  * a terminal screen using setScreen().
  * Use the scrollTo() method to scroll the window up and down on the screen.
  * Call the getImage() method to retrieve the character image which is currently visible in the window.
@@ -50,10 +50,10 @@ class Screen;
  */
 class ScreenWindow : public QObject
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
-    /** 
+    /**
      * Constructs a new screen window with the given parent.
      * A screen must be specified by calling setScreen() before calling getImage() or getLineProperties().
      *
@@ -63,14 +63,14 @@ public:
      * between all views on a session.
      */
     ScreenWindow(QObject* parent = 0);
-	virtual ~ScreenWindow();
+    virtual ~ScreenWindow();
 
     /** Sets the screen which this window looks onto */
     void setScreen(Screen* screen);
     /** Returns the screen which this window looks onto */
     Screen* screen() const;
 
-    /** 
+    /**
      * Returns the image of characters which are currently visible through this window
      * onto the screen.
      *
@@ -87,14 +87,14 @@ public:
 
     /**
      * Returns the number of lines which the region of the window
-     * specified by scrollRegion() has been scrolled by since the last call 
-     * to resetScrollCount().  scrollRegion() is in most cases the 
+     * specified by scrollRegion() has been scrolled by since the last call
+     * to resetScrollCount().  scrollRegion() is in most cases the
      * whole window, but will be a smaller area in, for example, applications
      * which provide split-screen facilities.
      *
      * This is not guaranteed to be accurate, but allows views to optimise
      * rendering by reducing the amount of costly text rendering that
-     * needs to be done when the output is scrolled. 
+     * needs to be done when the output is scrolled.
      */
     int scrollCount() const;
 
@@ -104,7 +104,7 @@ public:
     void resetScrollCount();
 
     /**
-     * Returns the area of the window which was last scrolled, this is 
+     * Returns the area of the window which was last scrolled, this is
      * usually the whole window area.
      *
      * Like scrollCount(), this is not guaranteed to be accurate,
@@ -112,40 +112,40 @@ public:
      */
     QRect scrollRegion() const;
 
-    /** 
-     * Sets the start of the selection to the given @p line and @p column within 
+    /**
+     * Sets the start of the selection to the given @p line and @p column within
      * the window.
      */
-    void setSelectionStart( int column , int line , bool columnMode );
+    void setSelectionStart(int column, int line, bool columnMode);
     /**
      * Sets the end of the selection to the given @p line and @p column within
      * the window.
      */
-    void setSelectionEnd( int column , int line ); 
+    void setSelectionEnd(int column, int line);
     /**
      * Retrieves the start of the selection within the window.
      */
-    void getSelectionStart( int& column , int& line );
+    void getSelectionStart(int& column, int& line);
     /**
      * Retrieves the end of the selection within the window.
      */
-    void getSelectionEnd( int& column , int& line );
+    void getSelectionEnd(int& column, int& line);
     /**
      * Returns true if the character at @p line , @p column is part of the selection.
      */
-    bool isSelected( int column , int line );
-    /** 
+    bool isSelected(int column, int line);
+    /**
      * Clears the current selection
      */
     void clearSelection();
 
-	/** Sets the number of lines in the window */
-	void setWindowLines(int lines);
+    /** Sets the number of lines in the window */
+    void setWindowLines(int lines);
     /** Returns the number of lines in the window */
     int windowLines() const;
     /** Returns the number of columns in the window */
     int windowColumns() const;
-    
+
     /** Returns the total number of lines in the screen */
     int lineCount() const;
     /** Returns the total number of columns in the screen */
@@ -154,20 +154,20 @@ public:
     /** Returns the index of the line which is currently at the top of this window */
     int currentLine() const;
 
-    /** 
-     * Returns the position of the cursor 
+    /**
+     * Returns the position of the cursor
      * within the window.
      */
     QPoint cursorPosition() const;
 
-    /** 
+    /**
      * Convenience method. Returns true if the window is currently at the bottom
      * of the screen.
      */
     bool atEndOfOutput() const;
 
     /** Scrolls the window so that @p line is at the top of the window */
-    void scrollTo( int line );
+    void scrollTo(int line);
 
     enum RelativeScrollMode
     {
@@ -175,26 +175,26 @@ public:
         ScrollPages
     };
 
-    /** 
+    /**
      * Scrolls the window relative to its current position on the screen.
      *
      * @param mode Specifies whether @p amount refers to the number of lines or the number
-     * of pages to scroll.    
+     * of pages to scroll.
      * @param amount The number of lines or pages ( depending on @p mode ) to scroll by.  If
      * this number is positive, the view is scrolled down.  If this number is negative, the view
      * is scrolled up.
      */
-    void scrollBy( RelativeScrollMode mode , int amount );
+    void scrollBy(RelativeScrollMode mode, int amount);
 
-    /** 
+    /**
      * Specifies whether the window should automatically move to the bottom
      * of the screen when new output is added.
      *
-     * If this is set to true, the window will be moved to the bottom of the associated screen ( see 
+     * If this is set to true, the window will be moved to the bottom of the associated screen ( see
      * screen() ) when the notifyOutputChanged() method is called.
      */
     void setTrackOutput(bool trackOutput);
-    /** 
+    /**
      * Returns whether the window automatically moves to the bottom of the screen as
      * new output is added.  See setTrackOutput()
      */
@@ -205,10 +205,10 @@ public:
      *
      * @param preserveLineBreaks See Screen::selectedText()
      */
-    QString selectedText( bool preserveLineBreaks ) const;
+    QString selectedText(bool preserveLineBreaks) const;
 
 public slots:
-    /** 
+    /**
      * Notifies the window that the contents of the associated terminal screen have changed.
      * This moves the window to the bottom of the screen if trackOutput() is true and causes
      * the outputChanged() signal to be emitted.
@@ -217,13 +217,13 @@ public slots:
 
 signals:
     /**
-     * Emitted when the contents of the associated terminal screen ( see screen() ) changes. 
+     * Emitted when the contents of the associated terminal screen ( see screen() ) changes.
      */
     void outputChanged();
 
     /**
      * Emitted when the screen window is scrolled to a different position.
-     * 
+     *
      * @param line The line which is now at the top of the window.
      */
     void scrolled(int line);
@@ -234,18 +234,18 @@ signals:
     void selectionChanged();
 
 private:
-	int endWindowLine() const;
-	void fillUnusedArea();
+    int endWindowLine() const;
+    void fillUnusedArea();
 
     Screen* _screen; // see setScreen() , screen()
-	Character* _windowBuffer;
-	int _windowBufferSize;
-	bool _bufferNeedsUpdate;
+    Character* _windowBuffer;
+    int _windowBufferSize;
+    bool _bufferNeedsUpdate;
 
-	int  _windowLines;
-    int  _currentLine; // see scrollTo() , currentLine()
-    bool _trackOutput; // see setTrackOutput() , trackOutput() 
-    int  _scrollCount; // count of lines which the window has been scrolled by since
+    int _windowLines;
+    int _currentLine;  // see scrollTo() , currentLine()
+    bool _trackOutput; // see setTrackOutput() , trackOutput()
+    int _scrollCount;  // count of lines which the window has been scrolled by since
                        // the last call to resetScrollCount()
 };
 

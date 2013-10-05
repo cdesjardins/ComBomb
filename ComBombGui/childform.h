@@ -12,14 +12,14 @@ class ChildForm;
 class ChildForm : public QTerminal
 {
     Q_OBJECT
-    
+
 public:
-    explicit ChildForm(const boost::shared_ptr<TgtIntf> &targetInterface, QWidget *parent = 0);
+    explicit ChildForm(const boost::shared_ptr<TgtIntf> &targetInterface, QWidget* parent = 0);
     ~ChildForm();
     //void setTargetInterface(const boost::shared_ptr<TgtIntf> &targetInterface);
 
 private:
-    Ui::ChildForm *ui;
+    Ui::ChildForm* ui;
 };
 
 #endif // CHILDFORM_H

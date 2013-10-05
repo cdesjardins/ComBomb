@@ -22,8 +22,9 @@
 
 #include "QTerminalImpl.h"
 
-QTerminalImpl::QTerminalImpl(const boost::shared_ptr<TgtIntf> &targetInterface, QWidget *parent)
-    : QTerminalInterface(parent) {
+QTerminalImpl::QTerminalImpl(const boost::shared_ptr<TgtIntf> &targetInterface, QWidget* parent)
+    : QTerminalInterface(parent)
+{
     setMinimumSize(600, 400);
     initialize(targetInterface);
 }
@@ -74,15 +75,19 @@ QTerminalImpl::~QTerminalImpl()
 
 void QTerminalImpl::setTerminalFont(const QFont &font)
 {
-    if(!m_terminalView)
+    if (!m_terminalView)
+    {
         return;
+    }
     m_terminalView->setVTFont(font);
 }
 
 void QTerminalImpl::setSize(int h, int v)
 {
-    if(!m_terminalView)
+    if (!m_terminalView)
+    {
         return;
+    }
     m_terminalView->setSize(h, v);
 }
 
@@ -93,7 +98,8 @@ void QTerminalImpl::sendText(const QString& text)
 
 void QTerminalImpl::setCursorType(CursorType type, bool blinking)
 {
-    switch(type) {
+    switch (type)
+    {
         case UnderlineCursor: m_terminalView->setKeyboardCursorShape(TerminalView::UnderlineCursor); break;
         case BlockCursor: m_terminalView->setKeyboardCursorShape(TerminalView::BlockCursor); break;
         case IBeamCursor: m_terminalView->setKeyboardCursorShape(TerminalView::IBeamCursor); break;
@@ -101,7 +107,7 @@ void QTerminalImpl::setCursorType(CursorType type, bool blinking)
     m_terminalView->setBlinkingCursor(blinking);
 }
 
-void QTerminalImpl::focusInEvent(QFocusEvent *focusEvent)
+void QTerminalImpl::focusInEvent(QFocusEvent* focusEvent)
 {
     Q_UNUSED(focusEvent);
     m_terminalView->updateImage();
@@ -109,7 +115,7 @@ void QTerminalImpl::focusInEvent(QFocusEvent *focusEvent)
     m_terminalView->update();
 }
 
-void QTerminalImpl::showEvent(QShowEvent *)
+void QTerminalImpl::showEvent(QShowEvent*)
 {
     m_terminalView->updateImage();
     m_terminalView->repaint();

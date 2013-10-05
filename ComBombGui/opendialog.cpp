@@ -14,8 +14,7 @@
 #define BASE_PORTNAME_2 "/dev/ttyUSB"
 #endif
 
-
-OpenDialog::OpenDialog(QWidget *parent) :
+OpenDialog::OpenDialog(QWidget* parent) :
     QDialog(parent),
     ui(new Ui::OpenDialog)
 {
@@ -156,5 +155,5 @@ void OpenDialog::on__browseButton_clicked()
     fileName = QFileDialog::getOpenFileName(this, tr("All files"), NULL, tr("All files (*.*)"));
     ui->_fileNameComboBox->insertItem(0, fileName);
     ui->_fileNameComboBox->setCurrentIndex(0);
-
 }
+

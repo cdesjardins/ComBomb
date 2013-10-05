@@ -5,8 +5,8 @@
 struct TgtSshImpl
 {
     TgtSshImpl(const TgtSshIntf::TgtConnection &config)
-        :_tgtConnectionConfig(config),
-          _sshThreadRun(true)
+        : _tgtConnectionConfig(config),
+        _sshThreadRun(true)
     {
     }
 
@@ -24,9 +24,8 @@ boost::shared_ptr<TgtSshIntf> TgtSshIntf::createSshConnection(const TgtConnectio
 }
 
 TgtSshIntf::TgtSshIntf(const TgtConnection &config)
-    :_sshData(new TgtSshImpl(config))
+    : _sshData(new TgtSshImpl(config))
 {
-
 }
 
 TgtSshIntf::TgtConnection TgtSshIntf::TgtGetConfig()
@@ -122,7 +121,7 @@ bool TgtSshIntf::TgtConnected()
     return false;
 }
 
-void TgtSshIntf::TgtGetTitle(std::string *szTitle)
+void TgtSshIntf::TgtGetTitle(std::string* szTitle)
 {
     std::stringstream t;
     t << _sshData->_tgtConnectionConfig._hostName << ":" << _sshData->_tgtConnectionConfig._portNum;
@@ -136,7 +135,7 @@ void TgtSshIntf::sshSend()
     int bytesCopied;
     while (_outgoingData.dequeue(b) == true)
     {
-        char *data = boost::asio::buffer_cast<char*>(b);
+        char* data = boost::asio::buffer_cast<char*>(b);
         bytesCopied = 0;
         status = cryptPushData(_sshData->_cryptSession, data, boost::asio::buffer_size(b), &bytesCopied);
         if (cryptStatusError(status))
@@ -176,7 +175,7 @@ void TgtSshIntf::sshRecv()
     int status;
     do
     {
-        char *data = boost::asio::buffer_cast<char*>(_currentIncomingBuffer);
+        char* data = boost::asio::buffer_cast<char*>(_currentIncomingBuffer);
         outDataLength = 0;
         status = cryptPopData(_sshData->_cryptSession, data, boost::asio::buffer_size(_currentIncomingBuffer), &outDataLength);
         if (cryptStatusError(status))
@@ -190,3 +189,4 @@ void TgtSshIntf::sshRecv()
         }
     } while ((outDataLength > 0) && (cryptStatusOK(status)));
 }
+

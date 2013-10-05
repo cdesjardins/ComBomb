@@ -44,38 +44,37 @@
 
 TerminalModel::TerminalModel(const boost::shared_ptr<TgtIntf> &targetInterface) :
     _shellProcess(0)
-  , _emulation(0)
-  , _monitorActivity(false)
-  , _monitorSilence(false)
-  , _notifiedActivity(false)
-  , _autoClose(true)
-  , _wantedClose(false)
-  , _silenceSeconds(10)
-  , _addToUtmp(false)
-  , _fullScripting(false)
-  , _hasDarkBackground(false)
-  , _targetInterface(targetInterface)
+    , _emulation(0)
+    , _monitorActivity(false)
+    , _monitorSilence(false)
+    , _notifiedActivity(false)
+    , _autoClose(true)
+    , _wantedClose(false)
+    , _silenceSeconds(10)
+    , _addToUtmp(false)
+    , _fullScripting(false)
+    , _hasDarkBackground(false)
+    , _targetInterface(targetInterface)
 {
     //create emulation backend
     _emulation = new Vt102Emulation();
-    connect( _emulation, SIGNAL( stateSet(int) ),
-             this, SLOT( activityStateSet(int) ) );
-    connect( _emulation, SIGNAL( changeTabTextColorRequest( int ) ),
-             this, SIGNAL( changeTabTextColorRequest( int ) ) );
-    connect( _emulation, SIGNAL(profileChangeCommandReceived(const QString&)),
-             this, SIGNAL( profileChangeCommandReceived(const QString&)) );
+    connect(_emulation, SIGNAL(stateSet(int)),
+            this, SLOT(activityStateSet(int)));
+    connect(_emulation, SIGNAL(changeTabTextColorRequest(int)),
+            this, SIGNAL(changeTabTextColorRequest(int)));
+    connect(_emulation, SIGNAL(profileChangeCommandReceived(const QString &)),
+            this, SIGNAL(profileChangeCommandReceived(const QString &)));
     // TODO
     // connect( _emulation,SIGNAL(imageSizeChanged(int,int)) , this ,
     //        SLOT(onEmulationSizeChange(int,int)) );
 
     _selfListener = new SelfListener(targetInterface);
     _selfListener->start();
-    connect( _selfListener, SIGNAL(recvData(const char*,int)),
-             this, SLOT(onReceiveBlock(const char*,int)), Qt::BlockingQueuedConnection);
+    connect(_selfListener, SIGNAL(recvData(const char*, int)),
+            this, SLOT(onReceiveBlock(const char*, int)), Qt::BlockingQueuedConnection);
 
-
-    connect( _emulation, SIGNAL(sendData(const char*,int))
-             ,this,SLOT(sendData(const char*,int)));
+    connect(_emulation, SIGNAL(sendData(const char*, int))
+            , this, SLOT(sendData(const char*, int)));
 
     //setup timer for monitoring session activity
     _monitorTimer = new QTimer(this);
@@ -87,6 +86,7 @@ void TerminalModel::setDarkBackground(bool darkBackground)
 {
     _hasDarkBackground = darkBackground;
 }
+
 bool TerminalModel::hasDarkBackground() const
 {
     return _hasDarkBackground;
@@ -104,36 +104,36 @@ QList<TerminalView*> TerminalModel::views() const
 
 void TerminalModel::addView(TerminalView* widget)
 {
-    Q_ASSERT( !_views.contains(widget) );
+    Q_ASSERT(!_views.contains(widget));
 
     _views.append(widget);
 
-    if ( _emulation != 0 )
+    if (_emulation != 0)
     {
         // connect emulation - view signals and slots
-        connect( widget , SIGNAL(keyPressedSignal(QKeyEvent*)) , _emulation ,
-                 SLOT(sendKeyEvent(QKeyEvent*)) );
-        connect( widget , SIGNAL(mouseSignal(int,int,int,int)) , _emulation ,
-                 SLOT(sendMouseEvent(int,int,int,int)) );
-        connect( widget , SIGNAL(sendStringToEmu(const char*)) , _emulation ,
-                 SLOT(sendString(const char*)) );
+        connect(widget, SIGNAL(keyPressedSignal(QKeyEvent*)), _emulation,
+                SLOT(sendKeyEvent(QKeyEvent*)));
+        connect(widget, SIGNAL(mouseSignal(int, int, int, int)), _emulation,
+                SLOT(sendMouseEvent(int, int, int, int)));
+        connect(widget, SIGNAL(sendStringToEmu(const char*)), _emulation,
+                SLOT(sendString(const char*)));
 
         // allow emulation to notify view when the foreground process
         // indicates whether or not it is interested in mouse signals
-        connect( _emulation , SIGNAL(programUsesMouseChanged(bool)) , widget ,
-                 SLOT(setUsesMouse(bool)) );
+        connect(_emulation, SIGNAL(programUsesMouseChanged(bool)), widget,
+                SLOT(setUsesMouse(bool)));
 
-        widget->setUsesMouse( _emulation->programUsesMouse() );
+        widget->setUsesMouse(_emulation->programUsesMouse());
 
         widget->setScreenWindow(_emulation->createWindow());
     }
 
     //connect view signals and slots
-    QObject::connect( widget ,SIGNAL(changedContentSizeSignal(int,int)),this,
-                      SLOT(onViewSizeChange(int,int)));
+    QObject::connect(widget, SIGNAL(changedContentSizeSignal(int, int)), this,
+                     SLOT(onViewSizeChange(int, int)));
 
-    QObject::connect( widget ,SIGNAL(destroyed(QObject*)) , this ,
-                      SLOT(viewDestroyed(QObject*)) );
+    QObject::connect(widget, SIGNAL(destroyed(QObject*)), this,
+                     SLOT(viewDestroyed(QObject*)));
     //slot for close
     //QObject::connect(this, SIGNAL(finished()), widget, SLOT(close()));
 }
@@ -142,12 +142,12 @@ void TerminalModel::viewDestroyed(QObject* view)
 {
     TerminalView* display = (TerminalView*)view;
 
-    Q_ASSERT( _views.contains(display) );
+    Q_ASSERT(_views.contains(display));
 
     removeView(display);
 }
 
-void TerminalModel::sendData(const char *buf, int len)
+void TerminalModel::sendData(const char* buf, int len)
 {
     _targetInterface->TgtWrite(buf, len);
 }
@@ -156,9 +156,9 @@ void TerminalModel::removeView(TerminalView* widget)
 {
     _views.removeAll(widget);
 
-    disconnect(widget,0,this,0);
+    disconnect(widget, 0, this, 0);
 
-    if ( _emulation != 0 )
+    if (_emulation != 0)
     {
         // disconnect
         //  - key presses signals from widget
@@ -166,14 +166,14 @@ void TerminalModel::removeView(TerminalView* widget)
         //  - string sending signals from widget
         //
         //  ... and any other signals connected in addView()
-        disconnect( widget, 0, _emulation, 0);
+        disconnect(widget, 0, _emulation, 0);
 
         // disconnect state change signals emitted by emulation
-        disconnect( _emulation , 0 , widget , 0);
+        disconnect(_emulation, 0, widget, 0);
     }
 
     // close the session automatically when the last view is removed
-    if ( _views.count() == 0 )
+    if (_views.count() == 0)
     {
         close();
     }
@@ -192,9 +192,9 @@ void TerminalModel::monitorTimerDone()
     //This breaks with the addition of multiple views of a session.  The popup should disappear
     //when any of the views of the session becomes active
 
-
     //FIXME: Make message text for this notification and the activity notification more descriptive.
-    if (_monitorSilence) {
+    if (_monitorSilence)
+    {
         //    KNotification::event("Silence", ("Silence in session '%1'", _nameTitle), QPixmap(),
         //                    QApplication::activeWindow(),
         //                    KNotification::CloseWhenWidgetActivated);
@@ -205,36 +205,43 @@ void TerminalModel::monitorTimerDone()
         emit stateChanged(NOTIFYNORMAL);
     }
 
-    _notifiedActivity=false;
+    _notifiedActivity = false;
 }
 
 void TerminalModel::activityStateSet(int state)
 {
-    if (state==NOTIFYBELL)
+    if (state == NOTIFYBELL)
     {
         emit bellRequest("");
     }
-    else if (state==NOTIFYACTIVITY)
+    else if (state == NOTIFYACTIVITY)
     {
-        if (_monitorSilence) {
-            _monitorTimer->start(_silenceSeconds*1000);
+        if (_monitorSilence)
+        {
+            _monitorTimer->start(_silenceSeconds * 1000);
         }
 
-        if ( _monitorActivity ) {
+        if (_monitorActivity)
+        {
             //FIXME:  See comments in Session::monitorTimerDone()
-            if (!_notifiedActivity) {
+            if (!_notifiedActivity)
+            {
                 //        KNotification::event("Activity", ("Activity in session '%1'", _nameTitle), QPixmap(),
                 //                        QApplication::activeWindow(),
                 //        KNotification::CloseWhenWidgetActivated);
-                _notifiedActivity=true;
+                _notifiedActivity = true;
             }
         }
     }
 
-    if ( state==NOTIFYACTIVITY && !_monitorActivity )
+    if (state == NOTIFYACTIVITY && !_monitorActivity)
+    {
         state = NOTIFYNORMAL;
-    if ( state==NOTIFYSILENCE && !_monitorSilence )
+    }
+    if (state == NOTIFYSILENCE && !_monitorSilence)
+    {
         state = NOTIFYNORMAL;
+    }
 
     emit stateChanged(state);
 }
@@ -243,9 +250,10 @@ void TerminalModel::onViewSizeChange(int /*height*/, int /*width*/)
 {
     updateTerminalSize();
 }
-void TerminalModel::onEmulationSizeChange(int lines , int columns)
+
+void TerminalModel::onEmulationSizeChange(int lines, int columns)
 {
-    setSize( QSize(lines,columns) );
+    setSize(QSize(lines, columns));
 }
 
 void TerminalModel::updateTerminalSize()
@@ -262,22 +270,22 @@ void TerminalModel::updateTerminalSize()
     const int VIEW_COLUMNS_THRESHOLD = 2;
 
     //select largest number of lines and columns that will fit in all visible views
-    while ( viewIter.hasNext() )
+    while (viewIter.hasNext())
     {
         TerminalView* view = viewIter.next();
-        if ( view->isHidden() == false &&
-             view->lines() >= VIEW_LINES_THRESHOLD &&
-             view->columns() >= VIEW_COLUMNS_THRESHOLD )
+        if (view->isHidden() == false &&
+            view->lines() >= VIEW_LINES_THRESHOLD &&
+            view->columns() >= VIEW_COLUMNS_THRESHOLD)
         {
-            minLines = (minLines == -1) ? view->lines() : qMin( minLines , view->lines() );
-            minColumns = (minColumns == -1) ? view->columns() : qMin( minColumns , view->columns() );
+            minLines = (minLines == -1) ? view->lines() : qMin(minLines, view->lines());
+            minColumns = (minColumns == -1) ? view->columns() : qMin(minColumns, view->columns());
         }
     }
 
     // backend emulation must have a _terminal of at least 1 column x 1 line in size
-    if ( minLines > 0 && minColumns > 0 )
+    if (minLines > 0 && minColumns > 0)
     {
-        _emulation->setImageSize( minLines , minColumns );
+        _emulation->setImageSize(minLines, minColumns);
         //_kpty->setWinSize (minLines, minColumns);
         //_shellProcess->setWindowSize( minLines , minColumns );
     }
@@ -308,7 +316,11 @@ void TerminalModel::setProfileKey(const QString& key)
     _profileKey = key;
     emit profileChanged(key);
 }
-QString TerminalModel::profileKey() const { return _profileKey; }
+
+QString TerminalModel::profileKey() const
+{
+    return _profileKey;
+}
 
 void TerminalModel::done(int)
 {
@@ -336,39 +348,51 @@ void TerminalModel::clearHistory()
 }
 
 // unused currently
-bool TerminalModel::isMonitorActivity() const { return _monitorActivity; }
+bool TerminalModel::isMonitorActivity() const
+{
+    return _monitorActivity;
+}
+
 // unused currently
-bool TerminalModel::isMonitorSilence()  const { return _monitorSilence; }
+bool TerminalModel::isMonitorSilence()  const
+{
+    return _monitorSilence;
+}
 
 void TerminalModel::setMonitorActivity(bool _monitor)
 {
-    _monitorActivity=_monitor;
-    _notifiedActivity=false;
+    _monitorActivity = _monitor;
+    _notifiedActivity = false;
 
     activityStateSet(NOTIFYNORMAL);
 }
 
 void TerminalModel::setMonitorSilence(bool _monitor)
 {
-    if (_monitorSilence==_monitor)
+    if (_monitorSilence == _monitor)
+    {
         return;
+    }
 
-    _monitorSilence=_monitor;
+    _monitorSilence = _monitor;
     if (_monitorSilence)
     {
-        _monitorTimer->start(_silenceSeconds*1000);
+        _monitorTimer->start(_silenceSeconds * 1000);
     }
     else
+    {
         _monitorTimer->stop();
+    }
 
     activityStateSet(NOTIFYNORMAL);
 }
 
 void TerminalModel::setMonitorSilenceSeconds(int seconds)
 {
-    _silenceSeconds=seconds;
-    if (_monitorSilence) {
-        _monitorTimer->start(_silenceSeconds*1000);
+    _silenceSeconds = seconds;
+    if (_monitorSilence)
+    {
+        _monitorTimer->start(_silenceSeconds * 1000);
     }
 }
 
@@ -377,10 +401,10 @@ void TerminalModel::setAddToUtmp(bool set)
     _addToUtmp = set;
 }
 
-void TerminalModel::onReceiveBlock(const char* buf, int len )
+void TerminalModel::onReceiveBlock(const char* buf, int len)
 {
-    _emulation->receiveData( buf, len );
-    emit receivedData( QString::fromLatin1( buf, len ) );
+    _emulation->receiveData(buf, len);
+    emit receivedData(QString::fromLatin1(buf, len));
 }
 
 QSize TerminalModel::size()
@@ -391,7 +415,10 @@ QSize TerminalModel::size()
 void TerminalModel::setSize(const QSize& size)
 {
     if ((size.width() <= 1) || (size.height() <= 1))
+    {
         return;
+    }
 
     emit resizeRequest(size);
 }
+

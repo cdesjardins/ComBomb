@@ -6,8 +6,7 @@
 #include "ui_mainwindow.h"
 #include "cryptlib.h"
 
-
-MainWindow::MainWindow(QWidget *parent) :
+MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
     _ui(new Ui::MainWindow)
 {
@@ -50,19 +49,19 @@ void MainWindow::on_actionOpen_triggered()
             boost::shared_ptr<TgtIntf> intf;
             switch (_openDialog->getConnectionType())
             {
-            case OpenDialog::CB_CONN_SERIAL:
-                intf = TgtSerialIntf::createSerialConnection(_openDialog->getSerialConfig());
-                break;
-            case OpenDialog::CB_CONN_FILE:
-                intf = TgtFileIntf::createFileConnection(_openDialog->getFileConfig());
-                break;
-            case OpenDialog::CB_CONN_SSH:
-                intf = TgtSshIntf::createSshConnection(_openDialog->getSshConfig());
-                break;
+                case OpenDialog::CB_CONN_SERIAL:
+                    intf = TgtSerialIntf::createSerialConnection(_openDialog->getSerialConfig());
+                    break;
+                case OpenDialog::CB_CONN_FILE:
+                    intf = TgtFileIntf::createFileConnection(_openDialog->getFileConfig());
+                    break;
+                case OpenDialog::CB_CONN_SSH:
+                    intf = TgtSshIntf::createSshConnection(_openDialog->getSshConfig());
+                    break;
             }
 
-            ChildForm *childForm = new ChildForm(intf);
-            QMdiSubWindow *subWindow = _mdiArea->addSubWindow(childForm);
+            ChildForm* childForm = new ChildForm(intf);
+            QMdiSubWindow* subWindow = _mdiArea->addSubWindow(childForm);
             _connections.push_back(intf);
             subWindow->show();
         }
@@ -72,9 +71,8 @@ void MainWindow::on_actionOpen_triggered()
             QString err = "Unable to open connection to: ";
             err.append(e.what());
             messageBox.critical(0, "Error", err);
-            messageBox.setFixedSize(500,200);
+            messageBox.setFixedSize(500, 200);
         }
     }
 }
-
 

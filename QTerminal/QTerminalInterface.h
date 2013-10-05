@@ -30,32 +30,38 @@ class QTerminalInterface : public QWidget
 {
     Q_OBJECT
 public:
-    QTerminalInterface(QWidget *parent = 0) : QWidget(parent) {
-      connect (this, SIGNAL(customContextMenuRequested(QPoint)),
-               this, SLOT(handleCustomContextMenuRequested(QPoint)));
+    QTerminalInterface(QWidget* parent = 0) : QWidget(parent)
+    {
+        connect (this, SIGNAL(customContextMenuRequested(QPoint)),
+                 this, SLOT(handleCustomContextMenuRequested(QPoint)));
 
-      setContextMenuPolicy (Qt::CustomContextMenu);
+        setContextMenuPolicy (Qt::CustomContextMenu);
 
-      _contextMenu = new QMenu (this);
-      QAction *copyAction  = _contextMenu->addAction ("Copy");
-      QAction *pasteAction = _contextMenu->addAction ("Paste");
+        _contextMenu = new QMenu (this);
+        QAction* copyAction  = _contextMenu->addAction ("Copy");
+        QAction* pasteAction = _contextMenu->addAction ("Paste");
 
-      connect (copyAction, SIGNAL (triggered()), this, SLOT (copyClipboard()));
-      connect (pasteAction, SIGNAL (triggered()), this, SLOT (pasteClipboard()));
+        connect (copyAction, SIGNAL (triggered()), this, SLOT (copyClipboard()));
+        connect (pasteAction, SIGNAL (triggered()), this, SLOT (pasteClipboard()));
     }
-    virtual ~QTerminalInterface() { }
+
+    virtual ~QTerminalInterface()
+    {
+    }
 
     virtual void setTerminalFont(const QFont& font) = 0;
     virtual void setSize(int h, int v) = 0;
     virtual void sendText(const QString& text) = 0;
 
-    enum CursorType {
-      UnderlineCursor,
-      BlockCursor,
-      IBeamCursor
+    enum CursorType
+    {
+        UnderlineCursor,
+        BlockCursor,
+        IBeamCursor
     };
 
-    virtual void setCursorType(CursorType type, bool blinking) {
+    virtual void setCursorType(CursorType type, bool blinking)
+    {
         // Provide empty default impl in order to avoid conflicts with the win impl.
         Q_UNUSED(type);
         Q_UNUSED(blinking);
@@ -65,13 +71,14 @@ public slots:
     virtual void copyClipboard() = 0;
     virtual void pasteClipboard() = 0;
 
-    virtual void handleCustomContextMenuRequested(QPoint at) {
-      _contextMenu->move (mapToGlobal(at));
-      _contextMenu->show ();
+    virtual void handleCustomContextMenuRequested(QPoint at)
+    {
+        _contextMenu->move (mapToGlobal(at));
+        _contextMenu->show ();
     }
 
 private:
-    QMenu *_contextMenu;
+    QMenu* _contextMenu;
 };
 
 #endif // QTERMINALINTERFACE_H

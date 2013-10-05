@@ -91,10 +91,10 @@ public:
     TgtTelnetIntf();
     virtual ~TgtTelnetIntf();
     virtual int TgtDisconnect();
-    virtual int TgtRead(char *szReadData, int nMaxBytes);
-    virtual int TgtWrite(char *szWriteData, int nBytes);
+    virtual int TgtRead(char* szReadData, int nMaxBytes);
+    virtual int TgtWrite(char* szWriteData, int nBytes);
     virtual bool TgtConnected();
-    virtual void TgtGetTitle(char *szTitle);
+    virtual void TgtGetTitle(char* szTitle);
     virtual void TgtSetConfig(const std::string &szServerName, const int nPort, const std::string &szDescription)
     {
         m_sTgtConnection.m_szServerName = szServerName;
@@ -109,7 +109,7 @@ public:
     };
 
 protected:
-    int TgtTelnet(char *sTelnetRx, int nNumBytes, char *szReadData);
+    int TgtTelnet(char* sTelnetRx, int nNumBytes, char* szReadData);
     int TgtTelnetData(unsigned char cTelnetRx, char* cReadData);
     int TgtTelnetCommand(eTelnetCommand cTelnetRx);
     int TgtTelnetOption(eTelnetOption eOpt);
@@ -134,33 +134,28 @@ class TgtSerialIntf : public TgtIntf
 public:
     struct TgtConnection
     {
-        TgtConnection(const std::string &szPortName,
-                      const boost::asio::serial_port_base::baud_rate baudRate,
-                      const boost::asio::serial_port_base::parity parity,
-                      const boost::asio::serial_port_base::stop_bits stopBits,
-                      const boost::asio::serial_port_base::character_size byteSize,
-                      const boost::asio::serial_port_base::flow_control flowControl)
+        TgtConnection(const std::string &szPortName, const boost::asio::serial_port_base::baud_rate baudRate, const boost::asio::serial_port_base::parity parity, const boost::asio::serial_port_base::stop_bits stopBits, const boost::asio::serial_port_base::character_size byteSize, const boost::asio::serial_port_base::flow_control flowControl)
             : _portName(szPortName),
-              _baudRate(baudRate),
-              _parity(parity),
-              _stopBits(stopBits),
-              _byteSize(byteSize),
-              _flowControl(flowControl)
+            _baudRate(baudRate),
+            _parity(parity),
+            _stopBits(stopBits),
+            _byteSize(byteSize),
+            _flowControl(flowControl)
         {
         }
 
         std::string _portName;
-        boost::asio::serial_port_base::baud_rate _baudRate;
-        boost::asio::serial_port_base::parity _parity;
-        boost::asio::serial_port_base::stop_bits _stopBits;
+        boost::asio::serial_port_base::baud_rate      _baudRate;
+        boost::asio::serial_port_base::parity         _parity;
+        boost::asio::serial_port_base::stop_bits      _stopBits;
         boost::asio::serial_port_base::character_size _byteSize;
-        boost::asio::serial_port_base::flow_control _flowControl;
+        boost::asio::serial_port_base::flow_control   _flowControl;
     };
     static boost::shared_ptr<TgtSerialIntf> createSerialConnection(const TgtConnection &config);
     virtual ~TgtSerialIntf ();
     virtual int TgtDisconnect();
     virtual bool TgtConnected();
-    virtual void TgtGetTitle(std::string *szTitle);
+    virtual void TgtGetTitle(std::string* szTitle);
     virtual TgtConnection TgtGetConfig()
     {
         return _tgtConnectionConfig;
@@ -180,16 +175,16 @@ protected:
     volatile bool _serviceThreadRun;
 };
 
-
 class TgtFileIntf : public TgtIntf
 {
 public:
     struct TgtConnection
     {
         TgtConnection(std::string fileName)
-            :_fileName(fileName)
+            : _fileName(fileName)
         {
         }
+
         std::string _fileName;
     };
 
@@ -199,7 +194,7 @@ public:
     virtual int TgtDisconnect();
     virtual int TgtRead(boost::asio::mutable_buffer &b);
     virtual bool TgtConnected();
-    virtual void TgtGetTitle(std::string *szTitle);
+    virtual void TgtGetTitle(std::string* szTitle);
 
 protected:
     TgtFileIntf(const TgtConnection &config);
@@ -222,6 +217,7 @@ public:
             _password(password)
         {
         }
+
         std::string _hostName;
         int _portNum;
         std::string _userName;
@@ -231,9 +227,8 @@ public:
     virtual ~TgtSshIntf ();
     virtual int TgtDisconnect();
     virtual bool TgtConnected();
-    virtual void TgtGetTitle(std::string *szTitle);
+    virtual void TgtGetTitle(std::string* szTitle);
     virtual TgtConnection TgtGetConfig();
-
 
 protected:
     TgtSshIntf (const TgtConnection &config);
@@ -243,7 +238,6 @@ protected:
     virtual void TgtMakeConnection();
 
     boost::scoped_ptr<TgtSshImpl> _sshData;
-
 };
 
 #endif

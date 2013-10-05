@@ -17,7 +17,7 @@
 
 #include "SelfListener.h"
 
-SelfListener::SelfListener(const boost::shared_ptr<TgtIntf> &targetInterface, QObject *parent) :
+SelfListener::SelfListener(const boost::shared_ptr<TgtIntf> &targetInterface, QObject* parent) :
     QThread(parent),
     _targetInterface(targetInterface)
 {
@@ -25,16 +25,15 @@ SelfListener::SelfListener(const boost::shared_ptr<TgtIntf> &targetInterface, QO
 
 void SelfListener::run()
 {
-
     boost::asio::mutable_buffer b;
 
     bool running = true;
-    while(running)
+    while (running)
     {
         int bytes = _targetInterface->TgtRead(b);
         if (bytes > 0)
         {
-            const char *data = boost::asio::buffer_cast<const char*>(b);
+            const char* data = boost::asio::buffer_cast<const char*>(b);
             emit recvData(data, bytes);
             _targetInterface->TgtReturnReadBuffer(b);
 #ifdef OUT_TO_DEBUG_FILE
@@ -43,3 +42,4 @@ void SelfListener::run()
         }
     }
 }
+

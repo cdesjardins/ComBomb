@@ -1,7 +1,7 @@
 #include "childform.h"
 #include "ui_childform.h"
 
-ChildForm::ChildForm(const boost::shared_ptr<TgtIntf> &targetInterface, QWidget *parent) :
+ChildForm::ChildForm(const boost::shared_ptr<TgtIntf> &targetInterface, QWidget* parent) :
     QTerminal(targetInterface, parent),
     ui(new Ui::ChildForm)
 {
@@ -15,3 +15,4 @@ ChildForm::~ChildForm()
 {
     delete ui;
 }
+
