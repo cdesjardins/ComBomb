@@ -26,7 +26,7 @@ QTerminalImpl::QTerminalImpl(const boost::shared_ptr<TgtIntf> &targetInterface, 
     : QTerminalInterface(parent)
 {
     setMinimumSize(600, 400);
-    initialize(targetInterface, height, width);
+    initialize(targetInterface, width, height);
 }
 
 void QTerminalImpl::initialize(const boost::shared_ptr<TgtIntf> &targetInterface, int width, int height)
