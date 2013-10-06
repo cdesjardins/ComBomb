@@ -4,9 +4,16 @@
 #ifndef Q_MOC_RUN
 #include <boost/asio/buffer.hpp>
 #include <boost/smart_ptr.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
 #endif
 #include "impl/ThreadSafeQueue.h"
 #include <QWidget>
+
+
+
+
+
 
 class TgtIntf : public QWidget
 {
@@ -37,6 +44,10 @@ public:
         return m_nTotalTx;
     };
     void TgtReturnReadBuffer(const boost::asio::mutable_buffer &b);
+    boost::shared_ptr<const TgtConnectionConfigBase> getConfig()
+    {
+        return _connectionConfig;
+    }
 
 signals:
     void updateStatusSignal(QString);
@@ -56,5 +67,19 @@ private:
     bool _running;
     static int deleteBuffersFunctor(std::list<boost::asio::mutable_buffer> &pool);
 };
+
+namespace boost
+{
+    namespace serialization
+    {
+        template<class Archive>
+        void serialize(Archive & ar, TgtIntf::TgtConnectionConfigBase & configbase, const unsigned int version)
+        {
+            ar;
+            version;
+            configbase = configbase;
+        }
+    }
+}
 
 #endif // TGTINTF_H

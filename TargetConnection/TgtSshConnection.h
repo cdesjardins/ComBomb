@@ -21,6 +21,10 @@ public:
             _password(password)
         {
         }
+        TgtConnectionConfig()
+        {
+
+        }
 
         std::string _hostName;
         int _portNum;
@@ -43,5 +47,21 @@ protected:
 
     boost::scoped_ptr<TgtSshImpl> _sshData;
 };
+
+namespace boost
+{
+    namespace serialization
+    {
+        template<class Archive>
+        void serialize(Archive & ar, TgtSshIntf::TgtConnectionConfig & config, const unsigned int version)
+        {
+            version;
+            ar & boost::serialization::base_object<TgtIntf::TgtConnectionConfigBase>(config);
+            ar & config._hostName;
+            ar & config._portNum;
+            ar & config._userName;
+        }
+    }
+}
 
 #endif

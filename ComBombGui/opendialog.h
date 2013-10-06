@@ -17,7 +17,7 @@ public:
     {
         CB_CONN_SSH,
         CB_CONN_SERIAL,
-        CB_CONN_FILE,
+        CB_CONN_FILE
     };
 
     explicit OpenDialog(QWidget* parent = 0);
@@ -25,11 +25,15 @@ public:
     boost::shared_ptr<const TgtSerialIntf::TgtConnectionConfig> getSerialConfig() const;
     boost::shared_ptr<const TgtFileIntf::TgtConnectionConfig> getFileConfig() const;
     boost::shared_ptr<const TgtSshIntf::TgtConnectionConfig> getSshConfig() const;
+    void addFileConfig(const TgtFileIntf::TgtConnectionConfig &config);
+    void addSshConfig(const TgtSshIntf::TgtConnectionConfig &config);
 
     ConnectionType getConnectionType();
 
 private slots:
     void on__browseButton_clicked();
+    void hostNameSelectionChanged(int x);
+
 private:
     void addComPorts();
     void addComPorts(const std::string &basePortName);

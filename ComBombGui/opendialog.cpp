@@ -35,10 +35,22 @@ OpenDialog::ConnectionType OpenDialog::getConnectionType()
     return ret;
 }
 
+void OpenDialog::addFileConfig(const TgtFileIntf::TgtConnectionConfig &config)
+{
+    ui->_fileNameComboBox->addItem(config._fileName.c_str());
+}
+
 boost::shared_ptr<const TgtFileIntf::TgtConnectionConfig> OpenDialog::getFileConfig() const
 {
     boost::shared_ptr<TgtFileIntf::TgtConnectionConfig> ret(new TgtFileIntf::TgtConnectionConfig(ui->_fileNameComboBox->currentText().toLocal8Bit().constData()));
     return ret;
+}
+
+void OpenDialog::addSshConfig(const TgtSshIntf::TgtConnectionConfig &config)
+{
+    ui->_hostNameComboBox->addItem(config._hostName.c_str());
+    ui->_portNumLineEdit->setText(QString("%1").arg(config._portNum));
+    ui->_userNameComboBox->addItem(config._userName.c_str());
 }
 
 boost::shared_ptr<const TgtSshIntf::TgtConnectionConfig> OpenDialog::getSshConfig() const
@@ -49,6 +61,14 @@ boost::shared_ptr<const TgtSshIntf::TgtConnectionConfig> OpenDialog::getSshConfi
                                   ui->_userNameComboBox->currentText().toLocal8Bit().constData(),
                                   ui->_passwordLineEdit->text().toLocal8Bit().constData()));
     return ret;
+}
+
+void OpenDialog::hostNameSelectionChanged(int x)
+{
+    if (x < ui->_userNameComboBox->count())
+    {
+        ui->_userNameComboBox->setCurrentIndex(x);
+    }
 }
 
 boost::shared_ptr<const TgtSerialIntf::TgtConnectionConfig> OpenDialog::getSerialConfig() const

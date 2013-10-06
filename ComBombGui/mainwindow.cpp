@@ -4,6 +4,9 @@
 #include "childform.h"
 #include "ui_mainwindow.h"
 
+#define CB_FILE_CONFIG_STR  "file"
+#define CB_SSH_CONFIG_STR   "ssh"
+
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
     _ui(new Ui::MainWindow)
@@ -42,9 +45,74 @@ void MainWindow::errorBox(QString errMsg)
     msgBox.exec();
 }
 
+void MainWindow::getPreviousConnections(const std::string &connType, QStringList *connections)
+{
+    QSettings settings;
+    int size = settings.beginReadArray(connType.c_str());
+    int i;
+    for (i = 0; i < size; ++i)
+    {
+        settings.setArrayIndex(i);
+        connections->append(settings.value("config").toString());
+    }
+    settings.endArray();
+}
+
+void MainWindow::saveConnections(const std::string &connType, const std::string &connStr)
+{
+    if (connType.length() > 0)
+    {
+        int i;
+        QStringList connections;
+        QSettings settings;
+        getPreviousConnections(connType, &connections);
+        connections.insert(0, connStr.c_str());
+        connections.removeDuplicates();
+        i = 0;
+        settings.beginWriteArray(connType.c_str());
+        for (QStringList::iterator it = connections.begin(); it != connections.end(); ++it)
+        {
+            settings.setArrayIndex(i++);
+            settings.setValue("config", *it);
+        }
+        settings.endArray();
+    }
+}
+
+void MainWindow::loadConnections(const std::string &connType, OpenDialog &openDialog)
+{
+    QStringList connections;
+    getPreviousConnections(connType, &connections);
+
+    for (QStringList::iterator it = connections.begin(); it != connections.end(); ++it)
+    {
+        std::stringstream s;
+        s << it->toLocal8Bit().constData();
+        boost::archive::text_iarchive ia(s);
+        if (connType.compare(CB_FILE_CONFIG_STR) == 0)
+        {
+            TgtFileIntf::TgtConnectionConfig f;
+            ia >> f;
+            openDialog.addFileConfig(f);
+        }
+        else if (connType.compare(CB_SSH_CONFIG_STR) == 0)
+        {
+            TgtSshIntf::TgtConnectionConfig s;
+            ia >> s;
+            openDialog.addSshConfig(s);
+        }
+    }
+}
+
 void MainWindow::on_actionOpen_triggered()
 {
+    std::stringstream ofs;
+    boost::archive::text_oarchive oa(ofs);
     OpenDialog openDialog;
+    std::map<std::string, std::string> connConfig;
+    loadConnections(CB_FILE_CONFIG_STR, openDialog);
+    loadConnections(CB_SSH_CONFIG_STR, openDialog);
+
     if (openDialog.exec() == OpenDialog::Accepted)
     {
         try
@@ -53,13 +121,26 @@ void MainWindow::on_actionOpen_triggered()
             switch (openDialog.getConnectionType())
             {
                 case OpenDialog::CB_CONN_SERIAL:
-                    intf = TgtSerialIntf::createSerialConnection(openDialog.getSerialConfig());
+                    {
+                        boost::shared_ptr<const TgtSerialIntf::TgtConnectionConfig> p = openDialog.getSerialConfig();
+                        intf = TgtSerialIntf::createSerialConnection(p);
+                    }
                     break;
                 case OpenDialog::CB_CONN_FILE:
-                    intf = TgtFileIntf::createFileConnection(openDialog.getFileConfig());
+                    {
+                        boost::shared_ptr<const TgtFileIntf::TgtConnectionConfig> p = openDialog.getFileConfig();
+                        intf = TgtFileIntf::createFileConnection(p);
+                        oa << *(p.get());
+                        connConfig[CB_FILE_CONFIG_STR] = ofs.str();
+                    }
                     break;
                 case OpenDialog::CB_CONN_SSH:
-                    intf = TgtSshIntf::createSshConnection(openDialog.getSshConfig());
+                    {
+                        boost::shared_ptr<const TgtSshIntf::TgtConnectionConfig> p = openDialog.getSshConfig();
+                        intf = TgtSshIntf::createSshConnection(p);
+                        oa << *(p.get());
+                        connConfig[CB_SSH_CONFIG_STR] = ofs.str();
+                    }
                     break;
             }
 
@@ -68,6 +149,10 @@ void MainWindow::on_actionOpen_triggered()
 
             QMdiSubWindow* subWindow = _mdiArea->addSubWindow(childForm);
             _connections.push_back(intf);
+            if (connConfig.size() > 0)
+            {
+                saveConnections(connConfig.begin()->first, connConfig.begin()->second);
+            }
             subWindow->show();
             _ui->_statusBar->showMessage("Opened connection", 5000);
         }

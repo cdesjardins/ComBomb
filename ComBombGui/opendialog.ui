@@ -317,8 +317,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
+     <x>325</x>
+     <y>240</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
@@ -333,8 +333,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
+     <x>257</x>
+     <y>240</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -342,5 +342,24 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>_hostNameComboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>OpenDialog</receiver>
+   <slot>hostNameSelectionChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>191</x>
+     <y>83</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>285</x>
+     <y>246</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <slots>
+  <slot>hostNameSelectionChanged(int)</slot>
+ </slots>
 </ui>
