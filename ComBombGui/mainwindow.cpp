@@ -2,6 +2,7 @@
 #include <QMessageBox>
 #include "mainwindow.h"
 #include "childform.h"
+#include "aboutdialog.h"
 #include "ui_mainwindow.h"
 
 #define CB_FILE_CONFIG_STR  "file"
@@ -107,7 +108,7 @@ void MainWindow::on_actionOpen_triggered()
 {
     std::stringstream ofs;
     boost::archive::text_oarchive oa(ofs);
-    OpenDialog openDialog;
+    OpenDialog openDialog(this);
     std::map<std::string, std::string> connConfig;
     loadConnections(CB_FILE_CONFIG_STR, openDialog);
     loadConnections(CB_SSH_CONFIG_STR, openDialog);
@@ -167,3 +168,13 @@ void MainWindow::updateStatusSlot(QString status)
     _ui->_statusBar->showMessage(status, 5000);
 }
 
+void MainWindow::on_actionExit_triggered()
+{
+    qApp->quit();
+}
+
+void MainWindow::on_actionAbout_ComBomb_triggered()
+{
+    AboutDialog about(this);
+    about.exec();
+}

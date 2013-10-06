@@ -32,7 +32,7 @@ QTerminalImpl::QTerminalImpl(const boost::shared_ptr<TgtIntf> &targetInterface, 
 void QTerminalImpl::initialize(const boost::shared_ptr<TgtIntf> &targetInterface, int width, int height)
 {
     m_terminalView = new TerminalView(this);
-    m_terminalView->setKeyboardCursorShape(TerminalView::UnderlineCursor);
+    m_terminalView->setKeyboardCursorShape(TerminalView::IBeamCursor);
     m_terminalView->setBlinkingCursor(true);
     m_terminalView->setBellMode(TerminalView::NotifyBell);
     m_terminalView->setTerminalSizeHint(true);

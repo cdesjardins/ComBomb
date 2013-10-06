@@ -18,7 +18,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>ComBomb</string>
   </property>
   <property name="windowIcon">
    <iconset resource="ComBomb.qrc">
@@ -31,7 +31,7 @@
      <x>0</x>
      <y>0</y>
      <width>917</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="_menuFile">
@@ -41,7 +41,14 @@
     <addaction name="actionOpen"/>
     <addaction name="actionExit"/>
    </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionAbout_ComBomb"/>
+   </widget>
    <addaction name="_menuFile"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="_mainToolBar">
    <attribute name="toolBarArea">
@@ -68,6 +75,15 @@
   <action name="actionExit">
    <property name="text">
     <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionAbout_ComBomb">
+   <property name="icon">
+    <iconset resource="ComBomb.qrc">
+     <normaloff>:/images/ComBomb16.png</normaloff>:/images/ComBomb16.png</iconset>
+   </property>
+   <property name="text">
+    <string>About ComBomb</string>
    </property>
   </action>
  </widget>

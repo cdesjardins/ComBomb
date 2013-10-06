@@ -15,15 +15,18 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     childform.cpp \
-    opendialog.cpp
+    opendialog.cpp \
+    aboutdialog.cpp
 
 HEADERS  += mainwindow.h \
     childform.h \
-    opendialog.h
+    opendialog.h \
+    aboutdialog.h
 
 FORMS    += mainwindow.ui \
     childform.ui \
-    opendialog.ui
+    opendialog.ui \
+    aboutdialog.ui
 
 RESOURCES += \
     ComBomb.qrc

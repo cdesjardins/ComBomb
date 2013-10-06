@@ -24,6 +24,10 @@ protected:
 private slots:
     void on_actionOpen_triggered();
     void updateStatusSlot(QString status);
+    void on_actionExit_triggered();
+
+    void on_actionAbout_ComBomb_triggered();
+
 private:
 
     Ui::MainWindow* _ui;
