@@ -58,8 +58,8 @@ protected:
     {
         _what[0] = 0;
         _whatBuffer = boost::asio::buffer(_what, sizeof(_what) - 1);
-        copyStr(file);
-        copyInt(line);
+        //copyStr(file);
+        //copyInt(line);
     }
     boost::asio::mutable_buffer _whatBuffer;
     char _what[2048];

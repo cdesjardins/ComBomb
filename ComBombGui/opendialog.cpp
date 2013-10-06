@@ -157,7 +157,6 @@ void OpenDialog::addComPorts(const std::string &basePortName)
         portName.str("");
         portName << basePortName << i;
         boost::asio::serial_port port(ioService);
-        qDebug("Serial port: %s", portName.str().c_str());
         port.open(portName.str(), ec);
         if (port.is_open() == true)
         {
@@ -168,7 +167,6 @@ void OpenDialog::addComPorts(const std::string &basePortName)
 
 void OpenDialog::addComPorts()
 {
-    ui->_comPortComboBox->clear();
     addComPorts(BASE_PORTNAME_1);
 #ifdef BASE_PORTNAME_2
     addComPorts(BASE_PORTNAME_2);
