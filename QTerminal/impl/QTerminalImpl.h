@@ -34,7 +34,7 @@ class QTerminalImpl : public QTerminalInterface
 {
     Q_OBJECT
 public:
-    QTerminalImpl(const boost::shared_ptr<TgtIntf> &targetInterface, QWidget* parent = 0);
+    QTerminalImpl(const boost::shared_ptr<TgtIntf> &targetInterface, int width, int height, QWidget* parent = 0);
     virtual ~QTerminalImpl();
 
     void setTerminalFont(const QFont &font);
@@ -53,7 +53,7 @@ protected:
     virtual void resizeEvent(QResizeEvent*);
     QSize sizeHint() const;
 private:
-    void initialize(const boost::shared_ptr<TgtIntf> &targetInterface);
+    void initialize(const boost::shared_ptr<TgtIntf> &targetInterface, int width, int height);
 
     TerminalView* m_terminalView;
     TerminalModel* m_terminalModel;

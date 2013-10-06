@@ -22,14 +22,14 @@
 
 #include "QTerminalImpl.h"
 
-QTerminalImpl::QTerminalImpl(const boost::shared_ptr<TgtIntf> &targetInterface, QWidget* parent)
+QTerminalImpl::QTerminalImpl(const boost::shared_ptr<TgtIntf> &targetInterface, int width, int height, QWidget* parent)
     : QTerminalInterface(parent)
 {
     setMinimumSize(600, 400);
-    initialize(targetInterface);
+    initialize(targetInterface, height, width);
 }
 
-void QTerminalImpl::initialize(const boost::shared_ptr<TgtIntf> &targetInterface)
+void QTerminalImpl::initialize(const boost::shared_ptr<TgtIntf> &targetInterface, int width, int height)
 {
     m_terminalView = new TerminalView(this);
     m_terminalView->setKeyboardCursorShape(TerminalView::UnderlineCursor);
@@ -64,7 +64,7 @@ void QTerminalImpl::initialize(const boost::shared_ptr<TgtIntf> &targetInterface
     m_terminalModel->setDarkBackground(true);
     m_terminalModel->setKeyBindings("");
     m_terminalModel->run();
-    m_terminalView->setSize(80, 25);
+    m_terminalView->setSize(width, height);
     m_terminalModel->addView(m_terminalView);
 }
 
