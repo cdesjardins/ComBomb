@@ -7,8 +7,8 @@
 */
 #define TGT_BUFFER_SIZE   4096
 TgtIntf::TgtIntf(const boost::shared_ptr<const TgtConnectionConfigBase> &config)
-    :_running(true),
-      _connectionConfig(config)
+    : _connectionConfig(config),
+    _running(true)
 {
     for (size_t i = 0; i < 4096; i++)
     {
@@ -92,3 +92,4 @@ void TgtIntf::TgtAttemptReconnect()
         }
     }
 }
+

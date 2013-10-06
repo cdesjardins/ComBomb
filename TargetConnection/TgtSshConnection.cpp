@@ -1,5 +1,6 @@
 #include "cl/cryptlib.h"
 #include "TgtSshConnection.h"
+#include "CBException.h"
 #include <boost/format.hpp>
 #include <boost/thread.hpp>
 #include <boost/atomic.hpp>
@@ -23,10 +24,12 @@ public:
         }
         return tmp;
     }
+
     TgtSshInit()
     {
         cryptInit();
     }
+
     ~TgtSshInit()
     {
         cryptEnd();
@@ -47,6 +50,7 @@ struct TgtSshImpl
         _sshInit(TgtSshInit::instance())
     {
     }
+
     ~TgtSshImpl()
     {
         _sshInit.reset();
@@ -58,7 +62,6 @@ struct TgtSshImpl
     boost::shared_ptr<TgtSshInit> _sshInit;
 };
 
-
 boost::shared_ptr<TgtSshIntf> TgtSshIntf::createSshConnection(const boost::shared_ptr<const TgtConnectionConfig> &config)
 {
     boost::shared_ptr<TgtSshIntf> ret(new TgtSshIntf(config));
@@ -68,7 +71,7 @@ boost::shared_ptr<TgtSshIntf> TgtSshIntf::createSshConnection(const boost::share
 
 TgtSshIntf::TgtSshIntf(const boost::shared_ptr<const TgtConnectionConfig> &config)
     : TgtIntf(config),
-      _sshData(new TgtSshImpl())
+    _sshData(new TgtSshImpl())
 {
 }
 
@@ -78,7 +81,7 @@ TgtSshIntf::~TgtSshIntf()
     _sshData.reset();
 }
 
-void TgtSshIntf::TgtGetErrorMsg(std::string *errmsg, int sts, const std::string &defaultErrMsg)
+void TgtSshIntf::TgtGetErrorMsg(std::string* errmsg, int sts, const std::string &defaultErrMsg)
 {
     int status;
     char errorMessage[512];
@@ -106,7 +109,7 @@ void TgtSshIntf::TgtMakeConnection()
     if (cryptStatusError(status))
     {
         TgtGetErrorMsg(&errmsg, status, "Unable to create SSH session");
-        throw std::exception(errmsg.c_str());
+        throw CB_EXCEPTION_STR(CBException::CbExcp, errmsg.c_str());
     }
     status = cryptSetAttributeString(_sshData->_cryptSession,
                                      CRYPT_SESSINFO_SERVER_NAME,
@@ -117,14 +120,14 @@ void TgtSshIntf::TgtMakeConnection()
         cryptDestroySession(_sshData->_cryptSession);
         boost::format f("Unable to connect to '%s' (%d)");
         TgtGetErrorMsg(&errmsg, status, str(f % connectionConfig->_hostName % status));
-        throw std::exception(errmsg.c_str());
+        throw CB_EXCEPTION_STR(CBException::CbExcp, errmsg.c_str());
     }
     status = cryptSetAttribute(_sshData->_cryptSession, CRYPT_OPTION_NET_CONNECTTIMEOUT, 10);
     if (cryptStatusError(status))
     {
         cryptDestroySession(_sshData->_cryptSession);
         TgtGetErrorMsg(&errmsg, status, "Unable to set ssh connection timeout");
-        throw std::exception(errmsg.c_str());
+        throw CB_EXCEPTION_STR(CBException::CbExcp, errmsg.c_str());
     }
     status = cryptSetAttributeString(_sshData->_cryptSession,
                                      CRYPT_SESSINFO_USERNAME,
@@ -134,7 +137,7 @@ void TgtSshIntf::TgtMakeConnection()
     {
         cryptDestroySession(_sshData->_cryptSession);
         TgtGetErrorMsg(&errmsg, status, "Unable to set username");
-        throw std::exception(errmsg.c_str());
+        throw CB_EXCEPTION_STR(CBException::CbExcp, errmsg.c_str());
     }
     status = cryptSetAttributeString(_sshData->_cryptSession,
                                      CRYPT_SESSINFO_PASSWORD,
@@ -144,14 +147,14 @@ void TgtSshIntf::TgtMakeConnection()
     {
         cryptDestroySession(_sshData->_cryptSession);
         TgtGetErrorMsg(&errmsg, status, "Unable to set password");
-        throw std::exception(errmsg.c_str());
+        throw CB_EXCEPTION_STR(CBException::CbExcp, errmsg.c_str());
     }
     status = cryptSetAttribute(_sshData->_cryptSession, CRYPT_SESSINFO_ACTIVE, true);
     if (cryptStatusError(status))
     {
         cryptDestroySession(_sshData->_cryptSession);
         TgtGetErrorMsg(&errmsg, status, "Unable to activate session");
-        throw std::exception(errmsg.c_str());
+        throw CB_EXCEPTION_STR(CBException::CbExcp, errmsg.c_str());
     }
     else
     {

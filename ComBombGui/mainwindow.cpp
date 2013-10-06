@@ -18,7 +18,6 @@ MainWindow::MainWindow(QWidget* parent) :
     _ui->setupUi(this);
     _mdiArea = new QMdiArea;
     setCentralWidget(_mdiArea);
-
 }
 
 MainWindow::~MainWindow()
@@ -45,7 +44,7 @@ void MainWindow::errorBox(QString errMsg)
     msgBox.exec();
 }
 
-void MainWindow::getPreviousConnections(const std::string &connType, QStringList *connections)
+void MainWindow::getPreviousConnections(const std::string &connType, QStringList* connections)
 {
     QSettings settings;
     int size = settings.beginReadArray(connType.c_str());
@@ -121,27 +120,27 @@ void MainWindow::on_actionOpen_triggered()
             switch (openDialog.getConnectionType())
             {
                 case OpenDialog::CB_CONN_SERIAL:
-                    {
-                        boost::shared_ptr<const TgtSerialIntf::TgtConnectionConfig> p = openDialog.getSerialConfig();
-                        intf = TgtSerialIntf::createSerialConnection(p);
-                    }
-                    break;
+                {
+                    boost::shared_ptr<const TgtSerialIntf::TgtConnectionConfig> p = openDialog.getSerialConfig();
+                    intf = TgtSerialIntf::createSerialConnection(p);
+                }
+                break;
                 case OpenDialog::CB_CONN_FILE:
-                    {
-                        boost::shared_ptr<const TgtFileIntf::TgtConnectionConfig> p = openDialog.getFileConfig();
-                        intf = TgtFileIntf::createFileConnection(p);
-                        oa << *(p.get());
-                        connConfig[CB_FILE_CONFIG_STR] = ofs.str();
-                    }
-                    break;
+                {
+                    boost::shared_ptr<const TgtFileIntf::TgtConnectionConfig> p = openDialog.getFileConfig();
+                    intf = TgtFileIntf::createFileConnection(p);
+                    oa << *(p.get());
+                    connConfig[CB_FILE_CONFIG_STR] = ofs.str();
+                }
+                break;
                 case OpenDialog::CB_CONN_SSH:
-                    {
-                        boost::shared_ptr<const TgtSshIntf::TgtConnectionConfig> p = openDialog.getSshConfig();
-                        intf = TgtSshIntf::createSshConnection(p);
-                        oa << *(p.get());
-                        connConfig[CB_SSH_CONFIG_STR] = ofs.str();
-                    }
-                    break;
+                {
+                    boost::shared_ptr<const TgtSshIntf::TgtConnectionConfig> p = openDialog.getSshConfig();
+                    intf = TgtSshIntf::createSshConnection(p);
+                    oa << *(p.get());
+                    connConfig[CB_SSH_CONFIG_STR] = ofs.str();
+                }
+                break;
             }
 
             ChildForm* childForm = new ChildForm(intf);

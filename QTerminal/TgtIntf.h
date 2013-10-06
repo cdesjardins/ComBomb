@@ -10,11 +10,6 @@
 #include "impl/ThreadSafeQueue.h"
 #include <QWidget>
 
-
-
-
-
-
 class TgtIntf : public QWidget
 {
     Q_OBJECT
@@ -23,7 +18,6 @@ public:
     {
         virtual ~TgtConnectionConfigBase()
         {
-
         }
     };
 
@@ -70,16 +64,16 @@ private:
 
 namespace boost
 {
-    namespace serialization
-    {
-        template<class Archive>
-        void serialize(Archive & ar, TgtIntf::TgtConnectionConfigBase & configbase, const unsigned int version)
-        {
-            ar;
-            version;
-            configbase = configbase;
-        }
-    }
+namespace serialization
+{
+template<class Archive>
+void serialize(Archive & ar, TgtIntf::TgtConnectionConfigBase & configbase, const unsigned int version)
+{
+    ar;
+    version;
+    configbase = configbase;
+}
+}
 }
 
 #endif // TGTINTF_H

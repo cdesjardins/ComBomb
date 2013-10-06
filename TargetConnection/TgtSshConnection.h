@@ -21,9 +21,9 @@ public:
             _password(password)
         {
         }
+
         TgtConnectionConfig()
         {
-
         }
 
         std::string _hostName;
@@ -38,7 +38,7 @@ public:
     virtual void TgtGetTitle(std::string* szTitle);
 
 protected:
-    void TgtGetErrorMsg(std::string *errmsg, int status, const std::string &defaultErrMsg);
+    void TgtGetErrorMsg(std::string* errmsg, int status, const std::string &defaultErrMsg);
     TgtSshIntf (const boost::shared_ptr<const TgtConnectionConfig> &config);
     void sshThread();
     bool sshRecv();
@@ -50,18 +50,18 @@ protected:
 
 namespace boost
 {
-    namespace serialization
-    {
-        template<class Archive>
-        void serialize(Archive & ar, TgtSshIntf::TgtConnectionConfig & config, const unsigned int version)
-        {
-            version;
-            ar & boost::serialization::base_object<TgtIntf::TgtConnectionConfigBase>(config);
-            ar & config._hostName;
-            ar & config._portNum;
-            ar & config._userName;
-        }
-    }
+namespace serialization
+{
+template<class Archive>
+void serialize(Archive & ar, TgtSshIntf::TgtConnectionConfig & config, const unsigned int version)
+{
+    version;
+    ar & boost::serialization::base_object<TgtIntf::TgtConnectionConfigBase>(config);
+    ar & config._hostName;
+    ar & config._portNum;
+    ar & config._userName;
+}
+}
 }
 
 #endif

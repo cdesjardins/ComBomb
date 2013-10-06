@@ -1,4 +1,5 @@
 #include "TgtFileConnection.h"
+#include "CBException.h"
 #include <boost/format.hpp>
 
 /******************************************************************************
@@ -25,7 +26,7 @@ void TgtFileIntf::TgtMakeConnection()
     if (_inputFile == NULL)
     {
         boost::format f("Unable to open file: %s");
-        throw std::exception(str(f % connectionConfig->_fileName).c_str());
+        throw CB_EXCEPTION_STR(CBException::CbExcp, str(f % connectionConfig->_fileName).c_str());
     }
 }
 
@@ -65,3 +66,4 @@ void TgtFileIntf::TgtGetTitle(std::string* szTitle)
     boost::shared_ptr<const TgtConnectionConfig> connectionConfig = boost::dynamic_pointer_cast<const TgtConnectionConfig>(_connectionConfig);
     *szTitle = connectionConfig->_fileName;
 }
+

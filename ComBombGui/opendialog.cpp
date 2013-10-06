@@ -56,10 +56,10 @@ void OpenDialog::addSshConfig(const TgtSshIntf::TgtConnectionConfig &config)
 boost::shared_ptr<const TgtSshIntf::TgtConnectionConfig> OpenDialog::getSshConfig() const
 {
     boost::shared_ptr<TgtSshIntf::TgtConnectionConfig> ret(new TgtSshIntf::TgtConnectionConfig(
-                                  ui->_hostNameComboBox->currentText().toLocal8Bit().constData(),
-                                  ui->_portNumLineEdit->text().toInt(),
-                                  ui->_userNameComboBox->currentText().toLocal8Bit().constData(),
-                                  ui->_passwordLineEdit->text().toLocal8Bit().constData()));
+                                                               ui->_hostNameComboBox->currentText().toLocal8Bit().constData(),
+                                                               ui->_portNumLineEdit->text().toInt(),
+                                                               ui->_userNameComboBox->currentText().toLocal8Bit().constData(),
+                                                               ui->_passwordLineEdit->text().toLocal8Bit().constData()));
     return ret;
 }
 
@@ -80,12 +80,12 @@ boost::shared_ptr<const TgtSerialIntf::TgtConnectionConfig> OpenDialog::getSeria
     QVariant vFlowControl = ui->_flowControlComboBox->itemData(ui->_flowControlComboBox->currentIndex());
 
     boost::shared_ptr<TgtSerialIntf::TgtConnectionConfig> ret(new TgtSerialIntf::TgtConnectionConfig(
-        ui->_comPortComboBox->currentText().toUtf8().constData(),
-        boost::asio::serial_port_base::baud_rate(vBaudRate.toInt()),
-        boost::asio::serial_port_base::parity((boost::asio::serial_port_base::parity::type)vParity.toInt()),
-        boost::asio::serial_port_base::stop_bits((boost::asio::serial_port_base::stop_bits::type)vStopBits.toInt()),
-        boost::asio::serial_port_base::character_size(vByteSize.toInt()),
-        boost::asio::serial_port_base::flow_control((boost::asio::serial_port_base::flow_control::type)vFlowControl.toInt())));
+                                                                  ui->_comPortComboBox->currentText().toUtf8().constData(),
+                                                                  boost::asio::serial_port_base::baud_rate(vBaudRate.toInt()),
+                                                                  boost::asio::serial_port_base::parity((boost::asio::serial_port_base::parity::type)vParity.toInt()),
+                                                                  boost::asio::serial_port_base::stop_bits((boost::asio::serial_port_base::stop_bits::type)vStopBits.toInt()),
+                                                                  boost::asio::serial_port_base::character_size(vByteSize.toInt()),
+                                                                  boost::asio::serial_port_base::flow_control((boost::asio::serial_port_base::flow_control::type)vFlowControl.toInt())));
     return ret;
 }
 

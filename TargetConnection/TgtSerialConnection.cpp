@@ -136,3 +136,4 @@ void TgtSerialIntf::TgtGetTitle(std::string* szTitle)
       << stopbits;
     *szTitle = t.str();
 }
+

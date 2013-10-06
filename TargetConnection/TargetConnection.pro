@@ -22,7 +22,8 @@ HEADERS += \
     TgtSshConnection.h \
     TgtSerialConnection.h \
     TgtFileConnection.h \
-    TgtConnection.h
+    TgtConnection.h \
+    CBException.h
 unix:!symbian {
     maemo5 {
         target.path = /opt/usr/lib

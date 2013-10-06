@@ -31,18 +31,6 @@ RESOURCES += \
 INCLUDEPATH += $$PWD/..
 DEPENDPATH += $$PWD/..
 
-# Boost
-
-QMAKE_CXXFLAGS += -DBOOST_ALL_NO_LIB
-
-win32:QMAKE_CXXFLAGS += -D_WIN32_WINNT=0x0501
-
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../boost_1_54_0/stage/release/ -llibboost_system -llibboost_thread -llibboost_chrono -llibboost_date_time -llibboost_serialization
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../boost_1_54_0/stage/debug/ -llibboost_system -llibboost_thread -llibboost_chrono -llibboost_date_time -llibboost_serialization
-else:unix: LIBS += $$PWD/../boost_1_54_0/stage/x86/lib/libboost_system.a $$PWD/../boost_1_54_0/stage/x86/lib/libboost_thread.a $$PWD/../boost_1_54_0/stage/x86/lib/libboost_chrono.a $$PWD/../boost_1_54_0/stage/x86/lib/libboost_date_time.a $$PWD/../boost_1_54_0/stage/x86/lib/libboost_serialization.a
-
-INCLUDEPATH += $$PWD/../boost_1_54_0
-DEPENDPATH += $$PWD/../boost_1_54_0
 
 
 
@@ -51,7 +39,7 @@ DEPENDPATH += $$PWD/../boost_1_54_0
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../QTerminal/release/ -lQTerminal
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../QTerminal/debug/ -lQTerminal
-else:unix: LIBS += -L$$OUT_PWD/../QTerminal/ -lQTerminal
+else:unix: LIBS += $$OUT_PWD/../QTerminal/libQTerminal.a
 
 win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../QTerminal/release/QTerminal.lib
 else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../QTerminal/debug/QTerminal.lib
@@ -62,7 +50,7 @@ else:unix: PRE_TARGETDEPS += $$OUT_PWD/../QTerminal/libQTerminal.a
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../TargetConnection/release/ -lTargetConnection
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../TargetConnection/debug/ -lTargetConnection
-else:unix: LIBS += -L$$OUT_PWD/../TargetConnection/ -lTargetConnection
+else:unix: LIBS += $$OUT_PWD/../TargetConnection/libTargetConnection.a
 
 win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../TargetConnection/release/TargetConnection.lib
 else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../TargetConnection/debug/TargetConnection.lib
@@ -82,3 +70,16 @@ win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../cl/release/cl32
 else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../cl/debug/cl32.lib
 
 
+
+# Boost
+
+QMAKE_CXXFLAGS += -DBOOST_ALL_NO_LIB
+
+win32:QMAKE_CXXFLAGS += -D_WIN32_WINNT=0x0501
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../boost_1_54_0/stage/release/ -llibboost_system -llibboost_thread -llibboost_chrono -llibboost_date_time -llibboost_serialization
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../boost_1_54_0/stage/debug/ -llibboost_system -llibboost_thread -llibboost_chrono -llibboost_date_time -llibboost_serialization
+else:unix: LIBS += $$PWD/../boost_1_54_0/stage/x86/lib/libboost_system.a $$PWD/../boost_1_54_0/stage/x86/lib/libboost_thread.a $$PWD/../boost_1_54_0/stage/x86/lib/libboost_chrono.a $$PWD/../boost_1_54_0/stage/x86/lib/libboost_date_time.a $$PWD/../boost_1_54_0/stage/x86/lib/libboost_serialization.a
+
+INCLUDEPATH += $$PWD/../boost_1_54_0
+DEPENDPATH += $$PWD/../boost_1_54_0

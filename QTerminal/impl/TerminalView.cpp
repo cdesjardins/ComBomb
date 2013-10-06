@@ -2612,7 +2612,7 @@ void TerminalView::makeImage()
 void TerminalView::setSize(int columns, int lines)
 {
     int scrollBarWidth = _scrollBar->style()->pixelMetric(QStyle::PM_ScrollBarExtent) +
-            style()->pixelMetric(QStyle::PM_MDIFrameWidth);
+                         style()->pixelMetric(QStyle::PM_MDIFrameWidth);
     QSize newSize = QSize((columns * _fontWidth) + scrollBarWidth, lines * _fontHeight);
 
     if (newSize != size())

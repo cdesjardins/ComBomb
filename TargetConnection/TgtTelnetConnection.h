@@ -118,5 +118,4 @@ protected:
     bool m_bConnected;
 };
 
-
 #endif
