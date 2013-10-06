@@ -2,7 +2,7 @@
 #define CJD_OPENDIALOG_H
 
 #include <QDialog>
-#include "TargetIntf.h"
+#include "TargetConnection/TgtConnection.h"
 
 namespace Ui {
 class OpenDialog;
@@ -22,16 +22,16 @@ public:
 
     explicit OpenDialog(QWidget* parent = 0);
     ~OpenDialog();
-    const TgtSerialIntf::TgtConnection getSerialConfig() const;
-    const TgtFileIntf::TgtConnection getFileConfig() const;
-    const TgtSshIntf::TgtConnection getSshConfig() const;
+    boost::shared_ptr<const TgtSerialIntf::TgtConnectionConfig> getSerialConfig() const;
+    boost::shared_ptr<const TgtFileIntf::TgtConnectionConfig> getFileConfig() const;
+    boost::shared_ptr<const TgtSshIntf::TgtConnectionConfig> getSshConfig() const;
 
     ConnectionType getConnectionType();
 
 private slots:
     void on__browseButton_clicked();
-
 private:
+    void addComPorts();
     void addComPorts(const std::string &basePortName);
     void addBaudRates();
     void addParity();

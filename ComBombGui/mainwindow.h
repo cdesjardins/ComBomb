@@ -19,10 +19,9 @@ public:
     static void errorBox(QString errMsg);
 private slots:
     void on_actionOpen_triggered();
-
+    void updateStatusSlot(QString status);
 private:
 
-    OpenDialog* _openDialog;
     Ui::MainWindow* _ui;
     QMdiArea* _mdiArea;
     std::vector<boost::shared_ptr<TgtIntf> > _connections;

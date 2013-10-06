@@ -6,8 +6,9 @@
 ** startup script (.cshrc) or the like.
 */
 #define TGT_BUFFER_SIZE   4096
-TgtIntf::TgtIntf(void)
-    :_running(true)
+TgtIntf::TgtIntf(const boost::shared_ptr<const TgtConnectionConfigBase> &config)
+    :_running(true),
+      _connectionConfig(config)
 {
     for (size_t i = 0; i < 4096; i++)
     {
@@ -83,7 +84,7 @@ void TgtIntf::TgtAttemptReconnect()
         catch (const std::exception &e)
         {
             // update status bar
-            //qDebug(e.what());
+            emit updateStatusSignal(e.what());
         }
         if ((reconnected == false) && (_running == true))
         {

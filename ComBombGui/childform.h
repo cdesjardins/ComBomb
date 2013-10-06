@@ -2,7 +2,7 @@
 #define CJD_CHILDFORM_H
 
 #include <QWidget>
-#include "TargetIntf.h"
+#include "QTerminal/TgtIntf.h"
 #include "QTerminal/QTerminal"
 
 namespace Ui {

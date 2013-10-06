@@ -4,4 +4,6 @@ CONFIG += ordered
 
 SUBDIRS += \
     QTerminal \
+    TargetConnection \
     ComBombGui
+

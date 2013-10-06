@@ -19,16 +19,12 @@ OpenDialog::OpenDialog(QWidget* parent) :
     ui(new Ui::OpenDialog)
 {
     ui->setupUi(this);
-    addComPorts(BASE_PORTNAME_1);
-#ifdef BASE_PORTNAME_2
-    addComPorts(BASE_PORTNAME_2);
-#endif
+    addComPorts();
     addBaudRates();
     addParity();
     addStopBits();
     addByteSize();
     addFlowControl();
-    ui->_fileNameComboBox->addItem("C:/Users/ChrisD/software_devel/ComBomb-build-Desktop_Qt_5_0_1_MSVC2010_32bit-Debug/test.cbd");
     ui->_portNumLineEdit->setValidator(new QIntValidator(0, 65536, this));
     ui->_passwordLineEdit->setEchoMode(QLineEdit::Password);
 }
@@ -39,22 +35,23 @@ OpenDialog::ConnectionType OpenDialog::getConnectionType()
     return ret;
 }
 
-const TgtFileIntf::TgtConnection OpenDialog::getFileConfig() const
+boost::shared_ptr<const TgtFileIntf::TgtConnectionConfig> OpenDialog::getFileConfig() const
 {
-    TgtFileIntf::TgtConnection ret(ui->_fileNameComboBox->currentText().toLocal8Bit().constData());
+    boost::shared_ptr<TgtFileIntf::TgtConnectionConfig> ret(new TgtFileIntf::TgtConnectionConfig(ui->_fileNameComboBox->currentText().toLocal8Bit().constData()));
     return ret;
 }
 
-const TgtSshIntf::TgtConnection OpenDialog::getSshConfig() const
+boost::shared_ptr<const TgtSshIntf::TgtConnectionConfig> OpenDialog::getSshConfig() const
 {
-    TgtSshIntf::TgtConnection ret(ui->_hostNameComboBox->currentText().toLocal8Bit().constData(),
+    boost::shared_ptr<TgtSshIntf::TgtConnectionConfig> ret(new TgtSshIntf::TgtConnectionConfig(
+                                  ui->_hostNameComboBox->currentText().toLocal8Bit().constData(),
                                   ui->_portNumLineEdit->text().toInt(),
                                   ui->_userNameComboBox->currentText().toLocal8Bit().constData(),
-                                  ui->_passwordLineEdit->text().toLocal8Bit().constData());
+                                  ui->_passwordLineEdit->text().toLocal8Bit().constData()));
     return ret;
 }
 
-const TgtSerialIntf::TgtConnection OpenDialog::getSerialConfig() const
+boost::shared_ptr<const TgtSerialIntf::TgtConnectionConfig> OpenDialog::getSerialConfig() const
 {
     QVariant vBaudRate    = ui->_baudRateComboBox->itemData(ui->_baudRateComboBox->currentIndex());
     QVariant vParity      = ui->_parityComboBox->itemData(ui->_parityComboBox->currentIndex());
@@ -62,13 +59,13 @@ const TgtSerialIntf::TgtConnection OpenDialog::getSerialConfig() const
     QVariant vByteSize    = ui->_byteSizeComboBox->itemData(ui->_byteSizeComboBox->currentIndex());
     QVariant vFlowControl = ui->_flowControlComboBox->itemData(ui->_flowControlComboBox->currentIndex());
 
-    TgtSerialIntf::TgtConnection ret(
+    boost::shared_ptr<TgtSerialIntf::TgtConnectionConfig> ret(new TgtSerialIntf::TgtConnectionConfig(
         ui->_comPortComboBox->currentText().toUtf8().constData(),
         boost::asio::serial_port_base::baud_rate(vBaudRate.toInt()),
         boost::asio::serial_port_base::parity((boost::asio::serial_port_base::parity::type)vParity.toInt()),
         boost::asio::serial_port_base::stop_bits((boost::asio::serial_port_base::stop_bits::type)vStopBits.toInt()),
         boost::asio::serial_port_base::character_size(vByteSize.toInt()),
-        boost::asio::serial_port_base::flow_control((boost::asio::serial_port_base::flow_control::type)vFlowControl.toInt()));
+        boost::asio::serial_port_base::flow_control((boost::asio::serial_port_base::flow_control::type)vFlowControl.toInt())));
     return ret;
 }
 
@@ -147,6 +144,15 @@ void OpenDialog::addComPorts(const std::string &basePortName)
             ui->_comPortComboBox->addItem(portName.str().c_str());
         }
     }
+}
+
+void OpenDialog::addComPorts()
+{
+    ui->_comPortComboBox->clear();
+    addComPorts(BASE_PORTNAME_1);
+#ifdef BASE_PORTNAME_2
+    addComPorts(BASE_PORTNAME_2);
+#endif
 }
 
 void OpenDialog::on__browseButton_clicked()

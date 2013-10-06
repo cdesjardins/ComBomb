@@ -2,24 +2,20 @@
 #include <QMessageBox>
 #include "mainwindow.h"
 #include "childform.h"
-#include "TargetIntf.h"
 #include "ui_mainwindow.h"
-#include "cryptlib.h"
 
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
     _ui(new Ui::MainWindow)
 {
+    QCoreApplication::setOrganizationName("Desjardins");
+    QCoreApplication::setOrganizationDomain("chrisd.info");
+    QCoreApplication::setApplicationName("ComBomb");
+
     _ui->setupUi(this);
     _mdiArea = new QMdiArea;
     setCentralWidget(_mdiArea);
-    _openDialog = new OpenDialog();
 
-    int status = cryptInit();
-    if (cryptStatusError(status))
-    {
-        MainWindow::errorBox("Unable to init crypt lib");
-    }
 }
 
 MainWindow::~MainWindow()
@@ -32,7 +28,6 @@ MainWindow::~MainWindow()
     }
     _connections.clear();
     delete _ui;
-    cryptEnd();
     qDebug("~mainwindow");
 }
 
@@ -49,25 +44,28 @@ void MainWindow::errorBox(QString errMsg)
 
 void MainWindow::on_actionOpen_triggered()
 {
-    if (_openDialog->exec() == OpenDialog::Accepted)
+    OpenDialog openDialog;
+    if (openDialog.exec() == OpenDialog::Accepted)
     {
         try
         {
             boost::shared_ptr<TgtIntf> intf;
-            switch (_openDialog->getConnectionType())
+            switch (openDialog.getConnectionType())
             {
                 case OpenDialog::CB_CONN_SERIAL:
-                    intf = TgtSerialIntf::createSerialConnection(_openDialog->getSerialConfig());
+                    intf = TgtSerialIntf::createSerialConnection(openDialog.getSerialConfig());
                     break;
                 case OpenDialog::CB_CONN_FILE:
-                    intf = TgtFileIntf::createFileConnection(_openDialog->getFileConfig());
+                    intf = TgtFileIntf::createFileConnection(openDialog.getFileConfig());
                     break;
                 case OpenDialog::CB_CONN_SSH:
-                    intf = TgtSshIntf::createSshConnection(_openDialog->getSshConfig());
+                    intf = TgtSshIntf::createSshConnection(openDialog.getSshConfig());
                     break;
             }
 
             ChildForm* childForm = new ChildForm(intf);
+            connect(intf.get(), SIGNAL(updateStatusSignal(QString)), this, SLOT(updateStatusSlot(QString)));
+
             QMdiSubWindow* subWindow = _mdiArea->addSubWindow(childForm);
             _connections.push_back(intf);
             subWindow->show();
@@ -78,5 +76,10 @@ void MainWindow::on_actionOpen_triggered()
             MainWindow::errorBox(e.what());
         }
     }
+}
+
+void MainWindow::updateStatusSlot(QString status)
+{
+    _ui->_statusBar->showMessage(status, 5000);
 }
 

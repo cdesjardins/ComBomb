@@ -15,13 +15,10 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     childform.cpp \
-    TargetIntf.cpp \
-    opendialog.cpp \
-    TgtSshIntf.cpp
+    opendialog.cpp
 
 HEADERS  += mainwindow.h \
     childform.h \
-    TargetIntf.h \
     opendialog.h
 
 FORMS    += mainwindow.ui \
@@ -30,6 +27,11 @@ FORMS    += mainwindow.ui \
 
 RESOURCES += \
     ComBomb.qrc
+
+INCLUDEPATH += $$PWD/..
+DEPENDPATH += $$PWD/..
+
+# Boost
 
 QMAKE_CXXFLAGS += -DBOOST_ALL_NO_LIB
 
@@ -42,6 +44,31 @@ else:unix: LIBS += $$PWD/../boost_1_54_0/stage/x86/lib/libboost_system.a $$PWD/.
 INCLUDEPATH += $$PWD/../boost_1_54_0
 DEPENDPATH += $$PWD/../boost_1_54_0
 
+
+
+# QTerminal
+
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../QTerminal/release/ -lQTerminal
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../QTerminal/debug/ -lQTerminal
+else:unix: LIBS += -L$$OUT_PWD/../QTerminal/ -lQTerminal
+
+win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../QTerminal/release/QTerminal.lib
+else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../QTerminal/debug/QTerminal.lib
+else:unix: PRE_TARGETDEPS += $$OUT_PWD/../QTerminal/libQTerminal.a
+
+
+# Targetconnection
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../TargetConnection/release/ -lTargetConnection
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../TargetConnection/debug/ -lTargetConnection
+else:unix: LIBS += -L$$OUT_PWD/../TargetConnection/ -lTargetConnection
+
+win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../TargetConnection/release/TargetConnection.lib
+else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../TargetConnection/debug/TargetConnection.lib
+else:unix: PRE_TARGETDEPS += $$OUT_PWD/../TargetConnection/libTargetConnection.a
+
+
 # To build cryptLib for windows:
 # I have used version: 3.4.2
 # I changed the build type to static lib
@@ -51,24 +78,7 @@ win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../cl/release/ -lcl32 -lad
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../cl/debug/ -lcl32 -ladvapi32
 else:unix: LIBS += $$PWD/../cl/libcl.a
 
-INCLUDEPATH += $$PWD/../cl $$PWD/..
-DEPENDPATH += $$PWD/../cl $$PWD/..
-
 win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../cl/release/cl32.lib
 else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../cl/debug/cl32.lib
 
-win32: QMAKE_CXXFLAGS += -D_WINDOWS -DSTATIC_LIB
 
-#QTerminal
-
-
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../QTerminal/release/ -lQTerminal
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../QTerminal/debug/ -lQTerminal
-else:unix: LIBS += -L$$OUT_PWD/../QTerminal/ -lQTerminal
-
-INCLUDEPATH += $$PWD/../QTerminal
-DEPENDPATH += $$PWD/../QTerminal
-
-win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../QTerminal/release/QTerminal.lib
-else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../QTerminal/debug/QTerminal.lib
-else:unix: PRE_TARGETDEPS += $$OUT_PWD/../QTerminal/libQTerminal.a

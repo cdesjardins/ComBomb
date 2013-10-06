@@ -1,37 +1,81 @@
-#include "cryptlib.h"
-#include "TargetIntf.h"
-#include <QDebug>
+#include "cl/cryptlib.h"
+#include "TgtSshConnection.h"
 #include <boost/format.hpp>
+#include <boost/thread.hpp>
+#include <boost/atomic.hpp>
+#include <boost/thread/mutex.hpp>
+
+class TgtSshInit
+{
+public:
+    static boost::shared_ptr<TgtSshInit> instance()
+    {
+        boost::shared_ptr<TgtSshInit> tmp = _instance;
+        if (!tmp)
+        {
+            boost::mutex::scoped_lock guard(_instantiationMutex);
+            tmp = _instance;
+            if (!tmp)
+            {
+                _instance.reset(new TgtSshInit);
+                tmp = _instance;
+            }
+        }
+        return tmp;
+    }
+    TgtSshInit()
+    {
+        cryptInit();
+    }
+    ~TgtSshInit()
+    {
+        cryptEnd();
+    }
+
+private:
+    static boost::shared_ptr<TgtSshInit> _instance;
+    static boost::mutex _instantiationMutex;
+};
+
+boost::shared_ptr<TgtSshInit> TgtSshInit::_instance;
+boost::mutex TgtSshInit::_instantiationMutex;
 
 struct TgtSshImpl
 {
-    TgtSshImpl(const TgtSshIntf::TgtConnection &config)
-        : _tgtConnectionConfig(config),
-        _sshThreadRun(true)
+    TgtSshImpl()
+        : _sshThreadRun(true),
+        _sshInit(TgtSshInit::instance())
     {
     }
+    ~TgtSshImpl()
+    {
+        _sshInit.reset();
+    }
 
-    TgtSshIntf::TgtConnection _tgtConnectionConfig;
     CRYPT_SESSION _cryptSession;
     volatile bool _sshThreadRun;
     boost::scoped_ptr<boost::thread> _sshThread;
+    boost::shared_ptr<TgtSshInit> _sshInit;
 };
 
-boost::shared_ptr<TgtSshIntf> TgtSshIntf::createSshConnection(const TgtConnection &config)
+
+boost::shared_ptr<TgtSshIntf> TgtSshIntf::createSshConnection(const boost::shared_ptr<const TgtConnectionConfig> &config)
 {
     boost::shared_ptr<TgtSshIntf> ret(new TgtSshIntf(config));
     ret->TgtMakeConnection();
     return ret;
 }
 
-TgtSshIntf::TgtSshIntf(const TgtConnection &config)
-    : _sshData(new TgtSshImpl(config))
+TgtSshIntf::TgtSshIntf(const boost::shared_ptr<const TgtConnectionConfig> &config)
+    : TgtIntf(config),
+      _sshData(new TgtSshImpl())
 {
 }
 
-TgtSshIntf::TgtConnection TgtSshIntf::TgtGetConfig()
+TgtSshIntf::~TgtSshIntf()
 {
-    return _sshData->_tgtConnectionConfig;
+    TgtDisconnect();
+    _sshData.reset();
 }
 
 void TgtSshIntf::TgtGetErrorMsg(std::string *errmsg, int sts, const std::string &defaultErrMsg)
@@ -56,6 +100,8 @@ void TgtSshIntf::TgtMakeConnection()
 {
     int status;
     std::string errmsg;
+    boost::shared_ptr<const TgtConnectionConfig> connectionConfig = boost::dynamic_pointer_cast<const TgtConnectionConfig>(_connectionConfig);
+
     status = cryptCreateSession(&_sshData->_cryptSession, CRYPT_UNUSED, CRYPT_SESSION_SSH);
     if (cryptStatusError(status))
     {
@@ -64,13 +110,13 @@ void TgtSshIntf::TgtMakeConnection()
     }
     status = cryptSetAttributeString(_sshData->_cryptSession,
                                      CRYPT_SESSINFO_SERVER_NAME,
-                                     _sshData->_tgtConnectionConfig._hostName.c_str(),
-                                     _sshData->_tgtConnectionConfig._hostName.length());
+                                     connectionConfig->_hostName.c_str(),
+                                     connectionConfig->_hostName.length());
     if (cryptStatusError(status))
     {
         cryptDestroySession(_sshData->_cryptSession);
         boost::format f("Unable to connect to '%s' (%d)");
-        TgtGetErrorMsg(&errmsg, status, str(f % _sshData->_tgtConnectionConfig._hostName % status));
+        TgtGetErrorMsg(&errmsg, status, str(f % connectionConfig->_hostName % status));
         throw std::exception(errmsg.c_str());
     }
     status = cryptSetAttribute(_sshData->_cryptSession, CRYPT_OPTION_NET_CONNECTTIMEOUT, 10);
@@ -82,8 +128,8 @@ void TgtSshIntf::TgtMakeConnection()
     }
     status = cryptSetAttributeString(_sshData->_cryptSession,
                                      CRYPT_SESSINFO_USERNAME,
-                                     _sshData->_tgtConnectionConfig._userName.c_str(),
-                                     _sshData->_tgtConnectionConfig._userName.length());
+                                     connectionConfig->_userName.c_str(),
+                                     connectionConfig->_userName.length());
     if (cryptStatusError(status))
     {
         cryptDestroySession(_sshData->_cryptSession);
@@ -92,8 +138,8 @@ void TgtSshIntf::TgtMakeConnection()
     }
     status = cryptSetAttributeString(_sshData->_cryptSession,
                                      CRYPT_SESSINFO_PASSWORD,
-                                     _sshData->_tgtConnectionConfig._password.c_str(),
-                                     _sshData->_tgtConnectionConfig._password.length());
+                                     connectionConfig->_password.c_str(),
+                                     connectionConfig->_password.length());
     if (cryptStatusError(status))
     {
         cryptDestroySession(_sshData->_cryptSession);
@@ -111,11 +157,6 @@ void TgtSshIntf::TgtMakeConnection()
     {
         _sshData->_sshThread.reset(new boost::thread(boost::bind(&TgtSshIntf::sshThread, this)));
     }
-}
-
-TgtSshIntf::~TgtSshIntf ()
-{
-    TgtDisconnect();
 }
 
 int TgtSshIntf::TgtDisconnect()
@@ -139,8 +180,9 @@ bool TgtSshIntf::TgtConnected()
 
 void TgtSshIntf::TgtGetTitle(std::string* szTitle)
 {
+    boost::shared_ptr<const TgtConnectionConfig> connectionConfig = boost::dynamic_pointer_cast<const TgtConnectionConfig>(_connectionConfig);
     std::stringstream t;
-    t << _sshData->_tgtConnectionConfig._hostName << ":" << _sshData->_tgtConnectionConfig._portNum;
+    t << connectionConfig->_hostName << ":" << connectionConfig->_portNum;
     *szTitle = t.str();
 }
 
