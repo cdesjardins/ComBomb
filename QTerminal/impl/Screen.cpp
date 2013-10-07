@@ -1627,30 +1627,6 @@ void Screen::copyLineToStream(int line,
                         count, currentLineProperties);
 }
 
-// Method below has been removed because of its reliance on 'histCursor'
-// and I want to restrict the methods which have knowledge of the scroll position
-// to just those which deal with selection and supplying final screen images.
-//
-/*void Screen::writeToStream(QTextStream* stream , TerminalCharacterDecoder* decoder) {
-  sel_begin = 0;
-  sel_BR = sel_begin;
-  sel_TL = sel_begin;
-  setSelectionEnd(columns-1,lines-1+hist->getLines()-histCursor);
-
-  writeSelectionToStream(stream,decoder);
-
-  clearSelection();
-}*/
-
-void Screen::writeToStream(TerminalCharacterDecoder* decoder, int from, int to)
-{
-    sel_begin = loc(0, from);
-    sel_TL = sel_begin;
-    sel_BR = loc(columns - 1, to);
-    writeSelectionToStream(decoder);
-    clearSelection();
-}
-
 QString Screen::getHistoryLine(int no)
 {
     sel_begin = loc(0, no);

@@ -31,7 +31,7 @@ QTerminalImpl::QTerminalImpl(const boost::shared_ptr<TgtIntf> &targetInterface, 
 
 void QTerminalImpl::initialize(const boost::shared_ptr<TgtIntf> &targetInterface, int width, int height)
 {
-    m_terminalView = new TerminalView(this);
+    m_terminalView.reset(new TerminalView(this));
     m_terminalView->setKeyboardCursorShape(TerminalView::IBeamCursor);
     m_terminalView->setBlinkingCursor(true);
     m_terminalView->setBellMode(TerminalView::NotifyBell);
@@ -41,7 +41,7 @@ void QTerminalImpl::initialize(const boost::shared_ptr<TgtIntf> &targetInterface
     m_terminalView->setTerminalSizeStartup(true);
     m_terminalView->setScrollBarPosition(TerminalView::ScrollBarRight);
 
-    connect(m_terminalView, SIGNAL(customContextMenuRequested(QPoint)),
+    connect(m_terminalView.get(), SIGNAL(customContextMenuRequested(QPoint)),
             this, SLOT(handleCustomContextMenuRequested(QPoint)));
 
 #ifdef Q_OS_MAC
@@ -54,11 +54,9 @@ void QTerminalImpl::initialize(const boost::shared_ptr<TgtIntf> &targetInterface
     font.setPointSize(10);
 #endif
     setTerminalFont(font);
-    setFocusProxy(m_terminalView);
-    setFocus(Qt::OtherFocusReason);
+    setFocusProxy(m_terminalView.get());
 
-    m_terminalModel = new TerminalModel(targetInterface);
-    m_terminalModel->setAutoClose(true);
+    m_terminalModel.reset(new TerminalModel(targetInterface));
     m_terminalModel->setCodec(QTextCodec::codecForName("UTF-8"));
     m_terminalModel->setHistoryType(HistoryTypeBuffer(100000));
     m_terminalModel->setDarkBackground(true);
@@ -71,6 +69,13 @@ void QTerminalImpl::initialize(const boost::shared_ptr<TgtIntf> &targetInterface
 QTerminalImpl::~QTerminalImpl()
 {
     emit destroyed();
+    m_terminalModel.reset();
+    m_terminalView.reset();
+}
+
+void QTerminalImpl::close()
+{
+    m_terminalModel->close();
 }
 
 void QTerminalImpl::setTerminalFont(const QFont &font)

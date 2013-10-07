@@ -43,13 +43,10 @@
 #include "Vt102Emulation.h"
 
 TerminalModel::TerminalModel(const boost::shared_ptr<TgtIntf> &targetInterface) :
-    _shellProcess(0)
-    , _emulation(0)
+     _emulation(0)
     , _monitorActivity(false)
     , _monitorSilence(false)
     , _notifiedActivity(false)
-    , _autoClose(true)
-    , _wantedClose(false)
     , _silenceSeconds(10)
     , _addToUtmp(false)
     , _fullScripting(false)
@@ -57,29 +54,29 @@ TerminalModel::TerminalModel(const boost::shared_ptr<TgtIntf> &targetInterface) 
     , _targetInterface(targetInterface)
 {
     //create emulation backend
-    _emulation = new Vt102Emulation();
-    connect(_emulation, SIGNAL(stateSet(int)),
+    _emulation.reset(new Vt102Emulation());
+    connect(_emulation.get(), SIGNAL(stateSet(int)),
             this, SLOT(activityStateSet(int)));
-    connect(_emulation, SIGNAL(changeTabTextColorRequest(int)),
+    connect(_emulation.get(), SIGNAL(changeTabTextColorRequest(int)),
             this, SIGNAL(changeTabTextColorRequest(int)));
-    connect(_emulation, SIGNAL(profileChangeCommandReceived(const QString &)),
+    connect(_emulation.get(), SIGNAL(profileChangeCommandReceived(const QString &)),
             this, SIGNAL(profileChangeCommandReceived(const QString &)));
     // TODO
     // connect( _emulation,SIGNAL(imageSizeChanged(int,int)) , this ,
     //        SLOT(onEmulationSizeChange(int,int)) );
 
-    _selfListener = new SelfListener(targetInterface);
+    _selfListener.reset(new SelfListener(targetInterface));
     _selfListener->start();
-    connect(_selfListener, SIGNAL(recvData(const char*, int)),
+    connect(_selfListener.get(), SIGNAL(recvData(const char*, int)),
             this, SLOT(onReceiveBlock(const char*, int)), Qt::BlockingQueuedConnection);
 
-    connect(_emulation, SIGNAL(sendData(const char*, int))
+    connect(_emulation.get(), SIGNAL(sendData(const char*, int))
             , this, SLOT(sendData(const char*, int)));
 
     //setup timer for monitoring session activity
-    _monitorTimer = new QTimer(this);
+    _monitorTimer.reset(new QTimer(this));
     _monitorTimer->setSingleShot(true);
-    connect(_monitorTimer, SIGNAL(timeout()), this, SLOT(monitorTimerDone()));
+    connect(_monitorTimer.get(), SIGNAL(timeout()), this, SLOT(monitorTimerDone()));
 }
 
 void TerminalModel::setDarkBackground(bool darkBackground)
@@ -94,15 +91,10 @@ bool TerminalModel::hasDarkBackground() const
 
 void TerminalModel::setCodec(QTextCodec* codec)
 {
-    emulation()->setCodec(codec);
+    _emulation->setCodec(codec);
 }
 
-QList<TerminalView*> TerminalModel::views() const
-{
-    return _views;
-}
-
-void TerminalModel::addView(TerminalView* widget)
+void TerminalModel::addView(const boost::shared_ptr<TerminalView> &widget)
 {
     Q_ASSERT(!_views.contains(widget));
 
@@ -111,16 +103,16 @@ void TerminalModel::addView(TerminalView* widget)
     if (_emulation != 0)
     {
         // connect emulation - view signals and slots
-        connect(widget, SIGNAL(keyPressedSignal(QKeyEvent*)), _emulation,
+        connect(widget.get(), SIGNAL(keyPressedSignal(QKeyEvent*)), _emulation.get(),
                 SLOT(sendKeyEvent(QKeyEvent*)));
-        connect(widget, SIGNAL(mouseSignal(int, int, int, int)), _emulation,
+        connect(widget.get(), SIGNAL(mouseSignal(int, int, int, int)), _emulation.get(),
                 SLOT(sendMouseEvent(int, int, int, int)));
-        connect(widget, SIGNAL(sendStringToEmu(const char*)), _emulation,
+        connect(widget.get(), SIGNAL(sendStringToEmu(const char*)), _emulation.get(),
                 SLOT(sendString(const char*)));
 
         // allow emulation to notify view when the foreground process
         // indicates whether or not it is interested in mouse signals
-        connect(_emulation, SIGNAL(programUsesMouseChanged(bool)), widget,
+        connect(_emulation.get(), SIGNAL(programUsesMouseChanged(bool)), widget.get(),
                 SLOT(setUsesMouse(bool)));
 
         widget->setUsesMouse(_emulation->programUsesMouse());
@@ -129,54 +121,16 @@ void TerminalModel::addView(TerminalView* widget)
     }
 
     //connect view signals and slots
-    QObject::connect(widget, SIGNAL(changedContentSizeSignal(int, int)), this,
+    QObject::connect(widget.get(), SIGNAL(changedContentSizeSignal(int, int)), this,
                      SLOT(onViewSizeChange(int, int)));
 
-    QObject::connect(widget, SIGNAL(destroyed(QObject*)), this,
-                     SLOT(viewDestroyed(QObject*)));
     //slot for close
     //QObject::connect(this, SIGNAL(finished()), widget, SLOT(close()));
-}
-
-void TerminalModel::viewDestroyed(QObject* view)
-{
-    TerminalView* display = (TerminalView*)view;
-
-    Q_ASSERT(_views.contains(display));
-
-    removeView(display);
 }
 
 void TerminalModel::sendData(const char* buf, int len)
 {
     _targetInterface->TgtWrite(buf, len);
-}
-
-void TerminalModel::removeView(TerminalView* widget)
-{
-    _views.removeAll(widget);
-
-    disconnect(widget, 0, this, 0);
-
-    if (_emulation != 0)
-    {
-        // disconnect
-        //  - key presses signals from widget
-        //  - mouse activity signals from widget
-        //  - string sending signals from widget
-        //
-        //  ... and any other signals connected in addView()
-        disconnect(widget, 0, _emulation, 0);
-
-        // disconnect state change signals emitted by emulation
-        disconnect(_emulation, 0, widget, 0);
-    }
-
-    // close the session automatically when the last view is removed
-    if (_views.count() == 0)
-    {
-        close();
-    }
 }
 
 void TerminalModel::run()
@@ -258,7 +212,7 @@ void TerminalModel::onEmulationSizeChange(int lines, int columns)
 
 void TerminalModel::updateTerminalSize()
 {
-    QListIterator<TerminalView*> viewIter(_views);
+    QListIterator<boost::shared_ptr<TerminalView> > viewIter(_views);
 
     int minLines = -1;
     int minColumns = -1;
@@ -272,7 +226,7 @@ void TerminalModel::updateTerminalSize()
     //select largest number of lines and columns that will fit in all visible views
     while (viewIter.hasNext())
     {
-        TerminalView* view = viewIter.next();
+        boost::shared_ptr<TerminalView> view = viewIter.next();
         if (view->isHidden() == false &&
             view->lines() >= VIEW_LINES_THRESHOLD &&
             view->columns() >= VIEW_COLUMNS_THRESHOLD)
@@ -297,8 +251,7 @@ void TerminalModel::refresh()
 
 void TerminalModel::close()
 {
-    _autoClose = true;
-    _wantedClose = true;
+    _targetInterface->tgtDisconnect();
 }
 
 void TerminalModel::sendText(const QString &text) const
@@ -308,7 +261,11 @@ void TerminalModel::sendText(const QString &text) const
 
 TerminalModel::~TerminalModel()
 {
-    delete _emulation;
+    _selfListener->join();
+    _selfListener.reset();
+    _emulation.reset();
+    _views.clear();
+    _targetInterface.reset();
 }
 
 void TerminalModel::setProfileKey(const QString& key)
@@ -325,11 +282,6 @@ QString TerminalModel::profileKey() const
 void TerminalModel::done(int)
 {
     emit finished();
-}
-
-Emulation* TerminalModel::emulation() const
-{
-    return _emulation;
 }
 
 QString TerminalModel::keyBindings() const

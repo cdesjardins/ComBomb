@@ -30,6 +30,9 @@
 #include <QWidget>
 
 #include "Character.h"
+#ifndef Q_MOC_RUN
+#include <boost/smart_ptr.hpp>
+#endif
 
 class QDrag;
 class QDragEnterEvent;
@@ -618,7 +621,7 @@ private:
 
     bool _allowBell;
 
-    QGridLayout* _gridLayout;
+    boost::scoped_ptr<QGridLayout> _gridLayout;
 
     bool _fixedFont; // has fixed pitch
 
@@ -668,7 +671,7 @@ private:
     bool _columnSelectionMode;
 
     QClipboard* _clipboard;
-    QScrollBar* _scrollBar;
+    boost::scoped_ptr<QScrollBar> _scrollBar;
     ScrollBarPosition _scrollbarLocation;
     QString _wordCharacters;
     int _bellMode;
@@ -680,8 +683,8 @@ private:
     bool _ctrlDrag;           // require Ctrl key for drag
     TripleClickMode _tripleClickMode;
     bool _isFixedSize; //Columns / lines are locked.
-    QTimer* _blinkTimer;  // active when hasBlinker
-    QTimer* _blinkCursorTimer;  // active when hasBlinkingCursor
+    boost::scoped_ptr<QTimer> _blinkTimer;  // active when hasBlinker
+    boost::scoped_ptr<QTimer> _blinkCursorTimer;  // active when hasBlinkingCursor
 
 //    KMenu* _drop;
     QString _dropText;
@@ -690,14 +693,14 @@ private:
     bool _possibleTripleClick;  // is set in mouseDoubleClickEvent and deleted
                                 // after QApplication::doubleClickInterval() delay
 
-    QLabel* _resizeWidget;
-    QTimer* _resizeTimer;
+    boost::scoped_ptr<QLabel> _resizeWidget;
+    boost::scoped_ptr<QTimer> _resizeTimer;
 
     bool _flowControlWarningEnabled;
 
     //widgets related to the warning message that appears when the user presses Ctrl+S to suspend
     //terminal output - informing them what has happened and how to resume output
-    QLabel* _outputSuspendedLabel;
+    boost::scoped_ptr<QLabel> _outputSuspendedLabel;
 
     uint _lineSpacing;
 

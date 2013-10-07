@@ -56,7 +56,7 @@ protected:
 
     void init(const char* file, const int line)
     {
-        _what[0] = 0;
+        memset(_what, 0, sizeof(_what));
         _whatBuffer = boost::asio::buffer(_what, sizeof(_what) - 1);
         //copyStr(file);
         //copyInt(line);

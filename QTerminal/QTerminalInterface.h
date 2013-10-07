@@ -40,7 +40,8 @@ public:
         _contextMenu = new QMenu (this);
         QAction* copyAction  = _contextMenu->addAction ("Copy");
         QAction* pasteAction = _contextMenu->addAction ("Paste");
-
+        copyAction->setIcon(QIcon(":/images/page_copy.png"));
+        pasteAction->setIcon(QIcon(":/images/page_paste.png"));
         connect (copyAction, SIGNAL (triggered()), this, SLOT (copyClipboard()));
         connect (pasteAction, SIGNAL (triggered()), this, SLOT (pasteClipboard()));
     }

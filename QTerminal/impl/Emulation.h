@@ -34,6 +34,9 @@
 #include <QtCore/QTextCodec>
 #include <QtCore/QTextStream>
 #include <QtCore/QTimer>
+#ifndef Q_MOC_RUN
+#include <boost/smart_ptr.hpp>
+#endif
 
 class KeyboardTranslator;
 class HistoryType;
@@ -153,18 +156,6 @@ public:
     const HistoryType& history();
     /** Clears the history scroll. */
     void clearHistory();
-
-    /**
-     * Copies the output history from @p startLine to @p endLine
-     * into @p stream, using @p decoder to convert the terminal
-     * characters into text.
-     *
-     * @param decoder A decoder which converts lines of terminal characters with
-     * appearance attributes into output text.  PlainTextDecoder is the most commonly
-     * used decoder.
-     * @param startLine The first
-     */
-    virtual void writeToStream(TerminalCharacterDecoder* decoder, int startLine, int endLine);
 
     /** Returns the codec used to decode incoming characters.  See setCodec() */
     const QTextCodec* codec()
@@ -413,12 +404,12 @@ protected:
     };
     void setCodec(EmulationCodec codec); // codec number, 0 = locale, 1=utf8
 
-    QList<ScreenWindow*> _windows;
+    QList<boost::shared_ptr<ScreenWindow> > _windows;
 
-    Screen* _currentScreen; // pointer to the screen which is currently active,
+    int _currentScreenIndex; // pointer to the screen which is currently active,
                             // this is one of the elements in the screen[] array
 
-    Screen* _screen[2];    // 0 = primary screen ( used by most programs, including the shell
+    boost::shared_array<Screen> _screen;    // 0 = primary screen ( used by most programs, including the shell
                            //                      scrollbars are enabled in this mode )
                            // 1 = alternate      ( used by vi , emacs etc.
                            //                      scrollbars are not enabled in this mode )

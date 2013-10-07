@@ -17,6 +17,9 @@
     <italic>false</italic>
    </font>
   </property>
+  <property name="focusPolicy">
+   <enum>Qt::NoFocus</enum>
+  </property>
   <property name="windowTitle">
    <string>ComBomb</string>
   </property>
@@ -63,7 +66,7 @@
   <action name="actionOpen">
    <property name="icon">
     <iconset resource="ComBomb.qrc">
-     <normaloff>:/images/open.png</normaloff>:/images/open.png</iconset>
+     <normaloff>:/images/folder_star.png</normaloff>:/images/folder_star.png</iconset>
    </property>
    <property name="text">
     <string>Open</string>

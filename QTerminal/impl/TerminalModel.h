@@ -38,7 +38,6 @@
 #include "History.h"
 
 class Emulation;
-class PseudoTerminal;
 class TerminalView;
 
 /**
@@ -97,26 +96,7 @@ public:
      * Views can be removed using removeView().  The session is automatically
      * closed when the last view is removed.
      */
-    void addView(TerminalView* widget);
-    /**
-     * Removes a view from this session.  When the last view is removed,
-     * the session will be closed automatically.
-     *
-     * @p widget will no longer display output from or send input
-     * to the terminal
-     */
-    void removeView(TerminalView* widget);
-
-    /**
-     * Returns the views connected to this session
-     */
-    QList<TerminalView*> views() const;
-
-    /**
-     * Returns the terminal emulation instance being used to encode / decode
-     * characters to / from the process.
-     */
-    Emulation*  emulation() const;
+    void addView(const boost::shared_ptr<TerminalView> &widget);
 
     /**
      * Sets the type of history store used by this session.
@@ -177,15 +157,6 @@ public:
 
     /** Specifies whether a utmp entry should be created for the pty used by this session. */
     void setAddToUtmp(bool);
-
-    /**
-     * Specifies whether to close the session automatically when the terminal
-     * process terminates.
-     */
-    void setAutoClose(bool b)
-    {
-        _autoClose = b;
-    }
 
     /**
      * Sends @p text to the current foreground terminal program.
@@ -319,9 +290,6 @@ private slots:
 
     void activityStateSet(int);
 
-    //automatically detach views from sessions when view is destroyed
-    void viewDestroyed(QObject* view);
-
     void sendData(const char* buf, int len);
 
 private:
@@ -331,18 +299,15 @@ private:
 
     int _uniqueIdentifier;
 
-    PseudoTerminal* _shellProcess;
-    Emulation* _emulation;
+    boost::scoped_ptr<Emulation> _emulation;
 
-    QList<TerminalView*> _views;
+    QList<boost::shared_ptr<TerminalView> > _views;
 
     bool _monitorActivity;
     bool _monitorSilence;
     bool _notifiedActivity;
     bool _masterMode;
-    bool _autoClose;
-    bool _wantedClose;
-    QTimer* _monitorTimer;
+    boost::scoped_ptr<QTimer> _monitorTimer;
 
     int _silenceSeconds;
 
@@ -352,7 +317,7 @@ private:
     int _masterFd;
     int _slaveFd;
 
-    SelfListener* _selfListener;
+    boost::scoped_ptr<SelfListener> _selfListener;
 
     QColor _modifiedBackground;       // as set by: echo -en '\033]11;Color\007
 

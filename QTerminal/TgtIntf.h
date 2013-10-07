@@ -12,6 +12,8 @@
 #endif
 #include "impl/ThreadSafeQueue.h"
 #include <QWidget>
+#include <fstream>
+//#define CB_TRAP_TO_FILE
 
 class TgtIntf : public QWidget
 {
@@ -27,7 +29,7 @@ public:
     TgtIntf(const boost::shared_ptr<const TgtConnectionConfigBase> &config);
     virtual ~TgtIntf(void);
 
-    virtual int TgtDisconnect() = 0;
+    int tgtDisconnect();
     virtual int TgtRead(boost::asio::mutable_buffer &b);
     virtual int TgtWrite(const char* szWriteData, int nBytes);
     virtual bool TgtConnected() = 0;
@@ -52,6 +54,7 @@ signals:
 protected:
     void TgtAttemptReconnect();
     virtual void TgtMakeConnection() = 0;
+    virtual int TgtDisconnect() = 0;
 
     int m_nTotalTx;
     int m_nTotalRx;
@@ -63,6 +66,10 @@ protected:
 private:
     bool _running;
     static int deleteBuffersFunctor(std::list<boost::asio::mutable_buffer> &pool);
+    boost::mutex _disconnectMutex;
+#ifdef CB_TRAP_TO_FILE
+    std::ofstream _trapFile;
+#endif
 };
 
 namespace boost

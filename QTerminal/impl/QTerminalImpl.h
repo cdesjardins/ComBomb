@@ -42,6 +42,7 @@ public:
     void sendText(const QString& text);
 
     void setCursorType(CursorType type, bool blinking);
+    void close();
 
 public slots:
     void copyClipboard();
@@ -55,8 +56,8 @@ protected:
 private:
     void initialize(const boost::shared_ptr<TgtIntf> &targetInterface, int width, int height);
 
-    TerminalView* m_terminalView;
-    TerminalModel* m_terminalModel;
+    boost::shared_ptr<TerminalView> m_terminalView;
+    boost::scoped_ptr<TerminalModel> m_terminalModel;
 };
 
 #endif // Q_UNIXTERMINALIMPL

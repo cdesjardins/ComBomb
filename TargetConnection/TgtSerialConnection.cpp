@@ -62,6 +62,7 @@ TgtSerialIntf::TgtSerialIntf(const boost::shared_ptr<const TgtConnectionConfig> 
 
 TgtSerialIntf::~TgtSerialIntf ()
 {
+    tgtDisconnect();
 }
 
 void TgtSerialIntf::TgtReadCallback(const boost::system::error_code& error, const size_t bytesTransferred)
@@ -88,6 +89,9 @@ int TgtSerialIntf::TgtDisconnect()
         _service.stop();
         _serialServiceThread->join();
         _serialWriterThread->join();
+        _port.cancel();
+        _port.close();
+        _service.reset();
     }
     return 0;
 }

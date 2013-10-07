@@ -237,7 +237,6 @@ TerminalView::TerminalView(QWidget* parent)
     : QWidget(parent)
     , _screenWindow(0)
     , _allowBell(true)
-    , _gridLayout(0)
     , _fontHeight(1)
     , _fontWidth(1)
     , _fontAscent(1)
@@ -267,9 +266,6 @@ TerminalView::TerminalView(QWidget* parent)
     , _tripleClickMode(SelectWholeLine)
     , _isFixedSize(false)
     , _possibleTripleClick(false)
-    , _resizeWidget(0)
-    , _resizeTimer(0)
-    , _outputSuspendedLabel(0)
     , _lineSpacing(0)
     , _colorsInverted(false)
     , _blendColor(qRgba(0, 0, 0, 0xff))
@@ -288,17 +284,17 @@ TerminalView::TerminalView(QWidget* parent)
 
     // create scroll bar for scrolling output up and down
     // set the scroll bar's slider to occupy the whole area of the scroll bar initially
-    _scrollBar = new QScrollBar(this);
+    _scrollBar.reset(new QScrollBar(this));
     setScroll(0, 0);
     _scrollBar->setCursor(Qt::ArrowCursor);
-    connect(_scrollBar, SIGNAL(valueChanged(int)), this,
+    connect(_scrollBar.get(), SIGNAL(valueChanged(int)), this,
             SLOT(scrollBarPositionChanged(int)));
 
     // setup timers for blinking cursor and text
-    _blinkTimer   = new QTimer(this);
-    connect(_blinkTimer, SIGNAL(timeout()), this, SLOT(blinkEvent()));
-    _blinkCursorTimer   = new QTimer(this);
-    connect(_blinkCursorTimer, SIGNAL(timeout()), this, SLOT(blinkCursorEvent()));
+    _blinkTimer.reset(new QTimer(this));
+    connect(_blinkTimer.get(), SIGNAL(timeout()), this, SLOT(blinkEvent()));
+    _blinkCursorTimer.reset(new QTimer(this));
+    connect(_blinkCursorTimer.get(), SIGNAL(timeout()), this, SLOT(blinkCursorEvent()));
 
     //  QCursor::setAutoHideCursor( this, true );
 
@@ -319,20 +315,20 @@ TerminalView::TerminalView(QWidget* parent)
     // that TerminalDisplay will handle repainting its entire area.
     setAttribute(Qt::WA_OpaquePaintEvent);
 
-    _gridLayout = new QGridLayout(this);
+    _gridLayout.reset(new QGridLayout(this));
     _gridLayout->setMargin(0);
 
-    setLayout(_gridLayout);
+    setLayout(_gridLayout.get());
 }
 
 TerminalView::~TerminalView()
 {
     qApp->removeEventFilter(this);
 
-    delete[] _image;
+    delete []_image;
 
-    delete _gridLayout;
-    delete _outputSuspendedLabel;
+    _gridLayout.reset();
+    _outputSuspendedLabel.reset();
 }
 
 /* ------------------------------------------------------------------------- */
@@ -1057,16 +1053,16 @@ void TerminalView::showResizeNotification()
         }
         if (!_resizeWidget)
         {
-            _resizeWidget = new QLabel(("Size: XXX x XXX"), this);
+            _resizeWidget.reset(new QLabel(("Size: XXX x XXX"), this));
             _resizeWidget->setMinimumWidth(_resizeWidget->fontMetrics().width(("Size: XXX x XXX")));
             _resizeWidget->setMinimumHeight(_resizeWidget->sizeHint().height());
             _resizeWidget->setAlignment(Qt::AlignCenter);
 
             _resizeWidget->setStyleSheet("background-color:palette(window);border-style:solid;border-width:1px;border-color:palette(dark)");
 
-            _resizeTimer = new QTimer(this);
+            _resizeTimer.reset(new QTimer(this));
             _resizeTimer->setSingleShot(true);
-            connect(_resizeTimer, SIGNAL(timeout()), _resizeWidget, SLOT(hide()));
+            connect(_resizeTimer.get(), SIGNAL(timeout()), _resizeWidget.get(), SLOT(hide()));
         }
         QString sizeStr;
         sizeStr.sprintf("Size: %d x %d", _columns, _lines);
@@ -1476,12 +1472,12 @@ void TerminalView::setScroll(int cursor, int slines)
         return;
     }
 
-    disconnect(_scrollBar, SIGNAL(valueChanged(int)), this, SLOT(scrollBarPositionChanged(int)));
+    disconnect(_scrollBar.get(), SIGNAL(valueChanged(int)), this, SLOT(scrollBarPositionChanged(int)));
     _scrollBar->setRange(0, slines - _lines);
     _scrollBar->setSingleStep(1);
     _scrollBar->setPageStep(_lines);
     _scrollBar->setValue(cursor);
-    connect(_scrollBar, SIGNAL(valueChanged(int)), this, SLOT(scrollBarPositionChanged(int)));
+    connect(_scrollBar.get(), SIGNAL(valueChanged(int)), this, SLOT(scrollBarPositionChanged(int)));
 }
 
 void TerminalView::setScrollBarPosition(ScrollBarPosition position)
@@ -2719,11 +2715,11 @@ void TerminalView::outputSuspended(bool suspended)
         //all terminal emulators.
         //If there isn't a suitable article available in the target language the link
         //can simply be removed.
-        _outputSuspendedLabel = new QLabel(("<qt>Output has been "
+        _outputSuspendedLabel.reset(new QLabel(("<qt>Output has been "
                                             "<a href=\"http://en.wikipedia.org/wiki/XON\">suspended</a>"
                                             " by pressing Ctrl+S."
                                             "  Press <b>Ctrl+Q</b> to resume.</qt>"),
-                                           this);
+                                           this));
 
         QPalette palette(_outputSuspendedLabel->palette());
 
@@ -2743,7 +2739,7 @@ void TerminalView::outputSuspended(bool suspended)
         _outputSuspendedLabel->setOpenExternalLinks(true);
         _outputSuspendedLabel->setVisible(false);
 
-        _gridLayout->addWidget(_outputSuspendedLabel);
+        _gridLayout->addWidget(_outputSuspendedLabel.get());
         _gridLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding,
                                              QSizePolicy::Expanding),
                              1, 0);

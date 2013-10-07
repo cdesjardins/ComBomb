@@ -65,7 +65,6 @@ class TerminalCharacterDecoder;
     The number of lines of output history which are kept in addition to the current
     screen image depends on the history scroll being used to store the output.
     The scroll is specified using setScroll()
-    The output history can be retrieved using writeToStream()
 
     The screen image has a selection associated with it, specified using
     setSelectionStart() and setSelectionEnd().  The selected text can be retrieved
@@ -76,7 +75,7 @@ class Screen
 {
 public:
     /** Construct a new screen image of size @p lines by @p columns. */
-    Screen(int lines, int columns);
+    Screen(int lines = 40, int columns = 80);
     ~Screen();
 
     // VT100/2 Operations
@@ -449,15 +448,6 @@ public:
      * be inserted into the returned text at the end of each terminal line.
      */
     QString selectedText(bool preserveLineBreaks);
-
-    /**
-     * Copies part of the output to a stream.
-     *
-     * @param decoder A decoder which coverts terminal characters into text
-     * @param from The first line in the history to retrieve
-     * @param to The last line in the history to retrieve
-     */
-    void writeToStream(TerminalCharacterDecoder* decoder, int from, int to);
 
     /**
      * Sets the selection to line @p no in the history and returns

@@ -19,16 +19,28 @@
 
 SelfListener::SelfListener(const boost::shared_ptr<TgtIntf> &targetInterface, QObject* parent) :
     QThread(parent),
-    _targetInterface(targetInterface)
+    _targetInterface(targetInterface),
+    _running(true)
 {
+}
+
+SelfListener::~SelfListener()
+{
+    join();
+}
+
+void SelfListener::join()
+{
+    _running = false;
+    wait();
+    _targetInterface.reset();
 }
 
 void SelfListener::run()
 {
     boost::asio::mutable_buffer b;
 
-    bool running = true;
-    while (running)
+    while (_running)
     {
         int bytes = _targetInterface->TgtRead(b);
         if (bytes > 0)
@@ -41,5 +53,6 @@ void SelfListener::run()
 #endif
         }
     }
+    qDebug("SelfListener done!");
 }
 

@@ -49,17 +49,13 @@
 #include "ScreenWindow.h"
 
 Emulation::Emulation() :
-    _currentScreen(0),
+    _currentScreenIndex(0),
+    _screen(new Screen[2]),
     _codec(0),
     _decoder(0),
     _keyTranslator(0),
     _usesMouse(false)
 {
-    // create screens with a default size
-    _screen[0] = new Screen(40, 80);
-    _screen[1] = new Screen(40, 80);
-    _currentScreen = _screen[0];
-
     QObject::connect(&_bulkTimer1, SIGNAL(timeout()), this, SLOT(showBulk()));
     QObject::connect(&_bulkTimer2, SIGNAL(timeout()), this, SLOT(showBulk()));
 
@@ -80,16 +76,16 @@ void Emulation::usesMouseChanged(bool usesMouse)
 
 ScreenWindow* Emulation::createWindow()
 {
-    ScreenWindow* window = new ScreenWindow();
-    window->setScreen(_currentScreen);
+    boost::shared_ptr<ScreenWindow> window(new ScreenWindow());
+    window->setScreen(&_screen[_currentScreenIndex]);
     _windows << window;
 
-    connect(window, SIGNAL(selectionChanged()),
+    connect(window.get(), SIGNAL(selectionChanged()),
             this, SLOT(bufferedUpdate()));
 
     connect(this, SIGNAL(outputChanged()),
-            window, SLOT(notifyOutputChanged()));
-    return window;
+            window.get(), SLOT(notifyOutputChanged()));
+    return window.get();
 }
 
 /*!
@@ -97,15 +93,8 @@ ScreenWindow* Emulation::createWindow()
 
 Emulation::~Emulation()
 {
-    QListIterator<ScreenWindow*> windowIter(_windows);
-
-    while (windowIter.hasNext())
-    {
-        delete windowIter.next();
-    }
-
-    delete _screen[0];
-    delete _screen[1];
+    _windows.clear();
+    _screen.reset();
     delete _decoder;
 }
 
@@ -114,36 +103,36 @@ Emulation::~Emulation()
 
 void Emulation::setScreen(int n)
 {
-    Screen* old = _currentScreen;
-    _currentScreen = _screen[n & 1];
-    if (_currentScreen != old)
+    int old = _currentScreenIndex;
+    _currentScreenIndex = n & 1;
+    if (_currentScreenIndex != old)
     {
-        old->setBusySelecting(false);
+        _screen[old].setBusySelecting(false);
 
         // tell all windows onto this emulation to switch to the newly active _screen
-        QListIterator<ScreenWindow*> windowIter(_windows);
+        QListIterator<boost::shared_ptr<ScreenWindow> > windowIter(_windows);
         while (windowIter.hasNext())
         {
-            windowIter.next()->setScreen(_currentScreen);
+            windowIter.next()->setScreen(&_screen[_currentScreenIndex]);
         }
     }
 }
 
 void Emulation::clearHistory()
 {
-    _screen[0]->setScroll(_screen[0]->getScroll(), false);
+    _screen[0].setScroll(_screen[0].getScroll(), false);
 }
 
 void Emulation::setHistory(const HistoryType& t)
 {
-    _screen[0]->setScroll(t);
+    _screen[0].setScroll(t);
 
     showBulk();
 }
 
 const HistoryType& Emulation::history()
 {
-    return _screen[0]->getScroll();
+    return _screen[0].getScroll();
 }
 
 void Emulation::setCodec(const QTextCodec* qtc)
@@ -198,13 +187,13 @@ void Emulation::receiveChar(int c)
     c &= 0xff;
     switch (c)
     {
-        case '\b': _currentScreen->BackSpace();                 break;
-        case '\t': _currentScreen->Tabulate();                  break;
-        case '\n': _currentScreen->NewLine();                   break;
-        case '\r': _currentScreen->Return();                    break;
+        case '\b': _screen[_currentScreenIndex].BackSpace();                 break;
+        case '\t': _screen[_currentScreenIndex].Tabulate();                  break;
+        case '\n': _screen[_currentScreenIndex].NewLine();                   break;
+        case '\r': _screen[_currentScreenIndex].Return();                    break;
         case 0x07: emit stateSet(NOTIFYBELL);
             break;
-        default: _currentScreen->ShowCharacter(c);            break;
+        default: _screen[_currentScreenIndex].ShowCharacter(c);            break;
     }
     ;
 }
@@ -266,17 +255,11 @@ void Emulation::receiveData(const char* text, int length)
 
 // Selection --------------------------------------------------------------- --
 
-void Emulation::writeToStream(TerminalCharacterDecoder* _decoder,
-                              int startLine,
-                              int endLine)
-{
-    _currentScreen->writeToStream(_decoder, startLine, endLine);
-}
 
 int Emulation::lineCount()
 {
     // sum number of lines currently on _screen plus number of lines in history
-    return _currentScreen->getLines() + _currentScreen->getHistLines();
+    return _screen[_currentScreenIndex].getLines() + _screen[_currentScreenIndex].getHistLines();
 }
 
 // Refreshing -------------------------------------------------------------- --
@@ -293,8 +276,8 @@ void Emulation::showBulk()
 
     emit outputChanged();
 
-    _currentScreen->resetScrolledLines();
-    _currentScreen->resetDroppedLines();
+    _screen[_currentScreenIndex].resetScrolledLines();
+    _screen[_currentScreenIndex].resetDroppedLines();
 }
 
 void Emulation::bufferedUpdate()
@@ -319,8 +302,8 @@ void Emulation::setImageSize(int lines, int columns)
     Q_ASSERT(lines > 0);
     Q_ASSERT(columns > 0);
 
-    _screen[0]->resizeImage(lines, columns);
-    _screen[1]->resizeImage(lines, columns);
+    _screen[0].resizeImage(lines, columns);
+    _screen[1].resizeImage(lines, columns);
 
     emit imageSizeChanged(lines, columns);
 
@@ -329,7 +312,7 @@ void Emulation::setImageSize(int lines, int columns)
 
 QSize Emulation::imageSize()
 {
-    return QSize(_currentScreen->getColumns(), _currentScreen->getLines());
+    return QSize(_screen[_currentScreenIndex].getColumns(), _screen[_currentScreenIndex].getLines());
 }
 
 ushort ExtendedCharTable::extendedCharHash(ushort* unicodePoints, ushort length) const

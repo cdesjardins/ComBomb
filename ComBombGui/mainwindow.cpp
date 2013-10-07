@@ -23,13 +23,6 @@ MainWindow::MainWindow(QWidget* parent) :
 
 MainWindow::~MainWindow()
 {
-    std::vector<boost::shared_ptr<TgtIntf> >::iterator it;
-    for (it = _connections.begin(); it < _connections.end(); it++)
-    {
-        boost::shared_ptr<TgtIntf> connection = *it;
-        connection->TgtDisconnect();
-    }
-    _connections.clear();
     delete _ui;
     qDebug("~mainwindow");
 }
@@ -144,11 +137,10 @@ void MainWindow::on_actionOpen_triggered()
                 break;
             }
 
-            ChildForm* childForm = new ChildForm(intf);
+            ChildForm* childForm = new ChildForm(intf, this);
             connect(intf.get(), SIGNAL(updateStatusSignal(QString)), this, SLOT(updateStatusSlot(QString)));
 
             QMdiSubWindow* subWindow = _mdiArea->addSubWindow(childForm);
-            _connections.push_back(intf);
             if (connConfig.size() > 0)
             {
                 saveConnections(connConfig.begin()->first, connConfig.begin()->second);
