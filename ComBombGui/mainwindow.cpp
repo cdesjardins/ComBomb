@@ -17,12 +17,13 @@ MainWindow::MainWindow(QWidget* parent) :
     QCoreApplication::setApplicationName("ComBomb");
 
     _ui->setupUi(this);
-    _mdiArea = new QMdiArea;
+    _mdiArea = new QMdiArea();
     setCentralWidget(_mdiArea);
 }
 
 MainWindow::~MainWindow()
 {
+    delete _mdiArea;
     delete _ui;
     qDebug("~mainwindow");
 }
@@ -170,3 +171,24 @@ void MainWindow::on_actionAbout_ComBomb_triggered()
     AboutDialog about(this);
     about.exec();
 }
+
+void MainWindow::on_actionCopy_triggered()
+{
+    QMdiSubWindow* subWindow = _mdiArea->activeSubWindow();
+    if (subWindow != NULL)
+    {
+        ChildForm* childForm = dynamic_cast<ChildForm*>(subWindow->widget());
+        emit childForm->triggerCopy();
+    }
+}
+
+void MainWindow::on_actionPaste_triggered()
+{
+    QMdiSubWindow* subWindow = _mdiArea->activeSubWindow();
+    if (subWindow != NULL)
+    {
+        ChildForm* childForm = dynamic_cast<ChildForm*>(subWindow->widget());
+        emit childForm->triggerPaste();
+    }
+}
+

@@ -7,5 +7,7 @@
         <file>images/folder_star.png</file>
         <file>images/page_copy.png</file>
         <file>images/page_paste.png</file>
+        <file>images/check_box.png</file>
+        <file>images/bomb.png</file>
     </qresource>
 </RCC>

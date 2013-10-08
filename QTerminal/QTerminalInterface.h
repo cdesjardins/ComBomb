@@ -44,6 +44,9 @@ public:
         pasteAction->setIcon(QIcon(":/images/page_paste.png"));
         connect (copyAction, SIGNAL (triggered()), this, SLOT (copyClipboard()));
         connect (pasteAction, SIGNAL (triggered()), this, SLOT (pasteClipboard()));
+
+        connect (this, SIGNAL (triggerCopy()), this, SLOT (copyClipboard()));
+        connect (this, SIGNAL (triggerPaste()), this, SLOT (pasteClipboard()));
     }
 
     virtual ~QTerminalInterface()
@@ -77,6 +80,9 @@ public slots:
         _contextMenu->move (mapToGlobal(at));
         _contextMenu->show ();
     }
+signals:
+    void triggerCopy();
+    void triggerPaste();
 
 private:
     QMenu* _contextMenu;

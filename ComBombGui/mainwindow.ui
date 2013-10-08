@@ -39,18 +39,27 @@
    </property>
    <widget class="QMenu" name="_menuFile">
     <property name="title">
-     <string>File</string>
+     <string>&amp;File</string>
     </property>
     <addaction name="actionOpen"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
-     <string>Help</string>
+     <string>&amp;Help</string>
     </property>
     <addaction name="actionAbout_ComBomb"/>
    </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>&amp;Edit</string>
+    </property>
+    <addaction name="actionCopy"/>
+    <addaction name="actionPaste"/>
+    <addaction name="actionSelect_All"/>
+   </widget>
    <addaction name="_menuFile"/>
+   <addaction name="menuEdit"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="_mainToolBar">
@@ -69,15 +78,19 @@
      <normaloff>:/images/folder_star.png</normaloff>:/images/folder_star.png</iconset>
    </property>
    <property name="text">
-    <string>Open</string>
+    <string>&amp;Open</string>
    </property>
    <property name="toolTip">
     <string>Open new connection</string>
    </property>
   </action>
   <action name="actionExit">
+   <property name="icon">
+    <iconset resource="ComBomb.qrc">
+     <normaloff>:/images/bomb.png</normaloff>:/images/bomb.png</iconset>
+   </property>
    <property name="text">
-    <string>Exit</string>
+    <string>E&amp;xit</string>
    </property>
   </action>
   <action name="actionAbout_ComBomb">
@@ -86,7 +99,49 @@
      <normaloff>:/images/ComBomb16.png</normaloff>:/images/ComBomb16.png</iconset>
    </property>
    <property name="text">
+    <string>&amp;About ComBomb</string>
+   </property>
+   <property name="toolTip">
     <string>About ComBomb</string>
+   </property>
+  </action>
+  <action name="actionCopy">
+   <property name="icon">
+    <iconset resource="ComBomb.qrc">
+     <normaloff>:/images/page_copy.png</normaloff>:/images/page_copy.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Copy</string>
+   </property>
+   <property name="toolTip">
+    <string>Copy</string>
+   </property>
+  </action>
+  <action name="actionPaste">
+   <property name="icon">
+    <iconset resource="ComBomb.qrc">
+     <normaloff>:/images/page_paste.png</normaloff>:/images/page_paste.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Paste</string>
+   </property>
+   <property name="toolTip">
+    <string>Paste</string>
+   </property>
+  </action>
+  <action name="actionSelect_All">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="ComBomb.qrc">
+     <normaloff>:/images/check_box.png</normaloff>:/images/check_box.png</iconset>
+   </property>
+   <property name="text">
+    <string>Select &amp;All</string>
+   </property>
+   <property name="toolTip">
+    <string>Select All</string>
    </property>
   </action>
  </widget>

@@ -2,8 +2,8 @@
 #define CJD_MAINWINDOW_H
 
 #include "opendialog.h"
+#include <QMdiArea.h>
 #include <QMainWindow>
-#include <QMdiArea>
 
 namespace Ui {
 class MainWindow;
@@ -25,8 +25,9 @@ private slots:
     void on_actionOpen_triggered();
     void updateStatusSlot(QString status);
     void on_actionExit_triggered();
-
     void on_actionAbout_ComBomb_triggered();
+    void on_actionCopy_triggered();
+    void on_actionPaste_triggered();
 
 private:
 
