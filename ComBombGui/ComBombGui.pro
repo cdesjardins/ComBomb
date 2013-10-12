@@ -11,6 +11,13 @@ CONFIG += static
 TARGET = ComBombGui
 TEMPLATE = app
 
+versionTarget.target = versioning.h
+versionTarget.depends = FORCE
+versionTarget.commands = $$PWD/../createVersion.py
+PRE_TARGETDEPS += versioning.h
+QMAKE_EXTRA_TARGETS += versionTarget
+
+HEADERS += versioning.h
 
 SOURCES += main.cpp\
         mainwindow.cpp \
