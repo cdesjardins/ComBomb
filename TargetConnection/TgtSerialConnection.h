@@ -47,12 +47,14 @@ protected:
     void serviceThread();
     void writerThread();
     virtual void TgtMakeConnection();
+    void tgtStopService();
 
-    boost::scoped_ptr<boost::asio::io_service> _service;
+    boost::asio::io_service _service;
     boost::scoped_ptr<boost::asio::serial_port> _port;
     boost::scoped_ptr<boost::thread> _serialServiceThread;
     boost::scoped_ptr<boost::thread> _serialWriterThread;
-    volatile bool _serialThreadsRun;
+    volatile bool _serialWriterThreadRun;
+    volatile bool _serialServiceThreadRun;
 };
 
 namespace boost

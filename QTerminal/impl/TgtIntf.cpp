@@ -86,6 +86,12 @@ int TgtIntf::TgtWrite(const char* szWriteData, int nBytes)
 void TgtIntf::TgtAttemptReconnect()
 {
     bool reconnected = false;
+    std::string title;
+    std::string newTitle;
+    TgtGetTitle(&title);
+    newTitle = title;
+    newTitle.append(" Disconnected");
+    emit updateTitleSignal(newTitle.c_str());
     while ((reconnected == false) && (_running == true))
     {
         try
@@ -103,6 +109,7 @@ void TgtIntf::TgtAttemptReconnect()
             boost::this_thread::sleep(boost::posix_time::seconds(1));
         }
     }
+    emit updateTitleSignal(title.c_str());
 }
 
 int TgtIntf::tgtDisconnect()

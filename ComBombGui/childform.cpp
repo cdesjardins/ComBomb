@@ -9,7 +9,13 @@ ChildForm::ChildForm(const boost::shared_ptr<TgtIntf> &targetInterface, QWidget*
     ui->setupUi(this);
     targetInterface->TgtGetTitle(&szTitle);
     setWindowTitle(szTitle.c_str());
+    connect(targetInterface.get(), SIGNAL(updateTitleSignal(QString)), this, SLOT(updateTitleSlot(QString)));
     setAttribute(Qt::WA_DeleteOnClose, true);
+}
+
+void ChildForm::updateTitleSlot(QString title)
+{
+    setWindowTitle(title);
 }
 
 ChildForm::~ChildForm()

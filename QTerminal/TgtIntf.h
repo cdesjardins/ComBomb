@@ -50,7 +50,7 @@ public:
 
 signals:
     void updateStatusSignal(QString);
-
+    void updateTitleSignal(QString);
 protected:
     void TgtAttemptReconnect();
     virtual void TgtMakeConnection() = 0;
