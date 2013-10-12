@@ -14,6 +14,15 @@ boost::shared_ptr<TgtSerialIntf> TgtSerialIntf::createSerialConnection(const boo
 
 void TgtSerialIntf::TgtMakeConnection()
 {
+    boost::shared_ptr<const TgtConnectionConfig> connectionConfig = boost::dynamic_pointer_cast<const TgtConnectionConfig>(_connectionConfig);
+    _service.reset(new boost::asio::io_service());
+    _port.reset(new boost::asio::serial_port(*_service.get(), connectionConfig->_portName));
+    _port->set_option(connectionConfig->_baudRate);
+    _port->set_option(connectionConfig->_parity);
+    _port->set_option(connectionConfig->_byteSize);
+    _port->set_option(connectionConfig->_stopBits);
+    _port->set_option(connectionConfig->_flowControl);
+
     _serialThreadsRun = true;
     _serialServiceThread.reset(new boost::thread(boost::bind(&TgtSerialIntf::serviceThread, this)));
     _serialWriterThread.reset(new  boost::thread(boost::bind(&TgtSerialIntf::writerThread, this)));
@@ -26,8 +35,8 @@ void TgtSerialIntf::serviceThread()
 {
     do
     {
-        _service.run();
-        _service.reset();
+        _service->run();
+        _service->reset();
     } while (_serialThreadsRun == true);
 }
 
@@ -40,12 +49,11 @@ void TgtSerialIntf::writerThread()
     {
         if (_outgoingData.dequeue(b) == true)
         {
-            //int ret = _port.write_some(boost::asio::buffer(b));
-            boost::asio::write(_port, boost::asio::buffer(b), ec);
+            boost::asio::write(*_port.get(), boost::asio::buffer(b), ec);
             TgtReturnReadBuffer(b);
             if (ec)
             {
-                TgtDisconnect();
+                TgtDisconnect(false);
                 attemptReconnect = true;
                 break;
             }
@@ -64,14 +72,9 @@ void TgtSerialIntf::writerThread()
 }
 
 TgtSerialIntf::TgtSerialIntf(const boost::shared_ptr<const TgtConnectionConfig> &config)
-    : TgtIntf(config),
-    _port(_service, config->_portName)
+    : TgtIntf(config)
+
 {
-    _port.set_option(config->_baudRate);
-    _port.set_option(config->_parity);
-    _port.set_option(config->_byteSize);
-    _port.set_option(config->_stopBits);
-    _port.set_option(config->_flowControl);
 }
 
 TgtSerialIntf::~TgtSerialIntf ()
@@ -88,25 +91,33 @@ void TgtSerialIntf::TgtReadCallback(const boost::system::error_code& error, cons
             _incomingData.enqueue(boost::asio::buffer(_currentIncomingBuffer, bytesTransferred));
             _bufferPool.dequeue(_currentIncomingBuffer);
         }
-        _port.async_read_some(boost::asio::buffer(_currentIncomingBuffer),
+        _port->async_read_some(boost::asio::buffer(_currentIncomingBuffer),
                               boost::bind(&TgtSerialIntf::TgtReadCallback, this,
                                           boost::asio::placeholders::error,
                                           boost::asio::placeholders::bytes_transferred));
     }
 }
 
-int TgtSerialIntf::TgtDisconnect()
+int TgtSerialIntf::TgtDisconnect(bool joinWriter)
 {
-    _service.stop();
+    _service->stop();
     if (_serialThreadsRun == true)
     {
         _serialThreadsRun = false;
-        _serialServiceThread->join();
-        _serialWriterThread->join();
+        if (_serialServiceThread->joinable())
+        {
+            _serialServiceThread->join();
+        }
+        if ((_serialWriterThread->joinable()) && (joinWriter == true))
+        {
+            _serialWriterThread->join();
+        }
     }
-    _port.cancel();
-    _port.close();
+    _port->cancel();
+    _port->close();
+    _service->reset();
     _service.reset();
+    _port.reset();
     return 0;
 }
 

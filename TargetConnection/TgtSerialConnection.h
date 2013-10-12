@@ -32,7 +32,12 @@ public:
     };
     static boost::shared_ptr<TgtSerialIntf> createSerialConnection(const boost::shared_ptr<const TgtConnectionConfig> &config);
     virtual ~TgtSerialIntf ();
-    virtual int TgtDisconnect();
+    virtual int TgtDisconnect(bool joinWriter);
+    virtual int TgtDisconnect()
+    {
+        return TgtDisconnect(true);
+    }
+
     virtual bool TgtConnected();
     virtual void TgtGetTitle(std::string* szTitle);
 
@@ -43,8 +48,8 @@ protected:
     void writerThread();
     virtual void TgtMakeConnection();
 
-    boost::asio::io_service _service;
-    boost::asio::serial_port _port;
+    boost::scoped_ptr<boost::asio::io_service> _service;
+    boost::scoped_ptr<boost::asio::serial_port> _port;
     boost::scoped_ptr<boost::thread> _serialServiceThread;
     boost::scoped_ptr<boost::thread> _serialWriterThread;
     volatile bool _serialThreadsRun;
