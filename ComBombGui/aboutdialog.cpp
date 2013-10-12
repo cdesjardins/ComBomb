@@ -7,7 +7,9 @@ AboutDialog::AboutDialog(QWidget *parent) :
     ui(new Ui::AboutDialog)
 {
     ui->setupUi(this);
-    ui->versionLabel->setText(CB_GIT_VER_STR);
+    QString ver("ComBomb version: ");
+    ver.append(CB_GIT_VER_STR);
+    ui->versionLabel->setText(ver);
 }
 
 AboutDialog::~AboutDialog()
