@@ -1,3 +1,3 @@
 /* This is a generated file, do not change, see vergen.py   */
 /* Do not include this file directly, use include/version.h */
-#define CB_GIT_VER_STR "v0.1a-2-gf0363be-dirty"
+#define CB_GIT_VER_STR "v0.1a-5-gf20780a-dirty"
