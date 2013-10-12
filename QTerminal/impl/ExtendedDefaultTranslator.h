@@ -71,4 +71,5 @@
 "key Down  +Shift-AppScreen  : scrollLineDown\n"
 "key Next  +Shift-AppScreen  : scrollPageDown\n"
 "key ScrollLock     : scrollLock\n"
+"key C + Control: \"\\x03\""
 "\0"
