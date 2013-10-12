@@ -14,7 +14,7 @@ boost::shared_ptr<TgtSerialIntf> TgtSerialIntf::createSerialConnection(const boo
 
 void TgtSerialIntf::TgtMakeConnection()
 {
-    _serviceThreadRun = true;
+    _serialThreadsRun = true;
     _serialServiceThread.reset(new boost::thread(boost::bind(&TgtSerialIntf::serviceThread, this)));
     _serialWriterThread.reset(new  boost::thread(boost::bind(&TgtSerialIntf::writerThread, this)));
 
@@ -28,24 +28,38 @@ void TgtSerialIntf::serviceThread()
     {
         _service.run();
         _service.reset();
-    } while (_serviceThreadRun == true);
+    } while (_serialThreadsRun == true);
 }
 
 void TgtSerialIntf::writerThread()
 {
     boost::asio::mutable_buffer b;
-    while (_serviceThreadRun == true)
+    boost::system::error_code  ec;
+    bool attemptReconnect = false;
+    while (_serialThreadsRun == true)
     {
         if (_outgoingData.dequeue(b) == true)
         {
             //int ret = _port.write_some(boost::asio::buffer(b));
-            boost::asio::write(_port, boost::asio::buffer(b));
+            boost::asio::write(_port, boost::asio::buffer(b), ec);
             TgtReturnReadBuffer(b);
+            if (ec)
+            {
+                TgtDisconnect();
+                attemptReconnect = true;
+                break;
+            }
         }
         else
         {
             boost::this_thread::sleep(boost::posix_time::milliseconds(1));
         }
+    }
+    qDebug("serial done");
+    if (attemptReconnect == true)
+    {
+        qDebug("attempt reconnect");
+        TgtAttemptReconnect();
     }
 }
 
@@ -83,16 +97,16 @@ void TgtSerialIntf::TgtReadCallback(const boost::system::error_code& error, cons
 
 int TgtSerialIntf::TgtDisconnect()
 {
-    if (_serviceThreadRun == true)
+    _service.stop();
+    if (_serialThreadsRun == true)
     {
-        _serviceThreadRun = false;
-        _service.stop();
+        _serialThreadsRun = false;
         _serialServiceThread->join();
         _serialWriterThread->join();
-        _port.cancel();
-        _port.close();
-        _service.reset();
     }
+    _port.cancel();
+    _port.close();
+    _service.reset();
     return 0;
 }
 

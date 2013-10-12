@@ -47,7 +47,7 @@ protected:
     boost::asio::serial_port _port;
     boost::scoped_ptr<boost::thread> _serialServiceThread;
     boost::scoped_ptr<boost::thread> _serialWriterThread;
-    volatile bool _serviceThreadRun;
+    volatile bool _serialThreadsRun;
 };
 
 namespace boost
