@@ -2,7 +2,7 @@
 #define CJD_MAINWINDOW_H
 
 #include "opendialog.h"
-#include <QMdiArea.h>
+#include <QMdiArea>
 #include <QMainWindow>
 
 namespace Ui {
