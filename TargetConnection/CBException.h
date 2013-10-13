@@ -58,8 +58,13 @@ protected:
     {
         memset(_what, 0, sizeof(_what));
         _whatBuffer = boost::asio::buffer(_what, sizeof(_what) - 1);
-        //copyStr(file);
-        //copyInt(line);
+#ifdef CB_LOG_EXECP_FNL
+        copyStr(file);
+        copyInt(line);
+#else
+        UNREF_PARAM(file);
+        UNREF_PARAM(line);
+#endif
     }
     boost::asio::mutable_buffer _whatBuffer;
     char _what[2048];

@@ -27,7 +27,11 @@ public:
 
     TgtSshInit()
     {
-        cryptInit();
+        C_RET status = cryptInit();
+        if (cryptStatusError(status))
+        {
+            throw CB_EXCEPTION_STR(CBException::CbExcp, "Unable to init cryptLib");
+        }
     }
 
     ~TgtSshInit()

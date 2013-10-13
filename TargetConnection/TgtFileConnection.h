@@ -43,7 +43,7 @@ namespace serialization
 template<class Archive>
 void serialize(Archive & ar, TgtFileIntf::TgtConnectionConfig & config, const unsigned int version)
 {
-    version;
+    UNREF_PARAM(version);
     ar & boost::serialization::base_object<TgtIntf::TgtConnectionConfigBase>(config);
     ar & config._fileName;
 }

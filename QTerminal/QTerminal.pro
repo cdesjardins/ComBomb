@@ -25,8 +25,7 @@ SOURCES += \
     impl/KeyboardTranslator.cpp \
     impl/TgtIntf.cpp
 
-HEADERS += qterminal.h \
-    QTerminalInterface.h \
+HEADERS += QTerminalInterface.h \
     qterminal.h \
     QTerminal \
     impl/Vt102Emulation.h \

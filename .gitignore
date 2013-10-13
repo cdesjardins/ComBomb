@@ -162,3 +162,5 @@ pip-log.txt
 # Mac crap
 .DS_Store
 boost_1_54_0*
+cl
+version.h

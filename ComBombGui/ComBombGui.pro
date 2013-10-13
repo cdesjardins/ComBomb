@@ -17,7 +17,6 @@ versionTarget.commands = $$PWD/../createVersion.py
 PRE_TARGETDEPS += versioning.h
 QMAKE_EXTRA_TARGETS += versionTarget
 DEPENDPATH += .
-HEADERS += versioning.h
 
 SOURCES += main.cpp\
         mainwindow.cpp \
@@ -29,7 +28,8 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h \
     childform.h \
     opendialog.h \
-    aboutdialog.h
+    aboutdialog.h \
+    versioning.h
 
 FORMS    += mainwindow.ui \
     childform.ui \
