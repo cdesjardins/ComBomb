@@ -78,7 +78,7 @@ p, li { white-space: pre-wrap; }
     <set>Qt::TextBrowserInteraction</set>
    </property>
   </widget>
-  <widget class="QLabel" name="label_2">
+  <widget class="CBLabel" name="label_2">
    <property name="geometry">
     <rect>
      <x>320</x>
@@ -112,6 +112,13 @@ p, li { white-space: pre-wrap; }
    </property>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CBLabel</class>
+   <extends>QLabel</extends>
+   <header>cblabel.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="ComBomb.qrc"/>
  </resources>

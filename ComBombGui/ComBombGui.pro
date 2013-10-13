@@ -29,7 +29,8 @@ HEADERS  += mainwindow.h \
     childform.h \
     opendialog.h \
     aboutdialog.h \
-    versioning.h
+    versioning.h \
+    cblabel.h
 
 FORMS    += mainwindow.ui \
     childform.ui \

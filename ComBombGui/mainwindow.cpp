@@ -25,7 +25,6 @@ MainWindow::~MainWindow()
 {
     delete _mdiArea;
     delete _ui;
-    qDebug("~mainwindow");
 }
 
 void MainWindow::errorBox(QString errMsg)

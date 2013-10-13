@@ -9,6 +9,6 @@
         <file>images/page_paste.png</file>
         <file>images/check_box.png</file>
         <file>images/bomb.png</file>
-        <file>images/carrage_return.png</file>
+        <file>images/myicon.png</file>
     </qresource>
 </RCC>
