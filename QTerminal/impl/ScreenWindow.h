@@ -233,6 +233,7 @@ signals:
      */
     void selectionChanged();
 
+
 private:
     int endWindowLine() const;
     void fillUnusedArea();

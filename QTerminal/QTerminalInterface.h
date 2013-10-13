@@ -40,10 +40,13 @@ public:
         _contextMenu = new QMenu (this);
         QAction* copyAction  = _contextMenu->addAction ("Copy");
         QAction* pasteAction = _contextMenu->addAction ("Paste");
+        QAction* newlineAction = _contextMenu->addAction ("Toggle CR/LF");
         copyAction->setIcon(QIcon(":/images/page_copy.png"));
         pasteAction->setIcon(QIcon(":/images/page_paste.png"));
+        newlineAction->setCheckable(true);
         connect (copyAction, SIGNAL (triggered()), this, SLOT (copyClipboard()));
         connect (pasteAction, SIGNAL (triggered()), this, SLOT (pasteClipboard()));
+        connect (newlineAction, SIGNAL (triggered()), this, SLOT (newlineToggle()));
 
         connect (this, SIGNAL (triggerCopy()), this, SLOT (copyClipboard()));
         connect (this, SIGNAL (triggerPaste()), this, SLOT (pasteClipboard()));
@@ -74,7 +77,7 @@ public:
 public slots:
     virtual void copyClipboard() = 0;
     virtual void pasteClipboard() = 0;
-
+    virtual void newlineToggle() = 0;
     virtual void handleCustomContextMenuRequested(QPoint at)
     {
         _contextMenu->move (mapToGlobal(at));

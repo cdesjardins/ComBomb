@@ -1298,6 +1298,18 @@ void Vt102Emulation::resetModes()
     setMode(MODE_Ansi);
 }
 
+void Vt102Emulation::newlineToggle()
+{
+    if (getMode(MODE_NewLine))
+    {
+        resetMode(MODE_NewLine);
+    }
+    else
+    {
+        setMode(MODE_NewLine);
+    }
+}
+
 void Vt102Emulation::setMode(int m)
 {
     _currParm.mode[m] = true;

@@ -150,3 +150,7 @@ void QTerminalImpl::pasteClipboard()
     m_terminalView->pasteClipboard();
 }
 
+void QTerminalImpl::newlineToggle()
+{
+    m_terminalModel->newlineToggle();
+}

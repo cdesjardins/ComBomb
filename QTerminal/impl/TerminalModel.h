@@ -197,7 +197,7 @@ public:
      * shell to redraw the prompt line.
      */
     void refresh();
-
+    void newlineToggle();
 public slots:
 
     /**

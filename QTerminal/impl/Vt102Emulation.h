@@ -90,6 +90,7 @@ public:
     // reimplemented
     virtual char getErase() const;
 
+    virtual void newlineToggle();
 public slots:
 
     // reimplemented

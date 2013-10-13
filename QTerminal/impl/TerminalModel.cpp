@@ -383,4 +383,7 @@ void TerminalModel::setSize(const QSize& size)
 
     emit resizeRequest(size);
 }
-
+void TerminalModel::newlineToggle()
+{
+    _emulation->newlineToggle();
+}

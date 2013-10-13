@@ -53,6 +53,5 @@ void SelfListener::run()
 #endif
         }
     }
-    qDebug("SelfListener done!");
 }
 

@@ -411,7 +411,6 @@ public:
     void setScreenWindow(ScreenWindow* window);
     /** Returns the terminal screen section which is displayed in this widget.  See setScreenWindow() */
     ScreenWindow* screenWindow() const;
-
 public slots:
 
     /**
