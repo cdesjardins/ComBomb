@@ -12,18 +12,19 @@ TARGET = ComBombGui
 TEMPLATE = app
 
 versionTarget.target = versioning.h
-versionTarget.depends = FORCE
+versionTarget.depends = $$PWD/../.git
 versionTarget.commands = $$PWD/../createVersion.py
 PRE_TARGETDEPS += versioning.h
 QMAKE_EXTRA_TARGETS += versionTarget
-
+DEPENDPATH += .
 HEADERS += versioning.h
 
 SOURCES += main.cpp\
         mainwindow.cpp \
     childform.cpp \
     opendialog.cpp \
-    aboutdialog.cpp
+    aboutdialog.cpp \
+    versioning.cpp
 
 HEADERS  += mainwindow.h \
     childform.h \

@@ -2,6 +2,10 @@
 import sys, os
 from subprocess import Popen, PIPE
 
+def touch(fname, times=None):
+    with file(fname, 'a'):
+        os.utime(fname, times)
+        
 class CreateVer:
     def __init__(self, argv):
         pass
@@ -10,11 +14,11 @@ class CreateVer:
         print os.getcwd()
         process = Popen(["git", "describe", "--dirty", "--always"], stdout=PIPE, cwd="../../ComBomb/")
         gitVerStr = process.communicate()[0].strip()
-        f = open("../../ComBomb/ComBombGui/versioning.h", "wb")
+        f = open("../../ComBomb/ComBombGui/version.h", "wb")
         f.write("/* This is a generated file, do not change, see vergen.py   */\n")
-        f.write("/* Do not include this file directly, use include/version.h */\n")
         f.write("#define CB_GIT_VER_STR \"" + gitVerStr + "\"\n")
         f.close()
+        #touch("../../ComBomb/ComBombGui/versioning.h")
 
 
 if __name__ == "__main__":
