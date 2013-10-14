@@ -39,7 +39,6 @@ void TgtSerialIntf::serviceThread()
         _service.run();
         _service.reset();
     } while (_serialServiceThreadRun == true);
-    qDebug("serial service done");
 }
 
 void TgtSerialIntf::writerThread()
@@ -65,10 +64,8 @@ void TgtSerialIntf::writerThread()
             boost::this_thread::sleep(boost::posix_time::milliseconds(1));
         }
     }
-    qDebug("serial done");
     if (attemptReconnect == true)
     {
-        qDebug("attempt reconnect");
         TgtAttemptReconnect();
     }
 }

@@ -236,10 +236,8 @@ void TgtSshIntf::sshThread()
         }
     }
     cryptDestroySession(_sshData->_cryptSession);
-    qDebug("ssh done");
     if (attemptReconnect == true)
     {
-        qDebug("attempt reconnect");
         TgtAttemptReconnect();
     }
 }
@@ -257,7 +255,6 @@ bool TgtSshIntf::sshSend()
         status = cryptPushData(_sshData->_cryptSession, data, boost::asio::buffer_size(b), &bytesCopied);
         if (cryptStatusError(status))
         {
-            qDebug("Unable to send data");
             ret = false;
         }
         else if (bytesCopied < (int)boost::asio::buffer_size(b))

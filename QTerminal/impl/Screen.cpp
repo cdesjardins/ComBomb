@@ -211,7 +211,7 @@ void Screen::setMargins(int top, int bot)
     bot = bot - 1;            // Adjust to internal lineno
     if (!(0 <= top && top < bot && bot < lines))
     {
-        qDebug() << " setRegion(" << top << "," << bot << ") : bad range.";
+        //qDebug() << " setRegion(" << top << "," << bot << ") : bad range.";
         return;               // Default error action: ignore
     }
     tmargin = top;
