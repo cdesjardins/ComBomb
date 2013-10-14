@@ -114,6 +114,7 @@ void TgtIntf::TgtAttemptReconnect()
 
 int TgtIntf::tgtDisconnect()
 {
+    _running = false;
     boost::mutex::scoped_lock guard(_disconnectMutex);
     return TgtDisconnect();
 }
