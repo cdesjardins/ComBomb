@@ -10,5 +10,6 @@
         <file>images/check_box.png</file>
         <file>images/bomb.png</file>
         <file>images/myicon.png</file>
+        <file>images/clipboard_sign.png</file>
     </qresource>
 </RCC>

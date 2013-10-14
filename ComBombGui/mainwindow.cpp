@@ -10,21 +10,34 @@
 
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
-    _ui(new Ui::MainWindow)
+    _ui(new Ui::MainWindow),
+    _mdiArea(new QMdiArea()),
+    _fileClipboardDialog(new FileClipboardDialog(this))
 {
-    QCoreApplication::setOrganizationName("Desjardins");
-    QCoreApplication::setOrganizationDomain("chrisd.info");
-    QCoreApplication::setApplicationName("ComBomb");
 
     _ui->setupUi(this);
-    _mdiArea = new QMdiArea();
     setCentralWidget(_mdiArea);
+    restoreWidgetGeometry(_fileClipboardDialog, "FileClipboardGeometry");
 }
 
 MainWindow::~MainWindow()
 {
+    MainWindow::saveWidgetGeometry(_fileClipboardDialog, "FileClipboardGeometry");
+    delete _fileClipboardDialog;
     delete _mdiArea;
     delete _ui;
+}
+
+void MainWindow::saveWidgetGeometry(QWidget *w, QString tag)
+{
+    QSettings settings;
+    settings.setValue(tag, w->saveGeometry());
+}
+
+void MainWindow::restoreWidgetGeometry(QWidget *w, QString tag)
+{
+    QSettings settings;
+    w->restoreGeometry(settings.value(tag).toByteArray());
 }
 
 void MainWindow::errorBox(QString errMsg)
@@ -191,3 +204,14 @@ void MainWindow::on_actionPaste_triggered()
     }
 }
 
+void MainWindow::on_actionFile_clipboard_triggered()
+{
+    if (_fileClipboardDialog->isVisible() == true)
+    {
+        _fileClipboardDialog->hide();
+    }
+    else
+    {
+        _fileClipboardDialog->show();
+    }
+}

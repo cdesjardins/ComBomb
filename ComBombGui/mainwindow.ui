@@ -57,6 +57,7 @@
     <addaction name="actionCopy"/>
     <addaction name="actionPaste"/>
     <addaction name="actionSelect_All"/>
+    <addaction name="actionFile_clipboard"/>
    </widget>
    <addaction name="_menuFile"/>
    <addaction name="menuEdit"/>
@@ -70,6 +71,7 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionOpen"/>
+   <addaction name="actionFile_clipboard"/>
   </widget>
   <widget class="QStatusBar" name="_statusBar"/>
   <action name="actionOpen">
@@ -142,6 +144,18 @@
    </property>
    <property name="toolTip">
     <string>Select All</string>
+   </property>
+  </action>
+  <action name="actionFile_clipboard">
+   <property name="icon">
+    <iconset resource="ComBomb.qrc">
+     <normaloff>:/images/clipboard_sign.png</normaloff>:/images/clipboard_sign.png</iconset>
+   </property>
+   <property name="text">
+    <string>File clipboard</string>
+   </property>
+   <property name="toolTip">
+    <string>Open File clipboard</string>
    </property>
   </action>
  </widget>
