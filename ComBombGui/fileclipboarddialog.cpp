@@ -56,7 +56,12 @@ void FileClipboardDialog::sendItemTriggered(int index)
         ChildForm *c = MainWindow::getMainWindow()->getActiveChildWindow();
         if (c != NULL)
         {
-            c->sendText(item->text());
+            QString text = item->text();
+            if (ui->newLineCheckBox->isChecked())
+            {
+                text += "\n";
+            }
+            c->sendText(text);
         }
     }
 }
