@@ -1,14 +1,12 @@
 #include <QSettings>
 #include "fileclipboarddialog.h"
-#include "fileclipboardheader.h"
 #include "ui_fileclipboarddialog.h"
-
-
-
+#include "mainwindow.h"
 
 FileClipboardDialog::FileClipboardDialog(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::FileClipboardDialog)
+    ui(new Ui::FileClipboardDialog),
+    _fileClipboardHeader(NULL)
 {
     ui->setupUi(this);
     QSettings settings;
@@ -23,7 +21,9 @@ FileClipboardDialog::FileClipboardDialog(QWidget *parent) :
     }
 
     settings.endArray();
-    ui->fileClipboardTable->setVerticalHeader(new FileClipboardHeader());
+    _fileClipboardHeader = new FileClipboardHeader();
+    ui->fileClipboardTable->setVerticalHeader(_fileClipboardHeader);
+    connect(_fileClipboardHeader, SIGNAL(sendItemSignal(int)), this, SLOT(sendItemTriggered(int)));
 }
 
 FileClipboardDialog::~FileClipboardDialog()
@@ -40,16 +40,23 @@ FileClipboardDialog::~FileClipboardDialog()
     }
     settings.endArray();
     delete ui;
+    if (_fileClipboardHeader != NULL)
+    {
+        delete _fileClipboardHeader;
+    }
 }
 
 
-void FileClipboardDialog::on_fileClipboardTable_itemDoubleClicked(QTableWidgetItem *item)
+void FileClipboardDialog::sendItemTriggered(int index)
 {
-    qDebug("item double clicked %s", item->text());
+    QTableWidgetItem * item = ui->fileClipboardTable->item(index, 0);
+    if (item->text().length() > 0)
+    {
+        //qDebug("Send %s", item->text().toLocal8Bit().constData());
+        ChildForm *c = MainWindow::getMainWindow()->getActiveChildWindow();
+        if (c != NULL)
+        {
+            c->sendText(item->text());
+        }
+    }
 }
-
-void FileClipboardDialog::on_fileClipboardTable_cellDoubleClicked(int row, int column)
-{
-    qDebug("cell double clicked %d %d", row, column);
-}
-

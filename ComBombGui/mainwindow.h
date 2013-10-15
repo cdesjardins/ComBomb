@@ -3,6 +3,7 @@
 
 #include "fileclipboarddialog.h"
 #include "opendialog.h"
+#include "childform.h"
 #include <QMdiArea>
 #include <QMainWindow>
 
@@ -15,12 +16,15 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget* parent = 0);
+    static MainWindow *getMainWindow(QWidget* parent = 0);
+    static void destroyMainWindow();
     ~MainWindow();
     static void errorBox(QString errMsg);
     static void restoreWidgetGeometry(QWidget *w, QString tag);
     static void saveWidgetGeometry(QWidget *w, QString tag);
+    ChildForm* getActiveChildWindow();
 protected:
+    explicit MainWindow(QWidget* parent = 0);
     void saveConnections(const std::string &connType, const std::string &connStr);
     void loadConnections(const std::string &connType, OpenDialog &openDialog);
     void getPreviousConnections(const std::string &connType, QStringList* connections);
@@ -39,6 +43,7 @@ private:
     Ui::MainWindow* _ui;
     QMdiArea* _mdiArea;
     FileClipboardDialog *_fileClipboardDialog;
+    static MainWindow *_instance;
 
 };
 

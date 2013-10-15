@@ -10,8 +10,11 @@ int main(int argc, char* argv[])
 
     QApplication a(argc, argv);
 
-    MainWindow w;
-    w.show();
-    return a.exec();
+    MainWindow *w = MainWindow::getMainWindow();
+    w->show();
+    int ret = a.exec();
+
+    MainWindow::destroyMainWindow();
+    return ret;
 }
 

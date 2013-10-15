@@ -2,7 +2,7 @@
 #define FILECLIPBOARDDIALOG_H
 
 #include <QDialog>
-#include <QTableWidgetItem>
+#include "fileclipboardheader.h"
 
 namespace Ui {
 class FileClipboardDialog;
@@ -17,10 +17,11 @@ public:
     ~FileClipboardDialog();
 
 private slots:
-    void on_fileClipboardTable_itemDoubleClicked(QTableWidgetItem *item);
-    void on_fileClipboardTable_cellDoubleClicked(int row, int column);
+    void sendItemTriggered(int index);
+
 private:
     Ui::FileClipboardDialog *ui;
+    FileClipboardHeader *_fileClipboardHeader;
 };
 
 #endif // FILECLIPBOARDDIALOG_H

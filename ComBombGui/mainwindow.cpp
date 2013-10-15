@@ -8,6 +8,26 @@
 #define CB_FILE_CONFIG_STR  "file"
 #define CB_SSH_CONFIG_STR   "ssh"
 
+MainWindow *MainWindow ::_instance = NULL;
+
+MainWindow *MainWindow::getMainWindow(QWidget* parent)
+{
+    if (_instance == NULL)
+    {
+        _instance = new MainWindow(parent);
+    }
+    return _instance;
+}
+
+void MainWindow::destroyMainWindow()
+{
+    if (_instance != NULL)
+    {
+        delete _instance;
+        _instance = NULL;
+    }
+}
+
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
     _ui(new Ui::MainWindow),
@@ -186,22 +206,31 @@ void MainWindow::on_actionAbout_ComBomb_triggered()
 
 void MainWindow::on_actionCopy_triggered()
 {
-    QMdiSubWindow* subWindow = _mdiArea->activeSubWindow();
-    if (subWindow != NULL)
+    ChildForm* childForm = getActiveChildWindow();
+    if (childForm != NULL)
     {
-        ChildForm* childForm = dynamic_cast<ChildForm*>(subWindow->widget());
         emit childForm->triggerCopy();
     }
 }
 
 void MainWindow::on_actionPaste_triggered()
 {
+    ChildForm* childForm = getActiveChildWindow();
+    if (childForm != NULL)
+    {
+        emit childForm->triggerPaste();
+    }
+}
+
+ChildForm* MainWindow::getActiveChildWindow()
+{
     QMdiSubWindow* subWindow = _mdiArea->activeSubWindow();
     if (subWindow != NULL)
     {
         ChildForm* childForm = dynamic_cast<ChildForm*>(subWindow->widget());
-        emit childForm->triggerPaste();
+        return childForm;
     }
+    return NULL;
 }
 
 void MainWindow::on_actionFile_clipboard_triggered()

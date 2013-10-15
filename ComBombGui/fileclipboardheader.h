@@ -16,11 +16,13 @@ public:
     {
 
     }
+signals:
+    void sendItemSignal(int index);
 
 public slots:
     void sectionClicked(int index)
     {
-        qDebug("Index: %i", index);
+        emit sendItemSignal(index);
     }
 };
 #endif // FILECLIPBOARDHEADER_H
