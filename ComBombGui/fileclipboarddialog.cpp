@@ -65,3 +65,17 @@ void FileClipboardDialog::sendItemTriggered(int index)
         }
     }
 }
+
+void FileClipboardDialog::hideEvent(QHideEvent *)
+{
+    qDebug("hideEvent");
+    MainWindow::saveWidgetGeometry(this, "FileClipboardGeometry");
+}
+
+void FileClipboardDialog::showEvent(QShowEvent *)
+{
+    qDebug("showEvent");
+    MainWindow::restoreWidgetGeometry(this, "FileClipboardGeometry");
+}
+
+

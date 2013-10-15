@@ -16,6 +16,10 @@ public:
     explicit FileClipboardDialog(QWidget *parent = 0);
     ~FileClipboardDialog();
 
+protected:
+    virtual void showEvent(QShowEvent* event);
+    virtual void hideEvent(QHideEvent* event);
+
 private slots:
     void sendItemTriggered(int index);
 

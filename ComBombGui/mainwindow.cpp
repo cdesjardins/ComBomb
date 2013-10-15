@@ -37,12 +37,10 @@ MainWindow::MainWindow(QWidget* parent) :
 
     _ui->setupUi(this);
     setCentralWidget(_mdiArea);
-    restoreWidgetGeometry(_fileClipboardDialog, "FileClipboardGeometry");
 }
 
 MainWindow::~MainWindow()
 {
-    MainWindow::saveWidgetGeometry(_fileClipboardDialog, "FileClipboardGeometry");
     delete _fileClipboardDialog;
     delete _mdiArea;
     delete _ui;
