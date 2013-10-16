@@ -503,7 +503,7 @@ void Vt102Emulation::updateTitle()
     _pendingTitleUpdates.clear();
 }
 
-void Vt102Emulation::tokenDebug(int token, int p, int q)
+void Vt102Emulation::tokenDebug(int token, int p)
 {
     int N = (token >> 0) & 0xff;
     int A = (token >> 8) & 0xff;
@@ -920,7 +920,7 @@ void Vt102Emulation::tau(int token, int p, int q)
 
         case TY_CSI_PG('c'):  reportSecondaryAttributes(          ); break;    //VT100
 
-        default: ReportErrorToken(); tokenDebug(token, p, q);   break;
+        default: ReportErrorToken(); tokenDebug(token, p);   break;
     }
     ;
 }
