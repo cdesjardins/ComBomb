@@ -503,6 +503,48 @@ void Vt102Emulation::updateTitle()
     _pendingTitleUpdates.clear();
 }
 
+void Vt102Emulation::tokenDebug(int token, int p, int q)
+{
+    int N = (token >> 0) & 0xff;
+    int A = (token >> 8) & 0xff;
+    switch (N)
+    {
+        case 0: qDebug("%c", (p < 128) ? p : '?');
+            break;
+        case 1: if (A == 'J')
+            {
+                qDebug("\r");
+            }
+            else if (A == 'M')
+            {
+                qDebug("\n");
+            }
+            else
+            {
+                qDebug("CTL-%c ", (token >> 8) & 0xff);
+            }
+            break;
+        case 2: qDebug("ESC-%c ", (token >> 8) & 0xff);
+            break;
+        case 3: qDebug("ESC_CS-%c-%c ", (token >> 8) & 0xff, (token >> 16) & 0xff);
+            break;
+        case 4: qDebug("ESC_DE-%c ", (token >> 8) & 0xff);
+            break;
+        case 5: qDebug("CSI-PS-%c-%d", (token >> 8) & 0xff, (token >> 16) & 0xff);
+            break;
+        case 6: qDebug("CSI-PN-%c [%d]", (token >> 8) & 0xff, p);
+            break;
+        case 7: qDebug("CSI-PR-%c-%d", (token >> 8) & 0xff, (token >> 16) & 0xff);
+            break;
+        case 8: qDebug("VT52-%c", (token >> 8) & 0xff);
+            break;
+        case 9: qDebug("CSI-PG-%c", (token >> 8) & 0xff);
+            break;
+        case 10: qDebug("CSI-PE-%c", (token >> 8) & 0xff);
+            break;
+    }
+}
+
 // Interpreting Codes ---------------------------------------------------------
 
 /*
@@ -523,46 +565,6 @@ void Vt102Emulation::updateTitle()
 
 void Vt102Emulation::tau(int token, int p, int q)
 {
-#if 0
-    int N = (token >> 0) & 0xff;
-    int A = (token >> 8) & 0xff;
-    switch (N)
-    {
-        case 0: printf("%c", (p < 128) ? p : '?');
-            break;
-        case 1: if (A == 'J')
-            {
-                printf("\r");
-            }
-            else if (A == 'M')
-            {
-                printf("\n");
-            }
-            else
-            {
-                printf("CTL-%c ", (token >> 8) & 0xff);
-            }
-            break;
-        case 2: printf("ESC-%c ", (token >> 8) & 0xff);
-            break;
-        case 3: printf("ESC_CS-%c-%c ", (token >> 8) & 0xff, (token >> 16) & 0xff);
-            break;
-        case 4: printf("ESC_DE-%c ", (token >> 8) & 0xff);
-            break;
-        case 5: printf("CSI-PS-%c-%d", (token >> 8) & 0xff, (token >> 16) & 0xff);
-            break;
-        case 6: printf("CSI-PN-%c [%d]", (token >> 8) & 0xff, p);
-            break;
-        case 7: printf("CSI-PR-%c-%d", (token >> 8) & 0xff, (token >> 16) & 0xff);
-            break;
-        case 8: printf("VT52-%c", (token >> 8) & 0xff);
-            break;
-        case 9: printf("CSI-PG-%c", (token >> 8) & 0xff);
-            break;
-        case 10: printf("CSI-PE-%c", (token >> 8) & 0xff);
-            break;
-    }
-#endif
 
     switch (token)
     {
@@ -747,6 +749,9 @@ void Vt102Emulation::tau(int token, int p, int q)
         case TY_CSI_PS('q',   4): /* IGNORED: LED4 on                  */ break; //VT100
         case TY_CSI_PS('x',   0):      reportTerminalParms  (2); break;       //VT100
         case TY_CSI_PS('x',   1):      reportTerminalParms  (3); break;       //VT100
+        case TY_CSI_PS(']', 9): break; // esc[n1;n2] no idea what this does
+        case TY_CSI_PS(']', 14): break; // esc[n1;n2] no idea what this does
+        case TY_CSI_PS(']', 30): break; // esc[n1;n2] no idea what this does
 
         case TY_CSI_PN('@'): _screen[_currentScreenIndex].insertChars          (p); break;
         case TY_CSI_PN('A'): _screen[_currentScreenIndex].cursorUp             (p); break;             //VT100
@@ -768,6 +773,16 @@ void Vt102Emulation::tau(int token, int p, int q)
         case TY_CSI_PN('f'): _screen[_currentScreenIndex].setCursorYX          (p,      q); break;    //VT100
         case TY_CSI_PN('r'):      setMargins           (p,      q); break;    //VT100
         case TY_CSI_PN('y'): /* IGNORED: Confidence test          */ break;    //VT100
+
+        case TY_CSI_PR('c', 0): break; // reset cursor to default? esc[?0c
+        case TY_CSI_PR('c', 1): break; // set cursor to something weird? esc[?1c
+        case TY_CSI_PR('c', 2): break; // set cursor to something weird? esc[?2c
+        case TY_CSI_PR('c', 3): break; // set cursor to something weird? esc[?3c
+        case TY_CSI_PR('c', 4): break; // set cursor to something weird? esc[?4c
+        case TY_CSI_PR('c', 5): break; // set cursor to something weird? esc[?5c
+        case TY_CSI_PR('c', 6): break; // set cursor to something weird? esc[?6c
+        case TY_CSI_PR('c', 7): break; // set cursor to something weird? esc[?7c
+        case TY_CSI_PR('c', 8): break; // set cursor to something weird? esc[?8c
 
         case TY_CSI_PR('h',   1):          setMode      (MODE_AppCuKeys); break; //VT100
         case TY_CSI_PR('l',   1):        resetMode      (MODE_AppCuKeys); break; //VT100
@@ -905,7 +920,7 @@ void Vt102Emulation::tau(int token, int p, int q)
 
         case TY_CSI_PG('c'):  reportSecondaryAttributes(          ); break;    //VT100
 
-        default: ReportErrorToken();    break;
+        default: ReportErrorToken(); tokenDebug(token, p, q);   break;
     }
     ;
 }
@@ -1400,21 +1415,23 @@ char Vt102Emulation::getErase() const
 static void hexdump(int* s, int len)
 {
     int i;
+    std::stringstream stream;
     for (i = 0; i < len; i++)
     {
         if (s[i] == '\\')
         {
-            printf("\\\\");
+            stream << "\\\\";
         }
         else if ((s[i]) > 32 && s[i] < 127)
         {
-            printf("%c", s[i]);
+            stream << (char) s[i];
         }
         else
         {
-            printf("0x%04x", s[i]);
+            stream << std::hex << s[i] << std::dec;
         }
     }
+    qDebug(stream.str().c_str());
 }
 
 void Vt102Emulation::scan_buffer_report()
@@ -1423,9 +1440,7 @@ void Vt102Emulation::scan_buffer_report()
     {
         return;
     }
-    printf("token: ");
     hexdump(pbuf, ppos);
-    printf("\n");
 }
 
 /*!
@@ -1434,7 +1449,7 @@ void Vt102Emulation::scan_buffer_report()
 void Vt102Emulation::ReportErrorToken()
 {
 #ifndef NDEBUG
-    //printf("undecodable "); scan_buffer_report();
+    scan_buffer_report();
 #endif
 }
 

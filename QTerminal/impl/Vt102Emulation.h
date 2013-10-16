@@ -150,7 +150,7 @@ private:
 
     void scan_buffer_report(); //FIXME: rename
     void ReportErrorToken(); //FIXME: rename
-
+    void tokenDebug(int token, int p, int q);
     void tau(int code, int p, int q);
     void XtermHack();
 
