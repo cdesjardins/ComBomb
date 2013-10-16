@@ -26,6 +26,7 @@ FileClipboardDialog::FileClipboardDialog(QWidget *parent) :
     bool sendNewLineChecked = settings.value("sendNewLine").toBool();
     ui->newLineCheckBox->setChecked(sendNewLineChecked);
     connect(_fileClipboardHeader, SIGNAL(sendItemSignal(int)), this, SLOT(sendItemTriggered(int)));
+    ui->fileClipboardTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 }
 
 FileClipboardDialog::~FileClipboardDialog()
