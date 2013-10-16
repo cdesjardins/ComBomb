@@ -23,6 +23,8 @@ FileClipboardDialog::FileClipboardDialog(QWidget *parent) :
     settings.endArray();
     _fileClipboardHeader = new FileClipboardHeader();
     ui->fileClipboardTable->setVerticalHeader(_fileClipboardHeader);
+    bool sendNewLineChecked = settings.value("sendNewLine").toBool();
+    ui->newLineCheckBox->setChecked(sendNewLineChecked);
     connect(_fileClipboardHeader, SIGNAL(sendItemSignal(int)), this, SLOT(sendItemTriggered(int)));
 }
 
@@ -39,6 +41,8 @@ FileClipboardDialog::~FileClipboardDialog()
         delete item;
     }
     settings.endArray();
+    settings.setValue("sendNewLine", ui->newLineCheckBox->isChecked());
+
     delete ui;
     if (_fileClipboardHeader != NULL)
     {
@@ -52,7 +56,6 @@ void FileClipboardDialog::sendItemTriggered(int index)
     QTableWidgetItem * item = ui->fileClipboardTable->item(index, 0);
     if (item->text().length() > 0)
     {
-        //qDebug("Send %s", item->text().toLocal8Bit().constData());
         ChildForm *c = MainWindow::getMainWindow()->getActiveChildWindow();
         if (c != NULL)
         {
@@ -61,6 +64,7 @@ void FileClipboardDialog::sendItemTriggered(int index)
             {
                 text += "\n";
             }
+
             c->sendText(text);
         }
     }
@@ -68,13 +72,11 @@ void FileClipboardDialog::sendItemTriggered(int index)
 
 void FileClipboardDialog::hideEvent(QHideEvent *)
 {
-    qDebug("hideEvent");
     MainWindow::saveWidgetGeometry(this, "FileClipboardGeometry");
 }
 
 void FileClipboardDialog::showEvent(QShowEvent *)
 {
-    qDebug("showEvent");
     MainWindow::restoreWidgetGeometry(this, "FileClipboardGeometry");
 }
 

@@ -52,7 +52,8 @@ int TgtIntf::deleteBuffersFunctor(std::list<boost::asio::mutable_buffer> &pool)
 
 void TgtIntf::TgtReturnReadBuffer(const boost::asio::mutable_buffer &b)
 {
-    _bufferPool.enqueue(boost::asio::buffer(b, TGT_BUFFER_SIZE - 1));
+    char* data = boost::asio::buffer_cast<char*>(b);
+    _bufferPool.enqueue(boost::asio::buffer(data, TGT_BUFFER_SIZE - 1));
 }
 
 int TgtIntf::TgtRead(boost::asio::mutable_buffer &b)
