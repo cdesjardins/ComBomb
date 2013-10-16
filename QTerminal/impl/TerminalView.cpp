@@ -1063,6 +1063,7 @@ void TerminalView::showResizeNotification()
             _resizeTimer.reset(new QTimer(this));
             _resizeTimer->setSingleShot(true);
             connect(_resizeTimer.get(), SIGNAL(timeout()), _resizeWidget.get(), SLOT(hide()));
+            connect(_resizeTimer.get(), SIGNAL(timeout()), this, SLOT(update()));
         }
         QString sizeStr;
         sizeStr.sprintf("Size: %d x %d", _columns, _lines);
