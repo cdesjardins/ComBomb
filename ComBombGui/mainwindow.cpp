@@ -8,9 +8,9 @@
 #define CB_FILE_CONFIG_STR  "file"
 #define CB_SSH_CONFIG_STR   "ssh"
 
-MainWindow *MainWindow ::_instance = NULL;
+MainWindow* MainWindow ::_instance = NULL;
 
-MainWindow *MainWindow::getMainWindow(QWidget* parent)
+MainWindow* MainWindow::getMainWindow(QWidget* parent)
 {
     if (_instance == NULL)
     {
@@ -34,7 +34,6 @@ MainWindow::MainWindow(QWidget* parent) :
     _mdiArea(new QMdiArea()),
     _fileClipboardDialog(new FileClipboardDialog(this))
 {
-
     _ui->setupUi(this);
     setCentralWidget(_mdiArea);
 }
@@ -46,13 +45,13 @@ MainWindow::~MainWindow()
     delete _ui;
 }
 
-void MainWindow::saveWidgetGeometry(QWidget *w, QString tag)
+void MainWindow::saveWidgetGeometry(QWidget* w, QString tag)
 {
     QSettings settings;
     settings.setValue(tag, w->saveGeometry());
 }
 
-void MainWindow::restoreWidgetGeometry(QWidget *w, QString tag)
+void MainWindow::restoreWidgetGeometry(QWidget* w, QString tag)
 {
     QSettings settings;
     w->restoreGeometry(settings.value(tag).toByteArray());
@@ -242,3 +241,4 @@ void MainWindow::on_actionFile_clipboard_triggered()
         _fileClipboardDialog->show();
     }
 }
+

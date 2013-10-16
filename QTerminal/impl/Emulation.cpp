@@ -255,7 +255,6 @@ void Emulation::receiveData(const char* text, int length)
 
 // Selection --------------------------------------------------------------- --
 
-
 int Emulation::lineCount()
 {
     // sum number of lines currently on _screen plus number of lines in history

@@ -83,6 +83,7 @@ public slots:
         _contextMenu->move (mapToGlobal(at));
         _contextMenu->show ();
     }
+
 signals:
     void triggerCopy();
     void triggerPaste();

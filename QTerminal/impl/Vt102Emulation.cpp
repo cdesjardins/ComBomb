@@ -565,7 +565,6 @@ void Vt102Emulation::tokenDebug(int token, int p)
 
 void Vt102Emulation::tau(int token, int p, int q)
 {
-
     switch (token)
     {
         case TY_CHR(         ): _screen[_currentScreenIndex].ShowCharacter        (p); break;       //UTF16

@@ -43,7 +43,7 @@
 #include "Vt102Emulation.h"
 
 TerminalModel::TerminalModel(const boost::shared_ptr<TgtIntf> &targetInterface) :
-     _emulation(0)
+    _emulation(0)
     , _monitorActivity(false)
     , _monitorSilence(false)
     , _notifiedActivity(false)
@@ -383,7 +383,9 @@ void TerminalModel::setSize(const QSize& size)
 
     emit resizeRequest(size);
 }
+
 void TerminalModel::newlineToggle()
 {
     _emulation->newlineToggle();
 }
+

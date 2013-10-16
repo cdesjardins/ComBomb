@@ -16,12 +16,12 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    static MainWindow *getMainWindow(QWidget* parent = 0);
+    static MainWindow* getMainWindow(QWidget* parent = 0);
     static void destroyMainWindow();
     ~MainWindow();
     static void errorBox(QString errMsg);
-    static void restoreWidgetGeometry(QWidget *w, QString tag);
-    static void saveWidgetGeometry(QWidget *w, QString tag);
+    static void restoreWidgetGeometry(QWidget* w, QString tag);
+    static void saveWidgetGeometry(QWidget* w, QString tag);
     ChildForm* getActiveChildWindow();
 protected:
     explicit MainWindow(QWidget* parent = 0);
@@ -42,9 +42,8 @@ private:
 
     Ui::MainWindow* _ui;
     QMdiArea* _mdiArea;
-    FileClipboardDialog *_fileClipboardDialog;
-    static MainWindow *_instance;
-
+    FileClipboardDialog* _fileClipboardDialog;
+    static MainWindow* _instance;
 };
 
 #endif // MAINWINDOW_H

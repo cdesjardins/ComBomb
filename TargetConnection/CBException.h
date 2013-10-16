@@ -8,7 +8,6 @@
 #define CB_EXCEPTION_INT(type, data)             type(__FILE__, __LINE__, data)
 #define CB_EXCEPTION_STR(type, str)              type(__FILE__, __LINE__, str)
 
-
 class CBException : public std::exception
 {
 public:
@@ -66,6 +65,7 @@ protected:
         UNREF_PARAM(line);
 #endif
     }
+
     boost::asio::mutable_buffer _whatBuffer;
     char _what[2048];
 };

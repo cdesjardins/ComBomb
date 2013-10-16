@@ -325,7 +325,7 @@ TerminalView::~TerminalView()
 {
     qApp->removeEventFilter(this);
 
-    delete []_image;
+    delete[]_image;
 
     _gridLayout.reset();
     _outputSuspendedLabel.reset();
@@ -2716,10 +2716,10 @@ void TerminalView::outputSuspended(bool suspended)
         //If there isn't a suitable article available in the target language the link
         //can simply be removed.
         _outputSuspendedLabel.reset(new QLabel(("<qt>Output has been "
-                                            "<a href=\"http://en.wikipedia.org/wiki/XON\">suspended</a>"
-                                            " by pressing Ctrl+S."
-                                            "  Press <b>Ctrl+Q</b> to resume.</qt>"),
-                                           this));
+                                                "<a href=\"http://en.wikipedia.org/wiki/XON\">suspended</a>"
+                                                " by pressing Ctrl+S."
+                                                "  Press <b>Ctrl+Q</b> to resume.</qt>"),
+                                               this));
 
         QPalette palette(_outputSuspendedLabel->palette());
 

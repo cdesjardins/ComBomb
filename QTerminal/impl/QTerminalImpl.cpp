@@ -154,3 +154,4 @@ void QTerminalImpl::newlineToggle()
 {
     m_terminalModel->newlineToggle();
 }
+

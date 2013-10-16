@@ -44,7 +44,7 @@ void TgtSerialIntf::serviceThread()
 void TgtSerialIntf::writerThread()
 {
     boost::asio::mutable_buffer b;
-    boost::system::error_code  ec;
+    boost::system::error_code ec;
     bool attemptReconnect = false;
     while (_serialWriterThreadRun == true)
     {
@@ -102,9 +102,9 @@ void TgtSerialIntf::TgtReadCallback(const boost::system::error_code& error, cons
             _bufferPool.dequeue(_currentIncomingBuffer);
         }
         _port->async_read_some(boost::asio::buffer(_currentIncomingBuffer),
-                              boost::bind(&TgtSerialIntf::TgtReadCallback, this,
-                                          boost::asio::placeholders::error,
-                                          boost::asio::placeholders::bytes_transferred));
+                               boost::bind(&TgtSerialIntf::TgtReadCallback, this,
+                                           boost::asio::placeholders::error,
+                                           boost::asio::placeholders::bytes_transferred));
     }
     else
     {

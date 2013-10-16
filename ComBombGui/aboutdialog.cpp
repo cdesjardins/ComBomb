@@ -3,11 +3,10 @@
 #include "versioning.h"
 #include "cblabel.h"
 
-CBLabel::CBLabel(QWidget *parent)
+CBLabel::CBLabel(QWidget* parent)
     : QLabel(parent),
-      _qImg(NULL)
+    _qImg(NULL)
 {
-
 }
 
 CBLabel::~CBLabel()
@@ -18,7 +17,7 @@ CBLabel::~CBLabel()
     }
 }
 
-void CBLabel::mouseDoubleClickEvent(QMouseEvent *)
+void CBLabel::mouseDoubleClickEvent(QMouseEvent*)
 {
     if (_qImg == NULL)
     {
@@ -29,8 +28,7 @@ void CBLabel::mouseDoubleClickEvent(QMouseEvent *)
     }
 }
 
-
-AboutDialog::AboutDialog(QWidget *parent) :
+AboutDialog::AboutDialog(QWidget* parent) :
     QDialog(parent),
     ui(new Ui::AboutDialog)
 {
@@ -44,3 +42,4 @@ AboutDialog::~AboutDialog()
 {
     delete ui;
 }
+

@@ -12,10 +12,11 @@ public:
         setSectionsClickable(true);
         connect(this, SIGNAL(sectionClicked(int)), this, SLOT(sectionClicked(int)));
     }
+
     ~FileClipboardHeader()
     {
-
     }
+
 signals:
     void sendItemSignal(int index);
 

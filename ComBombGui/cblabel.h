@@ -7,11 +7,11 @@ class CBLabel : public QLabel
 {
     Q_OBJECT
 public:
-    CBLabel(QWidget *parent = 0);
+    CBLabel(QWidget* parent = 0);
     ~CBLabel();
-    void mouseDoubleClickEvent(QMouseEvent *event);
+    void mouseDoubleClickEvent(QMouseEvent* event);
 private:
-    QImage *_qImg;
+    QImage* _qImg;
 };
 
 #endif // CBLABEL_H

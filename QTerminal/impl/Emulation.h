@@ -409,12 +409,12 @@ protected:
     QList<boost::shared_ptr<ScreenWindow> > _windows;
 
     int _currentScreenIndex; // pointer to the screen which is currently active,
-                            // this is one of the elements in the screen[] array
+                             // this is one of the elements in the screen[] array
 
     boost::shared_array<Screen> _screen;    // 0 = primary screen ( used by most programs, including the shell
-                           //                      scrollbars are enabled in this mode )
-                           // 1 = alternate      ( used by vi , emacs etc.
-                           //                      scrollbars are not enabled in this mode )
+    //                      scrollbars are enabled in this mode )
+    // 1 = alternate      ( used by vi , emacs etc.
+    //                      scrollbars are not enabled in this mode )
 
     //decodes an incoming C-style character stream into a unicode QString using
     //the current text codec.  (this allows for rendering of non-ASCII characters in text files etc.)

@@ -3,14 +3,14 @@
 #include "ui_fileclipboarddialog.h"
 #include "mainwindow.h"
 
-FileClipboardDialog::FileClipboardDialog(QWidget *parent) :
+FileClipboardDialog::FileClipboardDialog(QWidget* parent) :
     QDialog(parent),
     ui(new Ui::FileClipboardDialog),
     _fileClipboardHeader(NULL)
 {
     ui->setupUi(this);
     QSettings settings;
-    QTableWidgetItem *item;
+    QTableWidgetItem* item;
 
     settings.beginReadArray("FileClipboard");
     for (int row = 0; row < 256; row++)
@@ -31,7 +31,7 @@ FileClipboardDialog::FileClipboardDialog(QWidget *parent) :
 
 FileClipboardDialog::~FileClipboardDialog()
 {
-    QTableWidgetItem *item;
+    QTableWidgetItem* item;
     QSettings settings;
     settings.beginWriteArray("FileClipboard");
     for (int row = 0; row < ui->fileClipboardTable->rowCount(); row++)
@@ -51,13 +51,12 @@ FileClipboardDialog::~FileClipboardDialog()
     }
 }
 
-
 void FileClipboardDialog::sendItemTriggered(int index)
 {
-    QTableWidgetItem * item = ui->fileClipboardTable->item(index, 0);
+    QTableWidgetItem* item = ui->fileClipboardTable->item(index, 0);
     if (item->text().length() > 0)
     {
-        ChildForm *c = MainWindow::getMainWindow()->getActiveChildWindow();
+        ChildForm* c = MainWindow::getMainWindow()->getActiveChildWindow();
         if (c != NULL)
         {
             QString text = item->text();
@@ -71,14 +70,13 @@ void FileClipboardDialog::sendItemTriggered(int index)
     }
 }
 
-void FileClipboardDialog::hideEvent(QHideEvent *)
+void FileClipboardDialog::hideEvent(QHideEvent*)
 {
     MainWindow::saveWidgetGeometry(this, "FileClipboardGeometry");
 }
 
-void FileClipboardDialog::showEvent(QShowEvent *)
+void FileClipboardDialog::showEvent(QShowEvent*)
 {
     MainWindow::restoreWidgetGeometry(this, "FileClipboardGeometry");
 }
-
 

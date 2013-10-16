@@ -10,7 +10,7 @@ int main(int argc, char* argv[])
 
     QApplication a(argc, argv);
 
-    MainWindow *w = MainWindow::getMainWindow();
+    MainWindow* w = MainWindow::getMainWindow();
     w->show();
     int ret = a.exec();
 
