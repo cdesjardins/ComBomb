@@ -1053,7 +1053,7 @@ void TerminalView::showResizeNotification()
         }
         if (!_resizeWidget)
         {
-            _resizeWidget.reset(new QLabel(("Size: XXX x XXX"), this));
+            _resizeWidget.reset(new QLabel(("Size: XXX x XXX"), this->parentWidget()));
             _resizeWidget->setMinimumWidth(_resizeWidget->fontMetrics().width(("Size: XXX x XXX")));
             _resizeWidget->setMinimumHeight(_resizeWidget->sizeHint().height());
             _resizeWidget->setAlignment(Qt::AlignCenter);
@@ -1064,12 +1064,12 @@ void TerminalView::showResizeNotification()
             _resizeTimer->setSingleShot(true);
             connect(_resizeTimer.get(), SIGNAL(timeout()), _resizeWidget.get(), SLOT(hide()));
             connect(_resizeTimer.get(), SIGNAL(timeout()), this, SLOT(update()));
+            _resizeWidget->move((width() - _resizeWidget->width()) / 2,
+                                (height() - _resizeWidget->height()) / 2 + 20);
         }
         QString sizeStr;
         sizeStr.sprintf("Size: %d x %d", _columns, _lines);
         _resizeWidget->setText(sizeStr);
-        _resizeWidget->move((width() - _resizeWidget->width()) / 2,
-                            (height() - _resizeWidget->height()) / 2 + 20);
         _resizeWidget->show();
         _resizeTimer->start(1000);
     }
