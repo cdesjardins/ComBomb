@@ -287,8 +287,7 @@ TerminalView::TerminalView(QWidget* parent)
     _scrollBar.reset(new QScrollBar(this));
     setScroll(0, 0);
     _scrollBar->setCursor(Qt::ArrowCursor);
-    connect(_scrollBar.get(), SIGNAL(valueChanged(int)), this,
-            SLOT(scrollBarPositionChanged(int)));
+    connect(_scrollBar.get(), SIGNAL(valueChanged(int)), this, SLOT(scrollBarPositionChanged(int)));
 
     // setup timers for blinking cursor and text
     _blinkTimer.reset(new QTimer(this));

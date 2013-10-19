@@ -3,6 +3,8 @@
 #include "ui_fileclipboarddialog.h"
 #include "mainwindow.h"
 
+#define CB_FILE_CLIBBOARD_SETTINGS_ROOT "FileClipboard/"
+
 FileClipboardDialog::FileClipboardDialog(QWidget* parent) :
     QDialog(parent),
     ui(new Ui::FileClipboardDialog),
@@ -12,7 +14,7 @@ FileClipboardDialog::FileClipboardDialog(QWidget* parent) :
     QSettings settings;
     QTableWidgetItem* item;
 
-    settings.beginReadArray("FileClipboard");
+    settings.beginReadArray(CB_FILE_CLIBBOARD_SETTINGS_ROOT);
     for (int row = 0; row < 256; row++)
     {
         settings.setArrayIndex(row);
@@ -23,7 +25,7 @@ FileClipboardDialog::FileClipboardDialog(QWidget* parent) :
     settings.endArray();
     _fileClipboardHeader = new FileClipboardHeader();
     ui->fileClipboardTable->setVerticalHeader(_fileClipboardHeader);
-    bool sendNewLineChecked = settings.value("sendNewLine").toBool();
+    bool sendNewLineChecked = settings.value(CB_FILE_CLIBBOARD_SETTINGS_ROOT "SendNewLine").toBool();
     ui->newLineCheckBox->setChecked(sendNewLineChecked);
     connect(_fileClipboardHeader, SIGNAL(sendItemSignal(int)), this, SLOT(sendItemTriggered(int)));
     ui->fileClipboardTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
@@ -33,7 +35,11 @@ FileClipboardDialog::~FileClipboardDialog()
 {
     QTableWidgetItem* item;
     QSettings settings;
-    settings.beginWriteArray("FileClipboard");
+    if (isHidden() == false)
+    {
+        hideEvent(NULL);
+    }
+    settings.beginWriteArray(CB_FILE_CLIBBOARD_SETTINGS_ROOT);
     for (int row = 0; row < ui->fileClipboardTable->rowCount(); row++)
     {
         settings.setArrayIndex(row);
@@ -42,7 +48,7 @@ FileClipboardDialog::~FileClipboardDialog()
         delete item;
     }
     settings.endArray();
-    settings.setValue("sendNewLine", ui->newLineCheckBox->isChecked());
+    settings.setValue(CB_FILE_CLIBBOARD_SETTINGS_ROOT "SendNewLine", ui->newLineCheckBox->isChecked());
 
     delete ui;
     if (_fileClipboardHeader != NULL)
@@ -72,11 +78,13 @@ void FileClipboardDialog::sendItemTriggered(int index)
 
 void FileClipboardDialog::hideEvent(QHideEvent*)
 {
-    MainWindow::saveWidgetGeometry(this, "FileClipboardGeometry");
+    MainWindow::saveWidgetGeometry(this, CB_FILE_CLIBBOARD_SETTINGS_ROOT "Geometry");
+    qDebug("Hide");
 }
 
 void FileClipboardDialog::showEvent(QShowEvent*)
 {
-    MainWindow::restoreWidgetGeometry(this, "FileClipboardGeometry");
+    MainWindow::restoreWidgetGeometry(this, CB_FILE_CLIBBOARD_SETTINGS_ROOT "Geometry");
+    qDebug("Show");
 }
 
