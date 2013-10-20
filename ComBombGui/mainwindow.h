@@ -35,9 +35,8 @@ private slots:
     void on_actionAbout_ComBomb_triggered();
     void on_actionCopy_triggered();
     void on_actionPaste_triggered();
-
     void on_actionFile_clipboard_triggered();
-
+    void on_action_Options_triggered();
 private:
 
     Ui::MainWindow* _ui;

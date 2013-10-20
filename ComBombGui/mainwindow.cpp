@@ -3,6 +3,7 @@
 #include "mainwindow.h"
 #include "childform.h"
 #include "aboutdialog.h"
+#include "configdialog.h"
 #include "ui_mainwindow.h"
 
 #define CB_FILE_CONFIG_STR  "file"
@@ -76,7 +77,7 @@ void MainWindow::getPreviousConnections(const std::string &connType, QStringList
     for (i = 0; i < size; ++i)
     {
         settings.setArrayIndex(i);
-        connections->append(settings.value("config").toString());
+        connections->append(settings.value("Config").toString());
     }
     settings.endArray();
 }
@@ -96,7 +97,7 @@ void MainWindow::saveConnections(const std::string &connType, const std::string 
         for (QStringList::iterator it = connections.begin(); it != connections.end(); ++it)
         {
             settings.setArrayIndex(i++);
-            settings.setValue("config", *it);
+            settings.setValue("Config", *it);
         }
         settings.endArray();
     }
@@ -166,8 +167,9 @@ void MainWindow::on_actionOpen_triggered()
                 }
                 break;
             }
-
-            ChildForm* childForm = new ChildForm(intf, this);
+            QTerminalConfig terminalConfig;
+            ConfigDialog::getTerminalConfig(&terminalConfig);
+            ChildForm* childForm = new ChildForm(terminalConfig, intf, this);
             connect(intf.get(), SIGNAL(updateStatusSignal(QString)), this, SLOT(updateStatusSlot(QString)));
 
             QMdiSubWindow* subWindow = _mdiArea->addSubWindow(childForm);
@@ -242,3 +244,9 @@ void MainWindow::on_actionFile_clipboard_triggered()
     }
 }
 
+
+void MainWindow::on_action_Options_triggered()
+{
+    ConfigDialog configDialog(this);
+    configDialog.exec();
+}

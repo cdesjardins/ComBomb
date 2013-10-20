@@ -58,6 +58,8 @@
     <addaction name="actionPaste"/>
     <addaction name="actionSelect_All"/>
     <addaction name="actionFile_clipboard"/>
+    <addaction name="separator"/>
+    <addaction name="action_Options"/>
    </widget>
    <addaction name="_menuFile"/>
    <addaction name="menuEdit"/>
@@ -72,6 +74,7 @@
    </attribute>
    <addaction name="actionOpen"/>
    <addaction name="actionFile_clipboard"/>
+   <addaction name="action_Options"/>
   </widget>
   <widget class="QStatusBar" name="_statusBar"/>
   <action name="actionOpen">
@@ -152,10 +155,19 @@
      <normaloff>:/images/clipboard_sign.png</normaloff>:/images/clipboard_sign.png</iconset>
    </property>
    <property name="text">
-    <string>File clipboard</string>
+    <string>&amp;File clipboard</string>
    </property>
    <property name="toolTip">
     <string>Open File clipboard</string>
+   </property>
+  </action>
+  <action name="action_Options">
+   <property name="icon">
+    <iconset resource="ComBomb.qrc">
+     <normaloff>:/images/gear_in.png</normaloff>:/images/gear_in.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Options</string>
    </property>
   </action>
  </widget>

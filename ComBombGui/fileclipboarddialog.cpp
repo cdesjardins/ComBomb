@@ -79,12 +79,10 @@ void FileClipboardDialog::sendItemTriggered(int index)
 void FileClipboardDialog::hideEvent(QHideEvent*)
 {
     MainWindow::saveWidgetGeometry(this, CB_FILE_CLIBBOARD_SETTINGS_ROOT "Geometry");
-    qDebug("Hide");
 }
 
 void FileClipboardDialog::showEvent(QShowEvent*)
 {
     MainWindow::restoreWidgetGeometry(this, CB_FILE_CLIBBOARD_SETTINGS_ROOT "Geometry");
-    qDebug("Show");
 }
 

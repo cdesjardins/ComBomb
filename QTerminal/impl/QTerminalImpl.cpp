@@ -22,14 +22,14 @@
 
 #include "QTerminalImpl.h"
 
-QTerminalImpl::QTerminalImpl(const boost::shared_ptr<TgtIntf> &targetInterface, int width, int height, QWidget* parent)
+QTerminalImpl::QTerminalImpl(const QTerminalConfig &terminalConfig, const boost::shared_ptr<TgtIntf> &targetInterface, int width, int height, QWidget* parent)
     : QTerminalInterface(parent)
 {
     setMinimumSize(600, 400);
-    initialize(targetInterface, width, height);
+    initialize(terminalConfig, targetInterface, width, height);
 }
 
-void QTerminalImpl::initialize(const boost::shared_ptr<TgtIntf> &targetInterface, int width, int height)
+void QTerminalImpl::initialize(const QTerminalConfig &terminalConfig, const boost::shared_ptr<TgtIntf> &targetInterface, int width, int height)
 {
     m_terminalView.reset(new TerminalView(this));
     m_terminalView->setKeyboardCursorShape(TerminalView::IBeamCursor);
@@ -40,6 +40,7 @@ void QTerminalImpl::initialize(const boost::shared_ptr<TgtIntf> &targetInterface
     m_terminalView->setTripleClickMode(TerminalView::SelectWholeLine);
     m_terminalView->setTerminalSizeStartup(true);
     m_terminalView->setScrollBarPosition(TerminalView::ScrollBarRight);
+    m_terminalView->setSize(width, height);
 
     connect(m_terminalView.get(), SIGNAL(customContextMenuRequested(QPoint)),
             this, SLOT(handleCustomContextMenuRequested(QPoint)));
@@ -62,8 +63,9 @@ void QTerminalImpl::initialize(const boost::shared_ptr<TgtIntf> &targetInterface
     m_terminalModel->setDarkBackground(true);
     m_terminalModel->setKeyBindings("");
     m_terminalModel->run();
-    m_terminalView->setSize(width, height);
     m_terminalModel->addView(m_terminalView);
+
+    applyTerminalConfig(terminalConfig);
 }
 
 QTerminalImpl::~QTerminalImpl()
@@ -71,6 +73,11 @@ QTerminalImpl::~QTerminalImpl()
     emit destroyed();
     m_terminalModel.reset();
     m_terminalView.reset();
+}
+
+void QTerminalImpl::applyTerminalConfig(const QTerminalConfig &terminalConfig)
+{
+    m_terminalView->setWordCharacters(terminalConfig._wordSelectionDelimiters.c_str());
 }
 
 void QTerminalImpl::close()

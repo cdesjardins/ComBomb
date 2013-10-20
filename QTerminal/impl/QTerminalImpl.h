@@ -23,7 +23,8 @@
 #include <QtGui>
 #include "TerminalModel.h"
 #include "TerminalView.h"
-#include "../QTerminalInterface.h"
+#include "QTerminal/QTerminalInterface.h"
+#include "QTerminal/QTerminalConfig.h"
 #ifndef Q_MOC_RUN
 #include "boost/smart_ptr.hpp"
 #endif
@@ -34,7 +35,7 @@ class QTerminalImpl : public QTerminalInterface
 {
     Q_OBJECT
 public:
-    QTerminalImpl(const boost::shared_ptr<TgtIntf> &targetInterface, int width, int height, QWidget* parent = 0);
+    QTerminalImpl(const QTerminalConfig &terminalConfig, const boost::shared_ptr<TgtIntf> &targetInterface, int width, int height, QWidget* parent = 0);
     virtual ~QTerminalImpl();
 
     void setTerminalFont(const QFont &font);
@@ -43,6 +44,7 @@ public:
 
     void setCursorType(CursorType type, bool blinking);
     void close();
+    void applyTerminalConfig(const QTerminalConfig &terminalConfig);
 
 public slots:
     void copyClipboard();
@@ -54,7 +56,7 @@ protected:
     virtual void resizeEvent(QResizeEvent*);
     QSize sizeHint() const;
 private:
-    void initialize(const boost::shared_ptr<TgtIntf> &targetInterface, int width, int height);
+    void initialize(const QTerminalConfig &terminalConfig, const boost::shared_ptr<TgtIntf> &targetInterface, int width, int height);
 
     boost::shared_ptr<TerminalView> m_terminalView;
     boost::scoped_ptr<TerminalModel> m_terminalModel;
