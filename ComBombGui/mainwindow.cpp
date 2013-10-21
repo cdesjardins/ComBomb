@@ -105,26 +105,38 @@ void MainWindow::saveConnections(const std::string &connType, const std::string 
 
 void MainWindow::loadConnections(const std::string &connType, OpenDialog &openDialog)
 {
-    QStringList connections;
-    getPreviousConnections(connType, &connections);
-
-    for (QStringList::iterator it = connections.begin(); it != connections.end(); ++it)
+    std::stringstream s;
+    try
     {
-        std::stringstream s;
-        s << it->toLocal8Bit().constData();
-        boost::archive::text_iarchive ia(s);
-        if (connType.compare(CB_FILE_CONFIG_STR) == 0)
+        QStringList connections;
+        getPreviousConnections(connType, &connections);
+
+        for (QStringList::iterator it = connections.begin(); it != connections.end(); ++it)
         {
-            TgtFileIntf::TgtConnectionConfig f;
-            ia >> f;
-            openDialog.addFileConfig(f);
+            s.str("");
+            s << it->toLocal8Bit().constData();
+            boost::archive::text_iarchive ia(s);
+            if (connType.compare(CB_FILE_CONFIG_STR) == 0)
+            {
+                TgtFileIntf::TgtConnectionConfig f;
+                ia >> f;
+                openDialog.addFileConfig(f);
+            }
+            else if (connType.compare(CB_SSH_CONFIG_STR) == 0)
+            {
+                TgtSshIntf::TgtConnectionConfig s;
+                ia >> s;
+                openDialog.addSshConfig(s);
+            }
         }
-        else if (connType.compare(CB_SSH_CONFIG_STR) == 0)
-        {
-            TgtSshIntf::TgtConnectionConfig s;
-            ia >> s;
-            openDialog.addSshConfig(s);
-        }
+    }
+    catch (const std::exception &e)
+    {
+        QString what(e.what());
+        what.append(" (");
+        what.append(s.str().c_str());
+        what.append(")");
+        MainWindow::errorBox(what);
     }
 }
 
