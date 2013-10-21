@@ -1,28 +1,18 @@
 #ifndef QTERMINALCONFIG_H
 #define QTERMINALCONFIG_H
 
-#include <string>
+#include <QString>
+#include <QDataStream>
 #include "unparam.h"
 
 class QTerminalConfig
 {
 public:
     QTerminalConfig();
-    std::string _wordSelectionDelimiters;
+    QString _wordSelectionDelimiters;
 };
 
-
-namespace boost
-{
-namespace serialization
-{
-template<class Archive>
-void serialize(Archive & ar, QTerminalConfig & config, const unsigned int version)
-{
-    UNREF_PARAM(version);
-    ar & config._wordSelectionDelimiters;
-}
-}
-}
+QDataStream &operator<<(QDataStream &out, const QTerminalConfig &q);
+QDataStream &operator>>(QDataStream &in, QTerminalConfig &q);
 
 #endif // QTERMINALCONFIG_H

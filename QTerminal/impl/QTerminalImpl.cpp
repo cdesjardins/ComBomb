@@ -77,7 +77,7 @@ QTerminalImpl::~QTerminalImpl()
 
 void QTerminalImpl::applyTerminalConfig(const QTerminalConfig &terminalConfig)
 {
-    m_terminalView->setWordCharacters(terminalConfig._wordSelectionDelimiters.c_str());
+    m_terminalView->setWordCharacters(terminalConfig._wordSelectionDelimiters);
 }
 
 void QTerminalImpl::close()

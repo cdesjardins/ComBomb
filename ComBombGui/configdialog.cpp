@@ -13,7 +13,7 @@ ConfigDialog::ConfigDialog(QWidget *parent) :
     ui->setupUi(this);
 
     ConfigDialog::getTerminalConfig(&terminalConfig);
-    ui->wordSelectionDelimitersLineEdit->setText(terminalConfig._wordSelectionDelimiters.c_str());
+    ui->wordSelectionDelimitersLineEdit->setText(terminalConfig._wordSelectionDelimiters);
 }
 
 ConfigDialog::~ConfigDialog()
@@ -37,13 +37,14 @@ void ConfigDialog::showEvent(QShowEvent*)
 
 void ConfigDialog::on_buttonBox_accepted()
 {
-    std::stringstream ofs;
-    boost::archive::text_oarchive oa(ofs);
+    QByteArray qbytes;
     QSettings settings;
     QTerminalConfig terminalConfig;
+    QDataStream q(qbytes);
     terminalConfig._wordSelectionDelimiters = ui->wordSelectionDelimitersLineEdit->text().toLocal8Bit().constData();
-    oa << terminalConfig;
-    settings.setValue(CB_CONFIG_SETTINGS_ROOT "Settings", ofs.str().c_str());
+    q << terminalConfig;
+
+    settings.setValue(CB_CONFIG_SETTINGS_ROOT "Settings", qbytes);
 
     QList<ChildForm*> list = MainWindow::getMainWindow()->findChildren<ChildForm *>();
     foreach(ChildForm *w, list)
@@ -55,12 +56,11 @@ void ConfigDialog::on_buttonBox_accepted()
 void ConfigDialog::getTerminalConfig(QTerminalConfig *terminalConfig)
 {
     QSettings settings;
-    std::stringstream s;
-    s << settings.value(CB_CONFIG_SETTINGS_ROOT "Settings").toString().toLocal8Bit().constData();
-    if (s.str().length() > 0)
+    QByteArray qbytes(settings.value(CB_CONFIG_SETTINGS_ROOT "Settings").toByteArray());
+    if (qbytes.length() > 0)
     {
-        boost::archive::text_iarchive ia(s);
-        ia >> *terminalConfig;
+        QDataStream q(qbytes);
+        q >> *terminalConfig;
     }
 }
 
