@@ -40,7 +40,6 @@ void QTerminalImpl::initialize(const QTerminalConfig &terminalConfig, const boos
     m_terminalView->setTripleClickMode(TerminalView::SelectWholeLine);
     m_terminalView->setTerminalSizeStartup(true);
     m_terminalView->setScrollBarPosition(TerminalView::ScrollBarRight);
-    m_terminalView->setSize(width, height);
 
     connect(m_terminalView.get(), SIGNAL(customContextMenuRequested(QPoint)),
             this, SLOT(handleCustomContextMenuRequested(QPoint)));
@@ -65,6 +64,8 @@ void QTerminalImpl::initialize(const QTerminalConfig &terminalConfig, const boos
     m_terminalModel->run();
     m_terminalModel->addView(m_terminalView);
 
+    // Set the screen size after font and everything else is setup
+    m_terminalView->setSize(width, height);
     applyTerminalConfig(terminalConfig);
 }
 
