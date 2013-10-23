@@ -25,7 +25,8 @@ SOURCES += main.cpp\
     aboutdialog.cpp \
     versioning.cpp \
     fileclipboarddialog.cpp \
-    configdialog.cpp
+    configdialog.cpp \
+    runprocessdialog.cpp
 
 HEADERS  += mainwindow.h \
     childform.h \
@@ -35,14 +36,16 @@ HEADERS  += mainwindow.h \
     cblabel.h \
     fileclipboarddialog.h \
     fileclipboardheader.h \
-    configdialog.h
+    configdialog.h \
+    runprocessdialog.h
 
 FORMS    += mainwindow.ui \
     childform.ui \
     opendialog.ui \
     aboutdialog.ui \
     fileclipboarddialog.ui \
-    configdialog.ui
+    configdialog.ui \
+    runprocessdialog.ui
 
 RESOURCES += \
     ComBomb.qrc

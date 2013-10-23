@@ -262,3 +262,12 @@ void MainWindow::on_action_Options_triggered()
     ConfigDialog configDialog(this);
     configDialog.exec();
 }
+
+void MainWindow::on_action_Run_Process_triggered()
+{
+    ChildForm* activeWindow = getActiveChildWindow();
+    if (activeWindow != NULL)
+    {
+        activeWindow->runProcess();
+    }
+}

@@ -37,6 +37,8 @@ private slots:
     void on_actionPaste_triggered();
     void on_actionFile_clipboard_triggered();
     void on_action_Options_triggered();
+    void on_action_Run_Process_triggered();
+
 private:
 
     Ui::MainWindow* _ui;

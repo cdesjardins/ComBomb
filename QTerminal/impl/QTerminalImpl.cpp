@@ -41,8 +41,7 @@ void QTerminalImpl::initialize(const QTerminalConfig &terminalConfig, const boos
     m_terminalView->setTerminalSizeStartup(true);
     m_terminalView->setScrollBarPosition(TerminalView::ScrollBarRight);
 
-    connect(m_terminalView.get(), SIGNAL(customContextMenuRequested(QPoint)),
-            this, SLOT(handleCustomContextMenuRequested(QPoint)));
+    connect(m_terminalView.get(), SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(handleCustomContextMenuRequested(QPoint)));
 
 #ifdef Q_OS_MAC
     QFont font = QFont("Monaco");
