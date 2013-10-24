@@ -121,16 +121,16 @@ void TgtSshIntf::TgtMakeConnection()
                                      connectionConfig->_hostName.length());
     if (cryptStatusError(status))
     {
-        cryptDestroySession(_sshData->_cryptSession);
         boost::format f("Unable to connect to '%s' (%d)");
         TgtGetErrorMsg(&errmsg, status, str(f % connectionConfig->_hostName % status));
+        cryptDestroySession(_sshData->_cryptSession);
         throw CB_EXCEPTION_STR(CBException::CbExcp, errmsg.c_str());
     }
     status = cryptSetAttribute(_sshData->_cryptSession, CRYPT_OPTION_NET_CONNECTTIMEOUT, 10);
     if (cryptStatusError(status))
     {
-        cryptDestroySession(_sshData->_cryptSession);
         TgtGetErrorMsg(&errmsg, status, "Unable to set ssh connection timeout");
+        cryptDestroySession(_sshData->_cryptSession);
         throw CB_EXCEPTION_STR(CBException::CbExcp, errmsg.c_str());
     }
 
@@ -140,8 +140,8 @@ void TgtSshIntf::TgtMakeConnection()
                                      tt.c_str(), tt.length());
     if (cryptStatusError(status))
     {
-        cryptDestroySession(_sshData->_cryptSession);
         TgtGetErrorMsg(&errmsg, status, "Unable to set terminal type");
+        cryptDestroySession(_sshData->_cryptSession);
         throw CB_EXCEPTION_STR(CBException::CbExcp, errmsg.c_str());
     }
 
@@ -149,8 +149,8 @@ void TgtSshIntf::TgtMakeConnection()
                                CRYPT_SESSINFO_TERM_WIDTH, CB_DEFAULT_TERM_WIDTH);
     if (cryptStatusError(status))
     {
-        cryptDestroySession(_sshData->_cryptSession);
         TgtGetErrorMsg(&errmsg, status, "Unable to set terminal width");
+        cryptDestroySession(_sshData->_cryptSession);
         throw CB_EXCEPTION_STR(CBException::CbExcp, errmsg.c_str());
     }
 
@@ -158,8 +158,8 @@ void TgtSshIntf::TgtMakeConnection()
                                CRYPT_SESSINFO_TERM_HEIGHT, CB_DEFAULT_TERM_HEIGHT);
     if (cryptStatusError(status))
     {
-        cryptDestroySession(_sshData->_cryptSession);
         TgtGetErrorMsg(&errmsg, status, "Unable to set terminal height");
+        cryptDestroySession(_sshData->_cryptSession);
         throw CB_EXCEPTION_STR(CBException::CbExcp, errmsg.c_str());
     }
 
@@ -169,8 +169,8 @@ void TgtSshIntf::TgtMakeConnection()
                                      connectionConfig->_userName.length());
     if (cryptStatusError(status))
     {
-        cryptDestroySession(_sshData->_cryptSession);
         TgtGetErrorMsg(&errmsg, status, "Unable to set username");
+        cryptDestroySession(_sshData->_cryptSession);
         throw CB_EXCEPTION_STR(CBException::CbExcp, errmsg.c_str());
     }
     status = cryptSetAttributeString(_sshData->_cryptSession,
@@ -179,16 +179,16 @@ void TgtSshIntf::TgtMakeConnection()
                                      connectionConfig->_password.length());
     if (cryptStatusError(status))
     {
-        cryptDestroySession(_sshData->_cryptSession);
         TgtGetErrorMsg(&errmsg, status, "Unable to set password");
+        cryptDestroySession(_sshData->_cryptSession);
         throw CB_EXCEPTION_STR(CBException::CbExcp, errmsg.c_str());
     }
 
     status = cryptSetAttribute(_sshData->_cryptSession, CRYPT_SESSINFO_ACTIVE, true);
     if (cryptStatusError(status))
     {
-        cryptDestroySession(_sshData->_cryptSession);
         TgtGetErrorMsg(&errmsg, status, "Unable to activate session");
+        cryptDestroySession(_sshData->_cryptSession);
         throw CB_EXCEPTION_STR(CBException::CbExcp, errmsg.c_str());
     }
     else
