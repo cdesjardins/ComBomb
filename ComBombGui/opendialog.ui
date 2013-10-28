@@ -63,10 +63,10 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
           <item row="7" column="2">
-           <widget class="QLineEdit" name="_passwordLineEdit"/>
+           <widget class="QLineEdit" name="passwordLineEdit"/>
           </item>
           <item row="9" column="0">
-           <widget class="QLineEdit" name="_portNumLineEdit">
+           <widget class="QLineEdit" name="portNumLineEdit">
             <property name="inputMethodHints">
              <set>Qt::ImhDigitsOnly</set>
             </property>
@@ -83,7 +83,7 @@
            </widget>
           </item>
           <item row="7" column="0">
-           <widget class="QComboBox" name="_userNameComboBox">
+           <widget class="QComboBox" name="userNameComboBox">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -117,7 +117,7 @@
            </widget>
           </item>
           <item row="3" column="0" colspan="3">
-           <widget class="QComboBox" name="_hostNameComboBox">
+           <widget class="QComboBox" name="hostNameComboBox">
             <property name="editable">
              <bool>true</bool>
             </property>
@@ -157,17 +157,17 @@
            </widget>
           </item>
           <item row="3" column="0">
-           <widget class="QComboBox" name="_parityComboBox">
+           <widget class="QComboBox" name="parityComboBox">
             <property name="currentText">
              <string/>
             </property>
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="QComboBox" name="_comPortComboBox"/>
+           <widget class="QComboBox" name="comPortComboBox"/>
           </item>
           <item row="1" column="1">
-           <widget class="QComboBox" name="_baudRateComboBox">
+           <widget class="QComboBox" name="baudRateComboBox">
             <property name="currentText">
              <string/>
             </property>
@@ -188,7 +188,7 @@
            </widget>
           </item>
           <item row="3" column="1">
-           <widget class="QComboBox" name="_stopBitsComboBox">
+           <widget class="QComboBox" name="stopBitsComboBox">
             <property name="currentText">
              <string/>
             </property>
@@ -202,7 +202,7 @@
            </widget>
           </item>
           <item row="5" column="0">
-           <widget class="QComboBox" name="_byteSizeComboBox">
+           <widget class="QComboBox" name="byteSizeComboBox">
             <property name="currentText">
              <string/>
             </property>
@@ -216,7 +216,7 @@
            </widget>
           </item>
           <item row="5" column="1">
-           <widget class="QComboBox" name="_flowControlComboBox">
+           <widget class="QComboBox" name="flowControlComboBox">
             <property name="currentText">
              <string/>
             </property>
@@ -224,17 +224,17 @@
           </item>
          </layout>
          <zorder>label_2</zorder>
-         <zorder>_comPortComboBox</zorder>
-         <zorder>_baudRateComboBox</zorder>
+         <zorder>comPortComboBox</zorder>
+         <zorder>baudRateComboBox</zorder>
          <zorder>label</zorder>
-         <zorder>_parityComboBox</zorder>
+         <zorder>parityComboBox</zorder>
          <zorder>label_3</zorder>
          <zorder>label_4</zorder>
-         <zorder>_stopBitsComboBox</zorder>
+         <zorder>stopBitsComboBox</zorder>
          <zorder>label_5</zorder>
-         <zorder>_byteSizeComboBox</zorder>
+         <zorder>byteSizeComboBox</zorder>
          <zorder>label_6</zorder>
-         <zorder>_flowControlComboBox</zorder>
+         <zorder>flowControlComboBox</zorder>
         </widget>
        </item>
       </layout>
@@ -268,14 +268,14 @@
            </widget>
           </item>
           <item row="4" column="1">
-           <widget class="QPushButton" name="_browseButton">
+           <widget class="QPushButton" name="browseButton">
             <property name="text">
              <string>Browse</string>
             </property>
            </widget>
           </item>
           <item row="2" column="0" colspan="2">
-           <widget class="QComboBox" name="_fileNameComboBox">
+           <widget class="QComboBox" name="fileNameComboBox">
             <property name="editable">
              <bool>true</bool>
             </property>
@@ -291,19 +291,19 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>_hostNameComboBox</tabstop>
-  <tabstop>_userNameComboBox</tabstop>
-  <tabstop>_passwordLineEdit</tabstop>
-  <tabstop>_portNumLineEdit</tabstop>
+  <tabstop>hostNameComboBox</tabstop>
+  <tabstop>userNameComboBox</tabstop>
+  <tabstop>passwordLineEdit</tabstop>
+  <tabstop>portNumLineEdit</tabstop>
   <tabstop>tabWidget</tabstop>
-  <tabstop>_comPortComboBox</tabstop>
-  <tabstop>_baudRateComboBox</tabstop>
-  <tabstop>_parityComboBox</tabstop>
-  <tabstop>_stopBitsComboBox</tabstop>
-  <tabstop>_byteSizeComboBox</tabstop>
-  <tabstop>_flowControlComboBox</tabstop>
-  <tabstop>_fileNameComboBox</tabstop>
-  <tabstop>_browseButton</tabstop>
+  <tabstop>comPortComboBox</tabstop>
+  <tabstop>baudRateComboBox</tabstop>
+  <tabstop>parityComboBox</tabstop>
+  <tabstop>stopBitsComboBox</tabstop>
+  <tabstop>byteSizeComboBox</tabstop>
+  <tabstop>flowControlComboBox</tabstop>
+  <tabstop>fileNameComboBox</tabstop>
+  <tabstop>browseButton</tabstop>
   <tabstop>_buttonBox</tabstop>
  </tabstops>
  <resources>
@@ -343,7 +343,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>_hostNameComboBox</sender>
+   <sender>hostNameComboBox</sender>
    <signal>currentIndexChanged(int)</signal>
    <receiver>OpenDialog</receiver>
    <slot>hostNameSelectionChanged(int)</slot>
