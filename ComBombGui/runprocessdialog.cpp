@@ -1,11 +1,14 @@
 #include <QFileDialog>
 #include <QSettings>
+#include "mainwindow.h"
 #include "runprocessdialog.h"
 #include "ui_runprocessdialog.h"
 
-#define CB_RUN_PROCESS_SETTINGS_ROOT    "RunProcess/"
-#define CB_RUN_PROCESS_SETTINGS_PB      CB_RUN_PROCESS_SETTINGS_ROOT "Process/Browser"
-#define CB_RUN_PROCESS_SETTINGS_WDB     CB_RUN_PROCESS_SETTINGS_ROOT "WorkingDir/Browser"
+#define CB_RUN_PROCESS_SETTINGS_ROOT    objectName()
+#define CB_RUN_PROCESS_SETTINGS_PB      CB_RUN_PROCESS_SETTINGS_ROOT + "/Process/Browser"
+#define CB_RUN_PROCESS_SETTINGS_WDB     CB_RUN_PROCESS_SETTINGS_ROOT + "/WorkingDir/Browser"
+#define CB_RUN_PROCESS_SETTINGS_PP      CB_RUN_PROCESS_SETTINGS_ROOT + "/Process/Programs"
+#define CB_RUN_PROCESS_SETTINGS_WDP     CB_RUN_PROCESS_SETTINGS_ROOT + "/WorkingDir/Programs"
 
 RunProcessDialog::RunProcessDialog(QWidget *parent) :
     QDialog(parent),
@@ -28,6 +31,7 @@ void RunProcessDialog::on_programBrowseButton_clicked()
     if (fileName.isNull() == false)
     {
         settings.setValue(CB_RUN_PROCESS_SETTINGS_PB, QFileInfo(fileName).canonicalPath());
+        ui->programComboBox->addOrUpdateItem(fileName);
     }
 }
 
@@ -39,5 +43,6 @@ void RunProcessDialog::on_workingDirBrowseButton_clicked()
     if (dirName.isNull() == false)
     {
        settings.setValue(CB_RUN_PROCESS_SETTINGS_WDB, dirName);
+       ui->workingDirComboBox->addOrUpdateItem(dirName);
     }
 }

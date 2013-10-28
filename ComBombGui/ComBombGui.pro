@@ -26,7 +26,8 @@ SOURCES += main.cpp\
     versioning.cpp \
     fileclipboarddialog.cpp \
     configdialog.cpp \
-    runprocessdialog.cpp
+    runprocessdialog.cpp \
+    cbcombobox.cpp
 
 HEADERS  += mainwindow.h \
     childform.h \
@@ -37,7 +38,8 @@ HEADERS  += mainwindow.h \
     fileclipboarddialog.h \
     fileclipboardheader.h \
     configdialog.h \
-    runprocessdialog.h
+    runprocessdialog.h \
+    cbcombobox.h
 
 FORMS    += mainwindow.ui \
     childform.ui \

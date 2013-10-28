@@ -1,5 +1,6 @@
 #include <QMdiSubWindow>
 #include <QMessageBox>
+#include <QComboBox>
 #include "mainwindow.h"
 #include "childform.h"
 #include "aboutdialog.h"
