@@ -1,5 +1,5 @@
-#ifndef CJD_OPENDIALOG_H
-#define CJD_OPENDIALOG_H
+#ifndef CB_OPENDIALOG_H
+#define CB_OPENDIALOG_H
 
 #include <QDialog>
 #include "TargetConnection/TgtConnection.h"

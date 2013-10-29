@@ -41,8 +41,7 @@ void QTerminalImpl::initialize(const QTerminalConfig &terminalConfig, const boos
     m_terminalView->setTerminalSizeStartup(true);
     m_terminalView->setScrollBarPosition(TerminalView::ScrollBarRight);
 
-    connect(m_terminalView.get(), SIGNAL(customContextMenuRequested(QPoint)),
-            this, SLOT(handleCustomContextMenuRequested(QPoint)));
+    connect(m_terminalView.get(), SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(handleCustomContextMenuRequested(QPoint)));
 
 #ifdef Q_OS_MAC
     QFont font = QFont("Monaco");
@@ -76,14 +75,14 @@ QTerminalImpl::~QTerminalImpl()
     m_terminalView.reset();
 }
 
+void QTerminalImpl::connectToRecvText(QObject *who)
+{
+    m_terminalModel->connectToRecvText(who);
+}
+
 void QTerminalImpl::applyTerminalConfig(const QTerminalConfig &terminalConfig)
 {
     m_terminalView->setWordCharacters(terminalConfig._wordSelectionDelimiters);
-}
-
-void QTerminalImpl::close()
-{
-    m_terminalModel->close();
 }
 
 void QTerminalImpl::setTerminalFont(const QFont &font)

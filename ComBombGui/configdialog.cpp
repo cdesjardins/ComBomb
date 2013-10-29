@@ -2,7 +2,7 @@
 #include "ui_configdialog.h"
 #include "mainwindow.h"
 
-#define CB_CONFIG_SETTINGS_ROOT "Config/"
+#define CB_CONFIG_SETTINGS_ROOT "ConfigDialog/"
 
 
 ConfigDialog::ConfigDialog(QWidget *parent) :
@@ -40,7 +40,7 @@ void ConfigDialog::on_buttonBox_accepted()
     QByteArray qbytes;
     QSettings settings;
     QTerminalConfig terminalConfig;
-    QDataStream q(qbytes);
+    QDataStream q(&qbytes, QIODevice::WriteOnly);
     terminalConfig._wordSelectionDelimiters = ui->wordSelectionDelimitersLineEdit->text().toLocal8Bit().constData();
     q << terminalConfig;
 

@@ -832,6 +832,82 @@ void TerminalView::scrollImage(int lines, const QRect& screenWindowRegion)
     scroll(0, _fontHeight * (-lines), scrollRect);
 }
 
+int TerminalView::resizePaint(const int columnsToUpdate, const Character* const newLine, char* dirtyMask, QChar* disstrU)
+{
+    int len;
+    int updateLine = 0;
+    int cr  = -1; // undefined
+    CharacterColor cf;     // undefined
+    CharacterColor _clipboard;     // undefined
+    for (int x = 0; x < columnsToUpdate; x++)
+    {
+        _hasBlinker |= (newLine[x].rendition & RE_BLINK);
+
+        // Start drawing if this character or the next one differs.
+        // We also take the next one into account to handle the situation
+        // where characters exceed their cell width.
+        if (dirtyMask[x])
+        {
+            quint16 c = newLine[x + 0].character;
+            if (!c)
+            {
+                continue;
+            }
+            int p = 0;
+            disstrU[p++] = c; //fontMap(c);
+            bool lineDraw = isLineChar(c);
+            bool doubleWidth = (x + 1 == columnsToUpdate) ? false : (newLine[x + 1].character == 0);
+            cr = newLine[x].rendition;
+            _clipboard = newLine[x].backgroundColor;
+            if (newLine[x].foregroundColor != cf)
+            {
+                cf = newLine[x].foregroundColor;
+            }
+            int lln = columnsToUpdate - x;
+            for (len = 1; len < lln; len++)
+            {
+                const Character& ch = newLine[x + len];
+
+                if (!ch.character)
+                {
+                    continue; // Skip trailing part of multi-col chars.
+                }
+                bool nextIsDoubleWidth = (x + len + 1 == columnsToUpdate) ? false : (newLine[x + len + 1].character == 0);
+
+                if (ch.foregroundColor != cf ||
+                        ch.backgroundColor != _clipboard ||
+                        ch.rendition != cr ||
+                        !dirtyMask[x + len] ||
+                        isLineChar(c) != lineDraw ||
+                        nextIsDoubleWidth != doubleWidth)
+                {
+                    break;
+                }
+
+                disstrU[p++] = c; //fontMap(c);
+            }
+
+            QString unistr(disstrU, p);
+
+            bool saveFixedFont = _fixedFont;
+            if (lineDraw)
+            {
+                _fixedFont = false;
+            }
+            if (doubleWidth)
+            {
+                _fixedFont = false;
+            }
+
+            updateLine = true;
+
+            _fixedFont = saveFixedFont;
+            x += len - 1;
+        }
+    }
+    return updateLine;
+}
+
 void TerminalView::updateImage()
 {
     if (!_screenWindow)
@@ -848,7 +924,7 @@ void TerminalView::updateImage()
     _screenWindow->resetScrollCount();
 
     Character* const newimg = _screenWindow->getImage();
-    int lines = _screenWindow->windowLines() + 1;
+    int lines = _screenWindow->windowLines();
     int columns = _screenWindow->windowColumns();
 
     setScroll(_screenWindow->currentLine(), _screenWindow->lineCount());
@@ -860,7 +936,7 @@ void TerminalView::updateImage()
     Q_ASSERT(this->_usedLines <= this->_lines);
     Q_ASSERT(this->_usedColumns <= this->_columns);
 
-    int y, x, len;
+    int y, x;
 
     QPoint tL  = contentsRect().topLeft();
 
@@ -868,9 +944,6 @@ void TerminalView::updateImage()
     int tLy = tL.y();
     _hasBlinker = false;
 
-    CharacterColor cf;     // undefined
-    CharacterColor _clipboard;     // undefined
-    int cr  = -1; // undefined
 
     const int linesToUpdate = qMin(this->_lines, qMax(0, lines));
     const int columnsToUpdate = qMin(this->_columns, qMax(0, columns));
@@ -895,7 +968,6 @@ void TerminalView::updateImage()
         // mark surrounding neighbours dirty, in case the character exceeds
         // its cell boundaries
         memset(dirtyMask, 0, columnsToUpdate + 2);
-
         for (x = 0; x < columnsToUpdate; x++)
         {
             if (newLine[x] != currentLine[x])
@@ -906,72 +978,7 @@ void TerminalView::updateImage()
 
         if (!_resizing) // not while _resizing, we're expecting a paintEvent
         {
-            for (x = 0; x < columnsToUpdate; x++)
-            {
-                _hasBlinker |= (newLine[x].rendition & RE_BLINK);
-
-                // Start drawing if this character or the next one differs.
-                // We also take the next one into account to handle the situation
-                // where characters exceed their cell width.
-                if (dirtyMask[x])
-                {
-                    quint16 c = newLine[x + 0].character;
-                    if (!c)
-                    {
-                        continue;
-                    }
-                    int p = 0;
-                    disstrU[p++] = c; //fontMap(c);
-                    bool lineDraw = isLineChar(c);
-                    bool doubleWidth = (x + 1 == columnsToUpdate) ? false : (newLine[x + 1].character == 0);
-                    cr = newLine[x].rendition;
-                    _clipboard = newLine[x].backgroundColor;
-                    if (newLine[x].foregroundColor != cf)
-                    {
-                        cf = newLine[x].foregroundColor;
-                    }
-                    int lln = columnsToUpdate - x;
-                    for (len = 1; len < lln; len++)
-                    {
-                        const Character& ch = newLine[x + len];
-
-                        if (!ch.character)
-                        {
-                            continue; // Skip trailing part of multi-col chars.
-                        }
-                        bool nextIsDoubleWidth = (x + len + 1 == columnsToUpdate) ? false : (newLine[x + len + 1].character == 0);
-
-                        if (ch.foregroundColor != cf ||
-                            ch.backgroundColor != _clipboard ||
-                            ch.rendition != cr ||
-                            !dirtyMask[x + len] ||
-                            isLineChar(c) != lineDraw ||
-                            nextIsDoubleWidth != doubleWidth)
-                        {
-                            break;
-                        }
-
-                        disstrU[p++] = c; //fontMap(c);
-                    }
-
-                    QString unistr(disstrU, p);
-
-                    bool saveFixedFont = _fixedFont;
-                    if (lineDraw)
-                    {
-                        _fixedFont = false;
-                    }
-                    if (doubleWidth)
-                    {
-                        _fixedFont = false;
-                    }
-
-                    updateLine = true;
-
-                    _fixedFont = saveFixedFont;
-                    x += len - 1;
-                }
-            }
+            updateLine = resizePaint(columnsToUpdate, newLine, dirtyMask, disstrU);
         }
 
         //both the top and bottom halves of double height _lines must always be redrawn
@@ -1375,7 +1382,6 @@ void TerminalView::propagateSize()
 
 void TerminalView::updateImageSize()
 {
-    //qDebug("%s %d updateImageSize", __FILE__, __LINE__);
     Character* oldimg = _image;
     int oldlin = _lines;
     int oldcol = _columns;
@@ -1386,7 +1392,6 @@ void TerminalView::updateImageSize()
     int lines = qMin(oldlin, _lines);
     int columns = qMin(oldcol, _columns);
 
-    //qDebug("%s %d updateImageSize", __FILE__, __LINE__);
     if (oldimg)
     {
         for (int line = 0; line < lines; line++)
@@ -1397,7 +1402,6 @@ void TerminalView::updateImageSize()
         delete[] oldimg;
     }
 
-    //qDebug("%s %d updateImageSize", __FILE__, __LINE__);
     if (_screenWindow)
     {
         _screenWindow->setWindowLines(_lines);
@@ -1407,11 +1411,9 @@ void TerminalView::updateImageSize()
 
     if (_resizing)
     {
-        //qDebug("%s %d updateImageSize", __FILE__, __LINE__);
         showResizeNotification();
         emit changedContentSizeSignal(_contentHeight, _contentWidth); // expose resizeEvent
     }
-    //qDebug("%s %d updateImageSize", __FILE__, __LINE__);
 
     _resizing = false;
 }

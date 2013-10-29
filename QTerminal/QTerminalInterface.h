@@ -41,15 +41,18 @@ public:
         QAction* copyAction  = _contextMenu->addAction ("Copy");
         QAction* pasteAction = _contextMenu->addAction ("Paste");
         QAction* newlineAction = _contextMenu->addAction ("Toggle CR/LF");
+        QAction* runProcessAction = _contextMenu->addAction ("Run Process");
         copyAction->setIcon(QIcon(":/images/page_copy.png"));
         pasteAction->setIcon(QIcon(":/images/page_paste.png"));
+        runProcessAction->setIcon(QIcon(":/images/script_gear.png"));
         newlineAction->setCheckable(true);
-        connect (copyAction, SIGNAL (triggered()), this, SLOT (copyClipboard()));
-        connect (pasteAction, SIGNAL (triggered()), this, SLOT (pasteClipboard()));
-        connect (newlineAction, SIGNAL (triggered()), this, SLOT (newlineToggle()));
+        connect(copyAction, SIGNAL (triggered()), this, SLOT (copyClipboard()));
+        connect(pasteAction, SIGNAL (triggered()), this, SLOT (pasteClipboard()));
+        connect(newlineAction, SIGNAL (triggered()), this, SLOT (newlineToggle()));
+        connect(runProcessAction, SIGNAL (triggered()), this, SLOT (runProcess()));
 
-        connect (this, SIGNAL (triggerCopy()), this, SLOT (copyClipboard()));
-        connect (this, SIGNAL (triggerPaste()), this, SLOT (pasteClipboard()));
+        connect(this, SIGNAL (triggerCopy()), this, SLOT (copyClipboard()));
+        connect(this, SIGNAL (triggerPaste()), this, SLOT (pasteClipboard()));
     }
 
     virtual ~QTerminalInterface()
@@ -78,10 +81,11 @@ public slots:
     virtual void copyClipboard() = 0;
     virtual void pasteClipboard() = 0;
     virtual void newlineToggle() = 0;
+    virtual void runProcess() = 0;
     virtual void handleCustomContextMenuRequested(QPoint at)
     {
-        _contextMenu->move (mapToGlobal(at));
-        _contextMenu->show ();
+        _contextMenu->move(mapToGlobal(at));
+        _contextMenu->show();
     }
 
 signals:

@@ -1,5 +1,6 @@
 #include <QMdiSubWindow>
 #include <QMessageBox>
+#include <QComboBox>
 #include "mainwindow.h"
 #include "childform.h"
 #include "aboutdialog.h"
@@ -69,85 +70,9 @@ void MainWindow::errorBox(QString errMsg)
     msgBox.exec();
 }
 
-void MainWindow::getPreviousConnections(const std::string &connType, QStringList* connections)
-{
-    QSettings settings;
-    int size = settings.beginReadArray(connType.c_str());
-    int i;
-    for (i = 0; i < size; ++i)
-    {
-        settings.setArrayIndex(i);
-        connections->append(settings.value("Config").toString());
-    }
-    settings.endArray();
-}
-
-void MainWindow::saveConnections(const std::string &connType, const std::string &connStr)
-{
-    if (connType.length() > 0)
-    {
-        int i;
-        QStringList connections;
-        QSettings settings;
-        getPreviousConnections(connType, &connections);
-        connections.insert(0, connStr.c_str());
-        connections.removeDuplicates();
-        i = 0;
-        settings.beginWriteArray(connType.c_str());
-        for (QStringList::iterator it = connections.begin(); it != connections.end(); ++it)
-        {
-            settings.setArrayIndex(i++);
-            settings.setValue("Config", *it);
-        }
-        settings.endArray();
-    }
-}
-
-void MainWindow::loadConnections(const std::string &connType, OpenDialog &openDialog)
-{
-    std::stringstream s;
-    try
-    {
-        QStringList connections;
-        getPreviousConnections(connType, &connections);
-
-        for (QStringList::iterator it = connections.begin(); it != connections.end(); ++it)
-        {
-            s.str("");
-            s << it->toLocal8Bit().constData();
-            boost::archive::text_iarchive ia(s);
-            if (connType.compare(CB_FILE_CONFIG_STR) == 0)
-            {
-                TgtFileIntf::TgtConnectionConfig f;
-                ia >> f;
-                openDialog.addFileConfig(f);
-            }
-            else if (connType.compare(CB_SSH_CONFIG_STR) == 0)
-            {
-                TgtSshIntf::TgtConnectionConfig s;
-                ia >> s;
-                openDialog.addSshConfig(s);
-            }
-        }
-    }
-    catch (const std::exception &e)
-    {
-        QString what(e.what());
-        what.append(" (");
-        what.append(s.str().c_str());
-        what.append(")");
-        MainWindow::errorBox(what);
-    }
-}
-
 void MainWindow::on_actionOpen_triggered()
 {
-    std::stringstream ofs;
-    boost::archive::text_oarchive oa(ofs);
     OpenDialog openDialog(this);
-    std::map<std::string, std::string> connConfig;
-    loadConnections(CB_FILE_CONFIG_STR, openDialog);
-    loadConnections(CB_SSH_CONFIG_STR, openDialog);
 
     if (openDialog.exec() == OpenDialog::Accepted)
     {
@@ -166,16 +91,12 @@ void MainWindow::on_actionOpen_triggered()
                 {
                     boost::shared_ptr<const TgtFileIntf::TgtConnectionConfig> p = openDialog.getFileConfig();
                     intf = TgtFileIntf::createFileConnection(p);
-                    oa << *(p.get());
-                    connConfig[CB_FILE_CONFIG_STR] = ofs.str();
                 }
                 break;
                 case OpenDialog::CB_CONN_SSH:
                 {
                     boost::shared_ptr<const TgtSshIntf::TgtConnectionConfig> p = openDialog.getSshConfig();
                     intf = TgtSshIntf::createSshConnection(p);
-                    oa << *(p.get());
-                    connConfig[CB_SSH_CONFIG_STR] = ofs.str();
                 }
                 break;
             }
@@ -185,10 +106,6 @@ void MainWindow::on_actionOpen_triggered()
             connect(intf.get(), SIGNAL(updateStatusSignal(QString)), this, SLOT(updateStatusSlot(QString)));
 
             QMdiSubWindow* subWindow = _mdiArea->addSubWindow(childForm);
-            if (connConfig.size() > 0)
-            {
-                saveConnections(connConfig.begin()->first, connConfig.begin()->second);
-            }
             subWindow->show();
             _ui->_statusBar->showMessage("Opened connection", 5000);
         }
@@ -261,4 +178,13 @@ void MainWindow::on_action_Options_triggered()
 {
     ConfigDialog configDialog(this);
     configDialog.exec();
+}
+
+void MainWindow::on_action_Run_Process_triggered()
+{
+    ChildForm* activeWindow = getActiveChildWindow();
+    if (activeWindow != NULL)
+    {
+        activeWindow->runProcess();
+    }
 }

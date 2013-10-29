@@ -25,18 +25,17 @@ public:
     ChildForm* getActiveChildWindow();
 protected:
     explicit MainWindow(QWidget* parent = 0);
-    void saveConnections(const std::string &connType, const std::string &connStr);
-    void loadConnections(const std::string &connType, OpenDialog &openDialog);
-    void getPreviousConnections(const std::string &connType, QStringList* connections);
 private slots:
-    void on_actionOpen_triggered();
     void updateStatusSlot(QString status);
+    void on_actionOpen_triggered();
     void on_actionExit_triggered();
     void on_actionAbout_ComBomb_triggered();
     void on_actionCopy_triggered();
     void on_actionPaste_triggered();
     void on_actionFile_clipboard_triggered();
     void on_action_Options_triggered();
+    void on_action_Run_Process_triggered();
+
 private:
 
     Ui::MainWindow* _ui;
