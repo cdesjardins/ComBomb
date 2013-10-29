@@ -27,6 +27,11 @@ void CBComboBox::saveComboBox()
     QSettings settings;
     QStringList itemList;
     int i;
+    QString cur = currentText();
+    if (cur.length() > 0)
+    {
+        itemList.append(cur);
+    }
     for (i = 0; i < count(); i++)
     {
         itemList.append(itemText(i));

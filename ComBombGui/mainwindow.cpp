@@ -70,10 +70,10 @@ void MainWindow::errorBox(QString errMsg)
     msgBox.exec();
 }
 
-void MainWindow::getPreviousConnections(const std::string &connType, QStringList* connections)
+void MainWindow::getPreviousConnections(const QString &connType, QStringList* connections)
 {
     QSettings settings;
-    int size = settings.beginReadArray(connType.c_str());
+    int size = settings.beginReadArray("OpenDialog/" + connType);
     int i;
     for (i = 0; i < size; ++i)
     {
@@ -83,7 +83,7 @@ void MainWindow::getPreviousConnections(const std::string &connType, QStringList
     settings.endArray();
 }
 
-void MainWindow::saveConnections(const std::string &connType, const std::string &connStr)
+void MainWindow::saveConnections(const QString &connType, const QString &connStr)
 {
     if (connType.length() > 0)
     {
@@ -91,10 +91,10 @@ void MainWindow::saveConnections(const std::string &connType, const std::string 
         QStringList connections;
         QSettings settings;
         getPreviousConnections(connType, &connections);
-        connections.insert(0, connStr.c_str());
+        connections.insert(0, connStr);
         connections.removeDuplicates();
         i = 0;
-        settings.beginWriteArray(connType.c_str());
+        settings.beginWriteArray("OpenDialog/" + connType);
         for (QStringList::iterator it = connections.begin(); it != connections.end(); ++it)
         {
             settings.setArrayIndex(i++);
@@ -104,7 +104,7 @@ void MainWindow::saveConnections(const std::string &connType, const std::string 
     }
 }
 
-void MainWindow::loadConnections(const std::string &connType, OpenDialog &openDialog)
+void MainWindow::loadConnections(const QString &connType, OpenDialog &openDialog)
 {
     std::stringstream s;
     try
@@ -188,7 +188,7 @@ void MainWindow::on_actionOpen_triggered()
             QMdiSubWindow* subWindow = _mdiArea->addSubWindow(childForm);
             if (connConfig.size() > 0)
             {
-                saveConnections(connConfig.begin()->first, connConfig.begin()->second);
+                saveConnections(connConfig.begin()->first.c_str(), connConfig.begin()->second.c_str());
             }
             subWindow->show();
             _ui->_statusBar->showMessage("Opened connection", 5000);

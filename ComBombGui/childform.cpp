@@ -40,7 +40,7 @@ void ChildForm::runProcess()
             connect(_proc, SIGNAL(readyReadStandardOutput()), this, SLOT(readFromStdout()));
             connect(_proc, SIGNAL(error(QProcess::ProcessError)), this, SLOT(processError(QProcess::ProcessError)));
             connect(_proc, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(processDone(int, QProcess::ExitStatus)));
-            _proc->start("C:\\Users\\ChrisD\\software_devel\\tmp\\Debug\\tmp.exe");
+            //_proc->start("C:\\Users\\ChrisD\\software_devel\\tmp\\Debug\\tmp.exe");
         }
     }
     else
@@ -61,9 +61,8 @@ void ChildForm::processError(QProcess::ProcessError error)
     _proc = NULL;
 }
 
-void ChildForm::processDone(int returnCode, QProcess::ExitStatus status)
+void ChildForm::processDone(int , QProcess::ExitStatus )
 {
-    qDebug("Done: %d %d\n", returnCode, status);
     delete _proc;
     _proc = NULL;
 }
