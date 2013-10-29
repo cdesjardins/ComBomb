@@ -62,16 +62,22 @@ void CBComboBox::restoreComboBox()
 void CBComboBox::addOrUpdateItem(const QString &item)
 {
     int index = findText(item);
-    QString tmpItem;
     if (index == -1)
     {
-        tmpItem = item;
+        insertItem(0, item);
+        setCurrentIndex(0);
     }
     else
     {
-        tmpItem = itemText(index);
-        removeItem(index);
+        bump(index);
     }
+}
+
+void CBComboBox::bump(int index)
+{
+    QString tmpItem;
+    tmpItem = itemText(index);
+    removeItem(index);
     insertItem(0, tmpItem);
     setCurrentIndex(0);
 }

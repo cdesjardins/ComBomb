@@ -83,7 +83,7 @@
            </widget>
           </item>
           <item row="7" column="0">
-           <widget class="QComboBox" name="userNameComboBox">
+           <widget class="CBComboBox" name="userNameComboBox">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -117,7 +117,7 @@
            </widget>
           </item>
           <item row="3" column="0" colspan="3">
-           <widget class="QComboBox" name="hostNameComboBox">
+           <widget class="CBComboBox" name="hostNameComboBox">
             <property name="editable">
              <bool>true</bool>
             </property>
@@ -275,7 +275,7 @@
            </widget>
           </item>
           <item row="2" column="0" colspan="2">
-           <widget class="QComboBox" name="fileNameComboBox">
+           <widget class="CBComboBox" name="fileNameComboBox">
             <property name="editable">
              <bool>true</bool>
             </property>
@@ -290,6 +290,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CBComboBox</class>
+   <extends>QComboBox</extends>
+   <header>cbcombobox.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>hostNameComboBox</tabstop>
   <tabstop>userNameComboBox</tabstop>

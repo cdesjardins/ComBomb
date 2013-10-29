@@ -10,6 +10,7 @@ public:
     explicit CBComboBox(QWidget *parent = 0);
     ~CBComboBox();
     void addOrUpdateItem(const QString &item);
+    void bump(int index);
 signals:
 
 public slots:
