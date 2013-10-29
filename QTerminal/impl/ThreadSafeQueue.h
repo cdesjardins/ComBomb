@@ -2,8 +2,8 @@
 ** This provides a thread safe queue
 */
 
-#ifndef CJD_THREAD_SAFE_QUEUE_Hxx
-#define CJD_THREAD_SAFE_QUEUE_Hxx
+#ifndef CB_THREAD_SAFE_QUEUE_Hxx
+#define CB_THREAD_SAFE_QUEUE_Hxx
 
 #include <list>
 #ifndef Q_MOC_RUN

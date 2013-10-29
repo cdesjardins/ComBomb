@@ -75,14 +75,14 @@ QTerminalImpl::~QTerminalImpl()
     m_terminalView.reset();
 }
 
+void QTerminalImpl::connectToRecvText(QObject *who)
+{
+    m_terminalModel->connectToRecvText(who);
+}
+
 void QTerminalImpl::applyTerminalConfig(const QTerminalConfig &terminalConfig)
 {
     m_terminalView->setWordCharacters(terminalConfig._wordSelectionDelimiters);
-}
-
-void QTerminalImpl::close()
-{
-    m_terminalModel->close();
 }
 
 void QTerminalImpl::setTerminalFont(const QFont &font)

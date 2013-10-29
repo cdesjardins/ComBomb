@@ -41,9 +41,9 @@ public:
     void setTerminalFont(const QFont &font);
     void setSize(int h, int v);
     void sendText(const QString& text);
+    void connectToRecvText(QObject *who);
 
     void setCursorType(CursorType type, bool blinking);
-    void close();
     void applyTerminalConfig(const QTerminalConfig &terminalConfig);
 
 public slots:

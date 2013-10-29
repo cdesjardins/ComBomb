@@ -46,3 +46,20 @@ void RunProcessDialog::on_workingDirBrowseButton_clicked()
        ui->workingDirComboBox->addOrUpdateItem(dirName);
     }
 }
+
+QString RunProcessDialog::getWorkingDirectory()
+{
+    return ui->workingDirComboBox->currentText();
+}
+
+QStringList RunProcessDialog::getArguments()
+{
+    QString args = ui->argumentsComboBox->currentText();
+
+    return args.split(' ');
+}
+
+QString RunProcessDialog::getProgram()
+{
+    return ui->programComboBox->currentText();
+}

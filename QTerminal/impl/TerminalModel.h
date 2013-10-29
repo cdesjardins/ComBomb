@@ -198,6 +198,9 @@ public:
      */
     void refresh();
     void newlineToggle();
+    void connectToRecvText(QObject *who);
+protected:
+    virtual void closeEvent(QCloseEvent * event);
 public slots:
 
     /**
@@ -206,13 +209,6 @@ public slots:
      * This creates the terminal process and connects the teletype to it.
      */
     void run();
-
-    /**
-     * Closes the terminal session.  This sends a hangup signal
-     * (SIGHUP) to the terminal process and causes the done(Session*)
-     * signal to be emitted.
-     */
-    void close();
 
 signals:
 
@@ -325,6 +321,7 @@ private:
 
     bool _hasDarkBackground;
     boost::shared_ptr<TgtIntf> _targetInterface;
+    bool _closed;
 };
 
 #endif // TERMINALMODEL_H

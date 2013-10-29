@@ -6,6 +6,7 @@
 
 ChildForm::ChildForm(const QTerminalConfig &terminalConfig, const boost::shared_ptr<TgtIntf> &targetInterface, QWidget* parent) :
     QTerminal(terminalConfig, targetInterface, CB_DEFAULT_TERM_WIDTH, CB_DEFAULT_TERM_HEIGHT, parent),
+    _mutex(QMutex::Recursive),
     ui(new Ui::ChildForm),
     _proc(NULL)
 {
@@ -16,7 +17,7 @@ ChildForm::ChildForm(const QTerminalConfig &terminalConfig, const boost::shared_
     connect(targetInterface.get(), SIGNAL(updateTitleSignal(QString)), this, SLOT(updateTitleSlot(QString)));
     connect(this, SIGNAL(updateStatusSignal(QString)), MainWindow::getMainWindow(), SLOT(updateStatusSlot(QString)));
     setAttribute(Qt::WA_DeleteOnClose, true);
-
+    connectToRecvText(this);
 }
 
 void ChildForm::updateTitleSlot(QString title)
@@ -27,6 +28,21 @@ void ChildForm::updateTitleSlot(QString title)
 ChildForm::~ChildForm()
 {
     delete ui;
+}
+
+void ChildForm::closeEvent(QCloseEvent* event)
+{
+    deleteProcess();
+}
+
+void ChildForm::onReceiveText(const QString& text)
+{
+    _mutex.lock();
+    if (_proc != NULL)
+    {
+        _proc->write(text.toLocal8Bit().constData(), text.length());
+    }
+    _mutex.unlock();
 }
 
 void ChildForm::runProcess()
@@ -40,7 +56,9 @@ void ChildForm::runProcess()
             connect(_proc, SIGNAL(readyReadStandardOutput()), this, SLOT(readFromStdout()));
             connect(_proc, SIGNAL(error(QProcess::ProcessError)), this, SLOT(processError(QProcess::ProcessError)));
             connect(_proc, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(processDone(int, QProcess::ExitStatus)));
-            //_proc->start("C:\\Users\\ChrisD\\software_devel\\tmp\\Debug\\tmp.exe");
+            _proc->setWorkingDirectory(rpd.getWorkingDirectory());
+            QStringList args = rpd.getArguments();
+            _proc->start(rpd.getProgram(), args);
         }
     }
     else
@@ -51,18 +69,33 @@ void ChildForm::runProcess()
 
 void ChildForm::readFromStdout()
 {
-    sendText(_proc->readAllStandardOutput());
+    _mutex.lock();
+    if (_proc != NULL)
+    {
+        sendText(_proc->readAllStandardOutput());
+    }
+    _mutex.unlock();
 }
 
 void ChildForm::processError(QProcess::ProcessError error)
 {
     qDebug("Error: %d", error);
-    delete _proc;
-    _proc = NULL;
+    deleteProcess();
 }
 
 void ChildForm::processDone(int , QProcess::ExitStatus )
 {
-    delete _proc;
-    _proc = NULL;
+    deleteProcess();
+}
+
+void ChildForm::deleteProcess()
+{
+    _mutex.lock();
+    QProcess *p = _proc;
+    if (_proc != NULL)
+    {
+        _proc = NULL;
+        delete p;
+    }
+    _mutex.unlock();
 }

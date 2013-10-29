@@ -610,6 +610,7 @@ private:
     void propagateSize();
     void updateImageSize();
     void makeImage();
+    int resizePaint(const int columnsToUpdate, const Character* const newLine, char* dirtyMask, QChar* disstrU);
 
     // returns the position of the cursor in columns and lines
     QPoint cursorPosition() const;

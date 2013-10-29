@@ -7,8 +7,6 @@
 #ifndef Q_MOC_RUN
 #include <boost/asio/buffer.hpp>
 #include <boost/smart_ptr.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/archive/text_iarchive.hpp>
 #endif
 #include "impl/ThreadSafeQueue.h"
 #include "../unparam.h"
@@ -73,18 +71,5 @@ private:
 #endif
 };
 
-namespace boost
-{
-namespace serialization
-{
-template<class Archive>
-void serialize(Archive & ar, TgtIntf::TgtConnectionConfigBase & configbase, const unsigned int version)
-{
-    UNREF_PARAM(ar);
-    UNREF_PARAM(version);
-    UNREF_PARAM(configbase);
-}
-}
-}
 
 #endif // TGTINTF_H

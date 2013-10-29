@@ -14,12 +14,12 @@ class RunProcessDialog : public QDialog
 public:
     explicit RunProcessDialog(QWidget *parent = 0);
     ~RunProcessDialog();
-
+    QString getProgram();
+    QString getWorkingDirectory();
+    QStringList getArguments();
 private slots:
     void on_programBrowseButton_clicked();
-
     void on_workingDirBrowseButton_clicked();
-
 private:
     Ui::RunProcessDialog *ui;
 };

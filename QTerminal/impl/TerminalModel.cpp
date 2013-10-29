@@ -52,6 +52,7 @@ TerminalModel::TerminalModel(const boost::shared_ptr<TgtIntf> &targetInterface) 
     , _fullScripting(false)
     , _hasDarkBackground(false)
     , _targetInterface(targetInterface)
+    , _closed(false)
 {
     //create emulation backend
     _emulation.reset(new Vt102Emulation());
@@ -69,6 +70,11 @@ TerminalModel::TerminalModel(const boost::shared_ptr<TgtIntf> &targetInterface) 
     _monitorTimer.reset(new QTimer(this));
     _monitorTimer->setSingleShot(true);
     connect(_monitorTimer.get(), SIGNAL(timeout()), this, SLOT(monitorTimerDone()));
+}
+
+void TerminalModel::connectToRecvText(QObject *who)
+{
+    connect(this, SIGNAL(receivedData(const QString&)), who, SLOT(onReceiveText(const QString&)));
 }
 
 void TerminalModel::setDarkBackground(bool darkBackground)
@@ -241,8 +247,9 @@ void TerminalModel::refresh()
 {
 }
 
-void TerminalModel::close()
+void TerminalModel::closeEvent(QCloseEvent * event)
 {
+    _closed = true;
     _targetInterface->tgtDisconnect();
 }
 
@@ -357,8 +364,11 @@ void TerminalModel::setAddToUtmp(bool set)
 
 void TerminalModel::onReceiveBlock(const char* buf, int len)
 {
-    _emulation->receiveData(buf, len);
-    emit receivedData(QString::fromLatin1(buf, len));
+    if (_closed == false)
+    {
+        _emulation->receiveData(buf, len);
+        emit receivedData(QString::fromLatin1(buf, len));
+    }
 }
 
 QSize TerminalModel::size()
