@@ -31,7 +31,7 @@ public:
     ConnectionType getConnectionType();
 
 private slots:
-    void on__browseButton_clicked();
+    void on_browseButton_clicked();
     void hostNameSelectionChanged(int x);
 
 private:

@@ -6,7 +6,7 @@
 
 ChildForm::ChildForm(const QTerminalConfig &terminalConfig, const boost::shared_ptr<TgtIntf> &targetInterface, QWidget* parent) :
     QTerminal(terminalConfig, targetInterface, CB_DEFAULT_TERM_WIDTH, CB_DEFAULT_TERM_HEIGHT, parent),
-    _mutex(QMutex::Recursive),
+    _processMutex(QMutex::Recursive),
     ui(new Ui::ChildForm),
     _proc(NULL)
 {
@@ -37,12 +37,12 @@ void ChildForm::closeEvent(QCloseEvent* event)
 
 void ChildForm::onReceiveText(const QString& text)
 {
-    _mutex.lock();
+    _processMutex.lock();
     if (_proc != NULL)
     {
         _proc->write(text.toLocal8Bit().constData(), text.length());
     }
-    _mutex.unlock();
+    _processMutex.unlock();
 }
 
 void ChildForm::runProcess()
@@ -69,12 +69,12 @@ void ChildForm::runProcess()
 
 void ChildForm::readFromStdout()
 {
-    _mutex.lock();
+    _processMutex.lock();
     if (_proc != NULL)
     {
         sendText(_proc->readAllStandardOutput());
     }
-    _mutex.unlock();
+    _processMutex.unlock();
 }
 
 void ChildForm::processError(QProcess::ProcessError error)
@@ -90,12 +90,12 @@ void ChildForm::processDone(int , QProcess::ExitStatus )
 
 void ChildForm::deleteProcess()
 {
-    _mutex.lock();
+    _processMutex.lock();
     QProcess *p = _proc;
-    if (_proc != NULL)
+    _proc = NULL;
+    _processMutex.unlock();
+    if (p != NULL)
     {
-        _proc = NULL;
         delete p;
     }
-    _mutex.unlock();
 }

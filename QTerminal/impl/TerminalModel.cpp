@@ -255,7 +255,19 @@ void TerminalModel::closeEvent(QCloseEvent * event)
 
 void TerminalModel::sendText(const QString &text) const
 {
-    _emulation->sendText(text);
+    if (_closed == false)
+    {
+        _emulation->sendText(text);
+    }
+}
+
+void TerminalModel::onReceiveBlock(const char* buf, int len)
+{
+    if (_closed == false)
+    {
+        _emulation->receiveData(buf, len);
+        emit receivedData(QString::fromLatin1(buf, len));
+    }
 }
 
 TerminalModel::~TerminalModel()
@@ -360,15 +372,6 @@ void TerminalModel::setMonitorSilenceSeconds(int seconds)
 void TerminalModel::setAddToUtmp(bool set)
 {
     _addToUtmp = set;
-}
-
-void TerminalModel::onReceiveBlock(const char* buf, int len)
-{
-    if (_closed == false)
-    {
-        _emulation->receiveData(buf, len);
-        emit receivedData(QString::fromLatin1(buf, len));
-    }
 }
 
 QSize TerminalModel::size()

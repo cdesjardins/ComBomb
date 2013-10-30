@@ -173,7 +173,7 @@ void OpenDialog::addComPorts()
 #endif
 }
 
-void OpenDialog::on__browseButton_clicked()
+void OpenDialog::on_browseButton_clicked()
 {
     QString fileName;
     fileName = QFileDialog::getOpenFileName(this, tr("All files"), NULL, tr("All files (*.*)"));

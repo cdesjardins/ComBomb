@@ -37,7 +37,8 @@ void CBComboBox::saveComboBox()
         itemList.append(itemText(i));
     }
     itemList.removeDuplicates();
-    settings.beginWriteArray(getName());
+    QString name = getName();
+    settings.beginWriteArray(name);
     i = 0;
     for (QStringList::iterator it = itemList.begin(); it != itemList.end(); it++, i++)
     {
@@ -50,7 +51,8 @@ void CBComboBox::saveComboBox()
 void CBComboBox::restoreComboBox()
 {
     QSettings settings;
-    int size = settings.beginReadArray(getName());
+    QString name = getName();
+    int size = settings.beginReadArray(name);
     for (int i = 0; i < size; i++)
     {
         settings.setArrayIndex(i);
@@ -62,22 +64,18 @@ void CBComboBox::restoreComboBox()
 void CBComboBox::addOrUpdateItem(const QString &item)
 {
     int index = findText(item);
+    QString tmpItem;
+
     if (index == -1)
     {
-        insertItem(0, item);
-        setCurrentIndex(0);
+        tmpItem = item;
     }
     else
     {
-        bump(index);
+        tmpItem = itemText(index);
+        removeItem(index);
     }
-}
-
-void CBComboBox::bump(int index)
-{
-    QString tmpItem;
-    tmpItem = itemText(index);
-    removeItem(index);
     insertItem(0, tmpItem);
     setCurrentIndex(0);
 }
+

@@ -30,7 +30,7 @@ protected:
     virtual void closeEvent(QCloseEvent* event);
 private:
     void deleteProcess();
-    QMutex _mutex;
+    QMutex _processMutex;
     Ui::ChildForm* ui;
     QProcess *_proc;
 
