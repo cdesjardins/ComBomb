@@ -23,7 +23,13 @@ SelfListener::SelfListener(const boost::shared_ptr<TgtIntf> &targetInterface, QO
     _running(true)
 {
 }
-
+/*
+ * Move this to TgtIntf
+ * Make TgtRead give a shared_ptr<buffer>
+ * When a buffer is returned check the use count
+ * and either garbage collect it right away, or
+ * defer collection until the use count goes to 1
+ */
 SelfListener::~SelfListener()
 {
     join();
