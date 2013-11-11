@@ -33,17 +33,17 @@ public:
     };
     static boost::shared_ptr<TgtSshIntf> createSshConnection(const boost::shared_ptr<const TgtConnectionConfig> &config);
     virtual ~TgtSshIntf ();
-    virtual int TgtDisconnect();
-    virtual bool TgtConnected();
-    virtual void TgtGetTitle(std::string* szTitle);
+    virtual int tgtBreakConnection();
+    virtual bool tgtConnected();
+    virtual void tgtGetTitle(std::string* szTitle);
 
 protected:
-    void TgtGetErrorMsg(std::string* errmsg, int status, const std::string &defaultErrMsg);
+    void tgtGetErrorMsg(std::string* errmsg, int status, const std::string &defaultErrMsg);
     TgtSshIntf (const boost::shared_ptr<const TgtConnectionConfig> &config);
     void sshThread();
     bool sshRecv();
     bool sshSend();
-    virtual void TgtMakeConnection();
+    virtual void tgtMakeConnection();
 
     boost::scoped_ptr<TgtSshImpl> _sshData;
 };

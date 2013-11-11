@@ -29,19 +29,19 @@ public:
     virtual ~TgtIntf(void);
 
     int tgtDisconnect();
-    virtual int TgtRead(boost::asio::mutable_buffer &b);
-    virtual int TgtWrite(const char* szWriteData, int nBytes);
-    virtual bool TgtConnected() = 0;
-    virtual void TgtGetTitle(std::string* szTitle) = 0;
-    virtual int TgtGetBytesRx()
+    virtual int tgtRead(boost::asio::mutable_buffer &b);
+    virtual int tgtWrite(const char* szWriteData, int nBytes);
+    virtual bool tgtConnected() = 0;
+    virtual void tgtGetTitle(std::string* szTitle) = 0;
+    virtual int tgtGetBytesRx()
     {
         return m_nTotalRx;
     };
-    virtual int TgtGetBytesTx()
+    virtual int tgtGetBytesTx()
     {
         return m_nTotalTx;
     };
-    void TgtReturnReadBuffer(const boost::asio::mutable_buffer &b);
+    void tgtReturnReadBuffer(const boost::asio::mutable_buffer &b);
     boost::shared_ptr<const TgtConnectionConfigBase> getConfig()
     {
         return _connectionConfig;
@@ -51,9 +51,9 @@ signals:
     void updateStatusSignal(QString);
     void updateTitleSignal(QString);
 protected:
-    void TgtAttemptReconnect();
-    virtual void TgtMakeConnection() = 0;
-    virtual int TgtDisconnect() = 0;
+    void tgtAttemptReconnect();
+    virtual void tgtMakeConnection() = 0;
+    virtual int tgtBreakConnection() = 0;
 
     int m_nTotalTx;
     int m_nTotalRx;

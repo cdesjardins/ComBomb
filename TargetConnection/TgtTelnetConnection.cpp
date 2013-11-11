@@ -79,7 +79,7 @@ char* TgtTelnetIntf::TgtMakeConnection()
     return pRet;
 }
 
-int TgtTelnetIntf::TgtDisconnect()
+int TgtTelnetIntf::tgtBreakConnection()
 {
     m_bConnected = false;
     if (m_nSocket > 0)

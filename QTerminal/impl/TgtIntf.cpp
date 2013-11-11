@@ -50,13 +50,13 @@ int TgtIntf::deleteBuffersFunctor(std::list<boost::asio::mutable_buffer> &pool)
     return -ret;
 }
 
-void TgtIntf::TgtReturnReadBuffer(const boost::asio::mutable_buffer &b)
+void TgtIntf::tgtReturnReadBuffer(const boost::asio::mutable_buffer &b)
 {
     char* data = boost::asio::buffer_cast<char*>(b);
     _bufferPool.enqueue(boost::asio::buffer(data, TGT_BUFFER_SIZE - 1));
 }
 
-int TgtIntf::TgtRead(boost::asio::mutable_buffer &b)
+int TgtIntf::tgtRead(boost::asio::mutable_buffer &b)
 {
     int ret = 0;
     if (_incomingData.waitDequeue(b, 1) == true)
@@ -71,7 +71,7 @@ int TgtIntf::TgtRead(boost::asio::mutable_buffer &b)
     return ret;
 }
 
-int TgtIntf::TgtWrite(const char* szWriteData, int nBytes)
+int TgtIntf::tgtWrite(const char* szWriteData, int nBytes)
 {
     int ret = 0;
     if (nBytes > 0)
@@ -84,12 +84,12 @@ int TgtIntf::TgtWrite(const char* szWriteData, int nBytes)
     return ret;
 }
 
-void TgtIntf::TgtAttemptReconnect()
+void TgtIntf::tgtAttemptReconnect()
 {
     bool reconnected = false;
     std::string title;
     std::string newTitle;
-    TgtGetTitle(&title);
+    tgtGetTitle(&title);
     newTitle = title;
     newTitle.append(" Disconnected");
     emit updateTitleSignal(newTitle.c_str());
@@ -97,7 +97,7 @@ void TgtIntf::TgtAttemptReconnect()
     {
         try
         {
-            TgtMakeConnection();
+            tgtMakeConnection();
             reconnected = true;
         }
         catch (const std::exception &e)
@@ -117,6 +117,6 @@ int TgtIntf::tgtDisconnect()
 {
     _running = false;
     boost::mutex::scoped_lock guard(_disconnectMutex);
-    return TgtDisconnect();
+    return tgtBreakConnection();
 }
 

@@ -79,12 +79,12 @@ class TgtTelnetIntf : public TgtIntf
 public:
     TgtTelnetIntf();
     virtual ~TgtTelnetIntf();
-    virtual int TgtDisconnect();
-    virtual int TgtRead(char* szReadData, int nMaxBytes);
-    virtual int TgtWrite(char* szWriteData, int nBytes);
-    virtual bool TgtConnected();
-    virtual void TgtGetTitle(char* szTitle);
-    virtual void TgtSetConfig(const std::string &szServerName, const int nPort, const std::string &szDescription)
+    virtual int tgtBreakConnection();
+    virtual int tgtRead(char* szReadData, int nMaxBytes);
+    virtual int tgtWrite(char* szWriteData, int nBytes);
+    virtual bool tgtConnected();
+    virtual void tgtGetTitle(char* szTitle);
+    virtual void tgtSetConfig(const std::string &szServerName, const int nPort, const std::string &szDescription)
     {
         m_sTgtConnection.m_szServerName = szServerName;
         m_sTgtConnection.m_szDescription = szDescription;
@@ -98,16 +98,16 @@ public:
     };
 
 protected:
-    int TgtTelnet(char* sTelnetRx, int nNumBytes, char* szReadData);
-    int TgtTelnetData(unsigned char cTelnetRx, char* cReadData);
-    int TgtTelnetCommand(eTelnetCommand cTelnetRx);
-    int TgtTelnetOption(eTelnetOption eOpt);
-    int TgtProcessEcho();
-    int TgtProcessTerm();
-    int TgtProcessUnknownOption(eTelnetOption eOpt);
-    int TgtDeny(eTelnetOption eOpt);
-    int TgtConfirm(eTelnetOption eOpt);
-    int TgtSendCommand(eTelnetCommand eCmd, eTelnetOption eOpt);
+    int tgtTelnet(char* sTelnetRx, int nNumBytes, char* szReadData);
+    int tgtTelnetData(unsigned char cTelnetRx, char* cReadData);
+    int tgtTelnetCommand(eTelnetCommand cTelnetRx);
+    int tgtTelnetOption(eTelnetOption eOpt);
+    int tgtProcessEcho();
+    int tgtProcessTerm();
+    int tgtProcessUnknownOption(eTelnetOption eOpt);
+    int tgtDeny(eTelnetOption eOpt);
+    int tgtConfirm(eTelnetOption eOpt);
+    int tgtSendCommand(eTelnetCommand eCmd, eTelnetOption eOpt);
 
     int m_nSocket;
     char m_sTelnetRx[512];

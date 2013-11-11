@@ -10,7 +10,7 @@
 boost::shared_ptr<TgtFileIntf> TgtFileIntf::createFileConnection(const boost::shared_ptr<const TgtConnectionConfig> &config)
 {
     boost::shared_ptr<TgtFileIntf> ret(new TgtFileIntf(config));
-    ret->TgtMakeConnection();
+    ret->tgtMakeConnection();
     return ret;
 }
 
@@ -19,7 +19,7 @@ TgtFileIntf::TgtFileIntf(const boost::shared_ptr<const TgtConnectionConfig> &con
 {
 }
 
-void TgtFileIntf::TgtMakeConnection()
+void TgtFileIntf::tgtMakeConnection()
 {
     boost::shared_ptr<const TgtConnectionConfig> connectionConfig = boost::dynamic_pointer_cast<const TgtConnectionConfig>(_connectionConfig);
     _inputFile.open(connectionConfig->_fileName.c_str(), std::ifstream::in | std::ifstream::binary);
@@ -34,12 +34,12 @@ TgtFileIntf::~TgtFileIntf()
 {
 }
 
-int TgtFileIntf::TgtDisconnect()
+int TgtFileIntf::tgtBreakConnection()
 {
     return 0;
 }
 
-int TgtFileIntf::TgtRead(boost::asio::mutable_buffer &b)
+int TgtFileIntf::tgtRead(boost::asio::mutable_buffer &b)
 {
     size_t ret = 0;
     if (_inputFile)
@@ -53,15 +53,15 @@ int TgtFileIntf::TgtRead(boost::asio::mutable_buffer &b)
             _bufferPool.dequeue(_currentIncomingBuffer);
         }
     }
-    return TgtIntf::TgtRead(b);
+    return TgtIntf::tgtRead(b);
 }
 
-bool TgtFileIntf::TgtConnected()
+bool TgtFileIntf::tgtConnected()
 {
     return true;
 }
 
-void TgtFileIntf::TgtGetTitle(std::string* szTitle)
+void TgtFileIntf::tgtGetTitle(std::string* szTitle)
 {
     boost::shared_ptr<const TgtConnectionConfig> connectionConfig = boost::dynamic_pointer_cast<const TgtConnectionConfig>(_connectionConfig);
     *szTitle = connectionConfig->_fileName;

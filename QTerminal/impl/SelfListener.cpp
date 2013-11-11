@@ -48,12 +48,12 @@ void SelfListener::run()
 
     while (_running)
     {
-        int bytes = _targetInterface->TgtRead(b);
+        int bytes = _targetInterface->tgtRead(b);
         if (bytes > 0)
         {
             const char* data = boost::asio::buffer_cast<const char*>(b);
             emit recvData(data, bytes);
-            _targetInterface->TgtReturnReadBuffer(b);
+            _targetInterface->tgtReturnReadBuffer(b);
 #ifdef OUT_TO_DEBUG_FILE
             _debugFile.write(data, bytes);
 #endif

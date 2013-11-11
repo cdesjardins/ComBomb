@@ -12,7 +12,7 @@ ChildForm::ChildForm(const QTerminalConfig &terminalConfig, const boost::shared_
 {
     std::string szTitle;
     ui->setupUi(this);
-    targetInterface->TgtGetTitle(&szTitle);
+    targetInterface->tgtGetTitle(&szTitle);
     setWindowTitle(szTitle.c_str());
     connect(targetInterface.get(), SIGNAL(updateTitleSignal(QString)), this, SLOT(updateTitleSlot(QString)));
     connect(this, SIGNAL(updateStatusSignal(QString)), MainWindow::getMainWindow(), SLOT(updateStatusSlot(QString)));
@@ -30,7 +30,7 @@ ChildForm::~ChildForm()
     delete ui;
 }
 
-void ChildForm::closeEvent(QCloseEvent* event)
+void ChildForm::closeEvent(QCloseEvent* )
 {
     deleteProcess();
 }

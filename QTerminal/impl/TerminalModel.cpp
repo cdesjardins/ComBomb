@@ -128,7 +128,7 @@ void TerminalModel::addView(const boost::shared_ptr<TerminalView> &widget)
 
 void TerminalModel::sendData(const char* buf, int len)
 {
-    _targetInterface->TgtWrite(buf, len);
+    _targetInterface->tgtWrite(buf, len);
 }
 
 void TerminalModel::run()
