@@ -245,19 +245,19 @@ void TgtSshIntf::sshThread()
 bool TgtSshIntf::sshSend()
 {
     int ret = true;
-    boost::asio::mutable_buffer b;
+    boost::shared_ptr<boost::asio::mutable_buffer> b;
     int status;
     int bytesCopied;
     while (_outgoingData.dequeue(b) == true)
     {
-        char* data = boost::asio::buffer_cast<char*>(b);
+        char* data = boost::asio::buffer_cast<char*>(*b);
         bytesCopied = 0;
-        status = cryptPushData(_sshData->_cryptSession, data, boost::asio::buffer_size(b), &bytesCopied);
+        status = cryptPushData(_sshData->_cryptSession, data, boost::asio::buffer_size(*b), &bytesCopied);
         if (cryptStatusError(status))
         {
             ret = false;
         }
-        else if (bytesCopied < (int)boost::asio::buffer_size(b))
+        else if (bytesCopied < (int)boost::asio::buffer_size(*b))
         {
             qDebug("Didnt write everything");
         }
@@ -282,16 +282,17 @@ bool TgtSshIntf::sshRecv()
     bool ret = true;
     do
     {
-        char* data = boost::asio::buffer_cast<char*>(_currentIncomingBuffer);
+        char* data = boost::asio::buffer_cast<char*>(*_currentIncomingBuffer);
         outDataLength = 0;
-        status = cryptPopData(_sshData->_cryptSession, data, boost::asio::buffer_size(_currentIncomingBuffer), &outDataLength);
+        status = cryptPopData(_sshData->_cryptSession, data, boost::asio::buffer_size(*_currentIncomingBuffer), &outDataLength);
         if (cryptStatusError(status))
         {
             ret = false;
         }
         else if (outDataLength > 0)
         {
-            _incomingData.enqueue(boost::asio::buffer(_currentIncomingBuffer, outDataLength));
+            *_currentIncomingBuffer = boost::asio::buffer(*_currentIncomingBuffer, outDataLength);
+            _incomingData.enqueue(_currentIncomingBuffer);
             _bufferPool.dequeue(_currentIncomingBuffer);
         }
     } while ((outDataLength > 0) && (cryptStatusOK(status)));

@@ -35,12 +35,14 @@ void ChildForm::closeEvent(QCloseEvent* )
     deleteProcess();
 }
 
-void ChildForm::onReceiveText(const QString& text)
+void ChildForm::onReceiveBlock(boost::shared_ptr<boost::asio::mutable_buffer> incoming)
 {
     _processMutex.lock();
     if (_proc != NULL)
     {
-        _proc->write(text.toLocal8Bit().constData(), text.length());
+        char* buf = boost::asio::buffer_cast<char*>(*incoming);
+        int len = boost::asio::buffer_size(*incoming);
+        _proc->write(buf, len);
     }
     _processMutex.unlock();
 }

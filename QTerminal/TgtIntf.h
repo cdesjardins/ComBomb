@@ -9,6 +9,7 @@
 #include <boost/smart_ptr.hpp>
 #endif
 #include "impl/ThreadSafeQueue.h"
+#include "impl/garbagecollector.h"
 #include "../unparam.h"
 #include <QWidget>
 #include <fstream>
@@ -29,7 +30,7 @@ public:
     virtual ~TgtIntf(void);
 
     int tgtDisconnect();
-    virtual int tgtRead(boost::asio::mutable_buffer &b);
+    virtual int tgtRead(boost::shared_ptr<boost::asio::mutable_buffer> &b);
     virtual int tgtWrite(const char* szWriteData, int nBytes);
     virtual bool tgtConnected() = 0;
     virtual void tgtGetTitle(std::string* szTitle) = 0;
@@ -41,7 +42,7 @@ public:
     {
         return m_nTotalTx;
     };
-    void tgtReturnReadBuffer(const boost::asio::mutable_buffer &b);
+    void tgtReturnReadBuffer(const boost::shared_ptr<boost::asio::mutable_buffer> &b);
     boost::shared_ptr<const TgtConnectionConfigBase> getConfig()
     {
         return _connectionConfig;
@@ -57,15 +58,16 @@ protected:
 
     int m_nTotalTx;
     int m_nTotalRx;
-    ThreadSafeQueue<boost::asio::mutable_buffer> _incomingData;
-    ThreadSafeQueue<boost::asio::mutable_buffer> _outgoingData;
-    ThreadSafeQueue<boost::asio::mutable_buffer> _bufferPool;
-    boost::asio::mutable_buffer _currentIncomingBuffer;
+    ThreadSafeQueue<boost::shared_ptr<boost::asio::mutable_buffer> > _incomingData;
+    ThreadSafeQueue<boost::shared_ptr<boost::asio::mutable_buffer> > _outgoingData;
+    ThreadSafeQueue<boost::shared_ptr<boost::asio::mutable_buffer> > _bufferPool;
+    boost::shared_ptr<boost::asio::mutable_buffer> _currentIncomingBuffer;
     boost::shared_ptr<const TgtConnectionConfigBase> _connectionConfig;
 private:
     bool _running;
-    static int deleteBuffersFunctor(std::list<boost::asio::mutable_buffer> &pool);
+    static int deleteBuffersFunctor(std::list<boost::shared_ptr<boost::asio::mutable_buffer> > &pool);
     boost::mutex _disconnectMutex;
+    boost::shared_ptr<GarbageCollector<boost::asio::mutable_buffer> > _garbageCollector;
 #ifdef CB_TRAP_TO_FILE
     std::ofstream _trapFile;
 #endif

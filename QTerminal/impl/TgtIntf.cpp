@@ -11,6 +11,7 @@
 TgtIntf::TgtIntf(const boost::shared_ptr<const TgtConnectionConfigBase> &config)
     : _connectionConfig(config),
     _running(true)
+
 {
 #ifdef CB_TRAP_TO_FILE
     std::string trapFileName = boost::posix_time::to_iso_string(boost::posix_time::second_clock::local_time());
@@ -19,10 +20,12 @@ TgtIntf::TgtIntf(const boost::shared_ptr<const TgtConnectionConfigBase> &config)
     for (size_t i = 0; i < 4096; i++)
     {
         char* buffer = new char[TGT_BUFFER_SIZE];
-        _bufferPool.enqueue(boost::asio::mutable_buffer(buffer, TGT_BUFFER_SIZE - 1));
+        boost::shared_ptr<boost::asio::mutable_buffer> bfrPtr(new boost::asio::mutable_buffer(buffer, TGT_BUFFER_SIZE - 1));
+        _bufferPool.enqueue(bfrPtr);
     }
 
     _bufferPool.dequeue(_currentIncomingBuffer);
+    _garbageCollector = GarbageCollector<boost::asio::mutable_buffer>::createGargabageCollector(&_bufferPool);
 
     m_nTotalTx = 0;
     m_nTotalRx = 0;
@@ -37,32 +40,32 @@ TgtIntf::~TgtIntf(void)
 #endif
 }
 
-int TgtIntf::deleteBuffersFunctor(std::list<boost::asio::mutable_buffer> &pool)
+int TgtIntf::deleteBuffersFunctor(std::list<boost::shared_ptr<boost::asio::mutable_buffer> > &pool)
 {
     int ret = pool.size();
-    std::list<boost::asio::mutable_buffer>::iterator it;
+    std::list<boost::shared_ptr<boost::asio::mutable_buffer> >::iterator it;
     for (it = pool.begin(); it != pool.end(); it++)
     {
-        char* data = boost::asio::buffer_cast<char*>(*it);
+        boost::shared_ptr<boost::asio::mutable_buffer> bfrPtr = *it;
+        char* data = boost::asio::buffer_cast<char*>(*bfrPtr);
         delete data;
     }
     pool.clear();
     return -ret;
 }
 
-void TgtIntf::tgtReturnReadBuffer(const boost::asio::mutable_buffer &b)
+void TgtIntf::tgtReturnReadBuffer(const boost::shared_ptr<boost::asio::mutable_buffer> &b)
 {
-    char* data = boost::asio::buffer_cast<char*>(b);
-    _bufferPool.enqueue(boost::asio::buffer(data, TGT_BUFFER_SIZE - 1));
+    _garbageCollector->release(b);
 }
 
-int TgtIntf::tgtRead(boost::asio::mutable_buffer &b)
+int TgtIntf::tgtRead(boost::shared_ptr<boost::asio::mutable_buffer> &b)
 {
     int ret = 0;
     if (_incomingData.waitDequeue(b, 1) == true)
     {
-        ret = boost::asio::buffer_size(b);
-        char* data = boost::asio::buffer_cast<char*>(b);
+        ret = boost::asio::buffer_size(*b);
+        char* data = boost::asio::buffer_cast<char*>(*b);
         data[ret] = 0;
 #ifdef CB_TRAP_TO_FILE
         _trapFile.write(data, ret);
@@ -76,10 +79,14 @@ int TgtIntf::tgtWrite(const char* szWriteData, int nBytes)
     int ret = 0;
     if (nBytes > 0)
     {
-        boost::asio::mutable_buffer b;
+        boost::shared_ptr<boost::asio::mutable_buffer> b;
         _bufferPool.dequeue(b);
-        boost::asio::buffer_copy(b, boost::asio::buffer(szWriteData, nBytes));
-        _outgoingData.enqueue(boost::asio::buffer(b, nBytes));
+        char* data = boost::asio::buffer_cast<char*>(*b);
+        *b = boost::asio::buffer(data, TGT_BUFFER_SIZE - 1);
+
+        boost::asio::buffer_copy(*b, boost::asio::buffer(szWriteData, nBytes));
+        *b = boost::asio::buffer(*b, nBytes);
+        _outgoingData.enqueue(b);
     }
     return ret;
 }

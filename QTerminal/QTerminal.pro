@@ -47,7 +47,8 @@ HEADERS += QTerminalInterface.h \
     impl/ThreadSafeQueue.h \
     impl/KeyboardTranslator.h \
     impl/ExtendedDefaultTranslator.h \
-    QTerminalConfig.h
+    QTerminalConfig.h \
+    impl/garbagecollector.h
 unix:!symbian {
     maemo5 {
         target.path = /opt/usr/lib

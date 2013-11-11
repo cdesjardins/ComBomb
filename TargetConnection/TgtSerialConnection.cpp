@@ -43,14 +43,14 @@ void TgtSerialIntf::serviceThread()
 
 void TgtSerialIntf::writerThread()
 {
-    boost::asio::mutable_buffer b;
+    boost::shared_ptr<boost::asio::mutable_buffer> b;
     boost::system::error_code ec;
     bool attemptReconnect = false;
     while (_serialWriterThreadRun == true)
     {
         if (_outgoingData.dequeue(b) == true)
         {
-            boost::asio::write(*_port.get(), boost::asio::buffer(b), ec);
+            boost::asio::write(*_port.get(), boost::asio::buffer(*b), ec);
             tgtReturnReadBuffer(b);
             if (ec)
             {
@@ -98,10 +98,11 @@ void TgtSerialIntf::tgtReadCallback(const boost::system::error_code& error, cons
     {
         if (bytesTransferred > 0)
         {
-            _incomingData.enqueue(boost::asio::buffer(_currentIncomingBuffer, bytesTransferred));
+            *_currentIncomingBuffer = boost::asio::buffer(*_currentIncomingBuffer, bytesTransferred);
+            _incomingData.enqueue(_currentIncomingBuffer);
             _bufferPool.dequeue(_currentIncomingBuffer);
         }
-        _port->async_read_some(boost::asio::buffer(_currentIncomingBuffer),
+        _port->async_read_some(boost::asio::buffer(*_currentIncomingBuffer),
                                boost::bind(&TgtSerialIntf::tgtReadCallback, this,
                                            boost::asio::placeholders::error,
                                            boost::asio::placeholders::bytes_transferred));

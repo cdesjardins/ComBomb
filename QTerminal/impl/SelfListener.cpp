@@ -44,15 +44,14 @@ void SelfListener::join()
 
 void SelfListener::run()
 {
-    boost::asio::mutable_buffer b;
 
     while (_running)
     {
+        boost::shared_ptr<boost::asio::mutable_buffer> b;
         int bytes = _targetInterface->tgtRead(b);
         if (bytes > 0)
         {
-            const char* data = boost::asio::buffer_cast<const char*>(b);
-            emit recvData(data, bytes);
+            emit recvData(b);
             _targetInterface->tgtReturnReadBuffer(b);
 #ifdef OUT_TO_DEBUG_FILE
             _debugFile.write(data, bytes);

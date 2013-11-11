@@ -23,7 +23,7 @@ private slots:
     void readFromStdout();
     void processError(QProcess::ProcessError error);
     void processDone(int returnCode, QProcess::ExitStatus status);
-    void onReceiveText(const QString&);
+    void onReceiveBlock(boost::shared_ptr<boost::asio::mutable_buffer> incoming);
 signals:
     void updateStatusSignal(QString);
 protected:

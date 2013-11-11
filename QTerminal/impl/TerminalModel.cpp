@@ -42,6 +42,8 @@
 #include "TerminalView.h"
 #include "Vt102Emulation.h"
 
+Q_DECLARE_METATYPE(boost::shared_ptr<boost::asio::mutable_buffer>);
+
 TerminalModel::TerminalModel(const boost::shared_ptr<TgtIntf> &targetInterface) :
     _emulation(0)
     , _monitorActivity(false)
@@ -54,6 +56,7 @@ TerminalModel::TerminalModel(const boost::shared_ptr<TgtIntf> &targetInterface) 
     , _targetInterface(targetInterface)
     , _closed(false)
 {
+    qRegisterMetaType<boost::shared_ptr<boost::asio::mutable_buffer> >();
     //create emulation backend
     _emulation.reset(new Vt102Emulation());
     connect(_emulation.get(), SIGNAL(stateSet(int)), this, SLOT(activityStateSet(int)));
@@ -62,7 +65,8 @@ TerminalModel::TerminalModel(const boost::shared_ptr<TgtIntf> &targetInterface) 
 
     _selfListener.reset(new SelfListener(targetInterface));
     _selfListener->start();
-    connect(_selfListener.get(), SIGNAL(recvData(const char*, int)), this, SLOT(onReceiveBlock(const char*, int)), Qt::BlockingQueuedConnection);
+
+    connectToRecvText(this);
 
     connect(_emulation.get(), SIGNAL(sendData(const char*, int)) , this, SLOT(sendData(const char*, int)));
 
@@ -74,7 +78,7 @@ TerminalModel::TerminalModel(const boost::shared_ptr<TgtIntf> &targetInterface) 
 
 void TerminalModel::connectToRecvText(QObject *who)
 {
-    connect(this, SIGNAL(receivedData(const QString&)), who, SLOT(onReceiveText(const QString&)));
+    connect(_selfListener.get(), SIGNAL(recvData(boost::shared_ptr<boost::asio::mutable_buffer>)), who, SLOT(onReceiveBlock(boost::shared_ptr<boost::asio::mutable_buffer>)));
 }
 
 void TerminalModel::setDarkBackground(bool darkBackground)
@@ -261,12 +265,13 @@ void TerminalModel::sendText(const QString &text) const
     }
 }
 
-void TerminalModel::onReceiveBlock(const char* buf, int len)
+void TerminalModel::onReceiveBlock(boost::shared_ptr<boost::asio::mutable_buffer> incoming)
 {
     if (_closed == false)
     {
+        char* buf = boost::asio::buffer_cast<char*>(*incoming);
+        int len = boost::asio::buffer_size(*incoming);
         _emulation->receiveData(buf, len);
-        emit receivedData(QString::fromLatin1(buf, len));
     }
 }
 
