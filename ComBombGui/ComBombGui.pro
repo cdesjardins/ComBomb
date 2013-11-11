@@ -59,7 +59,7 @@ DEPENDPATH += $$PWD/..
 
 
 # QTerminal
-
+win32:RC_FILE = ComBomb.rc
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../QTerminal/release/ -lQTerminal
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../QTerminal/debug/ -lQTerminal
@@ -107,3 +107,6 @@ else:unix: LIBS += $$PWD/../boost_1_54_0/stage/x86/lib/libboost_system.a $$PWD/.
 
 INCLUDEPATH += $$PWD/../boost_1_54_0
 DEPENDPATH += $$PWD/../boost_1_54_0
+
+OTHER_FILES += \
+    ComBomb.rc

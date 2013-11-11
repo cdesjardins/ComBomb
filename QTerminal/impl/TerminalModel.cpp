@@ -251,7 +251,7 @@ void TerminalModel::refresh()
 {
 }
 
-void TerminalModel::closeEvent(QCloseEvent * event)
+void TerminalModel::closeEvent(QCloseEvent * )
 {
     _closed = true;
     _targetInterface->tgtDisconnect();
