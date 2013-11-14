@@ -109,7 +109,7 @@ void TgtSerialIntf::tgtReadCallback(const boost::system::error_code& error, cons
     }
     else
     {
-        tgtDisconnect();
+        tgtDisconnect(true);
         tgtAttemptReconnect();
     }
 }
@@ -124,9 +124,15 @@ int TgtSerialIntf::tgtBreakConnection(bool joinWriter)
             _serialWriterThread->join();
         }
     }
-    _port->cancel();
-    _port->close();
-    _port.reset();
+    if (_port != NULL)
+    {
+        if (_port->is_open())
+        {
+            _port->cancel();
+            _port->close();
+        }
+        _port.reset();
+    }
     return 0;
 }
 

@@ -29,7 +29,7 @@ public:
     TgtIntf(const boost::shared_ptr<const TgtConnectionConfigBase> &config);
     virtual ~TgtIntf(void);
 
-    int tgtDisconnect();
+    int tgtDisconnect(bool running = false);
     virtual int tgtRead(boost::shared_ptr<boost::asio::mutable_buffer> &b);
     virtual int tgtWrite(const char* szWriteData, int nBytes);
     virtual bool tgtConnected() = 0;

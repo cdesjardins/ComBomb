@@ -120,9 +120,9 @@ void TgtIntf::tgtAttemptReconnect()
     emit updateTitleSignal(title.c_str());
 }
 
-int TgtIntf::tgtDisconnect()
+int TgtIntf::tgtDisconnect(bool running)
 {
-    _running = false;
+    _running = running;
     boost::mutex::scoped_lock guard(_disconnectMutex);
     return tgtBreakConnection();
 }
