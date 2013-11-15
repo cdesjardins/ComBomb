@@ -36,6 +36,8 @@ private slots:
     void on_action_Options_triggered();
     void on_action_Run_Process_triggered();
 
+    void on_action_Clear_scrollback_triggered();
+
 private:
 
     Ui::MainWindow* _ui;

@@ -188,3 +188,12 @@ void MainWindow::on_action_Run_Process_triggered()
         activeWindow->runProcess();
     }
 }
+
+void MainWindow::on_action_Clear_scrollback_triggered()
+{
+    ChildForm* activeWindow = getActiveChildWindow();
+    if (activeWindow != NULL)
+    {
+        activeWindow->clearScrollback();
+    }
+}
