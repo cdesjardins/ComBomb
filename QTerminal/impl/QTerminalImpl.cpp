@@ -162,3 +162,9 @@ void QTerminalImpl::newlineToggle()
     m_terminalModel->newlineToggle();
 }
 
+void QTerminalImpl::clearScrollback()
+{
+    m_terminalModel->clearScreen();
+}
+
+

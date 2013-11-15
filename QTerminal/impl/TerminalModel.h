@@ -115,7 +115,7 @@ public:
      * Clears the history store used by this session.
      */
     void clearHistory();
-
+    void clearScreen();
     /**
      * Enables monitoring for activity in the session.
      * This will cause notifySessionState() to be emitted

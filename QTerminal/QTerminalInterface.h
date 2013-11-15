@@ -38,18 +38,23 @@ public:
         setContextMenuPolicy (Qt::CustomContextMenu);
 
         _contextMenu = new QMenu (this);
-        QAction* copyAction  = _contextMenu->addAction ("Copy");
-        QAction* pasteAction = _contextMenu->addAction ("Paste");
-        QAction* newlineAction = _contextMenu->addAction ("Toggle CR/LF");
-        QAction* runProcessAction = _contextMenu->addAction ("Run Process");
+        QAction* copyAction  = _contextMenu->addAction("Copy");
+        QAction* pasteAction = _contextMenu->addAction("Paste");
+        QAction* newlineAction = _contextMenu->addAction("Toggle CR/LF");
+        QAction* runProcessAction = _contextMenu->addAction("Run Process");
+        QAction* clearScrollbackAction = _contextMenu->addAction("Clear scrollback");
+
         copyAction->setIcon(QIcon(":/images/page_copy.png"));
         pasteAction->setIcon(QIcon(":/images/page_paste.png"));
         runProcessAction->setIcon(QIcon(":/images/script_gear.png"));
+        clearScrollbackAction->setIcon(QIcon(":/images/page_refresh.png"));
+
         newlineAction->setCheckable(true);
         connect(copyAction, SIGNAL (triggered()), this, SLOT (copyClipboard()));
         connect(pasteAction, SIGNAL (triggered()), this, SLOT (pasteClipboard()));
         connect(newlineAction, SIGNAL (triggered()), this, SLOT (newlineToggle()));
         connect(runProcessAction, SIGNAL (triggered()), this, SLOT (runProcess()));
+        connect(clearScrollbackAction, SIGNAL (triggered()), this, SLOT (clearScrollback()));
 
         connect(this, SIGNAL (triggerCopy()), this, SLOT (copyClipboard()));
         connect(this, SIGNAL (triggerPaste()), this, SLOT (pasteClipboard()));
@@ -82,6 +87,7 @@ public slots:
     virtual void pasteClipboard() = 0;
     virtual void newlineToggle() = 0;
     virtual void runProcess() = 0;
+    virtual void clearScrollback() = 0;
     virtual void handleCustomContextMenuRequested(QPoint at)
     {
         _contextMenu->move(mapToGlobal(at));

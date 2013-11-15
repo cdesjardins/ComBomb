@@ -50,6 +50,8 @@ public slots:
     void copyClipboard();
     void pasteClipboard();
     void newlineToggle();
+    void clearScrollback();
+
 protected:
     void focusInEvent(QFocusEvent* focusEvent);
     void showEvent(QShowEvent*);

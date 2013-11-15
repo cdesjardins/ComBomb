@@ -325,6 +325,13 @@ void TerminalModel::clearHistory()
     _emulation->clearHistory();
 }
 
+void TerminalModel::clearScreen()
+{
+    _emulation->clearEntireScreen();
+    _emulation->clearHistory();
+    _emulation->home();
+}
+
 // unused currently
 bool TerminalModel::isMonitorActivity() const
 {

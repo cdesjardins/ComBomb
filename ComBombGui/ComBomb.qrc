@@ -13,5 +13,6 @@
         <file>images/clipboard_sign.png</file>
         <file>images/gear_in.png</file>
         <file>images/script_gear.png</file>
+        <file>images/page_refresh.png</file>
     </qresource>
 </RCC>

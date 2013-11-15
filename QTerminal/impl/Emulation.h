@@ -255,7 +255,7 @@ public slots:
     void receiveData(const char* buffer, int len);
 
     virtual void newlineToggle() = 0;
-
+    void home();
 signals:
 
     /**

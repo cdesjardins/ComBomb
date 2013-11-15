@@ -57,6 +57,8 @@
     <addaction name="actionCopy"/>
     <addaction name="actionPaste"/>
     <addaction name="actionSelect_All"/>
+    <addaction name="action_Clear_scrollback"/>
+    <addaction name="separator"/>
     <addaction name="actionFile_clipboard"/>
     <addaction name="action_Run_Process"/>
     <addaction name="separator"/>
@@ -179,6 +181,15 @@
    </property>
    <property name="text">
     <string>&amp;Run Process</string>
+   </property>
+  </action>
+  <action name="action_Clear_scrollback">
+   <property name="icon">
+    <iconset resource="ComBomb.qrc">
+     <normaloff>:/images/page_refresh.png</normaloff>:/images/page_refresh.png</iconset>
+   </property>
+   <property name="text">
+    <string>C&amp;lear scrollback</string>
    </property>
   </action>
  </widget>
