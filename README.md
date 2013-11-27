@@ -10,7 +10,6 @@ git clone https://github.com/cdesjardins/ComBomb.git
 cd ComBomb
 [./]makeboost.py
 ```
-Once those commands are complete open ComBomb.pro in QT Creator Based on QT 5
-Then run qmake, and build.
+Once those commands are complete open ComBomb.pro in QT Creator Based on QT 5, then run qmake, and build.
 
 
