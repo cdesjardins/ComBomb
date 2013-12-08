@@ -1,17 +1,11 @@
 #include "opendialog.h"
 #include "ui_opendialog.h"
+#include "configdialog.h"
 #include <sstream>
 #include <QFileDialog>
 #include <QIntValidator>
 #ifndef Q_MOC_RUN
 #include <boost/asio/serial_port.hpp>
-#endif
-
-#ifdef WIN32
-#define BASE_PORTNAME_1 "COM"
-#else
-#define BASE_PORTNAME_1 "/dev/ttyS"
-#define BASE_PORTNAME_2 "/dev/ttyUSB"
 #endif
 
 OpenDialog::OpenDialog(QWidget* parent) :
@@ -147,30 +141,21 @@ void OpenDialog::addBaudRates()
     }
 }
 
-void OpenDialog::addComPorts(const std::string &basePortName)
-{
-    std::stringstream portName;
-    boost::asio::io_service ioService;
-    boost::system::error_code ec;
-    for (int i = 0; i < 16; i++)
-    {
-        portName.str("");
-        portName << basePortName << i;
-        boost::asio::serial_port port(ioService);
-        port.open(portName.str(), ec);
-        if (port.is_open() == true)
-        {
-            ui->comPortComboBox->addItem(portName.str().c_str());
-        }
-    }
-}
-
 void OpenDialog::addComPorts()
 {
-    addComPorts(BASE_PORTNAME_1);
-#ifdef BASE_PORTNAME_2
-    addComPorts(BASE_PORTNAME_2);
-#endif
+    boost::asio::io_service ioService;
+    boost::system::error_code ec;
+    QStringList comPorts = ConfigDialog::getPortListSettings();
+    for (QStringList::iterator it = comPorts.begin(); it != comPorts.end(); ++it)
+    {
+        boost::asio::serial_port port(ioService);
+        QString portname = *it;
+        port.open(portname.toLocal8Bit().constData(), ec);
+        if (port.is_open() == true)
+        {
+            ui->comPortComboBox->addItem(*it);
+        }
+    }
 }
 
 void OpenDialog::on_browseButton_clicked()

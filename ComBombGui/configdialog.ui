@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>174</width>
-    <height>100</height>
+    <height>301</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -30,7 +30,7 @@
      </layout>
     </widget>
    </item>
-   <item row="1" column="0">
+   <item row="2" column="0">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -40,8 +40,27 @@
      </property>
     </widget>
    </item>
+   <item row="1" column="0">
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string>Com Ports</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="CBListWidget" name="comPortsList"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CBListWidget</class>
+   <extends>QListWidget</extends>
+   <header>cblistwidget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="ComBomb.qrc"/>
  </resources>

@@ -17,7 +17,11 @@ public:
     ~ConfigDialog();
 
     static void getTerminalConfig(QTerminalConfig *terminalConfig);
+    static QStringList getPortListSettings();
 protected:
+    static QStringList getPortListDefaults(QString basePortName, int start, int stop);
+    void setPortListSettings();
+    void populateComPortListWidget();
     virtual void showEvent(QShowEvent* event);
     virtual void hideEvent(QHideEvent* event);
 

@@ -36,7 +36,6 @@ private slots:
 
 private:
     void addComPorts();
-    void addComPorts(const std::string &basePortName);
     void addBaudRates();
     void addParity();
     void addStopBits();

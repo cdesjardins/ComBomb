@@ -70,7 +70,7 @@ void QTerminalImpl::initialize(const QTerminalConfig &terminalConfig, const boos
     m_terminalView->installEventFilter(this);
 }
 
-bool QTerminalImpl::eventFilter(QObject *object, QEvent *event)
+bool QTerminalImpl::eventFilter(QObject *, QEvent *event)
 {
     if (event->type() == QEvent::KeyPress)
     {
