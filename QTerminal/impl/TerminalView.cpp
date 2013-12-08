@@ -47,6 +47,7 @@
 #include "konsole_wcwidth.h"
 #include "ScreenWindow.h"
 #include "TerminalCharacterDecoder.h"
+#include "BackTabEvent.h"
 
 #ifndef loc
 #define loc(X, Y) ((Y)*_columns + (X))
@@ -2480,6 +2481,13 @@ QVariant TerminalView::inputMethodQuery(Qt::InputMethodQuery query) const
 
 bool TerminalView::event(QEvent* e)
 {
+    if (e->type() == SendBackTab)
+    {
+        e->accept();
+        QKeyEvent keyEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::ShiftModifier, "\t");
+        keyPressEvent(&keyEvent);
+        return true;
+    }
     if (e->type() == QEvent::ShortcutOverride)
     {
         QKeyEvent* keyEvent = static_cast<QKeyEvent*>(e);

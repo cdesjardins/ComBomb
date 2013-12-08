@@ -19,8 +19,9 @@
 
 #include "QTerminal/TgtIntf.h"
 #include <QDebug>
-
+#include <QApplication>
 #include "QTerminalImpl.h"
+#include "BackTabEvent.h"
 
 QTerminalImpl::QTerminalImpl(const QTerminalConfig &terminalConfig, const boost::shared_ptr<TgtIntf> &targetInterface, int width, int height, QWidget* parent)
     : QTerminalInterface(parent)
@@ -66,6 +67,26 @@ void QTerminalImpl::initialize(const QTerminalConfig &terminalConfig, const boos
     // Set the screen size after font and everything else is setup
     m_terminalView->setSize(width, height);
     applyTerminalConfig(terminalConfig);
+    m_terminalView->installEventFilter(this);
+}
+
+bool QTerminalImpl::eventFilter(QObject *object, QEvent *event)
+{
+    if (event->type() == QEvent::KeyPress)
+    {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+        if (keyEvent->key() == Qt::Key_Backtab)
+        {
+            // Absorb backtab and post a new backtab event.
+            QApplication::postEvent(m_terminalView.get(), new SendBackTabEvent());
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    return false;
 }
 
 QTerminalImpl::~QTerminalImpl()
