@@ -9,7 +9,7 @@
 #include <boost/smart_ptr.hpp>
 #endif
 #include "impl/ThreadSafeQueue.h"
-#include "impl/garbagecollector.h"
+#include "impl/BufferPool.h"
 #include "../unparam.h"
 #include <QWidget>
 #include <fstream>
@@ -42,7 +42,6 @@ public:
     {
         return m_nTotalTx;
     };
-    void tgtReturnReadBuffer(const boost::shared_ptr<boost::asio::mutable_buffer> &b);
     boost::shared_ptr<const TgtConnectionConfigBase> getConfig()
     {
         return _connectionConfig;
@@ -60,14 +59,13 @@ protected:
     int m_nTotalRx;
     ThreadSafeQueue<boost::shared_ptr<boost::asio::mutable_buffer> > _incomingData;
     ThreadSafeQueue<boost::shared_ptr<boost::asio::mutable_buffer> > _outgoingData;
-    ThreadSafeQueue<boost::shared_ptr<boost::asio::mutable_buffer> > _bufferPool;
+    boost::shared_ptr<BufferPool> _bufferPool;
     boost::shared_ptr<boost::asio::mutable_buffer> _currentIncomingBuffer;
     boost::shared_ptr<const TgtConnectionConfigBase> _connectionConfig;
 private:
     bool _running;
     static int deleteBuffersFunctor(std::list<boost::shared_ptr<boost::asio::mutable_buffer> > &pool);
     boost::mutex _disconnectMutex;
-    boost::shared_ptr<GarbageCollector<boost::asio::mutable_buffer> > _garbageCollector;
 #ifdef CB_TRAP_TO_FILE
     std::ofstream _trapFile;
 #endif

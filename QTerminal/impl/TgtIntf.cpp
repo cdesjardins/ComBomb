@@ -7,7 +7,6 @@
 ** startup script (.cshrc) or the like.
 */
 
-#define TGT_BUFFER_SIZE   4096
 TgtIntf::TgtIntf(const boost::shared_ptr<const TgtConnectionConfigBase> &config)
     : _connectionConfig(config),
     _running(true)
@@ -17,15 +16,8 @@ TgtIntf::TgtIntf(const boost::shared_ptr<const TgtConnectionConfigBase> &config)
     std::string trapFileName = boost::posix_time::to_iso_string(boost::posix_time::second_clock::local_time());
     _trapFile.open(trapFileName + ".cbd", std::ios::out | std::ios::binary);
 #endif
-    for (size_t i = 0; i < 4096; i++)
-    {
-        char* buffer = new char[TGT_BUFFER_SIZE];
-        boost::shared_ptr<boost::asio::mutable_buffer> bfrPtr(new boost::asio::mutable_buffer(buffer, TGT_BUFFER_SIZE - 1));
-        _bufferPool.enqueue(bfrPtr);
-    }
-
-    _bufferPool.dequeue(_currentIncomingBuffer);
-    _garbageCollector = GarbageCollector<boost::asio::mutable_buffer>::createGargabageCollector(&_bufferPool);
+    _bufferPool = BufferPool::createPool(4096);
+    _bufferPool->dequeue(_currentIncomingBuffer);
 
     m_nTotalTx = 0;
     m_nTotalRx = 0;
@@ -34,7 +26,7 @@ TgtIntf::TgtIntf(const boost::shared_ptr<const TgtConnectionConfigBase> &config)
 TgtIntf::~TgtIntf(void)
 {
     _running = false;
-    _bufferPool.iterate(boost::bind(&TgtIntf::deleteBuffersFunctor, _1));
+    _bufferPool->iterate(boost::bind(&TgtIntf::deleteBuffersFunctor, _1));
 #ifdef CB_TRAP_TO_FILE
     _trapFile.close();
 #endif
@@ -52,11 +44,6 @@ int TgtIntf::deleteBuffersFunctor(std::list<boost::shared_ptr<boost::asio::mutab
     }
     pool.clear();
     return -ret;
-}
-
-void TgtIntf::tgtReturnReadBuffer(const boost::shared_ptr<boost::asio::mutable_buffer> &b)
-{
-    _garbageCollector->release(b);
 }
 
 int TgtIntf::tgtRead(boost::shared_ptr<boost::asio::mutable_buffer> &b)
@@ -80,9 +67,7 @@ int TgtIntf::tgtWrite(const char* szWriteData, int nBytes)
     if (nBytes > 0)
     {
         boost::shared_ptr<boost::asio::mutable_buffer> b;
-        _bufferPool.dequeue(b);
-        char* data = boost::asio::buffer_cast<char*>(*b);
-        *b = boost::asio::buffer(data, TGT_BUFFER_SIZE - 1);
+        _bufferPool->dequeue(b);
 
         boost::asio::buffer_copy(*b, boost::asio::buffer(szWriteData, nBytes));
         *b = boost::asio::buffer(*b, nBytes);

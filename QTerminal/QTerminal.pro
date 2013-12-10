@@ -24,7 +24,8 @@ SOURCES += \
     impl/Emulation.cpp \
     impl/KeyboardTranslator.cpp \
     impl/TgtIntf.cpp \
-    impl/QTerminalConfig.cpp
+    impl/QTerminalConfig.cpp \
+    impl/BufferPool.cpp
 
 HEADERS += QTerminalInterface.h \
     qterminal.h \
@@ -49,7 +50,9 @@ HEADERS += QTerminalInterface.h \
     impl/ExtendedDefaultTranslator.h \
     QTerminalConfig.h \
     impl/garbagecollector.h \
-    impl/BackTabEvent.h
+    impl/BackTabEvent.h \
+    impl/ThreadSafePool.h \
+    impl/BufferPool.h
 unix:!symbian {
     maemo5 {
         target.path = /opt/usr/lib

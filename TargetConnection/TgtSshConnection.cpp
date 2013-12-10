@@ -270,7 +270,6 @@ bool TgtSshIntf::sshSend()
                 ret = false;
             }
         }
-        tgtReturnReadBuffer(b);
     }
     return ret;
 }
@@ -293,7 +292,7 @@ bool TgtSshIntf::sshRecv()
         {
             *_currentIncomingBuffer = boost::asio::buffer(*_currentIncomingBuffer, outDataLength);
             _incomingData.enqueue(_currentIncomingBuffer);
-            _bufferPool.dequeue(_currentIncomingBuffer);
+            _bufferPool->dequeue(_currentIncomingBuffer);
         }
     } while ((outDataLength > 0) && (cryptStatusOK(status)));
     return ret;

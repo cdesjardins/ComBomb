@@ -46,7 +46,6 @@ void SelfListener::run()
         if (bytes > 0)
         {
             emit recvData(b);
-            _targetInterface->tgtReturnReadBuffer(b);
 #ifdef OUT_TO_DEBUG_FILE
             _debugFile.write(data, bytes);
 #endif

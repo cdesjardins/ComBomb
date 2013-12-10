@@ -51,7 +51,7 @@ int TgtFileIntf::tgtRead(boost::shared_ptr<boost::asio::mutable_buffer> &b)
         {
             *_currentIncomingBuffer = boost::asio::buffer(*_currentIncomingBuffer, ret);
             _incomingData.enqueue(_currentIncomingBuffer);
-            _bufferPool.dequeue(_currentIncomingBuffer);
+            _bufferPool->dequeue(_currentIncomingBuffer);
         }
     }
     return TgtIntf::tgtRead(b);
