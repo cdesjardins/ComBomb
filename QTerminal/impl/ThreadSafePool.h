@@ -17,7 +17,7 @@ protected:
     {
         for (int i = 0; i < num; i++)
         {
-            enqueue(allocateBuffer());
+            ThreadSafeQueue<boost::shared_ptr<T> >::enqueue(allocateBuffer());
         }
     }
 
