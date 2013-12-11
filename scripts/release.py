@@ -4,11 +4,12 @@ from subprocess import Popen, PIPE
 
 linuxSrcExeFile = "../build-ComBomb-Desktop_Qt_5_1_1_GCC_64bit-Release/ComBombGui/ComBombGui"
 linuxDstExeFile = os.path.expanduser("~/Dropbox/ComBomb/lin/")
+windowsSrcExeFile = os.path.expanduser("../build-ComBomb-Desktop_Qt_5_1_1_MSVC2010_32bit-Release/ComBombGui/release/ComBombGui.exe")
 windowsDstExeFile = os.path.expanduser("~/Dropbox/ComBomb/win/")
 
 def copyExeFile():
     if (platform.system() == "Windows"):
-        pass
+        shutil.copy(windowsSrcExeFile, windowsDstExeFile)
     elif (platform.system() == "Linux"):
         shutil.copy(linuxSrcExeFile, linuxDstExeFile)
     else:
