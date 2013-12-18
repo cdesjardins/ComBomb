@@ -57,18 +57,6 @@ protected:
     volatile bool _serialServiceThreadRun;
 };
 
-namespace boost
-{
-namespace serialization
-{
-template<class Archive>
-void serialize(Archive & ar, TgtSerialIntf::TgtConnectionConfig & config, const unsigned int version)
-{
-    ar;
-    config;
-    version;
-}
-}
-}
+
 
 #endif

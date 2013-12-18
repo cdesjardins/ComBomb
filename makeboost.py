@@ -85,7 +85,7 @@ def runB2Windows():
     file = os.fdopen(batfilefd, 'w')
     msvsfound = False
     msvsvars = []
-    for ver in range (13, 8, -1):
+    for ver in range (11, 8, -1):
         envvar = "VS" + str(ver) + "0COMNTOOLS"
         msvsvars.append(envvar)
         if (envvar in os.environ):
