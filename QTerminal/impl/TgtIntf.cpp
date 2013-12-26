@@ -13,8 +13,8 @@ TgtIntf::TgtIntf(const boost::shared_ptr<const TgtConnectionConfigBase> &config)
 
 {
 #ifdef CB_TRAP_TO_FILE
-    std::string trapFileName = boost::posix_time::to_iso_string(boost::posix_time::second_clock::local_time());
-    _trapFile.open(trapFileName + ".cbd", std::ios::out | std::ios::binary);
+    std::string trapFileName = boost::posix_time::to_iso_string(boost::posix_time::second_clock::local_time()) + ".cbd";
+    _trapFile.open(trapFileName.c_str(), std::ios::out | std::ios::binary);
 #endif
     _bufferPool = BufferPool::createPool(4096);
     _bufferPool->dequeue(_currentIncomingBuffer);
