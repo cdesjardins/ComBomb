@@ -126,7 +126,7 @@ void TgtSshIntf::tgtMakeConnection()
         cryptDestroySession(_sshData->_cryptSession);
         throw CB_EXCEPTION_STR(CBException::CbExcp, errmsg.c_str());
     }
-    status = cryptSetAttribute(_sshData->_cryptSession, CRYPT_OPTION_NET_CONNECTTIMEOUT, 10);
+    status = cryptSetAttribute(_sshData->_cryptSession, CRYPT_OPTION_NET_CONNECTTIMEOUT, 6);
     if (cryptStatusError(status))
     {
         tgtGetErrorMsg(&errmsg, status, "Unable to set ssh connection timeout");
