@@ -7,8 +7,10 @@
 ** startup script (.cshrc) or the like.
 */
 
+#define CB_TGT_INTF_NUM_BUFFS  1024
+#define CB_TGT_INTF_BUFF_SIZE  4096
 TgtIntf::TgtIntf(const boost::shared_ptr<const TgtConnectionConfigBase> &config)
-    : _bufferPool(new RefCntBufferPool(4096)),
+    : _bufferPool(new RefCntBufferPool(CB_TGT_INTF_NUM_BUFFS, CB_TGT_INTF_BUFF_SIZE)),
     _connectionConfig(config),
     _running(true)
 {
@@ -29,21 +31,7 @@ TgtIntf::~TgtIntf(void)
     _trapFile.close();
 #endif
 }
-/*
-int TgtIntf::deleteBuffersFunctor(std::list<boost::shared_ptr<boost::asio::mutable_buffer> > &pool)
-{
-    int ret = pool.size();
-    std::list<boost::shared_ptr<boost::asio::mutable_buffer> >::iterator it;
-    for (it = pool.begin(); it != pool.end(); it++)
-    {
-        boost::shared_ptr<boost::asio::mutable_buffer> bfrPtr = *it;
-        char* data = boost::asio::buffer_cast<char*>(*bfrPtr);
-        delete data;
-    }
-    pool.clear();
-    return -ret;
-}
-*/
+
 int TgtIntf::tgtRead(boost::intrusive_ptr<RefCntBuffer> &b)
 {
     int ret = 0;

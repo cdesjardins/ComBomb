@@ -64,7 +64,6 @@ protected:
     boost::shared_ptr<const TgtConnectionConfigBase> _connectionConfig;
 private:
     bool _running;
-    //static int deleteBuffersFunctor(std::list<boost::shared_ptr<boost::asio::mutable_buffer> > &pool);
     boost::mutex _disconnectMutex;
 #ifdef CB_TRAP_TO_FILE
     std::ofstream _trapFile;
