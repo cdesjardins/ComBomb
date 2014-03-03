@@ -116,7 +116,7 @@ protected:
     {
         // This function assumes that _queueMutex is locked already!
         boost::chrono::system_clock::time_point timeLimit = boost::chrono::system_clock::now() + boost::chrono::milliseconds(msTimeout);
-        do
+        while (_queue.empty() == true)
         {
             // if timeout is specified, then wait until the time is up
             // otherwise wait forever (forever is msTimeout = -1)
@@ -132,7 +132,7 @@ protected:
             {
                 _msgNotification.wait(_queueMutex);
             }
-        } while (_queue.empty() == true);
+        }
     }
 
     void pushData(const T &data)

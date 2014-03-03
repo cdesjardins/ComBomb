@@ -42,6 +42,7 @@ protected:
                 else
                 {
                     _holdingQueue.enqueue(data);
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(1));
                 }
             }
         }
