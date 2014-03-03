@@ -41,7 +41,7 @@ void SelfListener::run()
 
     while (_running)
     {
-        boost::shared_ptr<boost::asio::mutable_buffer> b;
+        boost::intrusive_ptr<RefCntBuffer> b;
         int bytes = _targetInterface->tgtRead(b);
         if (bytes > 0)
         {

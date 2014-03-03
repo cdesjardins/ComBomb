@@ -8,8 +8,8 @@
 #include <boost/asio/buffer.hpp>
 #include <boost/smart_ptr.hpp>
 #endif
-#include "impl/ThreadSafeQueue.h"
-#include "impl/BufferPool.h"
+#include "QueuePtr/ThreadSafeQueue.h"
+#include "QueuePtr/RefCntBufferPool.h"
 #include "../unparam.h"
 #include <QWidget>
 #include <fstream>
@@ -30,7 +30,7 @@ public:
     virtual ~TgtIntf(void);
 
     int tgtDisconnect(bool running = false);
-    virtual int tgtRead(boost::shared_ptr<boost::asio::mutable_buffer> &b);
+    virtual int tgtRead(boost::intrusive_ptr<RefCntBuffer> &b);
     virtual int tgtWrite(const char* szWriteData, int nBytes);
     virtual bool tgtConnected() = 0;
     virtual void tgtGetTitle(std::string* szTitle) = 0;
@@ -57,14 +57,14 @@ protected:
 
     int m_nTotalTx;
     int m_nTotalRx;
-    ThreadSafeQueue<boost::shared_ptr<boost::asio::mutable_buffer> > _incomingData;
-    ThreadSafeQueue<boost::shared_ptr<boost::asio::mutable_buffer> > _outgoingData;
-    boost::shared_ptr<BufferPool> _bufferPool;
-    boost::shared_ptr<boost::asio::mutable_buffer> _currentIncomingBuffer;
+    ThreadSafeQueue<boost::intrusive_ptr<RefCntBuffer> > _incomingData;
+    ThreadSafeQueue<boost::intrusive_ptr<RefCntBuffer> > _outgoingData;
+    boost::shared_ptr<RefCntBufferPool> _bufferPool;
+    boost::intrusive_ptr<RefCntBuffer> _currentIncomingBuffer;
     boost::shared_ptr<const TgtConnectionConfigBase> _connectionConfig;
 private:
     bool _running;
-    static int deleteBuffersFunctor(std::list<boost::shared_ptr<boost::asio::mutable_buffer> > &pool);
+    //static int deleteBuffersFunctor(std::list<boost::shared_ptr<boost::asio::mutable_buffer> > &pool);
     boost::mutex _disconnectMutex;
 #ifdef CB_TRAP_TO_FILE
     std::ofstream _trapFile;

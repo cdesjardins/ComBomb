@@ -8,15 +8,14 @@
 */
 
 TgtIntf::TgtIntf(const boost::shared_ptr<const TgtConnectionConfigBase> &config)
-    : _connectionConfig(config),
+    : _bufferPool(new RefCntBufferPool(4096)),
+    _connectionConfig(config),
     _running(true)
-
 {
 #ifdef CB_TRAP_TO_FILE
     std::string trapFileName = boost::posix_time::to_iso_string(boost::posix_time::second_clock::local_time()) + ".cbd";
     _trapFile.open(trapFileName.c_str(), std::ios::out | std::ios::binary);
 #endif
-    _bufferPool = BufferPool::createPool(4096);
     _bufferPool->dequeue(_currentIncomingBuffer);
 
     m_nTotalTx = 0;
@@ -26,12 +25,11 @@ TgtIntf::TgtIntf(const boost::shared_ptr<const TgtConnectionConfigBase> &config)
 TgtIntf::~TgtIntf(void)
 {
     _running = false;
-    _bufferPool->iterate(boost::bind(&TgtIntf::deleteBuffersFunctor, _1));
 #ifdef CB_TRAP_TO_FILE
     _trapFile.close();
 #endif
 }
-
+/*
 int TgtIntf::deleteBuffersFunctor(std::list<boost::shared_ptr<boost::asio::mutable_buffer> > &pool)
 {
     int ret = pool.size();
@@ -45,14 +43,14 @@ int TgtIntf::deleteBuffersFunctor(std::list<boost::shared_ptr<boost::asio::mutab
     pool.clear();
     return -ret;
 }
-
-int TgtIntf::tgtRead(boost::shared_ptr<boost::asio::mutable_buffer> &b)
+*/
+int TgtIntf::tgtRead(boost::intrusive_ptr<RefCntBuffer> &b)
 {
     int ret = 0;
     if (_incomingData.waitDequeue(b, 1) == true)
     {
-        ret = boost::asio::buffer_size(*b);
-        char* data = boost::asio::buffer_cast<char*>(*b);
+        ret = boost::asio::buffer_size(b->_buffer);
+        char* data = boost::asio::buffer_cast<char*>(b->_buffer);
         data[ret] = 0;
 #ifdef CB_TRAP_TO_FILE
         _trapFile.write(data, ret);
@@ -66,11 +64,11 @@ int TgtIntf::tgtWrite(const char* szWriteData, int nBytes)
     int ret = 0;
     if (nBytes > 0)
     {
-        boost::shared_ptr<boost::asio::mutable_buffer> b;
+        boost::intrusive_ptr<RefCntBuffer> b;
         _bufferPool->dequeue(b);
 
-        boost::asio::buffer_copy(*b, boost::asio::buffer(szWriteData, nBytes));
-        *b = boost::asio::buffer(*b, nBytes);
+        boost::asio::buffer_copy(b->_buffer, boost::asio::buffer(szWriteData, nBytes));
+        b->_buffer = boost::asio::buffer(b->_buffer, nBytes);
         _outgoingData.enqueue(b);
     }
     return ret;

@@ -42,7 +42,7 @@
 #include "TerminalView.h"
 #include "Vt102Emulation.h"
 
-Q_DECLARE_METATYPE(boost::shared_ptr<boost::asio::mutable_buffer>);
+Q_DECLARE_METATYPE(boost::intrusive_ptr<RefCntBuffer>);
 
 TerminalModel::TerminalModel(const boost::shared_ptr<TgtIntf> &targetInterface) :
     _emulation(0)
@@ -56,7 +56,7 @@ TerminalModel::TerminalModel(const boost::shared_ptr<TgtIntf> &targetInterface) 
     , _targetInterface(targetInterface)
     , _closed(false)
 {
-    qRegisterMetaType<boost::shared_ptr<boost::asio::mutable_buffer> >();
+    qRegisterMetaType<boost::intrusive_ptr<RefCntBuffer> >();
     //create emulation backend
     _emulation.reset(new Vt102Emulation());
     connect(_emulation.get(), SIGNAL(stateSet(int)), this, SLOT(activityStateSet(int)));
@@ -78,7 +78,7 @@ TerminalModel::TerminalModel(const boost::shared_ptr<TgtIntf> &targetInterface) 
 
 void TerminalModel::connectToRecvText(QObject *who)
 {
-    connect(_selfListener.get(), SIGNAL(recvData(boost::shared_ptr<boost::asio::mutable_buffer>)), who, SLOT(onReceiveBlock(boost::shared_ptr<boost::asio::mutable_buffer>)));
+    connect(_selfListener.get(), SIGNAL(recvData(boost::intrusive_ptr<RefCntBuffer>)), who, SLOT(onReceiveBlock(boost::intrusive_ptr<RefCntBuffer>)));
 }
 
 void TerminalModel::setDarkBackground(bool darkBackground)
@@ -265,12 +265,12 @@ void TerminalModel::sendText(const QString &text) const
     }
 }
 
-void TerminalModel::onReceiveBlock(boost::shared_ptr<boost::asio::mutable_buffer> incoming)
+void TerminalModel::onReceiveBlock(boost::intrusive_ptr<RefCntBuffer> incoming)
 {
     if (_closed == false)
     {
-        char* buf = boost::asio::buffer_cast<char*>(*incoming);
-        int len = boost::asio::buffer_size(*incoming);
+        char* buf = boost::asio::buffer_cast<char*>(incoming->_buffer);
+        int len = boost::asio::buffer_size(incoming->_buffer);
         _emulation->receiveData(buf, len);
     }
 }

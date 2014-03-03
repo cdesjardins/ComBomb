@@ -25,7 +25,7 @@ public:
     virtual ~TgtFileIntf(void);
 
     virtual int tgtBreakConnection();
-    virtual int tgtRead(boost::shared_ptr<boost::asio::mutable_buffer> &b);
+    virtual int tgtRead(boost::intrusive_ptr<RefCntBuffer> &b);
     virtual bool tgtConnected();
     virtual void tgtGetTitle(std::string* szTitle);
 

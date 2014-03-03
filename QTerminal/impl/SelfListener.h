@@ -29,7 +29,7 @@ public:
     void join();
     virtual ~SelfListener();
 signals:
-    void recvData(boost::shared_ptr<boost::asio::mutable_buffer> incoming);
+    void recvData(boost::intrusive_ptr<RefCntBuffer> incoming);
 
 public slots:
 

@@ -39,17 +39,17 @@ int TgtFileIntf::tgtBreakConnection()
     return 0;
 }
 
-int TgtFileIntf::tgtRead(boost::shared_ptr<boost::asio::mutable_buffer> &b)
+int TgtFileIntf::tgtRead(boost::intrusive_ptr<RefCntBuffer> &b)
 {
     size_t ret = 0;
     if (_inputFile)
     {
-        char* data = boost::asio::buffer_cast<char*>(*_currentIncomingBuffer);
-        _inputFile.read(data, boost::asio::buffer_size(*_currentIncomingBuffer));
+        char* data = boost::asio::buffer_cast<char*>(_currentIncomingBuffer->_buffer);
+        _inputFile.read(data, boost::asio::buffer_size(_currentIncomingBuffer->_buffer));
         ret = (size_t)_inputFile.gcount();
         if (ret > 0)
         {
-            *_currentIncomingBuffer = boost::asio::buffer(*_currentIncomingBuffer, ret);
+            _currentIncomingBuffer->_buffer = boost::asio::buffer(_currentIncomingBuffer->_buffer, ret);
             _incomingData.enqueue(_currentIncomingBuffer);
             _bufferPool->dequeue(_currentIncomingBuffer);
         }
