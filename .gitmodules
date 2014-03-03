@@ -1,0 +1,3 @@
+[submodule "QueuePtr"]
+	path = QueuePtr
+	url = git://github.com/cdesjardins/QueuePtr.git
