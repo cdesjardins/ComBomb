@@ -8,6 +8,8 @@ Note: The makeboost python script assumes pyton 2.6 or 2.7, it will download and
 ```
 git clone https://github.com/cdesjardins/ComBomb.git
 cd ComBomb
+git submodule init
+git submodule update
 [./]makeboost.py
 ```
 Once those commands are complete open ComBomb.pro in QT Creator Based on QT 5, then run qmake, and build.
