@@ -53,10 +53,21 @@ def copyJamFile(arch, toolsetsuffix, compilerVersion):
     target = "tools/build/v2/user-config.jam"
     appendLineToFile(target, line)
  
+def searchFile(target, line):
+    ret = False
+    searchfile = open(target, "r")
+    for l in searchfile:
+        if line in l:
+            ret = True
+            break
+    searchfile.close()
+    return ret
+
 def appendLineToFile(target, line):
-    f = open (target, "a")
-    f.write(line)
-    f.close()
+    if (searchFile(target, line) == False):
+        f = open (target, "a")
+        f.write(line)
+        f.close()
 
 def runBootstrap():
     bootstrap = []
