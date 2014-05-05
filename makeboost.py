@@ -80,7 +80,7 @@ def runB2Linux(arch, toolsetsuffix, compilerVersion, extraArgs):
     os.makedirs(targetDir)
     shutil.move("stage/lib", targetDir)
 
-def runB2Windows():
+def runB2Windows(extraArgs):
     batfilefd, batfilename = tempfile.mkstemp(suffix=".bat", text=True)
     file = os.fdopen(batfilefd, 'w')
     msvsfound = False
@@ -92,7 +92,7 @@ def runB2Windows():
             visualStudioInstallDir = os.environ[envvar];
             file.write("call \"" + visualStudioInstallDir + "..\\..\\VC\\vcvarsall.bat\" x86\n")
             file.write("call bootstrap.bat msvc\n")
-            cmd = "b2 --toolset=msvc-" + str(ver) + ".0 link=static -j 8 stage --layout=system -a variant="
+            cmd = "b2 --toolset=msvc-" + str(ver) + ".0 " + " ".join(extraArgs) + " link=static -j 8 stage --layout=system -a variant="
             file.write(cmd + "release\n")
             file.write("move stage\\lib stage\\release\n")
             file.write(cmd + "debug\n")
@@ -105,15 +105,15 @@ def runB2Windows():
     if (msvsfound == False):
         print("Unable to find env var for MSVS, tried: ", msvsvars)
 
-def runB2():
+def runB2(extraArgs):
     if (platform.system() == "Windows"):
         copyJamFile("x86", "", "")
-        runB2Windows()
+        runB2Windows(extraArgs)
     else:
         #runB2Linux("x86", "", "4.8.1", ["cxxflags=-fPIC"])
         #runB2Linux("x86", "", "4.6", ["cxxflags=-fPIC"])
         #runB2Linux("x86", "", "4.4", ["cxxflags=-fPIC"])
-        runB2Linux("x86", "", "", ["cxxflags=-fPIC"])
+        runB2Linux("x86", "", "", ["cxxflags=-fPIC"] + extraArgs)
     
 def main(argv):
     try:
@@ -132,7 +132,12 @@ def main(argv):
                 shutil.rmtree(stagedir)
         os.chdir(boostname)
         runBootstrap()
-        runB2()
+        extraArgs = [
+            "--with-system",
+            "--with-thread",
+            "--with-chrono",
+            ]
+        runB2(extraArgs)
     except:
         exc_type, exc_value, exc_traceback = sys.exc_info()
         traceback.print_exception(exc_type, exc_value, exc_traceback)

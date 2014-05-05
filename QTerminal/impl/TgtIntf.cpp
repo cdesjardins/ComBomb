@@ -1,6 +1,5 @@
 #include "QTerminal/TgtIntf.h"
 #include <boost/bind.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
 /*
 ** If telnet or ssh to a remote server and it is unix based and you see
 ** ^H every time you issue a backspace, then add stty erase ^H to your
@@ -15,7 +14,7 @@ TgtIntf::TgtIntf(const boost::shared_ptr<const TgtConnectionConfigBase> &config)
     _running(true)
 {
 #ifdef CB_TRAP_TO_FILE
-    std::string trapFileName = boost::posix_time::to_iso_string(boost::posix_time::second_clock::local_time()) + ".cbd";
+    std::string trapFileName("debug.cbd");
     _trapFile.open(trapFileName.c_str(), std::ios::out | std::ios::binary);
 #endif
     _bufferPool->dequeue(_currentIncomingBuffer);
