@@ -33,8 +33,8 @@ unix:!symbian {
     INSTALLS += target
 }
 
-INCLUDEPATH += $$PWD/..
-DEPENDPATH += $$PWD/..
+INCLUDEPATH += $$PWD/.. $$PWD/../QueuePtr/include
+DEPENDPATH  += $$PWD/.. $$PWD/../QueuePtr/include
 
 # Boost
 
@@ -47,3 +47,12 @@ DEPENDPATH += $$PWD/../boost_1_55_0
 
 # Crypt lib
 win32: QMAKE_CXXFLAGS += -D_WINDOWS -DSTATIC_LIB
+
+win32: {
+QMAKE_CXXFLAGS_RELEASE -= -MD
+QMAKE_CXXFLAGS_RELEASE += -MT
+QMAKE_CXXFLAGS_DEBUG -= -MDd
+QMAKE_CXXFLAGS_DEBUG += -MTd
+QMAKE_LFLAGS_DEBUG += /NODEFAULTLIB:msvcrtd.lib
+QMAKE_LFLAGS_RELEASE += /NODEFAULTLIB:msvcrt.lib
+}

@@ -54,10 +54,8 @@ FORMS    += mainwindow.ui \
 RESOURCES += \
     ComBomb.qrc
 
-INCLUDEPATH += $$PWD/..
-DEPENDPATH += $$PWD/..
-
-
+INCLUDEPATH += $$PWD/.. $$PWD/../QueuePtr/include
+DEPENDPATH += $$PWD/..  $$PWD/../QueuePtr/include
 
 
 # QTerminal
@@ -112,3 +110,17 @@ DEPENDPATH += $$PWD/../boost_1_55_0
 
 OTHER_FILES += \
     ComBomb.rc
+
+
+
+win32: {
+QMAKE_CXXFLAGS_RELEASE -= -MD
+QMAKE_CXXFLAGS_RELEASE += -MT
+QMAKE_CXXFLAGS_DEBUG -= -MDd
+QMAKE_CXXFLAGS_DEBUG += -MTd
+QMAKE_LFLAGS_DEBUG += /NODEFAULTLIB:msvcrtd.lib
+QMAKE_LFLAGS_RELEASE += /NODEFAULTLIB:msvcrt.lib
+}
+
+
+

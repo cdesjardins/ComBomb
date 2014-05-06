@@ -1,4 +1,4 @@
-#include "cbcombobox.h"
+ #include "cbcombobox.h"
 #include <QSettings>
 
 CBComboBox::CBComboBox(QWidget *parent) :

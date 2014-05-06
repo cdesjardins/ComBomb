@@ -8,8 +8,8 @@
 #include <boost/asio/buffer.hpp>
 #include <boost/smart_ptr.hpp>
 #endif
-#include "QueuePtr/ThreadSafeQueue.h"
-#include "QueuePtr/RefCntBufferPool.h"
+#include "ThreadSafeQueue.h"
+#include "RefCntBufferPool.h"
 #include "../unparam.h"
 #include <QWidget>
 #include <fstream>

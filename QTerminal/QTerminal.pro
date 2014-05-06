@@ -25,7 +25,7 @@ SOURCES += \
     impl/KeyboardTranslator.cpp \
     impl/TgtIntf.cpp \
     impl/QTerminalConfig.cpp \
-    ../QueuePtr/RefCntBufferPool.cpp
+    ../QueuePtr/src/RefCntBufferPool.cpp
 
 HEADERS += QTerminalInterface.h \
     qterminal.h \
@@ -48,12 +48,7 @@ HEADERS += QTerminalInterface.h \
     impl/KeyboardTranslator.h \
     impl/ExtendedDefaultTranslator.h \
     QTerminalConfig.h \
-    impl/BackTabEvent.h \
-    ../QueuePtr/ThreadSafeQueue.h \
-    ../QueuePtr/ThreadSafePool.h \
-    ../QueuePtr/RefCntBufferPool.h \
-    ../QueuePtr/RefCntBuffer.h \
-    ../QueuePtr/IntrusivePtrBase.h
+    impl/BackTabEvent.h
 unix:!symbian {
     maemo5 {
         target.path = /opt/usr/lib
@@ -64,8 +59,8 @@ unix:!symbian {
 }
 
 
-INCLUDEPATH += $$PWD/..
-DEPENDPATH += $$PWD/..
+INCLUDEPATH += $$PWD/.. $$PWD/../QueuePtr/include
+DEPENDPATH  += $$PWD/.. $$PWD/../QueuePtr/include
 
 # Boost
 
@@ -75,3 +70,12 @@ win32:QMAKE_CXXFLAGS += -D_WIN32_WINNT=0x0501
 
 INCLUDEPATH += $$PWD/../boost_1_55_0
 DEPENDPATH += $$PWD/../boost_1_55_0
+
+win32: {
+QMAKE_CXXFLAGS_RELEASE -= -MD
+QMAKE_CXXFLAGS_RELEASE += -MT
+QMAKE_CXXFLAGS_DEBUG -= -MDd
+QMAKE_CXXFLAGS_DEBUG += -MTd
+QMAKE_LFLAGS_DEBUG += /NODEFAULTLIB:msvcrtd.lib
+QMAKE_LFLAGS_RELEASE += /NODEFAULTLIB:msvcrt.lib
+}
