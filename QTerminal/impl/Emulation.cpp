@@ -52,7 +52,7 @@ Emulation::Emulation() :
     _currentScreenIndex(0),
     _screen(new Screen[2]),
     _codec(0),
-    _decoder(0),
+    _decoder(NULL),
     _keyTranslator(0),
     _usesMouse(false)
 {
@@ -95,7 +95,11 @@ Emulation::~Emulation()
 {
     _windows.clear();
     _screen.reset();
-    delete _decoder;
+    if (_decoder != NULL)
+    {
+        delete _decoder;
+        _decoder = NULL;
+    }
 }
 
 /*! change between primary and alternate _screen
@@ -145,7 +149,11 @@ void Emulation::setCodec(const QTextCodec* qtc)
     Q_ASSERT(qtc);
 
     _codec = qtc;
-    delete _decoder;
+    if (_decoder != NULL)
+    {
+        delete _decoder;
+        _decoder = NULL;
+    }
     _decoder = _codec->makeDecoder();
 
     emit useUtf8Request(utf8());
