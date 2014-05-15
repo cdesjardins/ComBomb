@@ -8,8 +8,6 @@
 boost::shared_ptr<TgtSerialIntf> TgtSerialIntf::createSerialConnection(const boost::shared_ptr<const TgtConnectionConfig> &config)
 {
     boost::shared_ptr<TgtSerialIntf> ret(new TgtSerialIntf(config));
-    ret->_serialServiceThreadRun = true;
-    ret->_serialServiceThread.reset(new boost::thread(boost::bind(&TgtSerialIntf::serviceThread, ret.get())));
     ret->tgtMakeConnection();
     return ret;
 }
@@ -27,7 +25,8 @@ void TgtSerialIntf::tgtMakeConnection()
 
     _serialWriterThreadRun = true;
     _serialWriterThread.reset(new  boost::thread(boost::bind(&TgtSerialIntf::writerThread, this)));
-
+    _serialServiceThreadRun = true;
+    _serialServiceThread.reset(new boost::thread(boost::bind(&TgtSerialIntf::serviceThread, this)));
     boost::system::error_code err;
     tgtReadCallback(err, 0);
 }
@@ -36,8 +35,8 @@ void TgtSerialIntf::serviceThread()
 {
     do
     {
-        _service.run();
         _service.reset();
+        _service.poll();
     } while (_serialServiceThreadRun == true);
 }
 
@@ -77,15 +76,14 @@ TgtSerialIntf::TgtSerialIntf(const boost::shared_ptr<const TgtConnectionConfig> 
 
 TgtSerialIntf::~TgtSerialIntf ()
 {
-    tgtStopService();
     tgtDisconnect();
 }
 
 void TgtSerialIntf::tgtStopService()
 {
     _serialServiceThreadRun = false;
-    _service.stop();
-    if (_serialServiceThread->joinable())
+    //_service.stop();
+    if ((_serialServiceThread->joinable() == true) && (boost::this_thread::get_id() != _serialServiceThread->get_id()))
     {
         _serialServiceThread->join();
     }
@@ -115,6 +113,8 @@ void TgtSerialIntf::tgtReadCallback(const boost::system::error_code& error, cons
 
 int TgtSerialIntf::tgtBreakConnection(bool joinWriter)
 {
+    tgtStopService();
+
     if (_serialWriterThreadRun == true)
     {
         _serialWriterThreadRun = false;
