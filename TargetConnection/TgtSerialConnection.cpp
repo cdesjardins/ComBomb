@@ -37,6 +37,7 @@ void TgtSerialIntf::serviceThread()
     {
         _service.reset();
         _service.poll();
+        boost::this_thread::sleep_for(boost::chrono::milliseconds(1));
     } while (_serialServiceThreadRun == true);
 }
 
