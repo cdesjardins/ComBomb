@@ -3,7 +3,6 @@
 #include "CBException.h"
 #include <boost/format.hpp>
 #include <boost/thread.hpp>
-#include <boost/atomic.hpp>
 #include <boost/thread/mutex.hpp>
 
 class TgtSshInit

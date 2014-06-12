@@ -26,6 +26,8 @@ private slots:
     void onReceiveBlock(boost::intrusive_ptr<RefCntBuffer> incoming);
 signals:
     void updateStatusSignal(QString);
+    void openWindowSignal();
+    void closeWindowSignal();
 protected:
     virtual void closeEvent(QCloseEvent* event);
 private:

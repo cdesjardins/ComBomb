@@ -6,6 +6,7 @@
 #include "childform.h"
 #include <QMdiArea>
 #include <QMainWindow>
+#include <boost/atomic.hpp>
 
 namespace Ui {
 class MainWindow;
@@ -25,7 +26,10 @@ public:
     ChildForm* getActiveChildWindow();
 protected:
     explicit MainWindow(QWidget* parent = 0);
+    void enableMenuItems(bool enabled);
 private slots:
+    void openWindowSlot();
+    void closeWindowSlot();
     void updateStatusSlot(QString status);
     void on_actionOpen_triggered();
     void on_actionExit_triggered();
@@ -38,12 +42,16 @@ private slots:
 
     void on_action_Clear_scrollback_triggered();
 
+    void on_actionFind_triggered();
+signals:
+    void findSignal();
 private:
 
     Ui::MainWindow* _ui;
     QMdiArea* _mdiArea;
     FileClipboardDialog* _fileClipboardDialog;
     static MainWindow* _instance;
+    boost::atomic<int> _windowCnt;
 };
 
 #endif // MAINWINDOW_H

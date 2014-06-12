@@ -40,21 +40,23 @@ public:
         _contextMenu = new QMenu (this);
         QAction* copyAction  = _contextMenu->addAction("Copy");
         QAction* pasteAction = _contextMenu->addAction("Paste");
+        QAction* selectAllAction = _contextMenu->addAction("Select All");
+        QAction* clearScrollbackAction = _contextMenu->addAction("Clear scrollback");
         QAction* newlineAction = _contextMenu->addAction("Toggle CR/LF");
         QAction* runProcessAction = _contextMenu->addAction("Run Process");
-        QAction* clearScrollbackAction = _contextMenu->addAction("Clear scrollback");
 
         copyAction->setIcon(QIcon(":/images/page_copy.png"));
         pasteAction->setIcon(QIcon(":/images/page_paste.png"));
-        runProcessAction->setIcon(QIcon(":/images/script_gear.png"));
+        selectAllAction->setIcon(QIcon(":/images/check_box.png"));
         clearScrollbackAction->setIcon(QIcon(":/images/page_refresh.png"));
+        runProcessAction->setIcon(QIcon(":/images/script_gear.png"));
 
         newlineAction->setCheckable(true);
         connect(copyAction, SIGNAL (triggered()), this, SLOT (copyClipboard()));
         connect(pasteAction, SIGNAL (triggered()), this, SLOT (pasteClipboard()));
+        connect(clearScrollbackAction, SIGNAL (triggered()), this, SLOT (clearScrollback()));
         connect(newlineAction, SIGNAL (triggered()), this, SLOT (newlineToggle()));
         connect(runProcessAction, SIGNAL (triggered()), this, SLOT (runProcess()));
-        connect(clearScrollbackAction, SIGNAL (triggered()), this, SLOT (clearScrollback()));
 
         connect(this, SIGNAL (triggerCopy()), this, SLOT (copyClipboard()));
         connect(this, SIGNAL (triggerPaste()), this, SLOT (pasteClipboard()));

@@ -34,10 +34,21 @@ MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
     _ui(new Ui::MainWindow),
     _mdiArea(new QMdiArea()),
-    _fileClipboardDialog(new FileClipboardDialog(this))
+    _fileClipboardDialog(new FileClipboardDialog(this)),
+    _windowCnt(0)
 {
     _ui->setupUi(this);
     setCentralWidget(_mdiArea);
+    enableMenuItems(false);
+}
+
+void MainWindow::enableMenuItems(bool enabled)
+{
+    _ui->action_Run_Process->setEnabled(enabled);
+    _ui->actionCopy->setEnabled(enabled);
+    _ui->actionPaste->setEnabled(enabled);
+    _ui->actionSelect_All->setEnabled(enabled);
+    _ui->action_Clear_scrollback->setEnabled(enabled);
 }
 
 MainWindow::~MainWindow()
@@ -121,6 +132,21 @@ void MainWindow::updateStatusSlot(QString status)
     _ui->_statusBar->showMessage(status, 5000);
 }
 
+void MainWindow::openWindowSlot()
+{
+    _windowCnt.fetch_add(1);
+    enableMenuItems(true);
+}
+
+void MainWindow::closeWindowSlot()
+{
+    int cnt = _windowCnt.fetch_sub(1);
+    if (cnt == 1)
+    {
+        enableMenuItems(false);
+    }
+}
+
 void MainWindow::on_actionExit_triggered()
 {
     qApp->quit();
@@ -173,7 +199,6 @@ void MainWindow::on_actionFile_clipboard_triggered()
     }
 }
 
-
 void MainWindow::on_action_Options_triggered()
 {
     ConfigDialog configDialog(this);
@@ -195,5 +220,14 @@ void MainWindow::on_action_Clear_scrollback_triggered()
     if (activeWindow != NULL)
     {
         activeWindow->clearScrollback();
+    }
+}
+
+void MainWindow::on_actionFind_triggered()
+{
+    ChildForm* activeWindow = getActiveChildWindow();
+    if (activeWindow != NULL)
+    {
+        activeWindow->findText("test", false);
     }
 }

@@ -188,4 +188,7 @@ void QTerminalImpl::clearScrollback()
     m_terminalModel->clearScreen();
 }
 
-
+void QTerminalImpl::findText(QString findText, bool caseSensitive)
+{
+    qDebug("Find text");
+}

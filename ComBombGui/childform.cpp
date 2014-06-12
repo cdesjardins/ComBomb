@@ -16,8 +16,11 @@ ChildForm::ChildForm(const QTerminalConfig &terminalConfig, const boost::shared_
     setWindowTitle(szTitle.c_str());
     connect(targetInterface.get(), SIGNAL(updateTitleSignal(QString)), this, SLOT(updateTitleSlot(QString)));
     connect(this, SIGNAL(updateStatusSignal(QString)), MainWindow::getMainWindow(), SLOT(updateStatusSlot(QString)));
+    connect(this, SIGNAL(openWindowSignal()), MainWindow::getMainWindow(), SLOT(openWindowSlot()));
+    connect(this, SIGNAL(closeWindowSignal()), MainWindow::getMainWindow(), SLOT(closeWindowSlot()));
     setAttribute(Qt::WA_DeleteOnClose, true);
     connectToRecvText(this);
+    emit openWindowSignal();
 }
 
 void ChildForm::updateTitleSlot(QString title)
@@ -33,6 +36,7 @@ ChildForm::~ChildForm()
 void ChildForm::closeEvent(QCloseEvent* )
 {
     deleteProcess();
+    emit closeWindowSignal();
 }
 
 void ChildForm::onReceiveBlock(boost::intrusive_ptr<RefCntBuffer> incoming)
