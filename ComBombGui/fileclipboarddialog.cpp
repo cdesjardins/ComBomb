@@ -72,6 +72,7 @@ void FileClipboardDialog::sendItemTriggered(int index)
             }
 
             c->sendText(text);
+            QApplication::setActiveWindow(MainWindow::getMainWindow());
         }
     }
 }
