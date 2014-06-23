@@ -57,7 +57,6 @@
     <addaction name="actionCopy"/>
     <addaction name="actionPaste"/>
     <addaction name="actionSelect_All"/>
-    <addaction name="actionFind"/>
     <addaction name="action_Clear_scrollback"/>
     <addaction name="separator"/>
     <addaction name="actionFile_clipboard"/>
@@ -191,11 +190,6 @@
    </property>
    <property name="text">
     <string>C&amp;lear scrollback</string>
-   </property>
-  </action>
-  <action name="actionFind">
-   <property name="text">
-    <string>&amp;Find</string>
    </property>
   </action>
  </widget>

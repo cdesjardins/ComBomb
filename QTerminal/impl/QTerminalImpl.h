@@ -46,7 +46,6 @@ public:
     void setCursorType(CursorType type, bool blinking);
     void applyTerminalConfig(const QTerminalConfig &terminalConfig);
     bool eventFilter(QObject *, QEvent *event);
-    void findText(QString findText, bool caseSensitive);
 public slots:
     void copyClipboard();
     void pasteClipboard();

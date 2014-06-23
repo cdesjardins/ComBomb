@@ -223,11 +223,3 @@ void MainWindow::on_action_Clear_scrollback_triggered()
     }
 }
 
-void MainWindow::on_actionFind_triggered()
-{
-    ChildForm* activeWindow = getActiveChildWindow();
-    if (activeWindow != NULL)
-    {
-        activeWindow->findText("test", false);
-    }
-}

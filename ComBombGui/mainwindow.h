@@ -39,10 +39,7 @@ private slots:
     void on_actionFile_clipboard_triggered();
     void on_action_Options_triggered();
     void on_action_Run_Process_triggered();
-
     void on_action_Clear_scrollback_triggered();
-
-    void on_actionFind_triggered();
 signals:
     void findSignal();
 private:
