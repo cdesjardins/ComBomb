@@ -28,6 +28,7 @@ void TgtSerialIntf::tgtMakeConnection()
     _serialServiceThreadRun = true;
     _serialServiceThread.reset(new boost::thread(boost::bind(&TgtSerialIntf::serviceThread, this)));
     boost::system::error_code err;
+    _bufferPool->dequeue(_currentIncomingBuffer);
     tgtReadCallback(err, 0);
 }
 

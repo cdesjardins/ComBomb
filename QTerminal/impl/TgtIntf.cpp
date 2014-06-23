@@ -17,7 +17,6 @@ TgtIntf::TgtIntf(const boost::shared_ptr<const TgtConnectionConfigBase> &config)
     std::string trapFileName("debug.cbd");
     _trapFile.open(trapFileName.c_str(), std::ios::out | std::ios::binary);
 #endif
-    _bufferPool->dequeue(_currentIncomingBuffer);
 
     m_nTotalTx = 0;
     m_nTotalRx = 0;
@@ -42,6 +41,7 @@ int TgtIntf::tgtRead(boost::intrusive_ptr<RefCntBuffer> &b)
 #ifdef CB_TRAP_TO_FILE
         _trapFile.write(data, ret);
 #endif
+        m_nTotalRx += ret;
     }
     return ret;
 }
@@ -57,6 +57,7 @@ int TgtIntf::tgtWrite(const char* szWriteData, int nBytes)
         boost::asio::buffer_copy(b->_buffer, boost::asio::buffer(szWriteData, nBytes));
         b->_buffer = boost::asio::buffer(b->_buffer, nBytes);
         _outgoingData.enqueue(b);
+        m_nTotalTx += nBytes;
     }
     return ret;
 }

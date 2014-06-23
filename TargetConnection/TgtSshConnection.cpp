@@ -234,6 +234,7 @@ void TgtSshIntf::sshThread()
             break;
         }
     }
+
     cryptDestroySession(_sshData->_cryptSession);
     if (attemptReconnect == true)
     {
@@ -278,22 +279,27 @@ bool TgtSshIntf::sshRecv()
     int outDataLength;
     int status;
     bool ret = true;
+    boost::intrusive_ptr<RefCntBuffer> currentIncomingBuffer;
+    _bufferPool->dequeue(currentIncomingBuffer);
     do
     {
-        char* data = boost::asio::buffer_cast<char*>(_currentIncomingBuffer->_buffer);
         outDataLength = 0;
-        status = cryptPopData(_sshData->_cryptSession, data, boost::asio::buffer_size(_currentIncomingBuffer->_buffer), &outDataLength);
-        if (cryptStatusError(status))
+        if (currentIncomingBuffer != NULL)
         {
-            ret = false;
+            char* data = boost::asio::buffer_cast<char*>(currentIncomingBuffer->_buffer);
+            status = cryptPopData(_sshData->_cryptSession, data, boost::asio::buffer_size(currentIncomingBuffer->_buffer), &outDataLength);
+            if (cryptStatusError(status))
+            {
+                ret = false;
+            }
+            else if (outDataLength > 0)
+            {
+                currentIncomingBuffer->_buffer = boost::asio::buffer(currentIncomingBuffer->_buffer, outDataLength);
+                _incomingData.enqueue(currentIncomingBuffer);
+                _bufferPool->dequeue(currentIncomingBuffer);
+            }
         }
-        else if (outDataLength > 0)
-        {
-            _currentIncomingBuffer->_buffer = boost::asio::buffer(_currentIncomingBuffer->_buffer, outDataLength);
-            _incomingData.enqueue(_currentIncomingBuffer);
-            _bufferPool->dequeue(_currentIncomingBuffer);
-        }
-    } while ((outDataLength > 0) && (cryptStatusOK(status)));
+    } while ((outDataLength > 0) && (cryptStatusOK(status)) && (_sshData->_sshThreadRun == true));
     return ret;
 }
 

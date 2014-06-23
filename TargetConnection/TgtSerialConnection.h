@@ -55,6 +55,7 @@ protected:
     boost::scoped_ptr<boost::thread> _serialWriterThread;
     volatile bool _serialWriterThreadRun;
     volatile bool _serialServiceThreadRun;
+    boost::intrusive_ptr<RefCntBuffer> _currentIncomingBuffer;
 };
 
 

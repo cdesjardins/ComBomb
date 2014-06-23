@@ -12,6 +12,7 @@ ChildForm::ChildForm(const QTerminalConfig &terminalConfig, const boost::shared_
 {
     std::string szTitle;
     ui->setupUi(this);
+
     targetInterface->tgtGetTitle(&szTitle);
     setWindowTitle(szTitle.c_str());
     connect(targetInterface.get(), SIGNAL(updateTitleSignal(QString)), this, SLOT(updateTitleSlot(QString)));

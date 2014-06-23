@@ -277,11 +277,11 @@ void TerminalModel::onReceiveBlock(boost::intrusive_ptr<RefCntBuffer> incoming)
 
 TerminalModel::~TerminalModel()
 {
+    _targetInterface.reset();
     _selfListener->join();
     _selfListener.reset();
     _emulation.reset();
     _views.clear();
-    _targetInterface.reset();
 }
 
 void TerminalModel::setProfileKey(const QString& key)

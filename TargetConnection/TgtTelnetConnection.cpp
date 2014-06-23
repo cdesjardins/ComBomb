@@ -346,7 +346,7 @@ int TgtTelnetIntf::TgtRead(char* szReadData, int nMaxBytes)
     nNumBytes = recv(m_nSocket, m_sTelnetRx, sizeof(m_sTelnetRx), 0);
     if (nNumBytes > 0)
     {
-        m_nTotalRx += nNumBytes;
+        //m_nTotalRx += nNumBytes;
     }
     else if ((nNumBytes == SOCKET_ERROR) && (WSAGetLastError() != WSAEWOULDBLOCK))
     {
@@ -364,7 +364,7 @@ int TgtTelnetIntf::TgtWrite(char* szWriteData, int nBytes)
     nNumBytes = send(m_nSocket, szWriteData, nBytes, 0);
     if (nNumBytes > 0)
     {
-        m_nTotalTx += nNumBytes;
+        //m_nTotalTx += nNumBytes;
     }
     else if (nNumBytes == SOCKET_ERROR)
     {

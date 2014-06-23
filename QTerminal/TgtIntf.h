@@ -60,7 +60,6 @@ protected:
     ThreadSafeQueue<boost::intrusive_ptr<RefCntBuffer> > _incomingData;
     ThreadSafeQueue<boost::intrusive_ptr<RefCntBuffer> > _outgoingData;
     boost::shared_ptr<RefCntBufferPool> _bufferPool;
-    boost::intrusive_ptr<RefCntBuffer> _currentIncomingBuffer;
     boost::shared_ptr<const TgtConnectionConfigBase> _connectionConfig;
 private:
     bool _running;
