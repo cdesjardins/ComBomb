@@ -53,7 +53,8 @@ boost::shared_ptr<const TgtSshIntf::TgtConnectionConfig> OpenDialog::getSshConfi
                                                                ui->hostNameComboBox->currentText().toLocal8Bit().constData(),
                                                                ui->portNumLineEdit->text().toInt(),
                                                                ui->userNameComboBox->currentText().toLocal8Bit().constData(),
-                                                               ui->passwordLineEdit->text().toLocal8Bit().constData()));
+                                                               ui->passwordLineEdit->text().toLocal8Bit().constData(),
+                                                               ui->privKeyFileComboBox->currentText().toLocal8Bit().constData()));
     return ret;
 }
 
@@ -166,3 +167,18 @@ void OpenDialog::on_browseButton_clicked()
     ui->fileNameComboBox->setCurrentIndex(0);
 }
 
+void OpenDialog::on_privKeyBrowseButton_clicked()
+{
+    QString fileName;
+    QString dirName = ui->privKeyFileComboBox->currentText();
+    if (dirName.isEmpty() == true)
+    {
+        dirName = QDir::homePath() + "/.ssh";
+    }
+    fileName = QFileDialog::getOpenFileName(this, tr("Private key files"), dirName, tr("PKCS (*.p12 *.p15);;All files (*.*)"));
+    if (fileName.isNull() == false)
+    {
+        ui->privKeyFileComboBox->insertItem(0, fileName);
+        ui->privKeyFileComboBox->setCurrentIndex(0);
+    }
+}

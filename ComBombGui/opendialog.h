@@ -34,6 +34,8 @@ private slots:
     void on_browseButton_clicked();
     void hostNameSelectionChanged(int x);
 
+    void on_privKeyBrowseButton_clicked();
+
 private:
     void addComPorts();
     void addBaudRates();

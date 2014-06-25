@@ -125,6 +125,15 @@ void TgtSshIntf::tgtMakeConnection()
         cryptDestroySession(_sshData->_cryptSession);
         throw CB_EXCEPTION_STR(CBException::CbExcp, errmsg.c_str());
     }
+
+    status = cryptSetAttribute(_sshData->_cryptSession, CRYPT_SESSINFO_SERVER_PORT, connectionConfig->_portNum);
+    if (cryptStatusError(status))
+    {
+        tgtGetErrorMsg(&errmsg, status, "Unable to set port");
+        cryptDestroySession(_sshData->_cryptSession);
+        throw CB_EXCEPTION_STR(CBException::CbExcp, errmsg.c_str());
+    }
+
     status = cryptSetAttribute(_sshData->_cryptSession, CRYPT_OPTION_NET_CONNECTTIMEOUT, 6);
     if (cryptStatusError(status))
     {
@@ -172,15 +181,29 @@ void TgtSshIntf::tgtMakeConnection()
         cryptDestroySession(_sshData->_cryptSession);
         throw CB_EXCEPTION_STR(CBException::CbExcp, errmsg.c_str());
     }
-    status = cryptSetAttributeString(_sshData->_cryptSession,
-                                     CRYPT_SESSINFO_PASSWORD,
-                                     connectionConfig->_password.c_str(),
-                                     connectionConfig->_password.length());
-    if (cryptStatusError(status))
+
+    bool privateKeyUsed = false;
+    /*
+     *  To generate PKCS 12 from id_rsa:
+     * openssl req -new -x509 -key ~/.ssh/id_rsa -out ssh-cert.pem
+     * openssl pkcs12 -export -in ssh-certs.pem -inkey ~/.ssh/id_rsa -out ssh-key.p12
+     */
+    if (connectionConfig->_privKeyFile.empty() == false)
     {
-        tgtGetErrorMsg(&errmsg, status, "Unable to set password");
-        cryptDestroySession(_sshData->_cryptSession);
-        throw CB_EXCEPTION_STR(CBException::CbExcp, errmsg.c_str());
+        privateKeyUsed = tryPrivateKey(connectionConfig);
+    }
+    if (privateKeyUsed == false)
+    {
+        status = cryptSetAttributeString(_sshData->_cryptSession,
+                                         CRYPT_SESSINFO_PASSWORD,
+                                         connectionConfig->_password.c_str(),
+                                         connectionConfig->_password.length());
+        if (cryptStatusError(status))
+        {
+            tgtGetErrorMsg(&errmsg, status, "Unable to set password");
+            cryptDestroySession(_sshData->_cryptSession);
+            throw CB_EXCEPTION_STR(CBException::CbExcp, errmsg.c_str());
+        }
     }
 
     status = cryptSetAttribute(_sshData->_cryptSession, CRYPT_SESSINFO_ACTIVE, true);
@@ -194,6 +217,36 @@ void TgtSshIntf::tgtMakeConnection()
     {
         _sshData->_sshThread.reset(new boost::thread(boost::bind(&TgtSshIntf::sshThread, this)));
     }
+}
+
+bool TgtSshIntf::tryPrivateKey(boost::shared_ptr<const TgtConnectionConfig> connectionConfig)
+{
+    bool ret = false;
+    CRYPT_KEYSET cryptKeyset;
+    CRYPT_CONTEXT cryptContext;
+    int status;
+    std::string errmsg;
+
+    status = cryptKeysetOpen(&cryptKeyset, CRYPT_UNUSED, CRYPT_KEYSET_FILE, connectionConfig->_privKeyFile.c_str(), CRYPT_KEYOPT_READONLY);
+    if (cryptStatusError(status) == false)
+    {
+        status = cryptGetPrivateKey(cryptKeyset, &cryptContext, CRYPT_KEYID_NAME, "[none]", connectionConfig->_password.c_str());
+        if (cryptStatusError(status) == false)
+        {
+            ret = true;
+            cryptKeysetClose(cryptKeyset);
+            status = cryptSetAttribute(_sshData->_cryptSession, CRYPT_SESSINFO_PRIVATEKEY, cryptContext);
+            if (cryptStatusError(status))
+            {
+                tgtGetErrorMsg(&errmsg, status, "Unable to set private key");
+                cryptDestroySession(_sshData->_cryptSession);
+                throw CB_EXCEPTION_STR(CBException::CbExcp, errmsg.c_str());
+            }
+            cryptDestroyContext(cryptContext);
+        }
+    }
+
+    return ret;
 }
 
 int TgtSshIntf::tgtBreakConnection()
