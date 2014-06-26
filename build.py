@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import shutil, sys, os, platform
+import shutil, sys, os, platform, createVersion, zipfile
 from subprocess import call
 
 def rmerror(function, path, excinfo):
@@ -17,21 +17,59 @@ def delBuildTree(delDir):
             break
 
 def which(file):
-    for path in os.environ["PATH"].split(":"):
+    if (platform.system() == "Windows"):
+        file += ".exe"
+    for path in os.environ["PATH"].split(os.pathsep):
         if os.path.exists(path + "/" + file):
                 return path + "/" + file
     return None
 
+def zipItWindows(filename, qtDir):
+    files = {
+        "ComBombGui/release/ComBombGui.exe": "ComBombGui.exe",
+        qtDir + "/Qt5Widgets.dll": "Qt5Widgets.dll",
+        qtDir + "/Qt5Gui.dll": "Qt5Gui.dll",
+        qtDir + "/libGLESv2.dll": "libGLESv2.dll",
+        qtDir + "/libEGL.dll": "libEGL.dll",
+        qtDir + "/Qt5Core.dll": "Qt5Core.dll",
+        qtDir + "/icuin51.dll": "icuin51.dll",
+        qtDir + "/icudt51.dll": "icudt51.dll",
+        qtDir + "/icuuc51.dll": "icuuc51.dll",
+        qtDir + "/../plugins/platforms/qminimal.dll": "platforms/qminimal.dll",
+        qtDir + "/../plugins/platforms/qwindows.dll": "platforms/qwindows.dll",
+    }
+    filename += ".zip"
+    combombZip = zipfile.ZipFile(filename, "w")
+    for k, v in files.iteritems():
+        print(k)
+        combombZip.write(k, v, zipfile.ZIP_DEFLATED)
+    
+def zipIt(gitVerStr, qtDir):
+    vers = gitVerStr.split("-")
+    filename = "ComBomb-" + vers[0] + "-" + vers[1]
+    if (platform.system() == "Windows"):
+        zipItWindows(filename, qtDir)
+    
 def main(argv):
     delBuildTree("build")
     os.makedirs("build")
     os.chdir("build")
-    print(which("qmake"))
-    call(["qmake", ".."])
+    CreateVer = createVersion.CreateVer(sys.argv[1:])
+    gitVerStr = CreateVer.run()
+    if (gitVerStr.find("dirty")):
+        print("Building on dirty codebase: " + gitVerStr)
+        #os._exit(1)
+    qmake = which("qmake")
+    (qtDir, tail) = os.path.split(qmake)
+    call([qmake, ".."])
     if (platform.system() == "Windows"):
         call(["nmake"])
+        pass
     else:
         call(["make", "-j"])
+    zipIt(gitVerStr, qtDir)
+    
+    print("Done")
 
 if __name__ == "__main__":
     main(sys.argv[1:])

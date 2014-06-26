@@ -19,6 +19,7 @@ class CreateVer:
         f.write("#define CB_GIT_VER_STR \"" + gitVerStr + "\"\n")
         f.close()
         #touch("../../ComBomb/ComBombGui/versioning.h")
+        return gitVerStr
 
 
 if __name__ == "__main__":
