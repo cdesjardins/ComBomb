@@ -70,6 +70,9 @@ def main(argv):
         print("Building on dirty codebase: " + gitVerStr)
         #os._exit(1)
     qmake = which("qmake")
+    if (qmake == None):
+        print("Qmake not found")
+        os._exit(1)
     (qtDir, tail) = os.path.split(qmake)
     call([qmake, ".."])
     if (platform.system() == "Windows"):
