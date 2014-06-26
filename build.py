@@ -67,8 +67,7 @@ def main(argv):
     CreateVer = createVersion.CreateVer(sys.argv[1:])
     gitVerStr = CreateVer.run()
     if (gitVerStr.find("dirty") > 0):
-        print("Building on dirty codebase: " + gitVerStr)
-        #os._exit(1)
+        raw_input("Building on dirty codebase (" + gitVerStr + "): ")
     qmake = which("qmake")
     if (qmake == None):
         print("Qmake not found")
