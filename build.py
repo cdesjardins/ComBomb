@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import shutil, sys, os, platform, createVersion, zipfile
+import shutil, sys, os, platform, createVersion, zipfile, tarfile
 from subprocess import call
 
 def rmerror(function, path, excinfo):
@@ -41,14 +41,24 @@ def zipItWindows(filename, qtDir):
     filename += ".zip"
     combombZip = zipfile.ZipFile(filename, "w")
     for k, v in files.iteritems():
-        print(k)
         combombZip.write(k, v, zipfile.ZIP_DEFLATED)
     
+def zipItPosix(filename, qtDir):
+    files = {
+        "ComBombGui/ComBombGui": "ComBomb/ComBombGui",
+    }
+    filename += ".tar.bz2"
+    file = tarfile.open(filename, "w:bz2")
+    for k, v in files.iteritems():
+        file.add(k, v)
+
 def zipIt(gitVerStr, qtDir):
     vers = gitVerStr.split("-")
     filename = "ComBomb-" + vers[0] + "-" + vers[1]
     if (platform.system() == "Windows"):
         zipItWindows(filename, qtDir)
+    else:
+        zipItPosix(filename, qtDir)
     
 def main(argv):
     delBuildTree("build")
@@ -56,7 +66,7 @@ def main(argv):
     os.chdir("build")
     CreateVer = createVersion.CreateVer(sys.argv[1:])
     gitVerStr = CreateVer.run()
-    if (gitVerStr.find("dirty")):
+    if (gitVerStr.find("dirty") > 0):
         print("Building on dirty codebase: " + gitVerStr)
         #os._exit(1)
     qmake = which("qmake")
@@ -67,6 +77,7 @@ def main(argv):
         pass
     else:
         call(["make", "-j"])
+        pass
     zipIt(gitVerStr, qtDir)
     
     print("Done")

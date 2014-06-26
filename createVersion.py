@@ -11,7 +11,6 @@ class CreateVer:
         pass
         
     def run(self):
-        print os.getcwd()
         process = Popen(["git", "describe", "--dirty", "--always"], stdout=PIPE, cwd="../../ComBomb/")
         gitVerStr = process.communicate()[0].strip()
         f = open("../../ComBomb/ComBombGui/version.h", "wb")
