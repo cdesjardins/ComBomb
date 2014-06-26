@@ -46,11 +46,15 @@ def zipItWindows(filename, qtDir):
 def zipItPosix(filename, qtDir):
     files = {
         "ComBombGui/ComBombGui": "ComBomb/ComBombGui",
+        qtDir + "/../lib/libQt5Widgets.so.5": "ComBomb/libQt5Widgets.so.5",
+        qtDir + "/../lib/libQt5Core.so.5": "ComBomb/libQt5Core.so.5",
+        qtDir + "/../lib/libQt5Gui.so.5": "ComBomb/libQt5Gui.so.5",
+        qtDir + "/../lib/libicui18n.so.51": "ComBomb/libicui18n.so.51",
     }
     filename += ".tar.bz2"
     file = tarfile.open(filename, "w:bz2")
     for k, v in files.iteritems():
-        file.add(k, v)
+        file.add(os.path.realpath(k), v)
 
 def zipIt(gitVerStr, qtDir):
     vers = gitVerStr.split("-")
