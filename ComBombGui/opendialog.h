@@ -33,8 +33,8 @@ public:
 private slots:
     void on_browseButton_clicked();
     void hostNameSelectionChanged(int x);
-
     void on_privKeyBrowseButton_clicked();
+    void on__buttonBox_accepted();
 
 private:
     void addComPorts();
