@@ -10,8 +10,9 @@ git clone https://github.com/cdesjardins/ComBomb.git
 cd ComBomb
 git submodule init
 git submodule update
-git clone https://github.com/cdesjardins/cl342.git cl
 [./]makeboost.py
+cd cl
+make -j or build is msvc on windows
 ```
 
 Once those commands are complete build the cryptlib library in the cl directory, and then open ComBomb.pro in QT Creator Based on QT 5, then run qmake, and build.
