@@ -46,9 +46,7 @@
 #include "KeyboardTranslator.h"
 #include "Screen.h"
 
-#ifndef Q_MOC_RUN
 #include <boost/format.hpp>
-#endif
 
 #if defined(HAVE_XKB)
 void scrolllock_set_off();

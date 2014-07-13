@@ -22,9 +22,12 @@ def which(file):
     for path in os.environ["PATH"].split(os.pathsep):
         if os.path.exists(path + "/" + file):
                 return path + "/" + file
+    print(file + " not found")
+    os._exit(1)
     return None
 
 def zipItWindows(filename, qtDir):
+    msvs10Dir = os.environ['VS100COMNTOOLS'] + "../../VC/redist/x86/Microsoft.VC100.CRT/"
     files = {
         "ComBombGui/release/ComBombGui.exe": "ComBombGui.exe",
         qtDir + "/Qt5Widgets.dll": "Qt5Widgets.dll",
@@ -37,6 +40,8 @@ def zipItWindows(filename, qtDir):
         qtDir + "/icuuc51.dll": "icuuc51.dll",
         qtDir + "/../plugins/platforms/qminimal.dll": "platforms/qminimal.dll",
         qtDir + "/../plugins/platforms/qwindows.dll": "platforms/qwindows.dll",
+        msvs10Dir + "msvcr100.dll": "msvcr100.dll",
+        msvs10Dir + "msvcp100.dll": "msvcp100.dll",
     }
     filename += ".zip"
     combombZip = zipfile.ZipFile(filename, "w")
@@ -77,13 +82,10 @@ def main(argv):
     if (gitVerStr.find("dirty") > 0):
         raw_input("Building on dirty codebase (" + gitVerStr + "): ")
     qmake = which("qmake")
-    if (qmake == None):
-        print("Qmake not found")
-        os._exit(1)
     (qtDir, tail) = os.path.split(qmake)
     call([qmake, ".."])
     if (platform.system() == "Windows"):
-        call(["nmake"])
+        call([which("nmake")])
         pass
     else:
         call(["make", "-j"])

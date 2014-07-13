@@ -4,9 +4,12 @@
 #include <sstream>
 #include <QFileDialog>
 #include <QIntValidator>
-#ifndef Q_MOC_RUN
+#include <QSettings>
 #include <boost/asio/serial_port.hpp>
-#endif
+
+
+#define CB_OPEN_SETTINGS_ROOT   "OpenDialog/"
+#define CB_OPEN_CONN_TYPE       CB_OPEN_SETTINGS_ROOT "ConnectionType"
 
 OpenDialog::OpenDialog(QWidget* parent) :
     QDialog(parent),
@@ -21,6 +24,8 @@ OpenDialog::OpenDialog(QWidget* parent) :
     addFlowControl();
     ui->portNumLineEdit->setValidator(new QIntValidator(0, 65536, this));
     ui->passwordLineEdit->setEchoMode(QLineEdit::Password);
+    QSettings settings;
+    ui->tabWidget->setCurrentIndex(settings.value(CB_OPEN_CONN_TYPE, CB_CONN_SSH).toInt());
 }
 
 OpenDialog::ConnectionType OpenDialog::getConnectionType()
@@ -181,4 +186,10 @@ void OpenDialog::on_privKeyBrowseButton_clicked()
         ui->privKeyFileComboBox->insertItem(0, fileName);
         ui->privKeyFileComboBox->setCurrentIndex(0);
     }
+}
+
+void OpenDialog::on__buttonBox_accepted()
+{
+    QSettings settings;
+    settings.setValue(CB_OPEN_CONN_TYPE, getConnectionType());
 }
