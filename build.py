@@ -49,7 +49,11 @@ def zipItPosix(filename, qtDir):
         qtDir + "/../lib/libQt5Widgets.so.5": "ComBomb/libQt5Widgets.so.5",
         qtDir + "/../lib/libQt5Core.so.5": "ComBomb/libQt5Core.so.5",
         qtDir + "/../lib/libQt5Gui.so.5": "ComBomb/libQt5Gui.so.5",
+        qtDir + "/../lib/libQt5DBus.so.5": "ComBomb/libQt5DBus.so.5",
         qtDir + "/../lib/libicui18n.so.51": "ComBomb/libicui18n.so.51",
+        qtDir + "/../lib/libicuuc.so.51": "ComBomb/libicuuc.so.51",
+        qtDir + "/../lib/libicudata.so.51": "ComBomb/libicudata.so.51",
+        qtDir + "/../plugins/platforms/libqxcb.so": "ComBomb/platforms/libqxcb.so",
     }
     filename += ".tar.bz2"
     file = tarfile.open(filename, "w:bz2")
