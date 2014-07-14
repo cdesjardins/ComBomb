@@ -65,8 +65,10 @@ def zipItPosix(filename, qtDir):
 
 def zipIt(gitVerStr, qtDir):
     vers = gitVerStr.split("-")
-    print(vers)
-    filename = "ComBomb-" + vers[0] + "-" + vers[1]
+
+    filename = "ComBomb-" + vers[0]
+    if (len(vers) > 1):
+        filename = filename + "-" + vers[1]
     if (platform.system() == "Windows"):
         zipItWindows(filename, qtDir)
     else:
@@ -84,7 +86,7 @@ def main(argv):
     (qtDir, tail) = os.path.split(qmake)
     call([qmake, ".."])
     if (platform.system() == "Windows"):
-        #call([which("jom")])
+        call([which("jom")])
         pass
     else:
         call(["make", "-j"])
