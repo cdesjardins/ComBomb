@@ -32,8 +32,6 @@ def zipItWindows(filename, qtDir):
         "ComBombGui/release/ComBombGui.exe": "ComBombGui.exe",
         qtDir + "/Qt5Widgets.dll": "Qt5Widgets.dll",
         qtDir + "/Qt5Gui.dll": "Qt5Gui.dll",
-        qtDir + "/libGLESv2.dll": "libGLESv2.dll",
-        qtDir + "/libEGL.dll": "libEGL.dll",
         qtDir + "/Qt5Core.dll": "Qt5Core.dll",
         qtDir + "/icuin52.dll": "icuin52.dll",
         qtDir + "/icudt52.dll": "icudt52.dll",
@@ -85,7 +83,7 @@ def main(argv):
     (qtDir, tail) = os.path.split(qmake)
     call([qmake, ".."])
     if (platform.system() == "Windows"):
-        call([which("nmake")])
+        call([which("jom")])
         pass
     else:
         call(["make", "-j"])
