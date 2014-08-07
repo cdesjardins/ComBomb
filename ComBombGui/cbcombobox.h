@@ -10,6 +10,7 @@ public:
     explicit CBComboBox(QWidget *parent = 0);
     ~CBComboBox();
     void addOrUpdateItem(const QString &item);
+    void setDefault(const QString &defaultVal);
 signals:
 
 public slots:
@@ -24,7 +25,8 @@ protected:
     void restoreComboBox();
     void restoreEditableComboBox();
     void restoreStaticComboBox();
-
+private:
+    QString _default;
 };
 
 #endif // CBCOMBOBOX_H

@@ -16,7 +16,7 @@ public:
     explicit ConfigDialog(QWidget *parent = 0);
     ~ConfigDialog();
 
-    static void getTerminalConfig(QTerminalConfig *terminalConfig);
+    static bool getTerminalConfig(QTerminalConfig *terminalConfig);
     static QStringList getPortListSettings();
 protected:
     static QStringList getPortListDefaults(QString basePortName, int start, int stop);

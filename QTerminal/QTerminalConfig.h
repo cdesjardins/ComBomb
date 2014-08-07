@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <QDataStream>
+#include <QFont>
 #include "unparam.h"
 
 class QTerminalConfig
@@ -10,6 +11,7 @@ class QTerminalConfig
 public:
     QTerminalConfig();
     QString _wordSelectionDelimiters;
+    QFont _font;
 };
 
 QDataStream &operator<<(QDataStream &out, const QTerminalConfig &q);

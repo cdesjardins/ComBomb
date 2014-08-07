@@ -20,9 +20,18 @@ ConfigDialog::ConfigDialog(QWidget *parent) :
     QTerminalConfig terminalConfig;
     ui->setupUi(this);
 
-    ConfigDialog::getTerminalConfig(&terminalConfig);
+    if (ConfigDialog::getTerminalConfig(&terminalConfig) == true)
+    {
+        ui->fontComboBox->setCurrentFont(terminalConfig._font);
+    }
     ui->wordSelectionDelimitersLineEdit->setText(terminalConfig._wordSelectionDelimiters);
-
+    for (int fontSize = 6; fontSize < 20; fontSize++)
+    {
+        std::stringstream fontSizeStr;
+        fontSizeStr << fontSize;
+        ui->fontSizeComboBox->addItem(fontSizeStr.str().c_str(), fontSize);
+    }
+    ui->fontSizeComboBox->setDefault("12");
     populateComPortListWidget();
 }
 
@@ -118,6 +127,8 @@ void ConfigDialog::on_buttonBox_accepted()
     QTerminalConfig terminalConfig;
     QDataStream q(&qbytes, QIODevice::WriteOnly);
     terminalConfig._wordSelectionDelimiters = ui->wordSelectionDelimitersLineEdit->text().toLocal8Bit().constData();
+    terminalConfig._font = ui->fontComboBox->currentFont();
+    terminalConfig._font.setPointSize(ui->fontSizeComboBox->currentData().toInt());
     q << terminalConfig;
 
     settings.setValue(CB_CONFIG_SETTINGS_ROOT "Settings", qbytes);
@@ -131,15 +142,18 @@ void ConfigDialog::on_buttonBox_accepted()
 
 }
 
-void ConfigDialog::getTerminalConfig(QTerminalConfig *terminalConfig)
+bool ConfigDialog::getTerminalConfig(QTerminalConfig *terminalConfig)
 {
+    bool ret = false;
     QSettings settings;
     QByteArray qbytes(settings.value(CB_CONFIG_SETTINGS_ROOT "Settings").toByteArray());
     if (qbytes.length() > 0)
     {
         QDataStream q(qbytes);
         q >> *terminalConfig;
+        ret = true;
     }
+    return ret;
 }
 
 

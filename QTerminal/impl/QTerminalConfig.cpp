@@ -9,6 +9,7 @@ QTerminalConfig::QTerminalConfig()
 QDataStream &operator<<(QDataStream &out, const QTerminalConfig &q)
 {
     out << q._wordSelectionDelimiters;
+    out << q._font;
     return out;
 }
 
@@ -16,5 +17,6 @@ QDataStream &operator>>(QDataStream &in, QTerminalConfig &q)
 {
     q = QTerminalConfig();
     in >> q._wordSelectionDelimiters;
+    in >> q._font;
     return in;
 }

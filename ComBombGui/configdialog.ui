@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>174</width>
-    <height>301</height>
+    <height>469</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,28 +18,6 @@
     <normaloff>:/images/ComBomb16.png</normaloff>:/images/ComBomb16.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
-    <widget class="QGroupBox" name="groupBox">
-     <property name="title">
-      <string>Word selection delimiters</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <widget class="QLineEdit" name="wordSelectionDelimitersLineEdit"/>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="0">
     <widget class="QGroupBox" name="groupBox_2">
      <property name="title">
@@ -52,9 +30,71 @@
      </layout>
     </widget>
    </item>
+   <item row="0" column="0">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Word selection delimiters</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QLineEdit" name="wordSelectionDelimitersLineEdit"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QGroupBox" name="groupBox_3">
+     <property name="title">
+      <string>Font</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <widget class="QFontComboBox" name="fontComboBox">
+        <property name="fontFilters">
+         <set>QFontComboBox::MonospacedFonts</set>
+        </property>
+        <property name="currentFont">
+         <font>
+          <family>Courier</family>
+         </font>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Font size</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="CBComboBox" name="fontSizeComboBox">
+        <property name="currentText">
+         <string/>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>CBComboBox</class>
+   <extends>QComboBox</extends>
+   <header>cbcombobox.h</header>
+  </customwidget>
   <customwidget>
    <class>CBListWidget</class>
    <extends>QListWidget</extends>

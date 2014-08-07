@@ -44,16 +44,6 @@ void QTerminalImpl::initialize(const QTerminalConfig &terminalConfig, const boos
 
     connect(m_terminalView.get(), SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(handleCustomContextMenuRequested(QPoint)));
 
-#ifdef Q_OS_MAC
-    QFont font = QFont("Monaco");
-    font.setStyleHint(QFont::TypeWriter);
-    font.setPointSize(11);
-#else
-    QFont font = QFont("Monospace");
-    font.setStyleHint(QFont::TypeWriter);
-    font.setPointSize(10);
-#endif
-    setTerminalFont(font);
     setFocusProxy(m_terminalView.get());
 
     m_terminalModel.reset(new TerminalModel(targetInterface));
@@ -104,6 +94,7 @@ void QTerminalImpl::connectToRecvText(QObject *who)
 void QTerminalImpl::applyTerminalConfig(const QTerminalConfig &terminalConfig)
 {
     m_terminalView->setWordCharacters(terminalConfig._wordSelectionDelimiters);
+    setTerminalFont(terminalConfig._font);
 }
 
 void QTerminalImpl::setTerminalFont(const QFont &font)

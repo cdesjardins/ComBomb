@@ -83,7 +83,11 @@ void CBComboBox::restoreStaticComboBox()
 {
     QSettings settings;
     QString name = getName();
-    QString value = settings.value(name, QString()).toString();
+    QString value = settings.value(name).toString();
+    if (value.length() == 0)
+    {
+        value = _default;
+    }
     if (value.length() > 0)
     {
         int index = findText(value);
@@ -125,3 +129,7 @@ void CBComboBox::addOrUpdateItem(const QString &item)
     setCurrentIndex(0);
 }
 
+void CBComboBox::setDefault(const QString &defaultVal)
+{
+    _default = defaultVal;
+}
