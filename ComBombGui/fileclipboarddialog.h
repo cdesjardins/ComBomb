@@ -19,13 +19,20 @@ public:
 protected:
     virtual void showEvent(QShowEvent* event);
     virtual void hideEvent(QHideEvent* event);
-
+    void loadFileClipboardSettings();
+    void saveFileClipboardSetting(int row);
+    void loadNewLineSettings();
 private slots:
     void sendItemTriggered(int index);
+
+    void on_fileClipboardTable_cellChanged(int row, int column);
+
+    void on_newLineCheckBox_toggled(bool checked);
 
 private:
     Ui::FileClipboardDialog* ui;
     FileClipboardHeader* _fileClipboardHeader;
+    bool _fileClipboardLoaded;
 };
 
 #endif // FILECLIPBOARDDIALOG_H
