@@ -24,6 +24,25 @@ void CBComboBox::showEvent(QShowEvent *)
 
 void CBComboBox::saveComboBox()
 {
+    if (isEditable() == true)
+    {
+        saveEditableComboBox();
+    }
+    else
+    {
+        saveStaticComboBox();
+    }
+}
+
+void CBComboBox::saveStaticComboBox()
+{
+    QSettings settings;
+    QString name = getName();
+    settings.setValue(name, currentText());
+}
+
+void CBComboBox::saveEditableComboBox()
+{
     QSettings settings;
     QStringList itemList;
     int i;
@@ -49,6 +68,33 @@ void CBComboBox::saveComboBox()
 }
 
 void CBComboBox::restoreComboBox()
+{
+    if (isEditable() == true)
+    {
+        restoreEditableComboBox();
+    }
+    else
+    {
+        restoreStaticComboBox();
+    }
+}
+
+void CBComboBox::restoreStaticComboBox()
+{
+    QSettings settings;
+    QString name = getName();
+    QString value = settings.value(name, QString()).toString();
+    if (value.length() > 0)
+    {
+        int index = findText(value);
+        if (index >= 0)
+        {
+            setCurrentIndex(index);
+        }
+    }
+}
+
+void CBComboBox::restoreEditableComboBox()
 {
     QSettings settings;
     QString name = getName();

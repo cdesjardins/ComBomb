@@ -18,7 +18,13 @@ protected:
     virtual void showEvent(QShowEvent * event);
     QString getName();
     void saveComboBox();
+    void saveEditableComboBox();
+    void saveStaticComboBox();
+
     void restoreComboBox();
+    void restoreEditableComboBox();
+    void restoreStaticComboBox();
+
 };
 
 #endif // CBCOMBOBOX_H

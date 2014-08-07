@@ -184,17 +184,17 @@
            </widget>
           </item>
           <item row="3" column="0">
-           <widget class="QComboBox" name="parityComboBox">
+           <widget class="CBComboBox" name="parityComboBox">
             <property name="currentText">
              <string/>
             </property>
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="QComboBox" name="comPortComboBox"/>
+           <widget class="CBComboBox" name="comPortComboBox"/>
           </item>
           <item row="1" column="1">
-           <widget class="QComboBox" name="baudRateComboBox">
+           <widget class="CBComboBox" name="baudRateComboBox">
             <property name="currentText">
              <string/>
             </property>
@@ -215,7 +215,7 @@
            </widget>
           </item>
           <item row="3" column="1">
-           <widget class="QComboBox" name="stopBitsComboBox">
+           <widget class="CBComboBox" name="stopBitsComboBox">
             <property name="currentText">
              <string/>
             </property>
@@ -229,7 +229,7 @@
            </widget>
           </item>
           <item row="5" column="0">
-           <widget class="QComboBox" name="byteSizeComboBox">
+           <widget class="CBComboBox" name="byteSizeComboBox">
             <property name="currentText">
              <string/>
             </property>
@@ -243,7 +243,7 @@
            </widget>
           </item>
           <item row="5" column="1">
-           <widget class="QComboBox" name="flowControlComboBox">
+           <widget class="CBComboBox" name="flowControlComboBox">
             <property name="currentText">
              <string/>
             </property>
