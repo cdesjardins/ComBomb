@@ -26,7 +26,6 @@ FileClipboardDialog::FileClipboardDialog(QWidget* parent) :
 
 FileClipboardDialog::~FileClipboardDialog()
 {
-    QSettings settings;
     if (isHidden() == false)
     {
         hideEvent(NULL);
