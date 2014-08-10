@@ -35,40 +35,6 @@ def extractTar():
     file.extractall()
     file.close()
 
-def copyJamFile(arch, toolsetsuffix, compilerVersion):
-    compiler = arch + toolsetsuffix
-    source = ""
-    if (platform.system() == "Windows"):
-        line = "using msvc ;\n"
-    else:
-        if (arch == "x86"):
-            if (len(compilerVersion) == 0):
-                line = "using gcc : x86 : g++ ;\n"
-            else:
-                line = "using gcc : " + compiler + compilerVersion + " : g++-" + compilerVersion + " ;\n"
-        elif (compiler == "arm"):
-            line = "using gcc : arm : arm-linux-gnueabihf-g++ ;\n"
-        else:
-            raise Exception("Inavlid compiler: " + compiler)
-    target = "tools/build/v2/user-config.jam"
-    appendLineToFile(target, line)
- 
-def searchFile(target, line):
-    ret = False
-    searchfile = open(target, "r")
-    for l in searchfile:
-        if line in l:
-            ret = True
-            break
-    searchfile.close()
-    return ret
-
-def appendLineToFile(target, line):
-    if (searchFile(target, line) == False):
-        f = open (target, "a")
-        f.write(line)
-        f.close()
-
 def runBootstrap():
     bootstrap = []
     # bootstrap on windows is done as part of runB2Windows becuase it needs the vcvars also
@@ -76,20 +42,8 @@ def runBootstrap():
         bootstrap = ["./bootstrap.sh"]
         call(bootstrap)
 
-def which(filename):
-    for path in os.environ["PATH"].split(os.pathsep):
-        if os.path.exists(path + "/" + filename):
-                return path + "/" + filename
-    return None
-    
-def runB2Linux(arch, toolsetsuffix, compilerVersion, extraArgs):
-    #copyJamFile(arch, toolsetsuffix, compilerVersion)
-    call(["./b2", "link=static", "-j", "8", "stage", "-a", "toolset=gcc-" + arch + toolsetsuffix + compilerVersion] + extraArgs)
-    targetDir = "stage/" + arch
-    if (len(compilerVersion) > 0):
-         targetDir += "-" + compilerVersion
-    os.makedirs(targetDir)
-    shutil.move("stage/lib", targetDir)
+def runB2Linux(extraArgs):
+    call(["./b2", "link=static", "-j", "8", "stage", "-a", "toolset=gcc"] + extraArgs)
 
 def runB2Windows(extraArgs):
     batfilefd, batfilename = tempfile.mkstemp(suffix=".bat", text=True)
@@ -118,13 +72,10 @@ def runB2Windows(extraArgs):
 
 def runB2(extraArgs):
     if (platform.system() == "Windows"):
-        #copyJamFile("x86", "", "")
         runB2Windows(extraArgs)
     else:
-        #runB2Linux("x86", "", "4.8.1", ["cxxflags=-fPIC"])
-        #runB2Linux("x86", "", "4.6", ["cxxflags=-fPIC"])
-        #runB2Linux("x86", "", "4.4", ["cxxflags=-fPIC"])
-        runB2Linux("x86", "", "", ["cxxflags=-fPIC"] + extraArgs)
+        extraArgs.append(["cxxflags=-fPIC"]);
+        runB2Linux(extraArgs)
     
 def main(argv):
     try:
@@ -155,9 +106,4 @@ def main(argv):
     
 if __name__ == "__main__":
     main(sys.argv[1:])
-
-#using gcc : x86 : g++ ;
-#using gcc : armhf : arm-linux-gnueabihf-g++ ;
-#using gcc : arm : arm-linux-gnueabi-g++ ;
-#using msvc ;
 
