@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 import sys, traceback, tarfile, os, platform, shutil, tempfile, errno, re, urllib2
 from subprocess import call
-boostname = "boost_1_55_0"
+boostname = "boost_1_56_0"
 boostfile = boostname + ".tar.bz2"
-boosturl = "http://downloads.sourceforge.net/project/boost/boost/1.55.0/" + boostfile
+boosturl = "http://downloads.sourceforge.net/project/boost/boost/1.56.0/" + boostfile
 boostdir = boostname + "/boost"
 
 def downloadBoost():
@@ -83,7 +83,7 @@ def which(filename):
     return None
     
 def runB2Linux(arch, toolsetsuffix, compilerVersion, extraArgs):
-    copyJamFile(arch, toolsetsuffix, compilerVersion)
+    #copyJamFile(arch, toolsetsuffix, compilerVersion)
     call(["./b2", "link=static", "-j", "8", "stage", "-a", "toolset=gcc-" + arch + toolsetsuffix + compilerVersion] + extraArgs)
     targetDir = "stage/" + arch
     if (len(compilerVersion) > 0):
@@ -118,7 +118,7 @@ def runB2Windows(extraArgs):
 
 def runB2(extraArgs):
     if (platform.system() == "Windows"):
-        copyJamFile("x86", "", "")
+        #copyJamFile("x86", "", "")
         runB2Windows(extraArgs)
     else:
         #runB2Linux("x86", "", "4.8.1", ["cxxflags=-fPIC"])
