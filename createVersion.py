@@ -13,7 +13,7 @@ class CreateVer:
     def run(self):
         process = Popen(["git", "describe", "--dirty", "--always"], stdout=PIPE, cwd="../../ComBomb/")
         gitVerStr = process.communicate()[0].strip()
-        f = open("../../ComBomb/ComBombGui/version.h", "wb")
+        f = open("../../ComBomb/ComBombGui/v.h", "wb")
         f.write("/* This is a generated file, do not change, see vergen.py   */\n")
         f.write("#define CB_GIT_VER_STR \"" + gitVerStr + "\"\n")
         f.close()
