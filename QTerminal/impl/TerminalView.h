@@ -153,9 +153,6 @@ public:
         return _tripleClickMode;
     }
 
-    void setLineSpacing(uint);
-    uint lineSpacing() const;
-
     void emitSelection(bool useXselection, bool appendReturn);
 
     /**
@@ -701,8 +698,6 @@ private:
     //widgets related to the warning message that appears when the user presses Ctrl+S to suspend
     //terminal output - informing them what has happened and how to resume output
     boost::scoped_ptr<QLabel> _outputSuspendedLabel;
-
-    uint _lineSpacing;
 
     bool _colorsInverted; // true during visual bell
 

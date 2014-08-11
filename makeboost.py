@@ -43,7 +43,9 @@ def runBootstrap():
         call(bootstrap)
 
 def runB2Linux(extraArgs):
-    call(["./b2", "link=static", "-j", "8", "stage", "-a", "toolset=gcc"] + extraArgs)
+    cmd = ["./b2", "link=static", "-j", "8", "stage", "-a", "toolset=gcc"]
+    cmd.extend(extraArgs)
+    call(cmd)
 
 def runB2Windows(extraArgs):
     batfilefd, batfilename = tempfile.mkstemp(suffix=".bat", text=True)
@@ -74,7 +76,7 @@ def runB2(extraArgs):
     if (platform.system() == "Windows"):
         runB2Windows(extraArgs)
     else:
-        extraArgs.append(["cxxflags=-fPIC"]);
+        extraArgs.extend(["cxxflags=-fPIC"]);
         runB2Linux(extraArgs)
     
 def main(argv):

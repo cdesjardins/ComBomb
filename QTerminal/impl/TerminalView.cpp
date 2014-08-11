@@ -165,7 +165,7 @@ unsigned short vt100_graphics[32] =
 void TerminalView::fontChange(const QFont&)
 {
     QFontMetrics fm(font());
-    _fontHeight = fm.height() + _lineSpacing;
+    _fontHeight = fm.height() + fm.leading();
 
     // waba TerminalDisplay 1.123:
     // "Base character width on widest ASCII character. This prevents too wide
@@ -267,7 +267,6 @@ TerminalView::TerminalView(QWidget* parent)
     , _tripleClickMode(SelectWholeLine)
     , _isFixedSize(false)
     , _possibleTripleClick(false)
-    , _lineSpacing(0)
     , _colorsInverted(false)
     , _blendColor(qRgba(0, 0, 0, 0xff))
     , _cursorShape(BlockCursor)
@@ -576,7 +575,7 @@ void TerminalView::drawCursor(QPainter& painter,
                               bool& invertCharacterColor)
 {
     QRect cursorRect = rect;
-    cursorRect.setHeight(_fontHeight - _lineSpacing - 1);
+    cursorRect.setHeight(_fontHeight - 1);
 
     if (!_cursorBlinking)
     {
@@ -2756,16 +2755,5 @@ void TerminalView::outputSuspended(bool suspended)
     }
 
     _outputSuspendedLabel->setVisible(suspended);
-}
-
-uint TerminalView::lineSpacing() const
-{
-    return _lineSpacing;
-}
-
-void TerminalView::setLineSpacing(uint i)
-{
-    _lineSpacing = i;
-    setVTFont(font()); // Trigger an update.
 }
 
