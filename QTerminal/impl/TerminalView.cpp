@@ -161,11 +161,17 @@ unsigned short vt100_graphics[32] =
     0xF800, 0xF801, 0x2500, 0xF803, 0xF804, 0x251c, 0x2524, 0x2534,
     0x252c, 0x2502, 0x2264, 0x2265, 0x03C0, 0x2260, 0x00A3, 0x00b7
 };
-
+#include <sstream>
+#include <iomanip>
 void TerminalView::fontChange(const QFont&)
 {
     QFontMetrics fm(font());
-    _fontHeight = fm.height() + fm.leading();
+    int leading = fm.leading();
+    _fontHeight = fm.height();
+    if (leading > 0)
+    {
+        _fontHeight += leading;
+    }
 
     // waba TerminalDisplay 1.123:
     // "Base character width on widest ASCII character. This prevents too wide
@@ -191,7 +197,32 @@ void TerminalView::fontChange(const QFont&)
     }
 
     _fontAscent = fm.ascent();
+#if 0
+    std::stringstream s;
+    s
+        << std::setw(20)<<  font().family().toLocal8Bit().constData()
+        << std::setw(3) <<  font().pointSizeF()
+        << std::setw(3) <<  font().pixelSize()
+        << std::setw(3) <<  font().styleHint()
+        << std::setw(3) <<  font().weight()
+        << std::setw(3) <<  font().style()
+        << std::setw(3) <<  font().underline()
+        << std::setw(3) <<  font().strikeOut()
+        << std::setw(3) <<  font().fixedPitch()
+        << std::setw(3) <<  font().rawMode()
+        << std::setw(3) <<  fm.ascent()
+        << std::setw(3) <<  fm.averageCharWidth()
+        << std::setw(3) <<  fm.descent()
+        << std::setw(3) <<  fm.height()
+        << std::setw(3) <<  fm.leading()
+        << std::setw(3) <<  fm.lineSpacing()
+        << std::setw(3) <<  fm.lineWidth()
+        << std::setw(3) <<  fm.maxWidth()
+        << std::setw(3) <<  fm.overlinePos()
+        << std::setw(3) <<  fm.xHeight();
 
+    qDebug("%s", s.str().c_str());
+#endif
     emit changedFontMetricSignal(_fontHeight, _fontWidth);
     //parentWidget()->setFixedWidth(_fontWidth * 80 + _leftMargin);
     propagateSize();
