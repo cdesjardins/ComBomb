@@ -6,7 +6,7 @@
 #define CB_FILE_CLIBBOARD_SETTINGS_ROOT "FileClipboard/"
 
 FileClipboardDialog::FileClipboardDialog(QWidget* parent) :
-    QDialog(parent),
+    CBDialog(parent),
     ui(new Ui::FileClipboardDialog),
     _fileClipboardHeader(NULL),
     _fileClipboardLoaded(false)
@@ -36,6 +36,11 @@ FileClipboardDialog::~FileClipboardDialog()
     {
         delete _fileClipboardHeader;
     }
+}
+
+QString FileClipboardDialog::getSettingsRoot()
+{
+    return CB_FILE_CLIBBOARD_SETTINGS_ROOT;
 }
 
 void FileClipboardDialog::saveFileClipboardSetting(int row)
@@ -81,16 +86,6 @@ void FileClipboardDialog::sendItemTriggered(int index)
             QApplication::setActiveWindow(MainWindow::getMainWindow());
         }
     }
-}
-
-void FileClipboardDialog::hideEvent(QHideEvent*)
-{
-    MainWindow::saveWidgetGeometry(this, CB_FILE_CLIBBOARD_SETTINGS_ROOT "Geometry");
-}
-
-void FileClipboardDialog::showEvent(QShowEvent*)
-{
-    MainWindow::restoreWidgetGeometry(this, CB_FILE_CLIBBOARD_SETTINGS_ROOT "Geometry");
 }
 
 void FileClipboardDialog::on_fileClipboardTable_cellChanged(int row, int column)

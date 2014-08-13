@@ -21,8 +21,6 @@ public:
     static void destroyMainWindow();
     ~MainWindow();
     static void errorBox(QString errMsg);
-    static void restoreWidgetGeometry(QWidget* w, QString tag);
-    static void saveWidgetGeometry(QWidget* w, QString tag);
     ChildForm* getActiveChildWindow();
 protected:
     explicit MainWindow(QWidget* parent = 0);

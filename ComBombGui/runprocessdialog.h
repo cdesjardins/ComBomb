@@ -1,13 +1,13 @@
 #ifndef RUNPROCESSDIALOG_H
 #define RUNPROCESSDIALOG_H
 
-#include <QDialog>
+#include "CBDialog.h"
 
 namespace Ui {
 class RunProcessDialog;
 }
 
-class RunProcessDialog : public QDialog
+class RunProcessDialog : public CBDialog
 {
     Q_OBJECT
 
@@ -17,6 +17,8 @@ public:
     QString getProgram();
     QString getWorkingDirectory();
     QStringList getArguments();
+protected:
+    virtual QString getSettingsRoot();
 private slots:
     void on_programBrowseButton_clicked();
     void on_workingDirBrowseButton_clicked();

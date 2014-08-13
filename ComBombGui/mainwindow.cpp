@@ -7,9 +7,6 @@
 #include "configdialog.h"
 #include "ui_mainwindow.h"
 
-#define CB_FILE_CONFIG_STR  "file"
-#define CB_SSH_CONFIG_STR   "ssh"
-
 MainWindow* MainWindow ::_instance = NULL;
 
 MainWindow* MainWindow::getMainWindow(QWidget* parent)
@@ -57,18 +54,6 @@ MainWindow::~MainWindow()
     delete _fileClipboardDialog;
     delete _mdiArea;
     delete _ui;
-}
-
-void MainWindow::saveWidgetGeometry(QWidget* w, QString tag)
-{
-    QSettings settings;
-    settings.setValue(tag, w->saveGeometry());
-}
-
-void MainWindow::restoreWidgetGeometry(QWidget* w, QString tag)
-{
-    QSettings settings;
-    w->restoreGeometry(settings.value(tag).toByteArray());
 }
 
 void MainWindow::errorBox(QString errMsg)
@@ -119,7 +104,7 @@ void MainWindow::on_actionOpen_triggered()
 
             QMdiSubWindow* subWindow = _mdiArea->addSubWindow(childForm);
             subWindow->show();
-            _ui->_statusBar->showMessage("Opened connection", 5000);
+            _ui->statusBar->showMessage("Opened connection", 5000);
         }
         catch (const std::exception &e)
         {
@@ -145,7 +130,7 @@ void MainWindow::readSettings()
 
 void MainWindow::updateStatusSlot(QString status)
 {
-    _ui->_statusBar->showMessage(status, 5000);
+    _ui->statusBar->showMessage(status, 5000);
 }
 
 void MainWindow::openWindowSlot()

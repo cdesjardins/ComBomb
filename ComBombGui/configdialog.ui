@@ -19,7 +19,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="1" column="0">
-    <widget class="QGroupBox" name="groupBox_2">
+    <widget class="QGroupBox" name="ConfigComPorts">
      <property name="title">
       <string>Com Ports</string>
      </property>
@@ -31,7 +31,7 @@
     </widget>
    </item>
    <item row="0" column="0">
-    <widget class="QGroupBox" name="groupBox">
+    <widget class="QGroupBox" name="ConfigDelimiters">
      <property name="title">
       <string>Word selection delimiters</string>
      </property>
@@ -53,7 +53,7 @@
     </widget>
    </item>
    <item row="2" column="0">
-    <widget class="QGroupBox" name="groupBox_3">
+    <widget class="QGroupBox" name="ConfigFont">
      <property name="title">
       <string>Font</string>
      </property>

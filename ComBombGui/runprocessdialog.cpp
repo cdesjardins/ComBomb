@@ -11,7 +11,7 @@
 #define CB_RUN_PROCESS_SETTINGS_WDP     CB_RUN_PROCESS_SETTINGS_ROOT + "/WorkingDir/Programs"
 
 RunProcessDialog::RunProcessDialog(QWidget *parent) :
-    QDialog(parent),
+    CBDialog(parent),
     ui(new Ui::RunProcessDialog)
 {
     ui->setupUi(this);
@@ -20,6 +20,11 @@ RunProcessDialog::RunProcessDialog(QWidget *parent) :
 RunProcessDialog::~RunProcessDialog()
 {
     delete ui;
+}
+
+QString RunProcessDialog::getSettingsRoot()
+{
+    return CB_RUN_PROCESS_SETTINGS_ROOT;
 }
 
 void RunProcessDialog::on_programBrowseButton_clicked()

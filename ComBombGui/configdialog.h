@@ -1,14 +1,14 @@
 #ifndef CONFIGDIALOG_H
 #define CONFIGDIALOG_H
 
-#include <QDialog>
+#include "CBDialog.h"
 #include "QTerminal/QTerminalConfig.h"
 
 namespace Ui {
 class ConfigDialog;
 }
 
-class ConfigDialog : public QDialog
+class ConfigDialog : public CBDialog
 {
     Q_OBJECT
 
@@ -22,8 +22,7 @@ protected:
     static QStringList getPortListDefaults(QString basePortName, int start, int stop);
     void setPortListSettings();
     void populateComPortListWidget();
-    virtual void showEvent(QShowEvent* event);
-    virtual void hideEvent(QHideEvent* event);
+    virtual QString getSettingsRoot();
 
 private slots:
     void on_buttonBox_accepted();

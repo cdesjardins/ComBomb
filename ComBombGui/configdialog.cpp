@@ -14,7 +14,7 @@
 
 
 ConfigDialog::ConfigDialog(QWidget *parent) :
-    QDialog(parent),
+    CBDialog(parent),
     ui(new Ui::ConfigDialog)
 {
     QTerminalConfig terminalConfig;
@@ -110,14 +110,9 @@ ConfigDialog::~ConfigDialog()
     delete ui;
 }
 
-void ConfigDialog::hideEvent(QHideEvent*)
+QString ConfigDialog::getSettingsRoot()
 {
-    MainWindow::saveWidgetGeometry(this, CB_CONFIG_SETTINGS_ROOT "Geometry");
-}
-
-void ConfigDialog::showEvent(QShowEvent*)
-{
-    MainWindow::restoreWidgetGeometry(this, CB_CONFIG_SETTINGS_ROOT "Geometry");
+    return CB_CONFIG_SETTINGS_ROOT;
 }
 
 void ConfigDialog::on_buttonBox_accepted()

@@ -29,7 +29,7 @@ void CBLabel::mouseDoubleClickEvent(QMouseEvent*)
 }
 
 AboutDialog::AboutDialog(QWidget* parent) :
-    QDialog(parent),
+    CBDialog(parent),
     ui(new Ui::AboutDialog)
 {
     ui->setupUi(this);
@@ -43,3 +43,7 @@ AboutDialog::~AboutDialog()
     delete ui;
 }
 
+QString AboutDialog::getSettingsRoot()
+{
+    return objectName();
+}

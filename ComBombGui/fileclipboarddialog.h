@@ -1,14 +1,14 @@
 #ifndef FILECLIPBOARDDIALOG_H
 #define FILECLIPBOARDDIALOG_H
 
-#include <QDialog>
+#include "CBDialog.h"
 #include "fileclipboardheader.h"
 
 namespace Ui {
 class FileClipboardDialog;
 }
 
-class FileClipboardDialog : public QDialog
+class FileClipboardDialog : public CBDialog
 {
     Q_OBJECT
 
@@ -17,11 +17,10 @@ public:
     ~FileClipboardDialog();
 
 protected:
-    virtual void showEvent(QShowEvent* event);
-    virtual void hideEvent(QHideEvent* event);
     void loadFileClipboardSettings();
     void saveFileClipboardSetting(int row);
     void loadNewLineSettings();
+    virtual QString getSettingsRoot();
 private slots:
     void sendItemTriggered(int index);
 
