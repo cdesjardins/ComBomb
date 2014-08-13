@@ -40,6 +40,7 @@ MainWindow::MainWindow(QWidget* parent) :
     _ui->setupUi(this);
     setCentralWidget(_mdiArea);
     enableMenuItems(false);
+    readSettings();
 }
 
 void MainWindow::enableMenuItems(bool enabled)
@@ -125,6 +126,21 @@ void MainWindow::on_actionOpen_triggered()
             MainWindow::errorBox(e.what());
         }
     }
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    QSettings settings;
+    settings.setValue("Geometry", saveGeometry());
+    settings.setValue("WindowState", saveState());
+    QMainWindow::closeEvent(event);
+}
+
+void MainWindow::readSettings()
+{
+    QSettings settings;
+    restoreGeometry(settings.value("Geometry").toByteArray());
+    restoreState(settings.value("WindowState").toByteArray());
 }
 
 void MainWindow::updateStatusSlot(QString status)
