@@ -333,7 +333,7 @@ bool TgtSshIntf::sshRecv()
     int status;
     bool ret = true;
     boost::intrusive_ptr<RefCntBuffer> currentIncomingBuffer;
-    _bufferPool->dequeue(currentIncomingBuffer);
+    _bufferPool->dequeue(currentIncomingBuffer, 100);
     do
     {
         outDataLength = 0;

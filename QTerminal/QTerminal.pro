@@ -48,7 +48,12 @@ HEADERS += QTerminalInterface.h \
     impl/KeyboardTranslator.h \
     impl/ExtendedDefaultTranslator.h \
     QTerminalConfig.h \
-    impl/BackTabEvent.h
+    impl/BackTabEvent.h \
+    ../QueuePtr/include/IntrusivePtrBase.h \
+    ../QueuePtr/include/RefCntBuffer.h \
+    ../QueuePtr/include/RefCntBufferPool.h \
+    ../QueuePtr/include/ThreadSafePool.h \
+    ../QueuePtr/include/ThreadSafeQueue.h
 unix:!symbian {
     maemo5 {
         target.path = /opt/usr/lib

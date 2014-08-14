@@ -33,7 +33,7 @@ TgtIntf::~TgtIntf(void)
 int TgtIntf::tgtRead(boost::intrusive_ptr<RefCntBuffer> &b)
 {
     int ret = 0;
-    if (_incomingData.waitDequeue(b, 1) == true)
+    if (_incomingData.dequeue(b, 1) == true)
     {
         ret = boost::asio::buffer_size(b->_buffer);
         char* data = boost::asio::buffer_cast<char*>(b->_buffer);
@@ -52,12 +52,13 @@ int TgtIntf::tgtWrite(const char* szWriteData, int nBytes)
     if (nBytes > 0)
     {
         boost::intrusive_ptr<RefCntBuffer> b;
-        _bufferPool->dequeue(b);
-
-        boost::asio::buffer_copy(b->_buffer, boost::asio::buffer(szWriteData, nBytes));
-        b->_buffer = boost::asio::buffer(b->_buffer, nBytes);
-        _outgoingData.enqueue(b);
-        m_nTotalTx += nBytes;
+        if (_bufferPool->dequeue(b, 1) == true)
+        {
+            boost::asio::buffer_copy(b->_buffer, boost::asio::buffer(szWriteData, nBytes));
+            b->_buffer = boost::asio::buffer(b->_buffer, nBytes);
+            _outgoingData.enqueue(b);
+            m_nTotalTx += nBytes;
+        }
     }
     return ret;
 }

@@ -49,7 +49,7 @@ void TgtSerialIntf::writerThread()
     bool attemptReconnect = false;
     while (_serialWriterThreadRun == true)
     {
-        if (_outgoingData.dequeue(b) == true)
+        if (_outgoingData.dequeue(b, 1) == true)
         {
             boost::asio::write(*_port.get(), boost::asio::buffer(b->_buffer), ec);
             if (ec)
@@ -58,10 +58,6 @@ void TgtSerialIntf::writerThread()
                 attemptReconnect = true;
                 break;
             }
-        }
-        else
-        {
-            boost::this_thread::sleep(boost::posix_time::milliseconds(1));
         }
     }
     if (attemptReconnect == true)
@@ -93,15 +89,31 @@ void TgtSerialIntf::tgtStopService()
 
 void TgtSerialIntf::tgtReadCallback(const boost::system::error_code& error, const size_t bytesTransferred)
 {
+
     if (!error)
     {
+        boost::asio::mutable_buffer buffer;
+
         if (bytesTransferred > 0)
         {
-            _currentIncomingBuffer->_buffer = boost::asio::buffer(_currentIncomingBuffer->_buffer, bytesTransferred);
-            _incomingData.enqueue(_currentIncomingBuffer);
+            if (_currentIncomingBuffer != NULL)
+            {
+                _currentIncomingBuffer->_buffer = boost::asio::buffer(_currentIncomingBuffer->_buffer, bytesTransferred);
+                _incomingData.enqueue(_currentIncomingBuffer);
+            }
             _bufferPool->dequeue(_currentIncomingBuffer);
         }
-        _port->async_read_some(boost::asio::buffer(_currentIncomingBuffer->_buffer),
+        if (_currentIncomingBuffer == NULL)
+        {
+            // If there are no buffers available then just throw away the next
+            // bit if incoming data...
+            buffer = boost::asio::buffer(_throwAway, sizeof(_throwAway) - 1);
+        }
+        else
+        {
+            buffer = _currentIncomingBuffer->_buffer;
+        }
+        _port->async_read_some(boost::asio::buffer(buffer),
                                boost::bind(&TgtSerialIntf::tgtReadCallback, this,
                                            boost::asio::placeholders::error,
                                            boost::asio::placeholders::bytes_transferred));

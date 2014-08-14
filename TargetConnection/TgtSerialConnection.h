@@ -56,6 +56,7 @@ protected:
     volatile bool _serialWriterThreadRun;
     volatile bool _serialServiceThreadRun;
     boost::intrusive_ptr<RefCntBuffer> _currentIncomingBuffer;
+    char _throwAway[1024];
 };
 
 
