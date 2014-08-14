@@ -1,5 +1,6 @@
- #include "cbcombobox.h"
+#include "cbcombobox.h"
 #include <QSettings>
+#include <QDialog>
 
 CBComboBox::CBComboBox(QWidget *parent) :
     QComboBox(parent)
@@ -8,18 +9,33 @@ CBComboBox::CBComboBox(QWidget *parent) :
 
 CBComboBox::~CBComboBox()
 {
-    saveComboBox();
 }
 
 QString CBComboBox::getName()
 {
-    QString ret(parentWidget()->objectName() + "/" + objectName());
+    QString ret;
+    QWidget *w = parentWidget();
+    for (int i = 0; ((i < 15) && (w != NULL)); i++)
+    {
+        QDialog *d = qobject_cast<QDialog*>(w);
+        if (d != NULL)
+        {
+            ret = (d->objectName() + "/" + objectName());
+            break;
+        }
+        w = w->parentWidget();
+    }
     return ret;
 }
 
-void CBComboBox::showEvent(QShowEvent *)
+void CBComboBox::showEvent(QShowEvent*)
 {
     restoreComboBox();
+}
+
+void CBComboBox::hideEvent(QHideEvent*)
+{
+    saveComboBox();
 }
 
 void CBComboBox::saveComboBox()
@@ -47,10 +63,7 @@ void CBComboBox::saveEditableComboBox()
     QStringList itemList;
     int i;
     QString cur = currentText();
-    if (cur.length() > 0)
-    {
-        itemList.append(cur);
-    }
+    itemList.append(cur);
     for (i = 0; i < count(); i++)
     {
         itemList.append(itemText(i));

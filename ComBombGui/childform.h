@@ -35,7 +35,7 @@ private:
     QMutex _processMutex;
     Ui::ChildForm* ui;
     QProcess *_proc;
-
+    bool _procError;
 };
 
 #endif // CHILDFORM_H

@@ -8,7 +8,8 @@ ChildForm::ChildForm(const QTerminalConfig &terminalConfig, const boost::shared_
     QTerminal(terminalConfig, targetInterface, CB_DEFAULT_TERM_WIDTH, CB_DEFAULT_TERM_HEIGHT, parent),
     _processMutex(QMutex::Recursive),
     ui(new Ui::ChildForm),
-    _proc(NULL)
+    _proc(NULL),
+    _procError(false)
 {
     std::string szTitle;
     ui->setupUi(this);
@@ -55,10 +56,15 @@ void ChildForm::onReceiveBlock(boost::intrusive_ptr<RefCntBuffer> incoming)
 void ChildForm::runProcess()
 {
     RunProcessDialog rpd;
+    if ((_proc != NULL) && (_procError == true))
+    {
+        deleteProcess();
+    }
     if (_proc == NULL)
     {
         if (rpd.exec() == RunProcessDialog::Accepted)
         {
+            _procError = false;
             _proc = new QProcess(this);
             connect(_proc, SIGNAL(readyReadStandardOutput()), this, SLOT(readFromStdout()));
             connect(_proc, SIGNAL(error(QProcess::ProcessError)), this, SLOT(processError(QProcess::ProcessError)));
@@ -86,8 +92,19 @@ void ChildForm::readFromStdout()
 
 void ChildForm::processError(QProcess::ProcessError error)
 {
-    qDebug("Error: %d", error);
-    deleteProcess();
+    QString errors[] =
+    {
+        "Failed To Start",
+        "Crashed",
+        "Timedout",
+        "Read Error",
+        "Write Error",
+        "Unknown Error"
+    };
+    _procError = true;
+    QString errMsg;
+    errMsg.sprintf("Error: (%d) %s", error, errors[error].toLocal8Bit().constData());
+    emit updateStatusSignal(errMsg);
 }
 
 void ChildForm::processDone(int , QProcess::ExitStatus )
