@@ -36,12 +36,11 @@
 //////////////////////////////////////////////////////////////////////
 // Abstract base class for file and buffer versions
 //////////////////////////////////////////////////////////////////////
-class HistoryType;
 
 class HistoryScroll
 {
 public:
-    HistoryScroll(HistoryType*);
+    HistoryScroll();
     virtual ~HistoryScroll();
 
     virtual bool hasScroll();
@@ -51,7 +50,7 @@ public:
     virtual int getLineLen(int lineno) = 0;
     virtual void getCells(int lineno, int colno, int count, Character res[]) = 0;
     virtual bool isWrappedLine(int lineno) = 0;
-
+    virtual HistoryScroll* scroll(HistoryScroll* old) const = 0;
     // backward compatibility (obsolete)
     Character getCell(int lineno, int colno)
     {
@@ -69,18 +68,7 @@ public:
 
     virtual void addLine(bool previousWrapped = false) = 0;
 
-    //
-    // FIXME:  Passing around constant references to HistoryType instances
-    // is very unsafe, because those references will no longer
-    // be valid if the history scroll is deleted.
-    //
-    const HistoryType& getType()
-    {
-        return *m_histType;
-    }
-
 protected:
-    HistoryType* m_histType;
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -89,15 +77,14 @@ protected:
 class HistoryScrollBuffer : public HistoryScroll
 {
 public:
-    typedef QVector<Character> HistoryLine;
-
-    HistoryScrollBuffer(unsigned int maxNbLines = 1000);
+    HistoryScrollBuffer(unsigned int maxNbLines);
     virtual ~HistoryScrollBuffer();
 
     virtual int getLines();
     virtual int getLineLen(int lineno);
     virtual void getCells(int lineno, int colno, int count, Character res[]);
     virtual bool isWrappedLine(int lineno);
+    virtual HistoryScroll* scroll(HistoryScroll* old) const;
 
     virtual void addCells(const Character a[], int count);
     virtual void addCellsVector(const QVector<Character>& cells);
@@ -112,88 +99,11 @@ public:
 private:
     int bufferIndex(int lineNumber);
 
-    HistoryLine* _historyBuffer;
+    QVector<Character>* _historyBuffer;
     QBitArray _wrappedLine;
     int _maxLineCount;
     int _usedLines;
     int _head;
-};
-
-//////////////////////////////////////////////////////////////////////
-// Nothing-based history (no history :-)
-//////////////////////////////////////////////////////////////////////
-class HistoryScrollNone : public HistoryScroll
-{
-public:
-    HistoryScrollNone();
-    virtual ~HistoryScrollNone();
-
-    virtual bool hasScroll();
-
-    virtual int getLines();
-    virtual int getLineLen(int lineno);
-    virtual void getCells(int lineno, int colno, int count, Character res[]);
-    virtual bool isWrappedLine(int lineno);
-
-    virtual void addCells(const Character a[], int count);
-    virtual void addLine(bool previousWrapped = false);
-};
-
-//////////////////////////////////////////////////////////////////////
-// History type
-//////////////////////////////////////////////////////////////////////
-
-class HistoryType
-{
-public:
-    HistoryType();
-    virtual ~HistoryType();
-
-    /**
-     * Returns true if the history is enabled ( can store lines of output )
-     * or false otherwise.
-     */
-    virtual bool isEnabled()           const = 0;
-    /**
-     * Returns true if the history size is unlimited.
-     */
-    bool isUnlimited() const
-    {
-        return maximumLineCount() == 0;
-    }
-
-    /**
-     * Returns the maximum number of lines which this history type
-     * can store or 0 if the history can store an unlimited number of lines.
-     */
-    virtual int maximumLineCount()    const = 0;
-
-    virtual HistoryScroll* scroll(HistoryScroll*) const = 0;
-};
-
-class HistoryTypeNone : public HistoryType
-{
-public:
-    HistoryTypeNone();
-
-    virtual bool isEnabled() const;
-    virtual int maximumLineCount() const;
-
-    virtual HistoryScroll* scroll(HistoryScroll*) const;
-};
-
-class HistoryTypeBuffer : public HistoryType
-{
-public:
-    HistoryTypeBuffer(unsigned int nbLines);
-
-    virtual bool isEnabled() const;
-    virtual int maximumLineCount() const;
-
-    virtual HistoryScroll* scroll(HistoryScroll*) const;
-
-protected:
-    unsigned int m_nbLines;
 };
 
 #endif // HISTORY_H

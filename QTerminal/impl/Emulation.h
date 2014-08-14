@@ -82,7 +82,7 @@ enum
  *
  * The size of the screen image can be specified by calling setImageSize() with the
  * desired number of lines and columns.  When new lines are added, old content
- * is moved into a history store, which can be set by calling setHistory().
+ * is moved into a history store.
  *
  * The screen image can be accessed by creating a ScreenWindow onto this emulation
  * by calling createWindow().  Screen windows provide access to a section of the
@@ -143,17 +143,6 @@ public:
      */
     int lineCount();
 
-    /**
-     * Sets the history store used by this emulation.  When new lines
-     * are added to the output, older lines at the top of the screen are transferred to a history
-     * store.
-     *
-     * The number of lines which are kept and the storage location depend on the
-     * type of store.
-     */
-    void setHistory(const HistoryType&);
-    /** Returns the history store used by this emulation.  See setHistory() */
-    const HistoryType& history();
     /** Clears the history scroll. */
     void clearHistory();
 

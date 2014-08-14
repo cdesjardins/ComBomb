@@ -17,7 +17,7 @@ public slots:
 
 protected:
     virtual void showEvent(QShowEvent* event);
-    void CBComboBox::hideEvent(QHideEvent* event);
+    virtual void hideEvent(QHideEvent* event);
     QString getName();
     void saveComboBox();
     void saveEditableComboBox();

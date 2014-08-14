@@ -1,7 +1,7 @@
 #ifndef ABOUTDIALOG_H
 #define ABOUTDIALOG_H
 
-#include "CBDialog.h"
+#include "cbdialog.h"
 
 namespace Ui {
 class AboutDialog;

@@ -310,16 +310,6 @@ void TerminalModel::setKeyBindings(const QString &id)
     _emulation->setKeyBindings(id);
 }
 
-void TerminalModel::setHistoryType(const HistoryType &hType)
-{
-    _emulation->setHistory(hType);
-}
-
-const HistoryType& TerminalModel::historyType() const
-{
-    return _emulation->history();
-}
-
 void TerminalModel::clearHistory()
 {
     _emulation->clearHistory();

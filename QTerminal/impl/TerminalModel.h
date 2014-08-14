@@ -97,20 +97,6 @@ public:
      * closed when the last view is removed.
      */
     void addView(const boost::shared_ptr<TerminalView> &widget);
-
-    /**
-     * Sets the type of history store used by this session.
-     * Lines of output produced by the terminal are added
-     * to the history store.  The type of history store
-     * used affects the number of lines which can be
-     * remembered before they are lost and the storage
-     * (in memory, on-disk etc.) used.
-     */
-    void setHistoryType(const HistoryType& type);
-    /**
-     * Returns the type of history store used by this session.
-     */
-    const HistoryType& historyType() const;
     /**
      * Clears the history store used by this session.
      */

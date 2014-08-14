@@ -36,14 +36,12 @@
 
 // History Scroll abstract base class //////////////////////////////////////
 
-HistoryScroll::HistoryScroll(HistoryType* t)
-    : m_histType(t)
+HistoryScroll::HistoryScroll()
 {
 }
 
 HistoryScroll::~HistoryScroll()
 {
-    delete m_histType;
 }
 
 bool HistoryScroll::hasScroll()
@@ -53,7 +51,7 @@ bool HistoryScroll::hasScroll()
 
 // History Scroll Buffer //////////////////////////////////////
 HistoryScrollBuffer::HistoryScrollBuffer(unsigned int maxLineCount)
-    : HistoryScroll(new HistoryTypeBuffer(maxLineCount))
+    : HistoryScroll()
     , _historyBuffer()
     , _maxLineCount(0)
     , _usedLines(0)
@@ -79,14 +77,14 @@ void HistoryScrollBuffer::addCellsVector(const QVector<Character>& cells)
     {
         _head = 0;
     }
-
-    _historyBuffer[bufferIndex(_usedLines - 1)] = cells;
-    _wrappedLine[bufferIndex(_usedLines - 1)] = false;
+    int index = bufferIndex(_usedLines - 1);
+    _historyBuffer[index] = cells;
+    _wrappedLine[index] = false;
 }
 
 void HistoryScrollBuffer::addCells(const Character a[], int count)
 {
-    HistoryLine newLine(count);
+    QVector<Character> newLine(count);
     qCopy(a, a + count, newLine.begin());
 
     addCellsVector(newLine);
@@ -146,7 +144,7 @@ void HistoryScrollBuffer::getCells(int lineNumber, int startColumn, int count, C
         return;
     }
 
-    const HistoryLine& line = _historyBuffer[bufferIndex(lineNumber)];
+    const QVector<Character>& line = _historyBuffer[bufferIndex(lineNumber)];
 
     //kDebug() << "startCol " << startColumn;
     //kDebug() << "line.size() " << line.size();
@@ -159,8 +157,8 @@ void HistoryScrollBuffer::getCells(int lineNumber, int startColumn, int count, C
 
 void HistoryScrollBuffer::setMaxNbLines(unsigned int lineCount)
 {
-    HistoryLine* oldBuffer = _historyBuffer;
-    HistoryLine* newBuffer = new HistoryLine[lineCount];
+    QVector<Character>* oldBuffer = _historyBuffer;
+    QVector<Character>* newBuffer = new QVector<Character>[lineCount];
 
     for (int i = 0; i < qMin(_usedLines, (int)lineCount); i++)
     {
@@ -193,117 +191,23 @@ int HistoryScrollBuffer::bufferIndex(int lineNumber)
     }
 }
 
-// History Scroll None //////////////////////////////////////
-
-HistoryScrollNone::HistoryScrollNone()
-    : HistoryScroll(new HistoryTypeNone())
-{
-}
-
-HistoryScrollNone::~HistoryScrollNone()
-{
-}
-
-bool HistoryScrollNone::hasScroll()
-{
-    return false;
-}
-
-int HistoryScrollNone::getLines()
-{
-    return 0;
-}
-
-int HistoryScrollNone::getLineLen(int)
-{
-    return 0;
-}
-
-bool HistoryScrollNone::isWrappedLine(int /*lineno*/)
-{
-    return false;
-}
-
-void HistoryScrollNone::getCells(int, int, int, Character[])
-{
-}
-
-void HistoryScrollNone::addCells(const Character[], int)
-{
-}
-
-void HistoryScrollNone::addLine(bool)
-{
-}
-
-//////////////////////////////////////////////////////////////////////
-// History Types
-//////////////////////////////////////////////////////////////////////
-
-HistoryType::HistoryType()
-{
-}
-
-HistoryType::~HistoryType()
-{
-}
-
-//////////////////////////////
-
-HistoryTypeNone::HistoryTypeNone()
-{
-}
-
-bool HistoryTypeNone::isEnabled() const
-{
-    return false;
-}
-
-HistoryScroll* HistoryTypeNone::scroll(HistoryScroll* old) const
-{
-    delete old;
-    return new HistoryScrollNone();
-}
-
-int HistoryTypeNone::maximumLineCount() const
-{
-    return 0;
-}
-
-//////////////////////////////
-
-HistoryTypeBuffer::HistoryTypeBuffer(unsigned int nbLines)
-    : m_nbLines(nbLines)
-{
-}
-
-bool HistoryTypeBuffer::isEnabled() const
-{
-    return true;
-}
-
-int HistoryTypeBuffer::maximumLineCount() const
-{
-    return m_nbLines;
-}
-
-HistoryScroll* HistoryTypeBuffer::scroll(HistoryScroll* old) const
+HistoryScroll* HistoryScrollBuffer::scroll(HistoryScroll* old) const
 {
     if (old)
     {
         HistoryScrollBuffer* oldBuffer = dynamic_cast<HistoryScrollBuffer*>(old);
         if (oldBuffer)
         {
-            oldBuffer->setMaxNbLines(m_nbLines);
+            oldBuffer->setMaxNbLines(_maxLineCount);
             return oldBuffer;
         }
 
-        HistoryScroll* newScroll = new HistoryScrollBuffer(m_nbLines);
+        HistoryScroll* newScroll = new HistoryScrollBuffer(_maxLineCount);
         int lines = old->getLines();
         int startLine = 0;
-        if (lines > (int) m_nbLines)
+        if (lines > (int) _maxLineCount)
         {
-            startLine = lines - m_nbLines;
+            startLine = lines - _maxLineCount;
         }
 
         Character line[LINE_SIZE];
@@ -328,6 +232,6 @@ HistoryScroll* HistoryTypeBuffer::scroll(HistoryScroll* old) const
         delete old;
         return newScroll;
     }
-    return new HistoryScrollBuffer(m_nbLines);
+    return new HistoryScrollBuffer(_maxLineCount);
 }
 

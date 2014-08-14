@@ -1,7 +1,7 @@
 #ifndef FILECLIPBOARDDIALOG_H
 #define FILECLIPBOARDDIALOG_H
 
-#include "CBDialog.h"
+#include "cbdialog.h"
 #include "fileclipboardheader.h"
 
 namespace Ui {

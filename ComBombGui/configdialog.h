@@ -1,7 +1,7 @@
 #ifndef CONFIGDIALOG_H
 #define CONFIGDIALOG_H
 
-#include "CBDialog.h"
+#include "cbdialog.h"
 #include "QTerminal/QTerminalConfig.h"
 
 namespace Ui {

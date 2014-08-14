@@ -68,7 +68,7 @@ Screen::Screen(int l, int c)
     screenLines(new ImageLine[lines + 1]),
     _scrolledLines(0),
     _droppedLines(0),
-    hist(new HistoryScrollNone()),
+    _hist(new HistoryScrollBuffer(100000)),
     cuX(0),
     cuY(0),
     cu_re(0),
@@ -106,7 +106,7 @@ Screen::~Screen()
 {
     delete[] screenLines;
     delete[] tabstops;
-    delete hist;
+    delete _hist;
 }
 
 /* ------------------------------------------------------------------------- */
@@ -574,14 +574,14 @@ void Screen::effectiveRendition()
 
 void Screen::copyFromHistory(Character* dest, int startLine, int count) const
 {
-    Q_ASSERT(startLine >= 0 && count > 0 && startLine + count <= hist->getLines());
+    Q_ASSERT(startLine >= 0 && count > 0 && startLine + count <= _hist->getLines());
 
     for (int line = startLine; line < startLine + count; line++)
     {
-        const int length = qMin(columns, hist->getLineLen(line));
+        const int length = qMin(columns, _hist->getLineLen(line));
         const int destLineOffset  = (line - startLine) * columns;
 
-        hist->getCells(line, 0, length, dest + destLineOffset);
+        _hist->getCells(line, 0, length, dest + destLineOffset);
 
         for (int column = length; column < columns; column++)
         {
@@ -619,7 +619,7 @@ void Screen::copyFromScreen(Character* dest, int startLine, int count) const
             dest[destIndex] = screenLines[srcIndex / columns].value(srcIndex % columns, defaultChar);
 
             // invert selected text
-            if (sel_begin != -1 && isSelected(column, line + hist->getLines()))
+            if (sel_begin != -1 && isSelected(column, line + _hist->getLines()))
             {
                 reverseRendition(dest[destIndex]);
             }
@@ -630,14 +630,14 @@ void Screen::copyFromScreen(Character* dest, int startLine, int count) const
 void Screen::getImage(Character* dest, int size, int startLine, int endLine) const
 {
     Q_ASSERT(startLine >= 0);
-    Q_ASSERT(endLine >= startLine && endLine < hist->getLines() + lines);
+    Q_ASSERT(endLine >= startLine && endLine < _hist->getLines() + lines);
 
     const int mergedLines = endLine - startLine + 1;
 
     Q_ASSERT(size >= mergedLines * columns);
     Q_UNUSED(size);
 
-    const int linesInHistoryBuffer = qBound(0, hist->getLines() - startLine, mergedLines);
+    const int linesInHistoryBuffer = qBound(0, _hist->getLines() - startLine, mergedLines);
     const int linesInScreenBuffer = mergedLines - linesInHistoryBuffer;
 
     // copy lines from history buffer
@@ -650,7 +650,7 @@ void Screen::getImage(Character* dest, int size, int startLine, int endLine) con
     if (linesInScreenBuffer > 0)
     {
         copyFromScreen(dest + linesInHistoryBuffer * columns,
-                       startLine + linesInHistoryBuffer - hist->getLines(),
+                       startLine + linesInHistoryBuffer - _hist->getLines(),
                        linesInScreenBuffer);
     }
 
@@ -674,10 +674,10 @@ void Screen::getImage(Character* dest, int size, int startLine, int endLine) con
 QVector<LineProperty> Screen::getLineProperties(int startLine, int endLine) const
 {
     Q_ASSERT(startLine >= 0);
-    Q_ASSERT(endLine >= startLine && endLine < hist->getLines() + lines);
+    Q_ASSERT(endLine >= startLine && endLine < _hist->getLines() + lines);
 
     const int mergedLines = endLine - startLine + 1;
-    const int linesInHistory = qBound(0, hist->getLines() - startLine, mergedLines);
+    const int linesInHistory = qBound(0, _hist->getLines() - startLine, mergedLines);
     const int linesInScreen = mergedLines - linesInHistory;
 
     QVector<LineProperty> result(mergedLines);
@@ -687,7 +687,7 @@ QVector<LineProperty> Screen::getLineProperties(int startLine, int endLine) cons
     for (int line = startLine; line < startLine + linesInHistory; line++)
     {
         //TODO Support for line properties other than wrapped lines
-        if (hist->isWrappedLine(line))
+        if (_hist->isWrappedLine(line))
         {
             result[index] = (LineProperty)(result[index] | LINE_WRAPPED);
         }
@@ -695,7 +695,7 @@ QVector<LineProperty> Screen::getLineProperties(int startLine, int endLine) cons
     }
 
     // copy properties for lines in screen buffer
-    const int firstScreenLine = startLine + linesInHistory - hist->getLines();
+    const int firstScreenLine = startLine + linesInHistory - _hist->getLines();
     for (int line = firstScreenLine; line < firstScreenLine + linesInScreen; line++)
     {
         result[index] = lineProperties[line];
@@ -843,7 +843,7 @@ void Screen::checkSelection(int from, int to)
     {
         return;
     }
-    int scr_TL = loc(0, hist->getLines());
+    int scr_TL = loc(0, _hist->getLines());
     //Clear entire selection if it overlaps region [from, to]
     if ((sel_BR > (from + scr_TL)) && (sel_TL < (to + scr_TL)))
     {
@@ -1109,7 +1109,7 @@ int Screen::getCursorY() const
 
 void Screen::clearImage(int loca, int loce, char c)
 {
-    int scr_TL = loc(0, hist->getLines());
+    int scr_TL = loc(0, _hist->getLines());
     //FIXME: check positions
 
     //Clear entire selection if it overlaps region to be moved...
@@ -1215,7 +1215,7 @@ void Screen::moveImage(int dest, int sourceBegin, int sourceEnd)
     {
         bool beginIsTL = (sel_begin == sel_TL);
         int diff = dest - sourceBegin; // Scroll by this amount
-        int scr_TL = loc(0, hist->getLines());
+        int scr_TL = loc(0, _hist->getLines());
         int srca = sourceBegin + scr_TL; // Translate index from screen to global
         int srce = sourceEnd + scr_TL; // Translate index from screen to global
         int desta = srca + diff;
@@ -1543,9 +1543,9 @@ void Screen::copyLineToStream(int line,
     LineProperty currentLineProperties = 0;
 
     //determine if the line is in the history buffer or the screen image
-    if (line < hist->getLines())
+    if (line < _hist->getLines())
     {
-        const int lineLength = hist->getLineLen(line);
+        const int lineLength = _hist->getLineLen(line);
 
         // ensure that start position is before end of line
         start = qMin(start, qMax(0, lineLength - 1));
@@ -1563,11 +1563,11 @@ void Screen::copyLineToStream(int line,
         // safety checks
         assert(start >= 0);
         assert(count >= 0);
-        assert((start + count) <= hist->getLineLen(line));
+        assert((start + count) <= _hist->getLineLen(line));
 
-        hist->getCells(line, start, count, characterBuffer);
+        _hist->getCells(line, start, count, characterBuffer);
 
-        if (hist->isWrappedLine(line))
+        if (_hist->isWrappedLine(line))
         {
             currentLineProperties |= LINE_WRAPPED;
         }
@@ -1581,7 +1581,7 @@ void Screen::copyLineToStream(int line,
 
         assert(count >= 0);
 
-        const int screenLine = line - hist->getLines();
+        const int screenLine = line - _hist->getLines();
 
         Character* data = screenLines[screenLine].data();
         int length = screenLines[screenLine].count();
@@ -1642,12 +1642,12 @@ void Screen::addHistLine()
 
     if (hasScroll())
     {
-        int oldHistLines = hist->getLines();
+        int oldHistLines = _hist->getLines();
 
-        hist->addCellsVector(screenLines[0]);
-        hist->addLine(lineProperties[0] & LINE_WRAPPED);
+        _hist->addCellsVector(screenLines[0]);
+        _hist->addLine(lineProperties[0] & LINE_WRAPPED);
 
-        int newHistLines = hist->getLines();
+        int newHistLines = _hist->getLines();
 
         bool beginIsTL = (sel_begin == sel_TL);
 
@@ -1709,33 +1709,33 @@ void Screen::addHistLine()
 
 int Screen::getHistLines()
 {
-    return hist->getLines();
+    return _hist->getLines();
 }
 
-void Screen::setScroll(const HistoryType& t, bool copyPreviousScroll)
+void Screen::setScroll(const HistoryScroll& t, bool copyPreviousScroll)
 {
     clearSelection();
 
     if (copyPreviousScroll)
     {
-        hist = t.scroll(hist);
+        _hist = t.scroll(_hist);
     }
     else
     {
-        HistoryScroll* oldScroll = hist;
-        hist = t.scroll(0);
+        HistoryScroll* oldScroll = _hist;
+        _hist = t.scroll(0);
         delete oldScroll;
     }
 }
 
 bool Screen::hasScroll()
 {
-    return hist->hasScroll();
+    return _hist->hasScroll();
 }
 
-const HistoryType& Screen::getScroll()
+const HistoryScroll& Screen::getScroll()
 {
-    return hist->getType();
+    return *_hist;
 }
 
 void Screen::setLineProperty(LineProperty property, bool enable)

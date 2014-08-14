@@ -1,7 +1,7 @@
 #ifndef RUNPROCESSDIALOG_H
 #define RUNPROCESSDIALOG_H
 
-#include "CBDialog.h"
+#include "cbdialog.h"
 
 namespace Ui {
 class RunProcessDialog;

@@ -49,7 +49,7 @@ void TgtSerialIntf::writerThread()
     bool attemptReconnect = false;
     while (_serialWriterThreadRun == true)
     {
-        if (_outgoingData.dequeue(b, 1) == true)
+        if (_outgoingData.dequeue(b, 100) == true)
         {
             boost::asio::write(*_port.get(), boost::asio::buffer(b->_buffer), ec);
             if (ec)
@@ -101,7 +101,7 @@ void TgtSerialIntf::tgtReadCallback(const boost::system::error_code& error, cons
                 _currentIncomingBuffer->_buffer = boost::asio::buffer(_currentIncomingBuffer->_buffer, bytesTransferred);
                 _incomingData.enqueue(_currentIncomingBuffer);
             }
-            _bufferPool->dequeue(_currentIncomingBuffer);
+            _bufferPool->dequeue(_currentIncomingBuffer, 100);
         }
         if (_currentIncomingBuffer == NULL)
         {

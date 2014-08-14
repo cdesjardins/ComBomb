@@ -48,7 +48,6 @@ void QTerminalImpl::initialize(const QTerminalConfig &terminalConfig, const boos
 
     m_terminalModel.reset(new TerminalModel(targetInterface));
     m_terminalModel->setCodec(QTextCodec::codecForName("UTF-8"));
-    m_terminalModel->setHistoryType(HistoryTypeBuffer(100000));
     m_terminalModel->setDarkBackground(true);
     m_terminalModel->setKeyBindings("");
     m_terminalModel->run();
