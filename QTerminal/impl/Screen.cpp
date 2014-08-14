@@ -1712,30 +1712,17 @@ int Screen::getHistLines()
     return _hist->getLines();
 }
 
-void Screen::setScroll(const HistoryScroll& t, bool copyPreviousScroll)
+void Screen::clearHistory()
 {
     clearSelection();
-
-    if (copyPreviousScroll)
-    {
-        _hist = t.scroll(_hist);
-    }
-    else
-    {
-        HistoryScroll* oldScroll = _hist;
-        _hist = t.scroll(0);
-        delete oldScroll;
-    }
+    HistoryScroll* oldScroll = _hist;
+    _hist = new HistoryScrollBuffer(oldScroll->getMaxLines());
+    delete oldScroll;
 }
 
 bool Screen::hasScroll()
 {
     return _hist->hasScroll();
-}
-
-const HistoryScroll& Screen::getScroll()
-{
-    return *_hist;
 }
 
 void Screen::setLineProperty(LineProperty property, bool enable)

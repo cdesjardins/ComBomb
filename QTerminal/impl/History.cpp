@@ -95,6 +95,11 @@ void HistoryScrollBuffer::addLine(bool previousWrapped)
     _wrappedLine[bufferIndex(_usedLines - 1)] = previousWrapped;
 }
 
+int HistoryScrollBuffer::getMaxLines()
+{
+    return _maxLineCount;
+}
+
 int HistoryScrollBuffer::getLines()
 {
     return _usedLines;
@@ -190,48 +195,3 @@ int HistoryScrollBuffer::bufferIndex(int lineNumber)
         return lineNumber;
     }
 }
-
-HistoryScroll* HistoryScrollBuffer::scroll(HistoryScroll* old) const
-{
-    if (old)
-    {
-        HistoryScrollBuffer* oldBuffer = dynamic_cast<HistoryScrollBuffer*>(old);
-        if (oldBuffer)
-        {
-            oldBuffer->setMaxNbLines(_maxLineCount);
-            return oldBuffer;
-        }
-
-        HistoryScroll* newScroll = new HistoryScrollBuffer(_maxLineCount);
-        int lines = old->getLines();
-        int startLine = 0;
-        if (lines > (int) _maxLineCount)
-        {
-            startLine = lines - _maxLineCount;
-        }
-
-        Character line[LINE_SIZE];
-        for (int i = startLine; i < lines; i++)
-        {
-            int size = old->getLineLen(i);
-            if (size > LINE_SIZE)
-            {
-                Character* tmp_line = new Character[size];
-                old->getCells(i, 0, size, tmp_line);
-                newScroll->addCells(tmp_line, size);
-                newScroll->addLine(old->isWrappedLine(i));
-                delete[] tmp_line;
-            }
-            else
-            {
-                old->getCells(i, 0, size, line);
-                newScroll->addCells(line, size);
-                newScroll->addLine(old->isWrappedLine(i));
-            }
-        }
-        delete old;
-        return newScroll;
-    }
-    return new HistoryScrollBuffer(_maxLineCount);
-}
-

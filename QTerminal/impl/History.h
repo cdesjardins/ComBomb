@@ -46,11 +46,11 @@ public:
     virtual bool hasScroll();
 
     // access to history
+    virtual int getMaxLines() = 0;
     virtual int getLines() = 0;
     virtual int getLineLen(int lineno) = 0;
     virtual void getCells(int lineno, int colno, int count, Character res[]) = 0;
     virtual bool isWrappedLine(int lineno) = 0;
-    virtual HistoryScroll* scroll(HistoryScroll* old) const = 0;
     // backward compatibility (obsolete)
     Character getCell(int lineno, int colno)
     {
@@ -80,11 +80,11 @@ public:
     HistoryScrollBuffer(unsigned int maxNbLines);
     virtual ~HistoryScrollBuffer();
 
+    virtual int getMaxLines();
     virtual int getLines();
     virtual int getLineLen(int lineno);
     virtual void getCells(int lineno, int colno, int count, Character res[]);
     virtual bool isWrappedLine(int lineno);
-    virtual HistoryScroll* scroll(HistoryScroll* old) const;
 
     virtual void addCells(const Character a[], int count);
     virtual void addCellsVector(const QVector<Character>& cells);

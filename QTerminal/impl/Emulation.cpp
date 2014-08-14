@@ -124,7 +124,7 @@ void Emulation::setScreen(int n)
 
 void Emulation::clearHistory()
 {
-    _screen[_currentScreenIndex].setScroll(_screen[_currentScreenIndex].getScroll(), false);
+    _screen[_currentScreenIndex].clearHistory();
 }
 
 void Emulation::home()

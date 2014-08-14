@@ -390,9 +390,7 @@ public:
      * If @p copyPreviousScroll is true then the contents of the previous
      * history buffer are copied into the new scroll.
      */
-    void setScroll(const HistoryScroll&, bool copyPreviousScroll = true);
-    /** Returns the type of storage used to keep lines in the history. */
-    const HistoryScroll& getScroll();
+    void clearHistory();
     /**
      * Returns true if this screen keeps lines that are scrolled off the screen
      * in a history buffer.
