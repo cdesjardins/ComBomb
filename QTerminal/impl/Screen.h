@@ -376,13 +376,13 @@ public:
     /** Return the number of lines. */
     int getLines()
     {
-        return lines;
+        return _lines;
     }
 
     /** Return the number of columns. */
     int getColumns()
     {
-        return columns;
+        return _columns;
     }
 
     /** Return the number of lines in the history buffer. */
@@ -575,8 +575,8 @@ private:
     void copyFromHistory(Character* dest, int startLine, int count) const;
 
     // screen image ----------------
-    int lines;
-    int columns;
+    int _lines;
+    int _columns;
 
     QVector<QVector<Character> > _screenLines;             // [lines]
 
@@ -585,14 +585,14 @@ private:
 
     int _droppedLines;
 
-    QVarLengthArray<LineProperty, 64> lineProperties;
+    QVarLengthArray<LineProperty, 64> _lineProperties;
 
     // history buffer ---------------
     boost::shared_ptr<HistoryScroll> _hist;
 
     // cursor location
-    int cuX;
-    int cuY;
+    int _cursorX;
+    int _cursorY;
 
     // cursor color and rendition info
     CharacterColor cu_fg;      // foreground
@@ -627,8 +627,8 @@ private:
     //
 
     // cursor location
-    int sa_cuX;
-    int sa_cuY;
+    int _savedCursorX;
+    int _savedCursorY;
 
     // rendition info
     quint8 sa_cu_re;
