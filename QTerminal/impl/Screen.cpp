@@ -62,13 +62,13 @@ Character Screen::defaultChar = Character(' ',
 
 //#define REVERSE_WRAPPED_LINES  // for wrapped line debug
 
-Screen::Screen(int l, int c)
+Screen::Screen(const boost::shared_ptr<HistoryScroll> &hist, int l, int c)
     : lines(l),
     columns(c),
-    screenLines(new ImageLine[lines + 1]),
+    screenLines(new QVector<Character>[lines + 1]),
     _scrolledLines(0),
     _droppedLines(0),
-    _hist(new HistoryScrollBuffer(100000)),
+    _hist(hist),
     cuX(0),
     cuY(0),
     cu_re(0),
@@ -106,7 +106,6 @@ Screen::~Screen()
 {
     delete[] screenLines;
     delete[] tabstops;
-    delete _hist;
 }
 
 /* ------------------------------------------------------------------------- */
@@ -448,7 +447,7 @@ void Screen::resizeImage(int new_lines, int new_columns)
 
     // create new screen lines and copy from old to new
 
-    ImageLine* newScreenLines = new ImageLine[new_lines + 1];
+    QVector<Character> * newScreenLines = new QVector<Character> [new_lines + 1];
     for (int i = 0; i < qMin(lines, new_lines + 1); i++)
     {
         newScreenLines[i] = screenLines[i];
@@ -1709,9 +1708,7 @@ int Screen::getHistLines()
 void Screen::clearHistory()
 {
     clearSelection();
-    HistoryScroll* oldScroll = _hist;
-    _hist = new HistoryScrollBuffer(oldScroll->getMaxLines());
-    delete oldScroll;
+    _hist->clearHistory();
 }
 
 bool Screen::hasScroll()

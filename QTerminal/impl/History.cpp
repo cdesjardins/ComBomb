@@ -54,30 +54,36 @@ HistoryScrollBuffer::HistoryScrollBuffer(unsigned int maxLineCount)
     : HistoryScroll()
     , _historyBuffer()
     , _maxLineCount(0)
+    , _growCount(maxLineCount)
     , _usedLines(0)
-    , _head(0)
 {
-    setMaxNbLines(maxLineCount);
+    growScrollback();
 }
 
 HistoryScrollBuffer::~HistoryScrollBuffer()
 {
-    delete[] _historyBuffer;
+
+}
+
+void HistoryScrollBuffer::clearHistory()
+{
+    for (int index = 0; index < _usedLines; index++)
+    {
+        _historyBuffer[index].clear();
+        _wrappedLine[index] = false;
+    }
+    _usedLines = 0;
 }
 
 void HistoryScrollBuffer::addCellsVector(const QVector<Character>& cells)
 {
-    _head++;
-    if (_usedLines < _maxLineCount)
+    _usedLines++;
+    if (_usedLines >= _maxLineCount)
     {
-        _usedLines++;
+        growScrollback();
     }
 
-    if (_head >= _maxLineCount)
-    {
-        _head = 0;
-    }
-    int index = bufferIndex(_usedLines - 1);
+    int index = _usedLines - 1;
     _historyBuffer[index] = cells;
     _wrappedLine[index] = false;
 }
@@ -92,12 +98,7 @@ void HistoryScrollBuffer::addCells(const Character a[], int count)
 
 void HistoryScrollBuffer::addLine(bool previousWrapped)
 {
-    _wrappedLine[bufferIndex(_usedLines - 1)] = previousWrapped;
-}
-
-int HistoryScrollBuffer::getMaxLines()
-{
-    return _maxLineCount;
+    _wrappedLine[_usedLines - 1] = previousWrapped;
 }
 
 int HistoryScrollBuffer::getLines()
@@ -111,7 +112,7 @@ int HistoryScrollBuffer::getLineLen(int lineNumber)
 
     if (lineNumber < _usedLines)
     {
-        return _historyBuffer[bufferIndex(lineNumber)].size();
+        return _historyBuffer[lineNumber].size();
     }
     else
     {
@@ -125,8 +126,7 @@ bool HistoryScrollBuffer::isWrappedLine(int lineNumber)
 
     if (lineNumber < _usedLines)
     {
-        //kDebug() << "Line" << lineNumber << "wrapped is" << _wrappedLine[bufferIndex(lineNumber)];
-        return _wrappedLine[bufferIndex(lineNumber)];
+        return _wrappedLine[lineNumber];
     }
     else
     {
@@ -149,49 +149,17 @@ void HistoryScrollBuffer::getCells(int lineNumber, int startColumn, int count, C
         return;
     }
 
-    const QVector<Character>& line = _historyBuffer[bufferIndex(lineNumber)];
-
-    //kDebug() << "startCol " << startColumn;
-    //kDebug() << "line.size() " << line.size();
-    //kDebug() << "count " << count;
+    const QVector<Character>& line = _historyBuffer[lineNumber];
 
     Q_ASSERT(startColumn <= line.size() - count);
 
     memcpy(buffer, line.constData() + startColumn, count * sizeof(Character));
 }
 
-void HistoryScrollBuffer::setMaxNbLines(unsigned int lineCount)
+void HistoryScrollBuffer::growScrollback()
 {
-    QVector<Character>* oldBuffer = _historyBuffer;
-    QVector<Character>* newBuffer = new QVector<Character>[lineCount];
-
-    for (int i = 0; i < qMin(_usedLines, (int)lineCount); i++)
-    {
-        newBuffer[i] = oldBuffer[bufferIndex(i)];
-    }
-
-    _usedLines = qMin(_usedLines, (int)lineCount);
-    _maxLineCount = lineCount;
-    _head = (_usedLines == _maxLineCount) ? 0 : _usedLines - 1;
-
-    _historyBuffer = newBuffer;
-    delete[] oldBuffer;
-
-    _wrappedLine.resize(lineCount);
+    _maxLineCount += _growCount;
+    _historyBuffer.resize(_maxLineCount);
+    _wrappedLine.resize(_maxLineCount);
 }
 
-int HistoryScrollBuffer::bufferIndex(int lineNumber)
-{
-    Q_ASSERT(lineNumber >= 0);
-    Q_ASSERT(lineNumber < _maxLineCount);
-    Q_ASSERT((_usedLines == _maxLineCount) || lineNumber <= _head);
-
-    if (_usedLines == _maxLineCount)
-    {
-        return (_head + lineNumber + 1) % _maxLineCount;
-    }
-    else
-    {
-        return lineNumber;
-    }
-}

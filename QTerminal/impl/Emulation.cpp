@@ -50,7 +50,6 @@
 
 Emulation::Emulation() :
     _currentScreenIndex(0),
-    _screen(new Screen[2]),
     _codec(0),
     _decoder(NULL),
     _keyTranslator(0),
@@ -58,6 +57,10 @@ Emulation::Emulation() :
 {
     QObject::connect(&_bulkTimer1, SIGNAL(timeout()), this, SLOT(showBulk()));
     QObject::connect(&_bulkTimer2, SIGNAL(timeout()), this, SLOT(showBulk()));
+
+    boost::shared_ptr<HistoryScroll> hist(new HistoryScrollBuffer(100));
+    _screen.append(boost::shared_ptr<Screen>(new Screen(hist)));
+    _screen.append(boost::shared_ptr<Screen>(new Screen(hist)));
 
     // listen for mouse status changes
     connect(this, SIGNAL(programUsesMouseChanged(bool)),
@@ -77,7 +80,7 @@ void Emulation::usesMouseChanged(bool usesMouse)
 ScreenWindow* Emulation::createWindow()
 {
     boost::shared_ptr<ScreenWindow> window(new ScreenWindow());
-    window->setScreen(&_screen[_currentScreenIndex]);
+    window->setScreen(_screen[_currentScreenIndex].get());
     _windows << window;
 
     connect(window.get(), SIGNAL(selectionChanged()),
@@ -94,7 +97,7 @@ ScreenWindow* Emulation::createWindow()
 Emulation::~Emulation()
 {
     _windows.clear();
-    _screen.reset();
+
     if (_decoder != NULL)
     {
         delete _decoder;
@@ -111,25 +114,25 @@ void Emulation::setScreen(int n)
     _currentScreenIndex = n & 1;
     if (_currentScreenIndex != old)
     {
-        _screen[old].setBusySelecting(false);
+        _screen[old]->setBusySelecting(false);
 
         // tell all windows onto this emulation to switch to the newly active _screen
         QListIterator<boost::shared_ptr<ScreenWindow> > windowIter(_windows);
         while (windowIter.hasNext())
         {
-            windowIter.next()->setScreen(&_screen[_currentScreenIndex]);
+            windowIter.next()->setScreen(_screen[_currentScreenIndex].get());
         }
     }
 }
 
 void Emulation::clearHistory()
 {
-    _screen[_currentScreenIndex].clearHistory();
+    _screen[_currentScreenIndex]->clearHistory();
 }
 
 void Emulation::home()
 {
-    _screen[_currentScreenIndex].home();
+    _screen[_currentScreenIndex]->home();
 }
 
 void Emulation::setCodec(const QTextCodec* qtc)
@@ -188,13 +191,13 @@ void Emulation::receiveChar(int c)
     c &= 0xff;
     switch (c)
     {
-        case '\b': _screen[_currentScreenIndex].BackSpace();                 break;
-        case '\t': _screen[_currentScreenIndex].Tabulate();                  break;
-        case '\n': _screen[_currentScreenIndex].NewLine();                   break;
-        case '\r': _screen[_currentScreenIndex].Return();                    break;
+        case '\b': _screen[_currentScreenIndex]->BackSpace();                 break;
+        case '\t': _screen[_currentScreenIndex]->Tabulate();                  break;
+        case '\n': _screen[_currentScreenIndex]->NewLine();                   break;
+        case '\r': _screen[_currentScreenIndex]->Return();                    break;
         case 0x07: emit stateSet(NOTIFYBELL);
             break;
-        default: _screen[_currentScreenIndex].ShowCharacter(c);            break;
+        default: _screen[_currentScreenIndex]->ShowCharacter(c);            break;
     }
     ;
 }
@@ -259,7 +262,7 @@ void Emulation::receiveData(const char* text, int length)
 int Emulation::lineCount()
 {
     // sum number of lines currently on _screen plus number of lines in history
-    return _screen[_currentScreenIndex].getLines() + _screen[_currentScreenIndex].getHistLines();
+    return _screen[_currentScreenIndex]->getLines() + _screen[_currentScreenIndex]->getHistLines();
 }
 
 // Refreshing -------------------------------------------------------------- --
@@ -276,8 +279,8 @@ void Emulation::showBulk()
 
     emit outputChanged();
 
-    _screen[_currentScreenIndex].resetScrolledLines();
-    _screen[_currentScreenIndex].resetDroppedLines();
+    _screen[_currentScreenIndex]->resetScrolledLines();
+    _screen[_currentScreenIndex]->resetDroppedLines();
 }
 
 void Emulation::bufferedUpdate()
@@ -302,8 +305,8 @@ void Emulation::setImageSize(int lines, int columns)
     Q_ASSERT(lines > 0);
     Q_ASSERT(columns > 0);
 
-    _screen[0].resizeImage(lines, columns);
-    _screen[1].resizeImage(lines, columns);
+    _screen[0]->resizeImage(lines, columns);
+    _screen[1]->resizeImage(lines, columns);
 
     emit imageSizeChanged(lines, columns);
 
@@ -312,7 +315,7 @@ void Emulation::setImageSize(int lines, int columns)
 
 QSize Emulation::imageSize()
 {
-    return QSize(_screen[_currentScreenIndex].getColumns(), _screen[_currentScreenIndex].getLines());
+    return QSize(_screen[_currentScreenIndex]->getColumns(), _screen[_currentScreenIndex]->getLines());
 }
 
 ushort ExtendedCharTable::extendedCharHash(ushort* unicodePoints, ushort length) const

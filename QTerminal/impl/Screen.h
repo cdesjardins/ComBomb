@@ -29,7 +29,9 @@
 #include <QtCore/QRect>
 #include <QtCore/QTextStream>
 #include <QtCore/QVarLengthArray>
-
+#ifndef Q_MOC_RUN
+#include <boost/smart_ptr.hpp>
+#endif
 // Konsole
 #include "Character.h"
 #include "History.h"
@@ -75,7 +77,7 @@ class Screen
 {
 public:
     /** Construct a new screen image of size @p lines by @p columns. */
-    Screen(int lines = 40, int columns = 80);
+    Screen(const boost::shared_ptr<HistoryScroll> &hist, int lines = 40, int columns = 80);
     ~Screen();
 
     // VT100/2 Operations
@@ -576,8 +578,7 @@ private:
     int lines;
     int columns;
 
-    typedef QVector<Character> ImageLine;      // [0..columns]
-    ImageLine* screenLines;             // [lines]
+    QVector<Character> * screenLines;             // [lines]
 
     int _scrolledLines;
     QRect _lastScrolledRegion;
@@ -587,7 +588,7 @@ private:
     QVarLengthArray<LineProperty, 64> lineProperties;
 
     // history buffer ---------------
-    HistoryScroll* _hist;
+    boost::shared_ptr<HistoryScroll> _hist;
 
     // cursor location
     int cuX;
