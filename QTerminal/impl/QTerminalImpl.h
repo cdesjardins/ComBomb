@@ -60,8 +60,8 @@ protected:
 private:
     void initialize(const QTerminalConfig &terminalConfig, const boost::shared_ptr<TgtIntf> &targetInterface, int width, int height);
 
-    boost::shared_ptr<TerminalView> m_terminalView;
-    boost::scoped_ptr<TerminalModel> m_terminalModel;
+    boost::shared_ptr<TerminalView> _terminalView;
+    boost::scoped_ptr<TerminalModel> _terminalModel;
 };
 
 #endif // Q_UNIXTERMINALIMPL

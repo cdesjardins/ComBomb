@@ -406,7 +406,7 @@ public:
      * @param line The line index of the first character in the selection.
      * @param columnmode True if the selection is in column mode.
      */
-    void setSelectionStart(const int column, const int line, const bool columnmode);
+    void setSelectionStart(const int column, const int line, const bool _columnMode);
 
     /**
      * Sets the end of the current selection.
@@ -430,11 +430,6 @@ public:
 
     /** Clears the current selection */
     void clearSelection();
-
-    void setBusySelecting(bool busy)
-    {
-        sel_busy = busy;
-    }
 
     /**
      *  Returns true if the character at (@p column, @p line) is part of the
@@ -595,32 +590,31 @@ private:
     int _cursorY;
 
     // cursor color and rendition info
-    CharacterColor cu_fg;      // foreground
-    CharacterColor cu_bg;      // background
-    quint8 cu_re;      // rendition
+    CharacterColor _cursorFg;      // foreground
+    CharacterColor _cursorBg;      // background
+    quint8 _cursorRe;      // rendition
 
     // margins ----------------
-    int tmargin;      // top margin
-    int bmargin;      // bottom margin
+    int _topMargin;      // top margin
+    int _bottomMargin;      // bottom margin
 
     // states ----------------
-    ScreenParm currParm;
+    ScreenParm _currParm;
 
     // ----------------------------
 
-    bool* tabstops;
+    bool* _tabstops;
 
     // selection -------------------
-    int sel_begin; // The first location selected.
-    int sel_TL;    // TopLeft Location.
-    int sel_BR;    // Bottom Right Location.
-    bool sel_busy; // Busy making a selection.
-    bool columnmode;  // Column selection mode
+    int _selectionBegin; // The first location selected.
+    int _selectionTopLeft;    // TopLeft Location.
+    int _selectionBottomRight;    // Bottom Right Location.
+    bool _columnMode;  // Column selection mode
 
     // effective colors and rendition ------------
-    CharacterColor ef_fg;      // These are derived from
-    CharacterColor ef_bg;      // the cu_* variables above
-    quint8 ef_re;      // to speed up operation
+    CharacterColor _effectiveCursorFg;      // These are derived from
+    CharacterColor _effectiveCursorBg;      // the cu_* variables above
+    quint8 _effectiveCursorRe;      // to speed up operation
 
     //
     // save cursor, rendition & states ------------
@@ -631,17 +625,17 @@ private:
     int _savedCursorY;
 
     // rendition info
-    quint8 sa_cu_re;
-    CharacterColor sa_cu_fg;
-    CharacterColor sa_cu_bg;
+    CharacterColor _savedCursorFg;
+    CharacterColor _savedCursorBg;
+    quint8 _savedCursorRe;
 
     // last position where we added a character
-    int lastPos;
+    int _lastPos;
 
     // modes
-    ScreenParm saveParm;
+    ScreenParm _saveParm;
 
-    static Character defaultChar;
+    static Character _defaultChar;
 };
 
 #endif // SCREEN_H

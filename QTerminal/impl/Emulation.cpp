@@ -113,8 +113,6 @@ void Emulation::setScreen(int n)
     _currentScreenIndex = n & 1;
     if (_currentScreenIndex != old)
     {
-        _screen[old]->setBusySelecting(false);
-
         // tell all windows onto this emulation to switch to the newly active _screen
         QListIterator<boost::shared_ptr<ScreenWindow> > windowIter(_windows);
         while (windowIter.hasNext())
