@@ -333,10 +333,13 @@ bool TgtSshIntf::sshRecv()
     int status;
     bool ret = true;
     boost::intrusive_ptr<RefCntBuffer> currentIncomingBuffer;
-    _bufferPool->dequeue(currentIncomingBuffer, 100);
     do
     {
         outDataLength = 0;
+        if (currentIncomingBuffer == NULL)
+        {
+            _bufferPool->dequeue(currentIncomingBuffer, 100);
+        }
         if (currentIncomingBuffer != NULL)
         {
             char* data = boost::asio::buffer_cast<char*>(currentIncomingBuffer->_buffer);
@@ -349,7 +352,7 @@ bool TgtSshIntf::sshRecv()
             {
                 currentIncomingBuffer->_buffer = boost::asio::buffer(currentIncomingBuffer->_buffer, outDataLength);
                 _incomingData.enqueue(currentIncomingBuffer);
-                _bufferPool->dequeue(currentIncomingBuffer);
+                currentIncomingBuffer.reset();
             }
         }
     } while ((outDataLength > 0) && (cryptStatusOK(status)) && (_sshData->_sshThreadRun == true));
