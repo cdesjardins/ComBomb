@@ -363,7 +363,7 @@ public:
      * @param startLine Index of first line to copy
      * @param endLine Index of last line to copy
      */
-    void getImage(Character* dest, int size, int startLine, int endLine) const;
+    void getImage(QVector<Character> &dest, int size, int startLine, int endLine) const;
 
     /**
      * Returns the additional attributes associated with lines in the image.

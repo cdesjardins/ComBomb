@@ -30,7 +30,6 @@
 
 ScreenWindow::ScreenWindow(QObject* parent)
     : QObject(parent)
-    , _windowBuffer(0)
     , _windowBufferSize(0)
     , _bufferNeedsUpdate(true)
     , _windowLines(1)
@@ -42,7 +41,6 @@ ScreenWindow::ScreenWindow(QObject* parent)
 
 ScreenWindow::~ScreenWindow()
 {
-    delete[] _windowBuffer;
 }
 
 void ScreenWindow::setScreen(Screen* screen)
@@ -57,15 +55,14 @@ Screen* ScreenWindow::screen() const
     return _screen;
 }
 
-Character* ScreenWindow::getImage()
+QVector<Character> &ScreenWindow::getImage()
 {
     // reallocate internal buffer if the window size has changed
     int size = windowLines() * windowColumns();
-    if (_windowBuffer == 0 || _windowBufferSize != size)
+    if (_windowBufferSize != size)
     {
-        delete[] _windowBuffer;
         _windowBufferSize = size;
-        _windowBuffer = new Character[size];
+        _windowBuffer.resize(size);
         _bufferNeedsUpdate = true;
     }
 
@@ -94,7 +91,7 @@ void ScreenWindow::fillUnusedArea()
     int unusedLines = windowEndLine - screenEndLine;
     int charsToFill = unusedLines * windowColumns();
 
-    Screen::fillWithDefaultChar(_windowBuffer + _windowBufferSize - charsToFill, charsToFill);
+    Screen::fillWithDefaultChar(_windowBuffer.begin() + _windowBufferSize - charsToFill, charsToFill);
 }
 
 // return the index of the line at the end of this window, or if this window

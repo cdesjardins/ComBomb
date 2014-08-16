@@ -617,7 +617,7 @@ void Screen::copyFromScreen(Character* dest, int startLine, int count) const
     }
 }
 
-void Screen::getImage(Character* dest, int size, int startLine, int endLine) const
+void Screen::getImage(QVector<Character> &dest, int size, int startLine, int endLine) const
 {
     Q_ASSERT(startLine >= 0);
     Q_ASSERT(endLine >= startLine && endLine < _hist->getLines() + _lines);
@@ -633,13 +633,13 @@ void Screen::getImage(Character* dest, int size, int startLine, int endLine) con
     // copy lines from history buffer
     if (linesInHistoryBuffer > 0)
     {
-        copyFromHistory(dest, startLine, linesInHistoryBuffer);
+        copyFromHistory(dest.begin(), startLine, linesInHistoryBuffer);
     }
 
     // copy lines from screen buffer
     if (linesInScreenBuffer > 0)
     {
-        copyFromScreen(dest + linesInHistoryBuffer * _columns,
+        copyFromScreen(dest.begin() + linesInHistoryBuffer * _columns,
                        startLine + linesInHistoryBuffer - _hist->getLines(),
                        linesInScreenBuffer);
     }

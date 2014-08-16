@@ -355,8 +355,6 @@ TerminalView::~TerminalView()
 {
     qApp->removeEventFilter(this);
 
-    delete[]_image;
-
     _gridLayout.reset();
     _outputSuspendedLabel.reset();
 }
@@ -801,7 +799,7 @@ void TerminalView::scrollImage(int lines, const QRect& screenWindowRegion)
     region.setBottom(qMin(region.bottom(), this->_lines - 2));
 
     if (lines == 0
-        || _image == 0
+        || _image.size() == 0
         || !region.isValid()
         || (region.top() + abs(lines)) >= region.bottom()
         || this->_lines <= region.height())
@@ -827,8 +825,8 @@ void TerminalView::scrollImage(int lines, const QRect& screenWindowRegion)
     if (lines > 0)
     {
         // check that the memory areas that we are going to move are valid
-        Q_ASSERT((char*)lastCharPos + bytesToMove <
-                 (char*)(_image + (this->_lines * this->_columns)));
+        //Q_ASSERT((char*)lastCharPos + bytesToMove <
+        //         (char*)(_image + (this->_lines * this->_columns)));
 
         Q_ASSERT((lines * this->_columns) < _imageSize);
 
@@ -844,8 +842,8 @@ void TerminalView::scrollImage(int lines, const QRect& screenWindowRegion)
     else
     {
         // check that the memory areas that we are going to move are valid
-        Q_ASSERT((char*)firstCharPos + bytesToMove <
-                 (char*)(_image + (this->_lines * this->_columns)));
+        //Q_ASSERT((char*)firstCharPos + bytesToMove <
+        //         (char*)(_image + (this->_lines * this->_columns)));
 
         //scroll internal image up
         memmove(lastCharPos, firstCharPos, bytesToMove);
@@ -954,13 +952,13 @@ void TerminalView::updateImage()
                 _screenWindow->scrollRegion());
     _screenWindow->resetScrollCount();
 
-    Character* const newimg = _screenWindow->getImage();
+    QVector<Character> const newimg = _screenWindow->getImage();
     int lines = _screenWindow->windowLines();
     int columns = _screenWindow->windowColumns();
 
     setScroll(_screenWindow->currentLine(), _screenWindow->lineCount());
 
-    if (!_image)
+    if (_image.size() == 0)
     {
         updateImageSize(); // Create _image
     }
@@ -1405,7 +1403,7 @@ void TerminalView::propagateSize()
         parentWidget()->setFixedSize(parentWidget()->sizeHint());
         return;
     }
-    if (_image)
+    if (_image.size() != 0)
     {
         updateImageSize();
     }
@@ -1413,25 +1411,10 @@ void TerminalView::propagateSize()
 
 void TerminalView::updateImageSize()
 {
-    Character* oldimg = _image;
     int oldlin = _lines;
     int oldcol = _columns;
 
     makeImage();
-
-    // copy the old image to reduce flicker
-    int lines = qMin(oldlin, _lines);
-    int columns = qMin(oldcol, _columns);
-
-    if (oldimg)
-    {
-        for (int line = 0; line < lines; line++)
-        {
-            memcpy((void*)&_image[_columns * line],
-                   (void*)&oldimg[oldcol * line], columns * sizeof(Character));
-        }
-        delete[] oldimg;
-    }
 
     if (_screenWindow)
     {
@@ -2639,7 +2622,7 @@ void TerminalView::makeImage()
 
     // We over-commit one character so that we can be more relaxed in dealing with
     // certain boundary conditions: _image[_imageSize] is a valid but unused position
-    _image = new Character[_imageSize + 1];
+    _image.resize(_imageSize + 1);
 
     clearImage();
 }
@@ -2656,25 +2639,6 @@ void TerminalView::setSize(int columns, int lines)
         _size = newSize;
         updateGeometry();
     }
-}
-
-void TerminalView::setFixedSize(int cols, int lins)
-{
-    _isFixedSize = true;
-
-    //ensure that display is at least one line by one column in size
-    _columns = qMax(1, cols);
-    _lines = qMax(1, lins);
-    _usedColumns = qMin(_usedColumns, _columns);
-    _usedLines = qMin(_usedLines, _lines);
-
-    if (_image)
-    {
-        delete[] _image;
-        makeImage();
-    }
-    setSize(cols, lins);
-    QWidget::setFixedSize(_size);
 }
 
 QSize TerminalView::sizeHint() const

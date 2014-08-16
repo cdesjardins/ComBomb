@@ -26,6 +26,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QPoint>
 #include <QtCore/QRect>
+#include <QVector>
 
 // Konsole
 #include "Character.h"
@@ -77,7 +78,7 @@ public:
      * The buffer is managed by the ScreenWindow instance and does not need to be
      * deleted by the caller.
      */
-    Character* getImage();
+    QVector<Character> &getImage();
 
     /**
      * Returns the line attributes associated with the lines of characters which
@@ -238,7 +239,7 @@ private:
     void fillUnusedArea();
 
     Screen* _screen; // see setScreen() , screen()
-    Character* _windowBuffer;
+    QVector<Character> _windowBuffer;
     int _windowBufferSize;
     bool _bufferNeedsUpdate;
 

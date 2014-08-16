@@ -253,7 +253,6 @@ public:
     }
 
     void setSize(int cols, int lins);
-    void setFixedSize(int cols, int lins);
 
     // reimplemented
     QSize sizeHint() const;
@@ -644,7 +643,7 @@ private:
 
     int _contentHeight;
     int _contentWidth;
-    Character* _image; // [lines][columns]
+    QVector<Character> _image; // [lines][columns]
     // only the area [usedLines][usedColumns] in the image contains valid data
 
     int _imageSize;
