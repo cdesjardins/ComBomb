@@ -409,7 +409,7 @@ protected:
     //the current text codec.  (this allows for rendering of non-ASCII characters in text files etc.)
     const QTextCodec* _codec;
     QTextDecoder* _decoder;
-    const KeyboardTranslator* _keyTranslator; // the keyboard layout
+    boost::shared_ptr<KeyboardTranslator> _keyTranslator; // the keyboard layout
 protected slots:
     /**
      * Schedules an update of attached views.

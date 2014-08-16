@@ -22,6 +22,7 @@
 #include <QApplication>
 #include "QTerminalImpl.h"
 #include "BackTabEvent.h"
+#include "KeyboardTranslator.h"
 
 QTerminalImpl::QTerminalImpl(const QTerminalConfig &terminalConfig, const boost::shared_ptr<TgtIntf> &targetInterface, int width, int height, QWidget* parent)
     : QTerminalInterface(parent)
@@ -177,4 +178,3 @@ void QTerminalImpl::clearScrollback()
 {
     m_terminalModel->clearScreen();
 }
-

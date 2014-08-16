@@ -72,7 +72,9 @@ void HistoryScrollBuffer::clearHistory()
         _historyBuffer[index].clear();
         _wrappedLine[index] = false;
     }
+    _maxLineCount = 0;
     _usedLines = 0;
+    growScrollback();
 }
 
 void HistoryScrollBuffer::addCellsVector(const QVector<Character>& cells)

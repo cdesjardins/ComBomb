@@ -52,7 +52,6 @@ Emulation::Emulation() :
     _currentScreenIndex(0),
     _codec(0),
     _decoder(NULL),
-    _keyTranslator(0),
     _usesMouse(false)
 {
     QObject::connect(&_bulkTimer1, SIGNAL(timeout()), this, SLOT(showBulk()));

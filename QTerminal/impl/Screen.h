@@ -578,7 +578,7 @@ private:
     int lines;
     int columns;
 
-    QVector<Character> * screenLines;             // [lines]
+    QVector<QVector<Character> > _screenLines;             // [lines]
 
     int _scrolledLines;
     QRect _lastScrolledRegion;

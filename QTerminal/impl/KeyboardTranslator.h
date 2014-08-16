@@ -72,6 +72,7 @@ class QTextStream;
 class KeyboardTranslator
 {
 public:
+    ~KeyboardTranslator();
     /**
      * The meaning of a particular key sequence may depend upon the state which
      * the terminal emulation is in.  Therefore findEntry() may return a different
@@ -456,7 +457,6 @@ public:
      * first requested via a call to findTranslator()
      */
     KeyboardTranslatorManager();
-    ~KeyboardTranslatorManager();
 
     /**
      * Adds a new translator.  If a translator with the same name
@@ -464,7 +464,7 @@ public:
      *
      * TODO: More documentation.
      */
-    void addTranslator(KeyboardTranslator* translator);
+    void addTranslator(boost::shared_ptr<KeyboardTranslator> translator);
 
     /**
      * Deletes a translator.  Returns true on successful deletion or false otherwise.
@@ -474,7 +474,7 @@ public:
     bool deleteTranslator(const QString& name);
 
     /** Returns the default translator for Konsole. */
-    const KeyboardTranslator* defaultTranslator();
+    const boost::shared_ptr<KeyboardTranslator> defaultTranslator();
 
     /**
      * Returns the keyboard translator with the given name or 0 if no translator
@@ -483,7 +483,7 @@ public:
      * The first time that a translator with a particular name is requested,
      * the on-disk .keyboard file is loaded and parsed.
      */
-    const KeyboardTranslator* findTranslator(const QString& name);
+    const boost::shared_ptr<KeyboardTranslator> findTranslator(const QString& name);
     /**
      * Returns a list of the names of available keyboard translators.
      *
@@ -493,22 +493,23 @@ public:
     QList<QString> allTranslators();
 
     /** Returns the global KeyboardTranslatorManager instance. */
-    static KeyboardTranslatorManager* instance();
+    static boost::shared_ptr<KeyboardTranslatorManager> instance();
+    static void destroy();
 
 private:
     static const char* defaultTranslatorText;
-    static KeyboardTranslatorManager* _theKeyboardTranslatorManager;
+    static boost::shared_ptr<KeyboardTranslatorManager> _theKeyboardTranslatorManager;
     static boost::mutex _theKeyboardTranslatorManagerMutex;
 
     void findTranslators(); // locate the available translators
-    KeyboardTranslator* loadTranslator(const QString& name); // loads the translator
+    boost::shared_ptr<KeyboardTranslator> loadTranslator(const QString& name); // loads the translator
                                                              // with the given name
-    KeyboardTranslator* loadTranslator(QIODevice* device, const QString& name);
+    boost::shared_ptr<KeyboardTranslator> loadTranslator(QIODevice* device, const QString& name);
 
-    bool saveTranslator(const KeyboardTranslator* translator);
+    bool saveTranslator(const boost::shared_ptr<KeyboardTranslator> translator);
     QString findTranslatorPath(const QString& name);
 
-    QHash<QString, KeyboardTranslator*> _translators; // maps translator-name -> KeyboardTranslator
+    QHash<QString, boost::shared_ptr<KeyboardTranslator> > _translators; // maps translator-name -> KeyboardTranslator
                                                       // instance
     bool _haveLoadedAll;
 };
