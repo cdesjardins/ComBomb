@@ -65,14 +65,14 @@ public:
      * @param _r A set of rendition flags which specify how this character is to be drawn.
      */
     inline Character(quint16 _c = ' ', CharacterColor _f = CharacterColor(COLOR_SPACE_DEFAULT, DEFAULT_FORE_COLOR), CharacterColor _b = CharacterColor(COLOR_SPACE_DEFAULT, DEFAULT_BACK_COLOR), quint8 _r = DEFAULT_RENDITION)
-        : character(_c), rendition(_r), foregroundColor(_f), backgroundColor(_b)
+        : _character(_c), _rendition(_r), _foregroundColor(_f), _backgroundColor(_b)
     {
     }
 
     union
     {
         /** The unicode character value for this character. */
-        quint16 character;
+        quint16 _character;
         /**
          * Experimental addition which allows a single Character instance to contain more than
          * one unicode character.
@@ -80,16 +80,16 @@ public:
          * charSequence is a hash code which can be used to look up the unicode
          * character sequence in the ExtendedCharTable used to create the sequence.
          */
-        quint16 charSequence;
+        quint16 _charSequence;
     };
 
     /** A combination of RENDITION flags which specify options for drawing the character. */
-    quint8 rendition;
+    quint8 _rendition;
 
     /** The foreground color used to draw this character. */
-    CharacterColor foregroundColor;
+    CharacterColor _foregroundColor;
     /** The color used to draw this character's background. */
-    CharacterColor backgroundColor;
+    CharacterColor _backgroundColor;
 
     /**
      * Returns true if this character has a transparent background when
@@ -117,34 +117,34 @@ public:
 
 inline bool operator ==(const Character& a, const Character& b)
 {
-    return a.character == b.character &&
-           a.rendition == b.rendition &&
-           a.foregroundColor == b.foregroundColor &&
-           a.backgroundColor == b.backgroundColor;
+    return a._character == b._character &&
+           a._rendition == b._rendition &&
+           a._foregroundColor == b._foregroundColor &&
+           a._backgroundColor == b._backgroundColor;
 }
 
 inline bool operator !=(const Character& a, const Character& b)
 {
-    return a.character != b.character ||
-           a.rendition != b.rendition ||
-           a.foregroundColor != b.foregroundColor ||
-           a.backgroundColor != b.backgroundColor;
+    return a._character != b._character ||
+           a._rendition != b._rendition ||
+           a._foregroundColor != b._foregroundColor ||
+           a._backgroundColor != b._backgroundColor;
 }
 
 inline bool Character::isTransparent(const ColorEntry* base) const
 {
-    return ((backgroundColor._colorSpace == COLOR_SPACE_DEFAULT) &&
-            base[backgroundColor._u + 0 + (backgroundColor._v ? BASE_COLORS : 0)].transparent)
-           || ((backgroundColor._colorSpace == COLOR_SPACE_SYSTEM) &&
-               base[backgroundColor._u + 2 + (backgroundColor._v ? BASE_COLORS : 0)].transparent);
+    return ((_backgroundColor._colorSpace == COLOR_SPACE_DEFAULT) &&
+            base[_backgroundColor._u + 0 + (_backgroundColor._v ? BASE_COLORS : 0)].transparent)
+           || ((_backgroundColor._colorSpace == COLOR_SPACE_SYSTEM) &&
+               base[_backgroundColor._u + 2 + (_backgroundColor._v ? BASE_COLORS : 0)].transparent);
 }
 
 inline bool Character::isBold(const ColorEntry* base) const
 {
-    return ((backgroundColor._colorSpace == COLOR_SPACE_DEFAULT) &&
-            base[backgroundColor._u + 0 + (backgroundColor._v ? BASE_COLORS : 0)].bold)
-           || ((backgroundColor._colorSpace == COLOR_SPACE_SYSTEM) &&
-               base[backgroundColor._u + 2 + (backgroundColor._v ? BASE_COLORS : 0)].bold);
+    return ((_backgroundColor._colorSpace == COLOR_SPACE_DEFAULT) &&
+            base[_backgroundColor._u + 0 + (_backgroundColor._v ? BASE_COLORS : 0)].bold)
+           || ((_backgroundColor._colorSpace == COLOR_SPACE_SYSTEM) &&
+               base[_backgroundColor._u + 2 + (_backgroundColor._v ? BASE_COLORS : 0)].bold);
 }
 
 extern unsigned short vt100_graphics[32];

@@ -33,31 +33,31 @@ QTerminalImpl::QTerminalImpl(const QTerminalConfig &terminalConfig, const boost:
 
 void QTerminalImpl::initialize(const QTerminalConfig &terminalConfig, const boost::shared_ptr<TgtIntf> &targetInterface, int width, int height)
 {
-    m_terminalView.reset(new TerminalView(this));
-    m_terminalView->setKeyboardCursorShape(TerminalView::IBeamCursor);
-    m_terminalView->setBlinkingCursor(true);
-    m_terminalView->setBellMode(TerminalView::NotifyBell);
-    m_terminalView->setTerminalSizeHint(true);
-    m_terminalView->setContextMenuPolicy(Qt::CustomContextMenu);
-    m_terminalView->setTripleClickMode(TerminalView::SelectWholeLine);
-    m_terminalView->setTerminalSizeStartup(true);
-    m_terminalView->setScrollBarPosition(TerminalView::ScrollBarRight);
+    _terminalView.reset(new TerminalView(this));
+    _terminalView->setKeyboardCursorShape(TerminalView::IBeamCursor);
+    _terminalView->setBlinkingCursor(true);
+    _terminalView->setBellMode(TerminalView::NotifyBell);
+    _terminalView->setTerminalSizeHint(true);
+    _terminalView->setContextMenuPolicy(Qt::CustomContextMenu);
+    _terminalView->setTripleClickMode(TerminalView::SelectWholeLine);
+    _terminalView->setTerminalSizeStartup(true);
+    _terminalView->setScrollBarPosition(TerminalView::ScrollBarRight);
 
-    connect(m_terminalView.get(), SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(handleCustomContextMenuRequested(QPoint)));
+    connect(_terminalView.get(), SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(handleCustomContextMenuRequested(QPoint)));
 
-    setFocusProxy(m_terminalView.get());
+    setFocusProxy(_terminalView.get());
 
-    m_terminalModel.reset(new TerminalModel(targetInterface));
-    m_terminalModel->setCodec(QTextCodec::codecForName("UTF-8"));
-    m_terminalModel->setDarkBackground(true);
-    m_terminalModel->setKeyBindings("");
-    m_terminalModel->run();
-    m_terminalModel->addView(m_terminalView);
+    _terminalModel.reset(new TerminalModel(targetInterface));
+    _terminalModel->setCodec(QTextCodec::codecForName("UTF-8"));
+    _terminalModel->setDarkBackground(true);
+    _terminalModel->setKeyBindings("");
+    _terminalModel->run();
+    _terminalModel->addView(_terminalView);
 
     // Set the screen size after font and everything else is setup
-    m_terminalView->setSize(width, height);
+    _terminalView->setSize(width, height);
     applyTerminalConfig(terminalConfig);
-    m_terminalView->installEventFilter(this);
+    _terminalView->installEventFilter(this);
 }
 
 bool QTerminalImpl::eventFilter(QObject *, QEvent *event)
@@ -68,7 +68,7 @@ bool QTerminalImpl::eventFilter(QObject *, QEvent *event)
         if (keyEvent->key() == Qt::Key_Backtab)
         {
             // Absorb backtab and post a new backtab event.
-            QApplication::postEvent(m_terminalView.get(), new SendBackTabEvent());
+            QApplication::postEvent(_terminalView.get(), new SendBackTabEvent());
             return true;
         }
         else
@@ -82,99 +82,99 @@ bool QTerminalImpl::eventFilter(QObject *, QEvent *event)
 QTerminalImpl::~QTerminalImpl()
 {
     emit destroyed();
-    m_terminalModel.reset();
-    m_terminalView.reset();
+    _terminalModel.reset();
+    _terminalView.reset();
 }
 
 void QTerminalImpl::connectToRecvText(QObject *who)
 {
-    m_terminalModel->connectToRecvText(who);
+    _terminalModel->connectToRecvText(who);
 }
 
 void QTerminalImpl::applyTerminalConfig(const QTerminalConfig &terminalConfig)
 {
-    m_terminalView->setWordCharacters(terminalConfig._wordSelectionDelimiters);
+    _terminalView->setWordCharacters(terminalConfig._wordSelectionDelimiters);
     setTerminalFont(terminalConfig._font);
 }
 
 void QTerminalImpl::setTerminalFont(const QFont &font)
 {
-    if (!m_terminalView)
+    if (!_terminalView)
     {
         return;
     }
-    m_terminalView->setVTFont(font);
+    _terminalView->setVTFont(font);
 }
 
 void QTerminalImpl::setSize(int h, int v)
 {
-    if (!m_terminalView)
+    if (!_terminalView)
     {
         return;
     }
-    m_terminalView->setSize(h, v);
+    _terminalView->setSize(h, v);
 }
 
 void QTerminalImpl::sendText(const QString& text)
 {
-    m_terminalModel->sendText(text);
+    _terminalModel->sendText(text);
 }
 
 QSize QTerminalImpl::sizeHint() const
 {
-    return m_terminalView->sizeHint();
+    return _terminalView->sizeHint();
 }
 
 void QTerminalImpl::setCursorType(CursorType type, bool blinking)
 {
     switch (type)
     {
-        case UnderlineCursor: m_terminalView->setKeyboardCursorShape(TerminalView::UnderlineCursor); break;
-        case BlockCursor: m_terminalView->setKeyboardCursorShape(TerminalView::BlockCursor); break;
-        case IBeamCursor: m_terminalView->setKeyboardCursorShape(TerminalView::IBeamCursor); break;
+        case UnderlineCursor: _terminalView->setKeyboardCursorShape(TerminalView::UnderlineCursor); break;
+        case BlockCursor: _terminalView->setKeyboardCursorShape(TerminalView::BlockCursor); break;
+        case IBeamCursor: _terminalView->setKeyboardCursorShape(TerminalView::IBeamCursor); break;
     }
-    m_terminalView->setBlinkingCursor(blinking);
+    _terminalView->setBlinkingCursor(blinking);
 }
 
 void QTerminalImpl::focusInEvent(QFocusEvent* focusEvent)
 {
     Q_UNUSED(focusEvent);
-    m_terminalView->updateImage();
-    m_terminalView->repaint();
-    m_terminalView->update();
+    _terminalView->updateImage();
+    _terminalView->repaint();
+    _terminalView->update();
 }
 
 void QTerminalImpl::showEvent(QShowEvent*)
 {
-    m_terminalView->updateImage();
-    m_terminalView->repaint();
-    m_terminalView->update();
+    _terminalView->updateImage();
+    _terminalView->repaint();
+    _terminalView->update();
 }
 
 void QTerminalImpl::resizeEvent(QResizeEvent*)
 {
-    m_terminalView->resize(this->size());
-    m_terminalView->updateImage();
-    m_terminalView->repaint();
-    m_terminalView->update();
+    _terminalView->resize(this->size());
+    _terminalView->updateImage();
+    _terminalView->repaint();
+    _terminalView->update();
 }
 
 void QTerminalImpl::copyClipboard()
 {
-    m_terminalView->copyClipboard();
+    _terminalView->copyClipboard();
 }
 
 void QTerminalImpl::pasteClipboard()
 {
-    m_terminalView->pasteClipboard();
+    _terminalView->pasteClipboard();
 }
 
 void QTerminalImpl::newlineToggle()
 {
-    m_terminalModel->newlineToggle();
+    _terminalModel->newlineToggle();
 }
 
 void QTerminalImpl::clearScrollback()
 {
-    m_terminalModel->clearScreen();
+    _terminalModel->clearScreen();
 }

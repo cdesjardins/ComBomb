@@ -74,7 +74,7 @@ void PlainTextDecoder::decodeLine(const Character* const characters, int count, 
     {
         for (int i = count - 1; i >= 0; i--)
         {
-            if (characters[i].character != ' ')
+            if (characters[i]._character != ' ')
             {
                 break;
             }
@@ -87,7 +87,7 @@ void PlainTextDecoder::decodeLine(const Character* const characters, int count, 
 
     for (int i = 0; i < outputCount; i++)
     {
-        plainText.append(QChar(characters[i].character));
+        plainText.append(QChar(characters[i]._character));
     }
 
     *_output << plainText;
@@ -138,21 +138,21 @@ void HTMLDecoder::decodeLine(const Character* const characters, int count, LineP
 
     for (int i = 0; i < count; i++)
     {
-        QChar ch(characters[i].character);
+        QChar ch(characters[i]._character);
 
         //check if appearance of character is different from previous char
-        if (characters[i].rendition != _lastRendition  ||
-            characters[i].foregroundColor != _lastForeColor  ||
-            characters[i].backgroundColor != _lastBackColor)
+        if (characters[i]._rendition != _lastRendition  ||
+            characters[i]._foregroundColor != _lastForeColor  ||
+            characters[i]._backgroundColor != _lastBackColor)
         {
             if (_innerSpanOpen)
             {
                 closeSpan(text);
             }
 
-            _lastRendition = characters[i].rendition;
-            _lastForeColor = characters[i].foregroundColor;
-            _lastBackColor = characters[i].backgroundColor;
+            _lastRendition = characters[i]._rendition;
+            _lastForeColor = characters[i]._foregroundColor;
+            _lastBackColor = characters[i]._backgroundColor;
 
             //build up style string
             QString style;
