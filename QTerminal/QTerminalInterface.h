@@ -54,6 +54,7 @@ public:
         newlineAction->setCheckable(true);
         connect(copyAction, SIGNAL (triggered()), this, SLOT (copyClipboard()));
         connect(pasteAction, SIGNAL (triggered()), this, SLOT (pasteClipboard()));
+        connect(selectAllAction, SIGNAL (triggered()), this, SLOT (selectAll()));
         connect(clearScrollbackAction, SIGNAL (triggered()), this, SLOT (clearScrollback()));
         connect(newlineAction, SIGNAL (triggered()), this, SLOT (newlineToggle()));
         connect(runProcessAction, SIGNAL (triggered()), this, SLOT (runProcess()));
@@ -89,6 +90,7 @@ public slots:
     virtual void pasteClipboard() = 0;
     virtual void newlineToggle() = 0;
     virtual void runProcess() = 0;
+    virtual void selectAll() = 0;
     virtual void clearScrollback() = 0;
     virtual void handleCustomContextMenuRequested(QPoint at)
     {

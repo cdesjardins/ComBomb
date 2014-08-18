@@ -396,3 +396,7 @@ void TerminalModel::newlineToggle()
     _emulation->newlineToggle();
 }
 
+int TerminalModel::lineCount()
+{
+    return _emulation->lineCount();
+}

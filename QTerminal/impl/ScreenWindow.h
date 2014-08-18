@@ -113,6 +113,7 @@ public:
      */
     QRect scrollRegion() const;
 
+    void setSelectionAll();
     /**
      * Sets the start of the selection to the given @p line and @p column within
      * the window.

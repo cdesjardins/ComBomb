@@ -224,3 +224,12 @@ void MainWindow::on_action_Clear_scrollback_triggered()
     }
 }
 
+
+void MainWindow::on_actionSelect_All_triggered()
+{
+    ChildForm* activeWindow = getActiveChildWindow();
+    if (activeWindow != NULL)
+    {
+        activeWindow->selectAll();
+    }
+}

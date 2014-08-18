@@ -1519,6 +1519,13 @@ void TerminalView::setScrollBarPosition(ScrollBarPosition position)
     update();
 }
 
+void TerminalView::selectAll()
+{
+    _screenWindow->setSelectionAll();
+
+    setSelection(_screenWindow->selectedText(true));
+}
+
 void TerminalView::mousePressEvent(QMouseEvent* ev)
 {
     if (_possibleTripleClick && (ev->button() == Qt::LeftButton))
@@ -1692,14 +1699,6 @@ void TerminalView::mouseMoveEvent(QMouseEvent* ev)
 
     extendSelection(ev->pos());
 }
-
-#if 0
-void TerminalDisplay::setSelectionEnd()
-{
-    extendSelection(_configureRequestPoint);
-}
-
-#endif
 
 void TerminalView::extendSelection(const QPoint& position)
 {

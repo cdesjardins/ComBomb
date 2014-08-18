@@ -185,6 +185,7 @@ public:
     void refresh();
     void newlineToggle();
     void connectToRecvText(QObject *who);
+    int lineCount();
 protected:
     virtual void closeEvent(QCloseEvent * event);
 public slots:
