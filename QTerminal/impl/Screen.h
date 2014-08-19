@@ -32,6 +32,7 @@
 #ifndef Q_MOC_RUN
 #include <boost/smart_ptr.hpp>
 #endif
+#include <deque>
 // Konsole
 #include "Character.h"
 #include "History.h"
@@ -573,7 +574,7 @@ private:
     int _lines;
     int _columns;
 
-    QVector<QVector<Character> > _screenLines;             // [lines]
+    std::deque<QVector<Character> > _screenLines;             // [lines]
 
     int _scrolledLines;
     QRect _lastScrolledRegion;

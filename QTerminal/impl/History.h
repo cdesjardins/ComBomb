@@ -58,14 +58,10 @@ public:
     }
 
     // adding lines.
-    virtual void addCells(const Character a[], int count) = 0;
+    //virtual void addCells(const Character a[], int count) = 0;
     // convenience method - this is virtual so that subclasses can take advantage
     // of QVector's implicit copying
-    virtual void addCellsVector(const QVector<Character>& cells)
-    {
-        addCells(cells.data(), cells.size());
-    }
-
+    virtual void addCellsVector(const QVector<Character>& cells) = 0;
     virtual void addLine(bool previousWrapped = false) = 0;
 
 protected:
@@ -86,7 +82,7 @@ public:
     virtual bool isWrappedLine(int lineno);
     virtual void clearHistory();
 
-    virtual void addCells(const Character a[], int count);
+    //virtual void addCells(const Character a[], int count);
     virtual void addCellsVector(const QVector<Character>& cells);
     virtual void addLine(bool previousWrapped = false);
 protected:

@@ -90,14 +90,6 @@ void HistoryScrollBuffer::addCellsVector(const QVector<Character>& cells)
     _wrappedLine[index] = false;
 }
 
-void HistoryScrollBuffer::addCells(const Character a[], int count)
-{
-    QVector<Character> newLine(count);
-    qCopy(a, a + count, newLine.begin());
-
-    addCellsVector(newLine);
-}
-
 void HistoryScrollBuffer::addLine(bool previousWrapped)
 {
     _wrappedLine[_usedLines - 1] = previousWrapped;

@@ -331,7 +331,7 @@ void Screen::deleteLines(int n)
     scrollUp(_cursorY, n);
 }
 
-/*! insert `n' lines at the cursor position.
+/*! insert n lines at the cursor position.
 
     The cursor is not moved by the operation.
 */
@@ -819,7 +819,7 @@ void Screen::NewLine()
     index();
 }
 
-/*! put `c' literally onto the screen at the current cursor position.
+/*! put c literally onto the screen at the current cursor position.
 
     VT100 uses the convention to produce an automatic newline (am)
     with the *first* character that would fall onto the next line (xenl).
@@ -961,9 +961,8 @@ void Screen::scrollUp(int n)
     scrollUp(_topMargin, n);
 }
 
-/*! scroll up `n' lines within current region.
-    The `n' new lines are cleared.
-    \sa setRegion \sa scrollDown
+/*! scroll up n lines within current region.
+    The n new lines are cleared.
 */
 
 QRect Screen::lastScrolledRegion() const
@@ -981,7 +980,7 @@ void Screen::scrollUp(int from, int n)
     _scrolledLines -= n;
     _lastScrolledRegion = QRect(0, _topMargin, _columns - 1, (_bottomMargin - _topMargin));
 
-    //FIXME: make sure `_topMargin', `_bottomMargin', `from', `n' is in bounds.
+    //FIXME: make sure _topMargin _bottomMargin from n is in bounds.
     moveImage(loc(0, from), loc(0, from + n), loc(_columns - 1, _bottomMargin));
     clearImage(loc(0, _bottomMargin - n + 1), loc(_columns - 1, _bottomMargin), ' ');
 }
@@ -995,9 +994,9 @@ void Screen::scrollDown(int n)
     scrollDown(_topMargin, n);
 }
 
-/*! scroll down `n' lines within current region.
-    The `n' new lines are cleared.
-    \sa setRegion \sa scrollUp
+/*! scroll down n lines within current region.
+    The n new lines are cleared.
+    setRegion scrollUp
 */
 
 void Screen::scrollDown(int from, int n)
@@ -1006,7 +1005,7 @@ void Screen::scrollDown(int from, int n)
 
     _scrolledLines += n;
 
-//FIXME: make sure `_topMargin', `_bottomMargin', `from', `n' is in bounds.
+    //FIXME: make sure _topMargin, _bottomMargin, from, n is in bounds.
     if (n <= 0)
     {
         return;
@@ -1136,12 +1135,12 @@ void Screen::clearImage(int loca, int loce, char c)
     }
 }
 
-/*! move image between (including) `sourceBegin' and `sourceEnd' to 'dest'.
+/*! move image between (including) sourceBegin and sourceEnd to dest.
 
-    The 'dest', 'sourceBegin' and 'sourceEnd' parameters can be generated using
+    The dest sourceBegin and sourceEnd parameters can be generated using
     the loc(column,line) macro.
 
-NOTE:  moveImage() can only move whole lines.
+    NOTE:  moveImage() can only move whole lines.
 
     This is an internal helper functions. The parameter types are internal
     addresses of within the screen image and make use of the way how the
@@ -1153,26 +1152,36 @@ void Screen::moveImage(int dest, int sourceBegin, int sourceEnd)
     Q_ASSERT(sourceBegin <= sourceEnd);
 
     int lines = (sourceEnd - sourceBegin) / _columns;
+    int destLine = dest / _columns;
+    int sourceBeginLine = sourceBegin / _columns;
 
     //move screen image and line properties:
     //the source and destination areas of the image may overlap,
     //so it matters that we do the copy in the right order -
     //forwards if dest < sourceBegin or backwards otherwise.
     //(search the web for 'memmove implementation' for details)
+    //qDebug("move image: %i %i %i", dest, lines, _screenLines.size());
+    /*
+    if (destLine == 0)
+    {
+        _screenLines.pop_front();
+        _screenLines.resize(_screenLines.size() + 1);
+    }
+    */
     if (dest < sourceBegin)
     {
         for (int i = 0; i <= lines; i++)
         {
-            _screenLines[(dest / _columns) + i] = _screenLines[(sourceBegin / _columns) + i];
-            _lineProperties[(dest / _columns) + i] = _lineProperties[(sourceBegin / _columns) + i];
+            _screenLines[destLine + i] = _screenLines[sourceBeginLine + i];
+            _lineProperties[destLine + i] = _lineProperties[sourceBeginLine + i];
         }
     }
     else
     {
         for (int i = lines; i >= 0; i--)
         {
-            _screenLines[(dest / _columns) + i] = _screenLines[(sourceBegin / _columns) + i];
-            _lineProperties[(dest / _columns) + i] = _lineProperties[(sourceBegin / _columns) + i];
+            _screenLines[destLine + i] = _screenLines[sourceBeginLine + i];
+            _lineProperties[destLine + i] = _lineProperties[sourceBeginLine + i];
         }
     }
 
