@@ -1480,7 +1480,7 @@ void Screen::writeSelectionToStream(TerminalCharacterDecoder* decoder,
             count = right - start + 1;
         }
 
-        const bool appendNewLine = (y != bottom);
+        const bool appendNewLine = (y != bottom) || ((top == bottom) && (right == (_columns - 1)));
         copyLineToStream(y,
                          start,
                          count,
