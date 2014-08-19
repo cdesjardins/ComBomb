@@ -57,11 +57,7 @@ public:
         Character res; getCells(lineno, colno, 1, &res); return res;
     }
 
-    // adding lines.
-    //virtual void addCells(const Character a[], int count) = 0;
-    // convenience method - this is virtual so that subclasses can take advantage
-    // of QVector's implicit copying
-    virtual void addCellsVector(const QVector<Character>& cells) = 0;
+    virtual void addCellsVector(const std::vector<Character>& cells) = 0;
     virtual void addLine(bool previousWrapped = false) = 0;
 
 protected:
@@ -83,14 +79,14 @@ public:
     virtual void clearHistory();
 
     //virtual void addCells(const Character a[], int count);
-    virtual void addCellsVector(const QVector<Character>& cells);
+    virtual void addCellsVector(const std::vector<Character>& cells);
     virtual void addLine(bool previousWrapped = false);
 protected:
     void growScrollback();
 
 private:
 
-    QVector<QVector<Character> >_historyBuffer;
+    std::vector<std::vector<Character> >_historyBuffer;
     QBitArray _wrappedLine;
     int _maxLineCount;
     int _growCount;

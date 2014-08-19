@@ -287,20 +287,21 @@ void Screen::deleteChars(int n)
     }
 
     // if cursor is beyond the end of the line there is nothing to do
-    if (_cursorX >= _screenLines[_cursorY].count())
+    if (_cursorX >= _screenLines[_cursorY].size())
     {
         return;
     }
 
-    if (_cursorX + n >= _screenLines[_cursorY].count())
+    if (_cursorX + n >= _screenLines[_cursorY].size())
     {
-        n = _screenLines[_cursorY].count() - 1 - _cursorX;
+        n = _screenLines[_cursorY].size() - 1 - _cursorX;
     }
 
     Q_ASSERT(n >= 0);
-    Q_ASSERT(_cursorX + n < _screenLines[_cursorY].count());
+    Q_ASSERT(_cursorX + n < _screenLines[_cursorY].size());
 
-    _screenLines[_cursorY].remove(_cursorX, n);
+    //_screenLines[_cursorY].remove(_cursorX, n);
+    _screenLines[_cursorY].erase(_screenLines[_cursorY].begin() + _cursorX, _screenLines[_cursorY].begin() + _cursorX + n);
 }
 
 void Screen::insertChars(int n)
@@ -314,9 +315,9 @@ void Screen::insertChars(int n)
         _screenLines[_cursorY].resize(_cursorX);
     }
 
-    _screenLines[_cursorY].insert(_cursorX, n, ' ');
+    _screenLines[_cursorY].insert(_screenLines[_cursorY].begin() + _cursorX, n, ' ');
 
-    if (_screenLines[_cursorY].count() > _columns)
+    if (_screenLines[_cursorY].size() > _columns)
     {
         _screenLines[_cursorY].resize(_columns);
     }
@@ -605,7 +606,14 @@ void Screen::copyFromScreen(Character* dest, int startLine, int count) const
             int srcIndex = srcLineStartIndex + column;
             int destIndex = destLineStartIndex + column;
 
-            dest[destIndex] = _screenLines[srcIndex / _columns].value(srcIndex % _columns, _defaultChar);
+            if ((srcIndex % _columns) >= _screenLines[srcIndex / _columns].size())
+            {
+                dest[destIndex] = _defaultChar;
+            }
+            else
+            {
+                dest[destIndex] = _screenLines[srcIndex / _columns].at(srcIndex % _columns);
+            }
 
             // invert selected text
             if (_selectionBegin != -1 && isSelected(column, line + _hist->getLines()))
@@ -870,7 +878,7 @@ void Screen::ShowCharacter(unsigned short c)
     int size = _screenLines[_cursorY].size();
     if (size == 0 && _cursorY > 0)
     {
-        _screenLines[_cursorY].resize(qMax(_screenLines[_cursorY - 1].size(), _cursorX + w));
+        _screenLines[_cursorY].resize(qMax(_screenLines[_cursorY - 1].size(), (size_t)_cursorX + w));
     }
     else
     {
@@ -1113,7 +1121,7 @@ void Screen::clearImage(int loca, int loce, char c)
         int endCol = (y == bottomLine) ? loce % _columns : _columns - 1;
         int startCol = (y == topLine) ? loca % _columns : 0;
 
-        QVector<Character>& line = _screenLines[y];
+        std::vector<Character>& line = _screenLines[y];
 
         if (isDefaultCh && endCol == _columns - 1)
         {
@@ -1559,7 +1567,7 @@ void Screen::copyLineToStream(int line,
         const int screenLine = line - _hist->getLines();
 
         Character* data = _screenLines[screenLine].data();
-        int length = _screenLines[screenLine].count();
+        int length = _screenLines[screenLine].size();
 
         //retrieve line from screen image
         for (int i = start; i < qMin(start + count, length); i++)

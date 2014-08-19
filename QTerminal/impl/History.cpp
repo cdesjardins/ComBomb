@@ -77,7 +77,7 @@ void HistoryScrollBuffer::clearHistory()
     growScrollback();
 }
 
-void HistoryScrollBuffer::addCellsVector(const QVector<Character>& cells)
+void HistoryScrollBuffer::addCellsVector(const std::vector<Character>& cells)
 {
     _usedLines++;
     if (_usedLines >= _maxLineCount)
@@ -143,11 +143,15 @@ void HistoryScrollBuffer::getCells(int lineNumber, int startColumn, int count, C
         return;
     }
 
-    const QVector<Character>& line = _historyBuffer[lineNumber];
+    const std::vector<Character>& line = _historyBuffer[lineNumber];
 
     Q_ASSERT(startColumn <= line.size() - count);
 
-    memcpy(buffer, line.constData() + startColumn, count * sizeof(Character));
+    for (int index = 0; index < count; index++)
+    {
+        buffer[index] = line[index + startColumn];
+    }
+    //memcpy(buffer, line.constData() + startColumn, count * sizeof(Character));
 }
 
 void HistoryScrollBuffer::growScrollback()
