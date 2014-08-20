@@ -31,40 +31,14 @@
 // Konsole
 #include "Character.h"
 
-//////////////////////////////////////////////////////////////////////
-
-//////////////////////////////////////////////////////////////////////
-// Abstract base class for file and buffer versions
-//////////////////////////////////////////////////////////////////////
-
+//
+// Buffer-based history
+//
 class HistoryScroll
 {
 public:
     HistoryScroll();
     virtual ~HistoryScroll();
-
-    virtual bool hasScroll();
-
-    // access to history
-    virtual int getLines() = 0;
-    virtual int getLineLen(int lineno) = 0;
-    virtual void getCells(int lineno, int colno, int count, std::vector<Character>::iterator& res, Character defaultChar) = 0;
-    virtual bool isWrappedLine(int lineno) = 0;
-    virtual void clearHistory() = 0;
-    virtual void addCellsVector(const std::vector<Character>& cells) = 0;
-    virtual void addLine(bool previousWrapped = false) = 0;
-
-protected:
-};
-
-//////////////////////////////////////////////////////////////////////
-// Buffer-based history (limited to a fixed nb of lines)
-//////////////////////////////////////////////////////////////////////
-class HistoryScrollBuffer : public HistoryScroll
-{
-public:
-    HistoryScrollBuffer(unsigned int maxNbLines);
-    virtual ~HistoryScrollBuffer();
 
     virtual int getLines();
     virtual int getLineLen(int lineno);
@@ -73,16 +47,13 @@ public:
     virtual void clearHistory();
     virtual void addCellsVector(const std::vector<Character>& cells);
     virtual void addLine(bool previousWrapped = false);
+    virtual bool hasScroll();
 protected:
-    void growScrollback();
 
 private:
 
     std::vector<std::vector<Character> >_historyBuffer;
     QBitArray _wrappedLine;
-    int _maxLineCount;
-    int _growCount;
-    int _usedLines;
 };
 
 #endif // HISTORY_H

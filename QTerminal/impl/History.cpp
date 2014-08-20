@@ -34,7 +34,10 @@
 // Reasonable line size
 #define LINE_SIZE   1024
 
-// History Scroll abstract base class //////////////////////////////////////
+bool HistoryScroll::hasScroll()
+{
+    return true;
+}
 
 HistoryScroll::HistoryScroll()
 {
@@ -44,67 +47,37 @@ HistoryScroll::~HistoryScroll()
 {
 }
 
-bool HistoryScroll::hasScroll()
+void HistoryScroll::clearHistory()
 {
-    return true;
+    qDebug("clear start");
+    _historyBuffer.clear();
+    qDebug("clear half way");
+    _wrappedLine.clear();
+    qDebug("clear end");
 }
 
-// History Scroll Buffer //////////////////////////////////////
-HistoryScrollBuffer::HistoryScrollBuffer(unsigned int maxLineCount)
-    : HistoryScroll()
-    , _historyBuffer()
-    , _maxLineCount(0)
-    , _growCount(maxLineCount)
-    , _usedLines(0)
+void HistoryScroll::addCellsVector(const std::vector<Character>& cells)
 {
-    growScrollback();
+    _historyBuffer.push_back(cells);
+    _wrappedLine.resize(_historyBuffer.size());
+    _wrappedLine[_wrappedLine.size() - 1] = false;
 }
 
-HistoryScrollBuffer::~HistoryScrollBuffer()
+void HistoryScroll::addLine(bool previousWrapped)
 {
-
+    _wrappedLine[_wrappedLine.size() - 1] = previousWrapped;
 }
 
-void HistoryScrollBuffer::clearHistory()
+int HistoryScroll::getLines()
 {
-    for (int index = 0; index < _usedLines; index++)
-    {
-        _historyBuffer[index].clear();
-        _wrappedLine[index] = false;
-    }
-    _maxLineCount = 0;
-    _usedLines = 0;
-    growScrollback();
+    return _historyBuffer.size();
 }
 
-void HistoryScrollBuffer::addCellsVector(const std::vector<Character>& cells)
+int HistoryScroll::getLineLen(int lineNumber)
 {
-    _usedLines++;
-    if (_usedLines >= _maxLineCount)
-    {
-        growScrollback();
-    }
+    Q_ASSERT(lineNumber >= 0 && lineNumber < _historyBuffer.size());
 
-    int index = _usedLines - 1;
-    _historyBuffer[index] = cells;
-    _wrappedLine[index] = false;
-}
-
-void HistoryScrollBuffer::addLine(bool previousWrapped)
-{
-    _wrappedLine[_usedLines - 1] = previousWrapped;
-}
-
-int HistoryScrollBuffer::getLines()
-{
-    return _usedLines;
-}
-
-int HistoryScrollBuffer::getLineLen(int lineNumber)
-{
-    Q_ASSERT(lineNumber >= 0 && lineNumber < _maxLineCount);
-
-    if (lineNumber < _usedLines)
+    if (lineNumber < _historyBuffer.size())
     {
         return _historyBuffer[lineNumber].size();
     }
@@ -114,11 +87,11 @@ int HistoryScrollBuffer::getLineLen(int lineNumber)
     }
 }
 
-bool HistoryScrollBuffer::isWrappedLine(int lineNumber)
+bool HistoryScroll::isWrappedLine(int lineNumber)
 {
-    Q_ASSERT(lineNumber >= 0 && lineNumber < _maxLineCount);
+    Q_ASSERT(lineNumber >= 0 && lineNumber < _wrappedLine.size());
 
-    if (lineNumber < _usedLines)
+    if (lineNumber < _wrappedLine.size())
     {
         return _wrappedLine[lineNumber];
     }
@@ -128,16 +101,16 @@ bool HistoryScrollBuffer::isWrappedLine(int lineNumber)
     }
 }
 
-void HistoryScrollBuffer::getCells(int lineNumber, int startColumn, int count, std::vector<Character>::iterator& buffer, Character defaultChar)
+void HistoryScroll::getCells(int lineNumber, int startColumn, int count, std::vector<Character>::iterator& buffer, Character defaultChar)
 {
     if (count == 0)
     {
         return;
     }
 
-    Q_ASSERT(lineNumber < _maxLineCount);
+    //Q_ASSERT(lineNumber < _historyBuffer.size());
 
-    if (lineNumber >= _usedLines)
+    if (lineNumber >= _historyBuffer.size())
     {
         for (int index = 0; index < count; index++)
         {
@@ -157,10 +130,4 @@ void HistoryScrollBuffer::getCells(int lineNumber, int startColumn, int count, s
     //memcpy(buffer, line.constData() + startColumn, count * sizeof(Character));
 }
 
-void HistoryScrollBuffer::growScrollback()
-{
-    _maxLineCount += _growCount;
-    _historyBuffer.resize(_maxLineCount);
-    _wrappedLine.resize(_maxLineCount);
-}
 

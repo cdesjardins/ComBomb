@@ -91,7 +91,10 @@ void ScreenWindow::fillUnusedArea()
     int unusedLines = windowEndLine - screenEndLine;
     int charsToFill = unusedLines * windowColumns();
 
-    Screen::fillWithDefaultChar(_windowBuffer.begin() + _windowBufferSize - charsToFill, charsToFill);
+    if (charsToFill > 0)
+    {
+        Screen::fillWithDefaultChar(_windowBuffer.begin() + _windowBufferSize - charsToFill, charsToFill);
+    }
 }
 
 // return the index of the line at the end of this window, or if this window
