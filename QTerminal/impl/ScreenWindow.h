@@ -78,13 +78,13 @@ public:
      * The buffer is managed by the ScreenWindow instance and does not need to be
      * deleted by the caller.
      */
-    QVector<Character> &getImage();
+    std::vector<Character> &getImage();
 
     /**
      * Returns the line attributes associated with the lines of characters which
      * are currently visible through this window
      */
-    QVector<LineProperty> getLineProperties();
+    std::vector<LineProperty> getLineProperties();
 
     /**
      * Returns the number of lines which the region of the window
@@ -240,7 +240,7 @@ private:
     void fillUnusedArea();
 
     Screen* _screen; // see setScreen() , screen()
-    QVector<Character> _windowBuffer;
+    std::vector<Character> _windowBuffer;
     int _windowBufferSize;
     bool _bufferNeedsUpdate;
 

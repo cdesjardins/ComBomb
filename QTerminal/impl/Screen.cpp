@@ -562,7 +562,7 @@ void Screen::effectiveRendition()
 
 */
 
-void Screen::copyFromHistory(Character* dest, int startLine, int count) const
+void Screen::copyFromHistory(std::vector<Character>::iterator &dest, int startLine, int count) const
 {
     Q_ASSERT(startLine >= 0 && count > 0 && startLine + count <= _hist->getLines());
 
@@ -571,7 +571,7 @@ void Screen::copyFromHistory(Character* dest, int startLine, int count) const
         const int length = qMin(_columns, _hist->getLineLen(line));
         const int destLineOffset  = (line - startLine) * _columns;
 
-        _hist->getCells(line, 0, length, dest + destLineOffset);
+        _hist->getCells(line, 0, length, dest + destLineOffset, _defaultChar);
 
         for (int column = length; column < _columns; column++)
         {
@@ -592,7 +592,7 @@ void Screen::copyFromHistory(Character* dest, int startLine, int count) const
     }
 }
 
-void Screen::copyFromScreen(Character* dest, int startLine, int count) const
+void Screen::copyFromScreen(std::vector<Character>::iterator &dest, int startLine, int count) const
 {
     Q_ASSERT(startLine >= 0 && count > 0 && startLine + count <= _lines);
 
@@ -624,7 +624,7 @@ void Screen::copyFromScreen(Character* dest, int startLine, int count) const
     }
 }
 
-void Screen::getImage(QVector<Character> &dest, int size, int startLine, int endLine) const
+void Screen::getImage(std::vector<Character> &dest, int size, int startLine, int endLine) const
 {
     Q_ASSERT(startLine >= 0);
     Q_ASSERT(endLine >= startLine && endLine < _hist->getLines() + _lines);
@@ -668,7 +668,7 @@ void Screen::getImage(QVector<Character> &dest, int size, int startLine, int end
     }
 }
 
-QVector<LineProperty> Screen::getLineProperties(int startLine, int endLine) const
+std::vector<LineProperty> Screen::getLineProperties(int startLine, int endLine) const
 {
     Q_ASSERT(startLine >= 0);
     Q_ASSERT(endLine >= startLine && endLine < _hist->getLines() + _lines);
@@ -677,7 +677,7 @@ QVector<LineProperty> Screen::getLineProperties(int startLine, int endLine) cons
     const int linesInHistory = qBound(0, _hist->getLines() - startLine, mergedLines);
     const int linesInScreen = mergedLines - linesInHistory;
 
-    QVector<LineProperty> result(mergedLines);
+    std::vector<LineProperty> result(mergedLines);
     int index = 0;
 
     // copy properties for lines in history
@@ -1519,7 +1519,8 @@ void Screen::copyLineToStream(int line,
     //element on each call to copyLineToStream
     //(which is unnecessary since all elements will be overwritten anyway)
     static const int MAX_CHARS = 1024;
-    static Character characterBuffer[MAX_CHARS];
+    static std::vector<Character> characterBuffer;
+    characterBuffer.resize(MAX_CHARS);
 
     assert(count < MAX_CHARS);
 
@@ -1548,7 +1549,7 @@ void Screen::copyLineToStream(int line,
         assert(count >= 0);
         assert((start + count) <= _hist->getLineLen(line));
 
-        _hist->getCells(line, start, count, characterBuffer);
+        _hist->getCells(line, start, count, characterBuffer.begin(), _defaultChar);
 
         if (_hist->isWrappedLine(line))
         {
@@ -1606,7 +1607,7 @@ void Screen::copyLineToStream(int line,
     }
 
     //decode line and write to text stream
-    decoder->decodeLine((Character*) characterBuffer,
+    decoder->decodeLine(characterBuffer.begin(),
                         count, currentLineProperties);
 }
 
@@ -1718,7 +1719,7 @@ void Screen::setLineProperty(LineProperty property, bool enable)
     }
 }
 
-void Screen::fillWithDefaultChar(Character* dest, int count)
+void Screen::fillWithDefaultChar(std::vector<Character>::iterator &dest, int count)
 {
     for (int i = 0; i < count; i++)
     {

@@ -363,7 +363,7 @@ public:
      * @param startLine Index of first line to copy
      * @param endLine Index of last line to copy
      */
-    void getImage(QVector<Character> &dest, int size, int startLine, int endLine) const;
+    void getImage(std::vector<Character> &dest, int size, int startLine, int endLine) const;
 
     /**
      * Returns the additional attributes associated with lines in the image.
@@ -371,7 +371,7 @@ public:
      * line is wrapped,
      * other attributes control the size of characters in the line.
      */
-    QVector<LineProperty> getLineProperties(int startLine, int endLine) const;
+    std::vector<LineProperty> getLineProperties(int startLine, int endLine) const;
 
     /** Return the number of lines. */
     int getLines()
@@ -526,7 +526,7 @@ public:
      * Fills the buffer @p dest with @p count instances of the default (ie. blank)
      * Character style.
      */
-    static void fillWithDefaultChar(Character* dest, int count);
+    static void fillWithDefaultChar(std::vector<Character>::iterator& dest, int count);
 
 private:
 
@@ -564,10 +564,10 @@ private:
 
     // copies 'count' lines from the screen buffer into 'dest',
     // starting from 'startLine', where 0 is the first line in the screen buffer
-    void copyFromScreen(Character* dest, int startLine, int count) const;
+    void copyFromScreen(std::vector<Character>::iterator& dest, int startLine, int count) const;
     // copies 'count' lines from the history buffer into 'dest',
     // starting from 'startLine', where 0 is the first line in the history
-    void copyFromHistory(Character* dest, int startLine, int count) const;
+    void copyFromHistory(std::vector<Character>::iterator& dest, int startLine, int count) const;
 
     // screen image ----------------
     int _lines;

@@ -861,7 +861,7 @@ void TerminalView::scrollImage(int lines, const QRect& screenWindowRegion)
     scroll(0, _fontHeight * (-lines), scrollRect);
 }
 
-int TerminalView::resizePaint(const int columnsToUpdate, const Character* const newLine, char* dirtyMask, QChar* disstrU)
+int TerminalView::resizePaint(const int columnsToUpdate, const std::vector<Character>::const_iterator &newLine, char* dirtyMask, QChar* disstrU)
 {
     int len;
     int updateLine = 0;
@@ -952,7 +952,7 @@ void TerminalView::updateImage()
                 _screenWindow->scrollRegion());
     _screenWindow->resetScrollCount();
 
-    QVector<Character> const newimg = _screenWindow->getImage();
+    std::vector<Character> const newimg = _screenWindow->getImage();
     int lines = _screenWindow->windowLines();
     int columns = _screenWindow->windowColumns();
 
@@ -988,8 +988,8 @@ void TerminalView::updateImage()
 
     for (y = 0; y < linesToUpdate; y++)
     {
-        const Character* currentLine = &_image[y * this->_columns];
-        const Character* const newLine = &newimg[y * columns];
+        const std::vector<Character>::iterator currentLine = _image.begin() + (y * this->_columns);
+        const std::vector<Character>::const_iterator newLine = newimg.begin() + (y * columns);
 
         int updateLine = 0;
 
@@ -1014,7 +1014,7 @@ void TerminalView::updateImage()
         //although both top and bottom halves contain the same characters, only
         //the top one is actually
         //drawn.
-        if (_lineProperties.count() > y)
+        if (_lineProperties.size() > y)
         {
             updateLine |= (_lineProperties[y] & LINE_DOUBLEHEIGHT);
         }
@@ -1037,7 +1037,11 @@ void TerminalView::updateImage()
 
         // replace the line of characters in the old _image with the
         // current line of the new _image
-        memcpy((void*)currentLine, (const void*)newLine, columnsToUpdate * sizeof(Character));
+        //memcpy((void*)currentLine, (const void*)newLine, columnsToUpdate * sizeof(Character));
+        for (int index = 0; index < columnsToUpdate; index++)
+        {
+            currentLine[index] = newLine[index];
+        }
     }
 
     // if the new _image is smaller than the previous _image, then ensure that the area
@@ -2476,7 +2480,7 @@ QVariant TerminalView::inputMethodQuery(Qt::InputMethodQuery query) const
             QTextStream stream(&lineText);
             PlainTextDecoder decoder;
             decoder.begin(&stream);
-            decoder.decodeLine(&_image[loc(0, cursorPos.y())], _usedColumns, _lineProperties[cursorPos.y()]);
+            decoder.decodeLine(_image.begin() + loc(0, cursorPos.y()), _usedColumns, _lineProperties[cursorPos.y()]);
             decoder.end();
             return lineText;
         }

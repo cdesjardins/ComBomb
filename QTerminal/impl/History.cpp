@@ -128,7 +128,7 @@ bool HistoryScrollBuffer::isWrappedLine(int lineNumber)
     }
 }
 
-void HistoryScrollBuffer::getCells(int lineNumber, int startColumn, int count, Character* buffer)
+void HistoryScrollBuffer::getCells(int lineNumber, int startColumn, int count, std::vector<Character>::iterator& buffer, Character defaultChar)
 {
     if (count == 0)
     {
@@ -139,7 +139,10 @@ void HistoryScrollBuffer::getCells(int lineNumber, int startColumn, int count, C
 
     if (lineNumber >= _usedLines)
     {
-        memset(buffer, 0, count * sizeof(Character));
+        for (int index = 0; index < count; index++)
+        {
+            buffer[index] = defaultChar;
+        }
         return;
     }
 

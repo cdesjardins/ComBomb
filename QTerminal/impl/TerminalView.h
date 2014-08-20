@@ -606,7 +606,7 @@ private:
     void propagateSize();
     void updateImageSize();
     void makeImage();
-    int resizePaint(const int columnsToUpdate, const Character* const newLine, char* dirtyMask, QChar* disstrU);
+    int resizePaint(const int columnsToUpdate, const std::vector<Character>::const_iterator& newLine, char* dirtyMask, QChar* disstrU);
 
     // returns the position of the cursor in columns and lines
     QPoint cursorPosition() const;
@@ -643,11 +643,11 @@ private:
 
     int _contentHeight;
     int _contentWidth;
-    QVector<Character> _image; // [lines][columns]
+    std::vector<Character> _image; // [lines][columns]
     // only the area [usedLines][usedColumns] in the image contains valid data
 
     int _imageSize;
-    QVector<LineProperty> _lineProperties;
+    std::vector<LineProperty> _lineProperties;
 
     ColorEntry _colorTable[TABLE_COLORS];
     uint _randomSeed;

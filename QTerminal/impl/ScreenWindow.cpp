@@ -55,7 +55,7 @@ Screen* ScreenWindow::screen() const
     return _screen;
 }
 
-QVector<Character> &ScreenWindow::getImage()
+std::vector<Character> &ScreenWindow::getImage()
 {
     // reallocate internal buffer if the window size has changed
     int size = windowLines() * windowColumns();
@@ -107,11 +107,11 @@ int ScreenWindow::endWindowLine() const
                 lineCount() - 1);
 }
 
-QVector<LineProperty> ScreenWindow::getLineProperties()
+std::vector<LineProperty> ScreenWindow::getLineProperties()
 {
-    QVector<LineProperty> result = _screen->getLineProperties(currentLine(), endWindowLine());
+    std::vector<LineProperty> result = _screen->getLineProperties(currentLine(), endWindowLine());
 
-    if (result.count() != windowLines())
+    if (result.size() != windowLines())
     {
         result.resize(windowLines());
     }

@@ -53,8 +53,7 @@ void PlainTextDecoder::end()
     _output = 0;
 }
 
-void PlainTextDecoder::decodeLine(const Character* const characters, int count, LineProperty /*properties*/
-                                  )
+void PlainTextDecoder::decodeLine(const std::vector<Character>::const_iterator& characters, int count, LineProperty)
 {
     Q_ASSERT(_output);
 
@@ -127,8 +126,7 @@ void HTMLDecoder::end()
 }
 
 //TODO: Support for LineProperty (mainly double width , double height)
-void HTMLDecoder::decodeLine(const Character* const characters, int count, LineProperty /*properties*/
-                             )
+void HTMLDecoder::decodeLine(const std::vector<Character>::const_iterator& characters, int count, LineProperty)
 {
     Q_ASSERT(_output);
 

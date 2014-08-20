@@ -57,7 +57,7 @@ public:
      * @param properties Additional properties which affect all characters in the line
      * @param output The output stream which receives the decoded text
      */
-    virtual void decodeLine(const Character* const characters, int count, LineProperty properties) = 0;
+    virtual void decodeLine(const std::vector<Character>::const_iterator& characters, int count, LineProperty properties) = 0;
 };
 
 /**
@@ -84,7 +84,7 @@ public:
     virtual void begin(QTextStream* output);
     virtual void end();
 
-    virtual void decodeLine(const Character* const characters, int count, LineProperty properties);
+    virtual void decodeLine(const std::vector<Character>::const_iterator& characters, int count, LineProperty properties);
 
 private:
     QTextStream* _output;
@@ -108,7 +108,7 @@ public:
      */
     void setColorTable(const ColorEntry* table);
 
-    virtual void decodeLine(const Character* const characters, int count, LineProperty properties);
+    virtual void decodeLine(const std::vector<Character>::const_iterator& characters, int count, LineProperty properties);
 
     virtual void begin(QTextStream* output);
     virtual void end();
