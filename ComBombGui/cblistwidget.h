@@ -9,7 +9,7 @@ class CBListWidget : public QListWidget
 
 public:
     explicit CBListWidget(QWidget* parent = 0);
-
+    virtual ~CBListWidget() {}
 private slots:
     void itemChangedSlot(QListWidgetItem* changedItem);
 private:

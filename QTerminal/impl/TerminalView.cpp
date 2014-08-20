@@ -809,17 +809,17 @@ void TerminalView::scrollImage(int lines, const QRect& screenWindowRegion)
 
     QRect scrollRect;
 
-    void* firstCharPos = &_image[region.top() * this->_columns];
-    void* lastCharPos = &_image[(region.top() + abs(lines)) * this->_columns];
+    //void* firstCharPos = &_image[region.top() * this->_columns];
+    //void* lastCharPos = &_image[(region.top() + abs(lines)) * this->_columns];
 
     int top = _topMargin + (region.top() * _fontHeight);
     int linesToMove = region.height() - abs(lines);
-    int bytesToMove = linesToMove *
-                      this->_columns *
-                      sizeof(Character);
+    //int bytesToMove = linesToMove *
+    //                  this->_columns *
+    //                  sizeof(Character);
 
     Q_ASSERT(linesToMove > 0);
-    Q_ASSERT(bytesToMove > 0);
+    //Q_ASSERT(bytesToMove > 0);
 
     //scroll internal image
     if (lines > 0)
@@ -831,7 +831,11 @@ void TerminalView::scrollImage(int lines, const QRect& screenWindowRegion)
         Q_ASSERT((lines * this->_columns) < _imageSize);
 
         //scroll internal image down
-        memmove(firstCharPos, lastCharPos, bytesToMove);
+        //memmove(firstCharPos, lastCharPos, bytesToMove);
+        for (int index = region.top() * this->_columns; index < (linesToMove * this->_columns); index++)
+        {
+            _image[index] = _image[region.top() + abs(lines) * this->_columns + index];
+        }
 
         //set region of display to scroll, making sure that
         //the region aligns correctly to the character grid
@@ -846,7 +850,11 @@ void TerminalView::scrollImage(int lines, const QRect& screenWindowRegion)
         //         (char*)(_image + (this->_lines * this->_columns)));
 
         //scroll internal image up
-        memmove(lastCharPos, firstCharPos, bytesToMove);
+        //memmove(lastCharPos, firstCharPos, bytesToMove);
+        for (int index = region.top() + abs(lines) * this->_columns; index < (linesToMove * this->_columns); index++)
+        {
+            _image[index] = _image[region.top() * this->_columns + index];
+        }
 
         //set region of the display to scroll, making sure that
         //the region aligns correctly to the character grid

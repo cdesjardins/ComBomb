@@ -8,6 +8,7 @@ class CBDialog : public QDialog
     Q_OBJECT
 public:
     explicit CBDialog(QWidget *parent = 0);
+    virtual ~CBDialog() {}
 protected:
     virtual QString getSettingsRoot() = 0;
     virtual void showEvent(QShowEvent* event);

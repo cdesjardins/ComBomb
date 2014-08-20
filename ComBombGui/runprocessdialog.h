@@ -13,7 +13,7 @@ class RunProcessDialog : public CBDialog
 
 public:
     explicit RunProcessDialog(QWidget *parent = 0);
-    ~RunProcessDialog();
+    virtual ~RunProcessDialog();
     QString getProgram();
     QString getWorkingDirectory();
     QStringList getArguments();

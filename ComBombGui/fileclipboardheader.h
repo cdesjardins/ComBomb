@@ -13,7 +13,7 @@ public:
         connect(this, SIGNAL(sectionClicked(int)), this, SLOT(sectionClicked(int)));
     }
 
-    ~FileClipboardHeader()
+    virtual ~FileClipboardHeader()
     {
     }
 

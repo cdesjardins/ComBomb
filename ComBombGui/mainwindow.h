@@ -19,7 +19,7 @@ class MainWindow : public QMainWindow
 public:
     static MainWindow* getMainWindow(QWidget* parent = 0);
     static void destroyMainWindow();
-    ~MainWindow();
+    virtual ~MainWindow();
     static void errorBox(QString errMsg);
     ChildForm* getActiveChildWindow();
 protected:

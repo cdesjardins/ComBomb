@@ -21,7 +21,7 @@ public:
     };
 
     explicit OpenDialog(QWidget* parent = 0);
-    ~OpenDialog();
+    virtual ~OpenDialog();
     boost::shared_ptr<const TgtSerialIntf::TgtConnectionConfig> getSerialConfig() const;
     boost::shared_ptr<const TgtFileIntf::TgtConnectionConfig> getFileConfig() const;
     boost::shared_ptr<const TgtSshIntf::TgtConnectionConfig> getSshConfig() const;

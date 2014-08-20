@@ -49,22 +49,14 @@ HistoryScroll::~HistoryScroll()
 
 void HistoryScroll::clearHistory()
 {
-    qDebug("clear start");
     _historyBuffer.clear();
-    qDebug("clear half way");
     _wrappedLine.clear();
-    qDebug("clear end");
 }
 
-void HistoryScroll::addCellsVector(const std::vector<Character>& cells)
+void HistoryScroll::addCellsVector(const std::vector<Character>& cells, bool previousWrapped)
 {
     _historyBuffer.push_back(cells);
     _wrappedLine.resize(_historyBuffer.size());
-    _wrappedLine[_wrappedLine.size() - 1] = false;
-}
-
-void HistoryScroll::addLine(bool previousWrapped)
-{
     _wrappedLine[_wrappedLine.size() - 1] = previousWrapped;
 }
 
@@ -73,7 +65,7 @@ int HistoryScroll::getLines()
     return _historyBuffer.size();
 }
 
-int HistoryScroll::getLineLen(int lineNumber)
+int HistoryScroll::getLineLen(size_t lineNumber)
 {
     Q_ASSERT(lineNumber >= 0 && lineNumber < _historyBuffer.size());
 
@@ -101,7 +93,7 @@ bool HistoryScroll::isWrappedLine(int lineNumber)
     }
 }
 
-void HistoryScroll::getCells(int lineNumber, int startColumn, int count, std::vector<Character>::iterator& buffer, Character defaultChar)
+void HistoryScroll::getCells(size_t lineNumber, int startColumn, int count, std::vector<Character>::iterator buffer, Character defaultChar)
 {
     if (count == 0)
     {

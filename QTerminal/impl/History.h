@@ -41,12 +41,11 @@ public:
     virtual ~HistoryScroll();
 
     virtual int getLines();
-    virtual int getLineLen(int lineno);
-    virtual void getCells(int lineno, int colno, int count, std::vector<Character>::iterator &res, Character defaultChar);
+    virtual int getLineLen(size_t lineno);
+    virtual void getCells(size_t lineno, int colno, int count, std::vector<Character>::iterator res, Character defaultChar);
     virtual bool isWrappedLine(int lineno);
     virtual void clearHistory();
-    virtual void addCellsVector(const std::vector<Character>& cells);
-    virtual void addLine(bool previousWrapped = false);
+    virtual void addCellsVector(const std::vector<Character>& cells, bool previousWrapped);
     virtual bool hasScroll();
 protected:
 

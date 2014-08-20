@@ -65,6 +65,7 @@ Character Screen::_defaultChar = Character(' ',
 Screen::Screen(const boost::shared_ptr<HistoryScroll> &hist, int l, int c)
     : _lines(l),
     _columns(c),
+    _screenLinesHead(0),
     _scrolledLines(0),
     _droppedLines(0),
     _hist(hist),
@@ -287,21 +288,23 @@ void Screen::deleteChars(int n)
     }
 
     // if cursor is beyond the end of the line there is nothing to do
-    if (_cursorX >= _screenLines[_cursorY].size())
+    if (_cursorX >= _screenLines[screenLineIndex(_cursorY)].size())
     {
         return;
     }
 
-    if (_cursorX + n >= _screenLines[_cursorY].size())
+    if (_cursorX + n >= _screenLines[screenLineIndex(_cursorY)].size())
     {
-        n = _screenLines[_cursorY].size() - 1 - _cursorX;
+        n = _screenLines[screenLineIndex(_cursorY)].size() - 1 - _cursorX;
     }
 
     Q_ASSERT(n >= 0);
-    Q_ASSERT(_cursorX + n < _screenLines[_cursorY].size());
+    Q_ASSERT(_cursorX + n < _screenLines[screenLineIndex(_cursorY)].size());
 
     //_screenLines[_cursorY].remove(_cursorX, n);
-    _screenLines[_cursorY].erase(_screenLines[_cursorY].begin() + _cursorX, _screenLines[_cursorY].begin() + _cursorX + n);
+    _screenLines[screenLineIndex(_cursorY)].erase(
+            _screenLines[screenLineIndex(_cursorY)].begin() + _cursorX,
+            _screenLines[screenLineIndex(_cursorY)].begin() + _cursorX + n);
 }
 
 void Screen::insertChars(int n)
@@ -310,16 +313,16 @@ void Screen::insertChars(int n)
     {
         n = 1;       // Default
     }
-    if (_screenLines[_cursorY].size() < _cursorX)
+    if (_screenLines[screenLineIndex(_cursorY)].size() < _cursorX)
     {
-        _screenLines[_cursorY].resize(_cursorX);
+        _screenLines[screenLineIndex(_cursorY)].resize(_cursorX);
     }
 
-    _screenLines[_cursorY].insert(_screenLines[_cursorY].begin() + _cursorX, n, ' ');
+    _screenLines[screenLineIndex(_cursorY)].insert(_screenLines[screenLineIndex(_cursorY)].begin() + _cursorX, n, ' ');
 
-    if (_screenLines[_cursorY].size() > _columns)
+    if (_screenLines[screenLineIndex(_cursorY)].size() > _columns)
     {
-        _screenLines[_cursorY].resize(_columns);
+        _screenLines[screenLineIndex(_cursorY)].resize(_columns);
     }
 }
 
@@ -562,7 +565,7 @@ void Screen::effectiveRendition()
 
 */
 
-void Screen::copyFromHistory(std::vector<Character>::iterator &dest, int startLine, int count) const
+void Screen::copyFromHistory(std::vector<Character>::iterator dest, int startLine, int count) const
 {
     Q_ASSERT(startLine >= 0 && count > 0 && startLine + count <= _hist->getLines());
 
@@ -592,7 +595,7 @@ void Screen::copyFromHistory(std::vector<Character>::iterator &dest, int startLi
     }
 }
 
-void Screen::copyFromScreen(std::vector<Character>::iterator &dest, int startLine, int count) const
+void Screen::copyFromScreen(std::vector<Character>::iterator dest, int startLine, int count) const
 {
     Q_ASSERT(startLine >= 0 && count > 0 && startLine + count <= _lines);
 
@@ -606,13 +609,13 @@ void Screen::copyFromScreen(std::vector<Character>::iterator &dest, int startLin
             int srcIndex = srcLineStartIndex + column;
             int destIndex = destLineStartIndex + column;
 
-            if ((srcIndex % _columns) >= _screenLines[srcIndex / _columns].size())
+            if ((srcIndex % _columns) >= _screenLines[screenLineIndex(srcIndex / _columns)].size())
             {
                 dest[destIndex] = _defaultChar;
             }
             else
             {
-                dest[destIndex] = _screenLines[srcIndex / _columns].at(srcIndex % _columns);
+                dest[destIndex] = _screenLines[screenLineIndex(srcIndex / _columns)].at(srcIndex % _columns);
             }
 
             // invert selected text
@@ -740,14 +743,14 @@ void Screen::BackSpace()
     _cursorX = qMin(_columns - 1, _cursorX); // nowrap!
     _cursorX = qMax(0, _cursorX - 1);
 
-    if (_screenLines[_cursorY].size() < _cursorX + 1)
+    if (_screenLines[screenLineIndex(_cursorY)].size() < _cursorX + 1)
     {
-        _screenLines[_cursorY].resize(_cursorX + 1);
+        _screenLines[screenLineIndex(_cursorY)].resize(_cursorX + 1);
     }
 
     if (BS_CLEARS)
     {
-        _screenLines[_cursorY][_cursorX]._character = ' ';
+        _screenLines[screenLineIndex(_cursorY)][_cursorX]._character = ' ';
     }
 }
 
@@ -875,16 +878,16 @@ void Screen::ShowCharacter(unsigned short c)
     }
 
     // ensure current line vector has enough elements
-    int size = _screenLines[_cursorY].size();
+    int size = _screenLines[screenLineIndex(_cursorY)].size();
     if (size == 0 && _cursorY > 0)
     {
-        _screenLines[_cursorY].resize(qMax(_screenLines[_cursorY - 1].size(), (size_t)_cursorX + w));
+        _screenLines[screenLineIndex(_cursorY)].resize(qMax(_screenLines[screenLineIndex(_cursorY - 1)].size(), (size_t)_cursorX + w));
     }
     else
     {
         if (size < _cursorX + w)
         {
-            _screenLines[_cursorY].resize(_cursorX + w);
+            _screenLines[screenLineIndex(_cursorY)].resize(_cursorX + w);
         }
     }
 
@@ -898,7 +901,7 @@ void Screen::ShowCharacter(unsigned short c)
     // check if selection is still valid.
     checkSelection(_cursorX, _cursorY);
 
-    Character& currentChar = _screenLines[_cursorY][_cursorX];
+    Character& currentChar = _screenLines[screenLineIndex(_cursorY)][_cursorX];
 
     currentChar._character = c;
     currentChar._foregroundColor = _effectiveCursorFg;
@@ -911,12 +914,12 @@ void Screen::ShowCharacter(unsigned short c)
     {
         i++;
 
-        if (_screenLines[_cursorY].size() < _cursorX + i + 1)
+        if (_screenLines[screenLineIndex(_cursorY)].size() < _cursorX + i + 1)
         {
-            _screenLines[_cursorY].resize(_cursorX + i + 1);
+            _screenLines[screenLineIndex(_cursorY)].resize(_cursorX + i + 1);
         }
 
-        Character& ch = _screenLines[_cursorY][_cursorX + i];
+        Character& ch = _screenLines[screenLineIndex(_cursorY)][_cursorX + i];
         ch._character = 0;
         ch._foregroundColor = _effectiveCursorFg;
         ch._backgroundColor = _effectiveCursorBg;
@@ -1121,7 +1124,7 @@ void Screen::clearImage(int loca, int loce, char c)
         int endCol = (y == bottomLine) ? loce % _columns : _columns - 1;
         int startCol = (y == topLine) ? loca % _columns : 0;
 
-        std::vector<Character>& line = _screenLines[y];
+        std::vector<Character>& line = _screenLines[screenLineIndex(y)];
 
         if (isDefaultCh && endCol == _columns - 1)
         {
@@ -1169,26 +1172,22 @@ void Screen::moveImage(int dest, int sourceBegin, int sourceEnd)
     //forwards if dest < sourceBegin or backwards otherwise.
     //(search the web for 'memmove implementation' for details)
     //qDebug("move image: %i %i %i", dest, lines, _screenLines.size());
-    /*
-    if (destLine == 0)
-    {
-        _screenLines.pop_front();
-        _screenLines.resize(_screenLines.size() + 1);
-    }
-    */
+
     if (dest < sourceBegin)
     {
+        _screenLinesHead++;
         for (int i = 0; i <= lines; i++)
         {
-            _screenLines[destLine + i] = _screenLines[sourceBeginLine + i];
+            //_screenLines[destLine + i] = _screenLines[sourceBeginLine + i];
             _lineProperties[destLine + i] = _lineProperties[sourceBeginLine + i];
         }
     }
     else
     {
+        _screenLinesHead--;
         for (int i = lines; i >= 0; i--)
         {
-            _screenLines[destLine + i] = _screenLines[sourceBeginLine + i];
+            //_screenLines[destLine + i] = _screenLines[sourceBeginLine + i];
             _lineProperties[destLine + i] = _lineProperties[sourceBeginLine + i];
         }
     }
@@ -1567,7 +1566,7 @@ void Screen::copyLineToStream(int line,
 
         const int screenLine = line - _hist->getLines();
 
-        Character* data = _screenLines[screenLine].data();
+        std::vector<Character>::iterator data = _screenLines[screenLine].begin();
         int length = _screenLines[screenLine].size();
 
         //retrieve line from screen image
@@ -1628,8 +1627,7 @@ void Screen::addHistLine()
     {
         int oldHistLines = _hist->getLines();
 
-        _hist->addCellsVector(_screenLines[0]);
-        _hist->addLine(_lineProperties[0] & LINE_WRAPPED);
+        _hist->addCellsVector(_screenLines[screenLineIndex(0)], _lineProperties[0] & LINE_WRAPPED);
 
         int newHistLines = _hist->getLines();
 
@@ -1719,7 +1717,7 @@ void Screen::setLineProperty(LineProperty property, bool enable)
     }
 }
 
-void Screen::fillWithDefaultChar(std::vector<Character>::iterator &dest, int count)
+void Screen::fillWithDefaultChar(std::vector<Character>::iterator dest, int count)
 {
     for (int i = 0; i < count; i++)
     {

@@ -14,7 +14,7 @@ class FileClipboardDialog : public CBDialog
 
 public:
     explicit FileClipboardDialog(QWidget* parent = 0);
-    ~FileClipboardDialog();
+    virtual ~FileClipboardDialog();
 
 protected:
     void loadFileClipboardSettings();

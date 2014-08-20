@@ -8,7 +8,7 @@ class CBComboBox : public QComboBox
     Q_OBJECT
 public:
     explicit CBComboBox(QWidget *parent = 0);
-    ~CBComboBox();
+    virtual ~CBComboBox();
     void addOrUpdateItem(const QString &item);
     void setDefault(const QString &defaultVal);
 signals:

@@ -14,7 +14,7 @@ class ConfigDialog : public CBDialog
 
 public:
     explicit ConfigDialog(QWidget *parent = 0);
-    ~ConfigDialog();
+    virtual ~ConfigDialog();
 
     static bool getTerminalConfig(QTerminalConfig *terminalConfig);
     static QStringList getPortListSettings();

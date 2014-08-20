@@ -8,7 +8,7 @@ class CBLabel : public QLabel
     Q_OBJECT
 public:
     CBLabel(QWidget* parent = 0);
-    ~CBLabel();
+    virtual ~CBLabel();
     void mouseDoubleClickEvent(QMouseEvent* event);
 private:
     QImage* _qImg;

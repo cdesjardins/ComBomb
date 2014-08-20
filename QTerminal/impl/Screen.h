@@ -31,6 +31,7 @@
 #include <QtCore/QVarLengthArray>
 #ifndef Q_MOC_RUN
 #include <boost/smart_ptr.hpp>
+#include <boost/circular_buffer.hpp>
 #endif
 // Konsole
 #include "Character.h"
@@ -526,7 +527,7 @@ public:
      * Fills the buffer @p dest with @p count instances of the default (ie. blank)
      * Character style.
      */
-    static void fillWithDefaultChar(std::vector<Character>::iterator& dest, int count);
+    static void fillWithDefaultChar(std::vector<Character>::iterator dest, int count);
 
 private:
 
@@ -564,17 +565,21 @@ private:
 
     // copies 'count' lines from the screen buffer into 'dest',
     // starting from 'startLine', where 0 is the first line in the screen buffer
-    void copyFromScreen(std::vector<Character>::iterator& dest, int startLine, int count) const;
+    void copyFromScreen(std::vector<Character>::iterator dest, int startLine, int count) const;
     // copies 'count' lines from the history buffer into 'dest',
     // starting from 'startLine', where 0 is the first line in the history
-    void copyFromHistory(std::vector<Character>::iterator& dest, int startLine, int count) const;
+    void copyFromHistory(std::vector<Character>::iterator dest, int startLine, int count) const;
+    size_t screenLineIndex(const size_t index) const
+    {
+        return ((index + _screenLinesHead) % _screenLines.size());
+    }
 
     // screen image ----------------
     int _lines;
     int _columns;
 
-    std::vector<std::vector<Character> > _screenLines;             // [lines]
-
+    boost::circular_buffer<std::vector<Character> > _screenLines;             // [lines]
+    int _screenLinesHead;
     int _scrolledLines;
     QRect _lastScrolledRegion;
 

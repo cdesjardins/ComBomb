@@ -93,7 +93,7 @@ void ScreenWindow::fillUnusedArea()
 
     if (charsToFill > 0)
     {
-        Screen::fillWithDefaultChar(_windowBuffer.begin() + _windowBufferSize - charsToFill, charsToFill);
+        Screen::fillWithDefaultChar((_windowBuffer.begin() + (_windowBufferSize - charsToFill)), charsToFill);
     }
 }
 
