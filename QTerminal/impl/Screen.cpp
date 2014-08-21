@@ -887,7 +887,7 @@ void Screen::ShowCharacter(unsigned short c)
     {
         if (size < _cursorX + w)
         {
-            _screenLines[screenLineIndex(_cursorY)].resize(_cursorX + w);
+            _screenLines[screenLineIndex(_cursorY)].resize(_columns);
         }
     }
 
