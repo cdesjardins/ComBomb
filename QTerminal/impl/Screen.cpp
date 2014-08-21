@@ -1566,8 +1566,8 @@ void Screen::copyLineToStream(int line,
 
         const int screenLine = line - _hist->getLines();
 
-        std::vector<Character>::iterator data = _screenLines[screenLine].begin();
-        int length = _screenLines[screenLine].size();
+        std::vector<Character>::iterator data = _screenLines[screenLineIndex(screenLine)].begin();
+        int length = _screenLines[screenLineIndex(screenLine)].size();
 
         //retrieve line from screen image
         for (int i = start; i < qMin(start + count, length); i++)
