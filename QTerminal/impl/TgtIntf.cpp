@@ -51,14 +51,19 @@ int TgtIntf::tgtWrite(const char* szWriteData, int nBytes)
     int ret = 0;
     if (nBytes > 0)
     {
-        boost::intrusive_ptr<RefCntBuffer> b;
-        if (_bufferPool->dequeue(b, 1) == true)
+        int totalSentBytes = 0;
+        do
         {
-            boost::asio::buffer_copy(b->_buffer, boost::asio::buffer(szWriteData, nBytes));
-            b->_buffer = boost::asio::buffer(b->_buffer, nBytes);
-            _outgoingData.enqueue(b);
-            m_nTotalTx += nBytes;
-        }
+            boost::intrusive_ptr<RefCntBuffer> b;
+            if (_bufferPool->dequeue(b, 1) == true)
+            {
+                int sentBytes = boost::asio::buffer_copy(b->_buffer, boost::asio::buffer(szWriteData + totalSentBytes, nBytes - totalSentBytes));
+                b->_buffer = boost::asio::buffer(b->_buffer, sentBytes);
+                _outgoingData.enqueue(b);
+                m_nTotalTx += sentBytes;
+                totalSentBytes += sentBytes;
+            }
+        } while (totalSentBytes < nBytes);
     }
     return ret;
 }

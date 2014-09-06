@@ -148,6 +148,7 @@ public:
      * Sends @p text to the current foreground terminal program.
      */
     void sendText(const QString& text) const;
+    void sendText(const QByteArray& text) const;
 
     /** Returns the terminal session's window size in lines and columns. */
     QSize size();

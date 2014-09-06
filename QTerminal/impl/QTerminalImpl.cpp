@@ -120,6 +120,11 @@ void QTerminalImpl::sendText(const QString& text)
     _terminalModel->sendText(text);
 }
 
+void QTerminalImpl::sendText(const QByteArray& text)
+{
+    _terminalModel->sendText(text);
+}
+
 QSize QTerminalImpl::sizeHint() const
 {
     return _terminalView->sizeHint();

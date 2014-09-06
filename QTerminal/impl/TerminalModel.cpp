@@ -265,6 +265,15 @@ void TerminalModel::sendText(const QString &text) const
     }
 }
 
+
+void TerminalModel::sendText(const QByteArray &text) const
+{
+    if (_closed == false)
+    {
+        _emulation->sendText(text);
+    }
+}
+
 void TerminalModel::onReceiveBlock(boost::intrusive_ptr<RefCntBuffer> incoming)
 {
     if (_closed == false)

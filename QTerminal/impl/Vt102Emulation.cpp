@@ -1093,6 +1093,14 @@ void Vt102Emulation::sendText(const QString& text)
     }
 }
 
+void Vt102Emulation::sendText(const QByteArray& text)
+{
+    if (!text.isEmpty())
+    {
+        emit sendData(text.constData(), text.length());
+    }
+}
+
 void Vt102Emulation::sendKeyEvent(QKeyEvent* event)
 {
     Qt::KeyboardModifiers modifiers = event->modifiers();

@@ -70,6 +70,7 @@ public:
     virtual void setTerminalFont(const QFont& font) = 0;
     virtual void setSize(int h, int v) = 0;
     virtual void sendText(const QString& text) = 0;
+    virtual void sendText(const QByteArray& text) = 0;
 
     enum CursorType
     {

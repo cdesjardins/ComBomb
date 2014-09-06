@@ -207,6 +207,7 @@ public slots:
      * This is equivalent to calling sendKeyEvent() for each character in @p text in succession.
      */
     virtual void sendText(const QString& text) = 0;
+    virtual void sendText(const QByteArray& text) = 0;
 
     /**
      * Interprets a key press event and emits the sendData() signal with
