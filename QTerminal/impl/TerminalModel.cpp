@@ -42,7 +42,7 @@
 #include "TerminalView.h"
 #include "Vt102Emulation.h"
 
-Q_DECLARE_METATYPE(boost::intrusive_ptr<RefCntBuffer>);
+Q_DECLARE_METATYPE(boost::intrusive_ptr<RefCntBuffer>)
 
 TerminalModel::TerminalModel(const boost::shared_ptr<TgtIntf> &targetInterface) :
     _emulation(0)
@@ -243,8 +243,6 @@ void TerminalModel::updateTerminalSize()
     if (minLines > 0 && minColumns > 0)
     {
         _emulation->setImageSize(minLines, minColumns);
-        //_kpty->setWinSize (minLines, minColumns);
-        //_shellProcess->setWindowSize( minLines , minColumns );
     }
 }
 
@@ -273,6 +271,11 @@ void TerminalModel::sendText(const QByteArray &text) const
     {
         _emulation->sendText(text);
     }
+}
+
+void TerminalModel::findText(const QString& string, const bool caseSensitive, const bool searchUp)
+{
+    _emulation->findText(string, caseSensitive, searchUp);
 }
 
 void TerminalModel::suppressOutput(bool suppress)

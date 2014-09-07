@@ -14,5 +14,6 @@
         <file>images/gear_in.png</file>
         <file>images/script_gear.png</file>
         <file>images/page_refresh.png</file>
+        <file>images/find.png</file>
     </qresource>
 </RCC>

@@ -47,6 +47,7 @@ void MainWindow::enableMenuItems(bool enabled)
     _ui->actionPaste->setEnabled(enabled);
     _ui->actionSelect_All->setEnabled(enabled);
     _ui->action_Clear_scrollback->setEnabled(enabled);
+    _ui->action_Find->setEnabled(enabled);
 }
 
 MainWindow::~MainWindow()
@@ -231,5 +232,14 @@ void MainWindow::on_actionSelect_All_triggered()
     if (activeWindow != NULL)
     {
         activeWindow->selectAll();
+    }
+}
+
+void MainWindow::on_action_Find_triggered()
+{
+    ChildForm* activeWindow = getActiveChildWindow();
+    if (activeWindow != NULL)
+    {
+        activeWindow->findText();
     }
 }

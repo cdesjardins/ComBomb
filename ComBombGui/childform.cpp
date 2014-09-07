@@ -1,4 +1,5 @@
 #include "runprocessdialog.h"
+#include "finddialog.h"
 #include "mainwindow.h"
 #include "childform.h"
 #include "configdialog.h"
@@ -51,6 +52,15 @@ void ChildForm::onReceiveBlock(boost::intrusive_ptr<RefCntBuffer> incoming)
         _proc->write(buf, len);
     }
     _processMutex.unlock();
+}
+
+void ChildForm::findText()
+{
+    FindDialog fd(this);
+    if (fd.exec() == FindDialog::Accepted)
+    {
+        QTerminal::findText(fd.getString(), fd.getCaseSensitivity(), fd.getSearchUp());
+    }
 }
 
 void ChildForm::runProcess()

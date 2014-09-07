@@ -42,6 +42,8 @@ private slots:
     void on_action_Clear_scrollback_triggered();
     void on_actionSelect_All_triggered();
 
+    void on_action_Find_triggered();
+
 signals:
     void findSignal();
 private:

@@ -54,6 +54,7 @@
     <property name="title">
      <string>&amp;Edit</string>
     </property>
+    <addaction name="action_Find"/>
     <addaction name="actionCopy"/>
     <addaction name="actionPaste"/>
     <addaction name="actionSelect_All"/>
@@ -76,6 +77,7 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionOpen"/>
+   <addaction name="action_Find"/>
    <addaction name="actionFile_clipboard"/>
    <addaction name="action_Options"/>
    <addaction name="action_Run_Process"/>
@@ -190,6 +192,18 @@
    </property>
    <property name="text">
     <string>C&amp;lear scrollback</string>
+   </property>
+  </action>
+  <action name="action_Find">
+   <property name="icon">
+    <iconset resource="ComBomb.qrc">
+     <normaloff>:/images/find.png</normaloff>:/images/find.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Find</string>
+   </property>
+   <property name="toolTip">
+    <string>Find text in window</string>
    </property>
   </action>
  </widget>
