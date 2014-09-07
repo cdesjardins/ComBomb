@@ -100,8 +100,6 @@ void HistoryScroll::getCells(size_t lineNumber, int startColumn, int count, std:
         return;
     }
 
-    //Q_ASSERT(lineNumber < _historyBuffer.size());
-
     if (lineNumber >= _historyBuffer.size())
     {
         for (int index = 0; index < count; index++)
@@ -113,13 +111,12 @@ void HistoryScroll::getCells(size_t lineNumber, int startColumn, int count, std:
 
     const std::vector<Character>& line = _historyBuffer[lineNumber];
 
-    Q_ASSERT(startColumn <= line.size() - count);
+    Q_ASSERT((size_t)startColumn <= line.size() - count);
 
     for (int index = 0; index < count; index++)
     {
         buffer[index] = line[index + startColumn];
     }
-    //memcpy(buffer, line.constData() + startColumn, count * sizeof(Character));
 }
 
 

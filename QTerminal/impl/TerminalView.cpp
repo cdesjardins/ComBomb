@@ -973,7 +973,7 @@ void TerminalView::updateImage()
     Q_ASSERT(this->_usedLines <= this->_lines);
     Q_ASSERT(this->_usedColumns <= this->_columns);
 
-    int y, x;
+    long y, x;
 
     QPoint tL  = contentsRect().topLeft();
 
@@ -1022,7 +1022,7 @@ void TerminalView::updateImage()
         //although both top and bottom halves contain the same characters, only
         //the top one is actually
         //drawn.
-        if (_lineProperties.size() > y)
+        if (_lineProperties.size() > (size_t)y)
         {
             updateLine |= (_lineProperties[y] & LINE_DOUBLEHEIGHT);
         }
@@ -1306,7 +1306,7 @@ void TerminalView::drawContents(QPainter &paint, const QRect &rect)
             }
             QString unistr(disstrU, p);
 
-            if (y < _lineProperties.size())
+            if ((size_t)y < _lineProperties.size())
             {
                 if (_lineProperties[y] & LINE_DOUBLEWIDTH)
                 {
@@ -1345,7 +1345,7 @@ void TerminalView::drawContents(QPainter &paint, const QRect &rect)
             //reset back to single-width, single-height _lines
             paint.resetMatrix();
 
-            if (y < _lineProperties.size() - 1)
+            if ((size_t)y < _lineProperties.size() - 1)
             {
                 //double-height _lines are represented by two adjacent _lines
                 //containing the same characters

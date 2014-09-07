@@ -288,18 +288,18 @@ void Screen::deleteChars(int n)
     }
 
     // if cursor is beyond the end of the line there is nothing to do
-    if (_cursorX >= _screenLines[screenLineIndex(_cursorY)].size())
+    if ((size_t)_cursorX >= _screenLines[screenLineIndex(_cursorY)].size())
     {
         return;
     }
 
-    if (_cursorX + n >= _screenLines[screenLineIndex(_cursorY)].size())
+    if ((size_t)_cursorX + n >= _screenLines[screenLineIndex(_cursorY)].size())
     {
         n = _screenLines[screenLineIndex(_cursorY)].size() - 1 - _cursorX;
     }
 
     Q_ASSERT(n >= 0);
-    Q_ASSERT(_cursorX + n < _screenLines[screenLineIndex(_cursorY)].size());
+    Q_ASSERT((size_t)_cursorX + n < _screenLines[screenLineIndex(_cursorY)].size());
 
     //_screenLines[_cursorY].remove(_cursorX, n);
     _screenLines[screenLineIndex(_cursorY)].erase(
@@ -313,14 +313,14 @@ void Screen::insertChars(int n)
     {
         n = 1;       // Default
     }
-    if (_screenLines[screenLineIndex(_cursorY)].size() < _cursorX)
+    if (_screenLines[screenLineIndex(_cursorY)].size() < (size_t)_cursorX)
     {
         _screenLines[screenLineIndex(_cursorY)].resize(_cursorX);
     }
 
     _screenLines[screenLineIndex(_cursorY)].insert(_screenLines[screenLineIndex(_cursorY)].begin() + _cursorX, n, ' ');
 
-    if (_screenLines[screenLineIndex(_cursorY)].size() > _columns)
+    if (_screenLines[screenLineIndex(_cursorY)].size() > (size_t)_columns)
     {
         _screenLines[screenLineIndex(_cursorY)].resize(_columns);
     }
@@ -609,7 +609,7 @@ void Screen::copyFromScreen(std::vector<Character>::iterator dest, int startLine
             int srcIndex = srcLineStartIndex + column;
             int destIndex = destLineStartIndex + column;
 
-            if ((srcIndex % _columns) >= _screenLines[screenLineIndex(srcIndex / _columns)].size())
+            if ((size_t)(srcIndex % _columns) >= _screenLines[screenLineIndex(srcIndex / _columns)].size())
             {
                 dest[destIndex] = _defaultChar;
             }
@@ -743,7 +743,7 @@ void Screen::BackSpace()
     _cursorX = qMin(_columns - 1, _cursorX); // nowrap!
     _cursorX = qMax(0, _cursorX - 1);
 
-    if (_screenLines[screenLineIndex(_cursorY)].size() < _cursorX + 1)
+    if (_screenLines[screenLineIndex(_cursorY)].size() < (size_t)_cursorX + 1)
     {
         _screenLines[screenLineIndex(_cursorY)].resize(_cursorX + 1);
     }
@@ -914,7 +914,7 @@ void Screen::ShowCharacter(unsigned short c)
     {
         i++;
 
-        if (_screenLines[screenLineIndex(_cursorY)].size() < _cursorX + i + 1)
+        if (_screenLines[screenLineIndex(_cursorY)].size() < (size_t)_cursorX + i + 1)
         {
             _screenLines[screenLineIndex(_cursorY)].resize(_cursorX + i + 1);
         }
@@ -1132,7 +1132,7 @@ void Screen::clearImage(int loca, int loce, char c)
         }
         else
         {
-            if (line.size() < endCol + 1)
+            if (line.size() < (size_t)endCol + 1)
             {
                 line.resize(endCol + 1);
             }
