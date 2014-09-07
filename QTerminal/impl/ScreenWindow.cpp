@@ -114,7 +114,7 @@ std::vector<LineProperty> ScreenWindow::getLineProperties()
 {
     std::vector<LineProperty> result = _screen->getLineProperties(currentLine(), endWindowLine());
 
-    if (result.size() != windowLines())
+    if (result.size() != (size_t)windowLines())
     {
         result.resize(windowLines());
     }

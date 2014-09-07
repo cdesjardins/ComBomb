@@ -67,7 +67,7 @@ int HistoryScroll::getLines()
 
 int HistoryScroll::getLineLen(size_t lineNumber)
 {
-    Q_ASSERT(lineNumber >= 0 && lineNumber < _historyBuffer.size());
+    Q_ASSERT(lineNumber < _historyBuffer.size());
 
     if (lineNumber < _historyBuffer.size())
     {
