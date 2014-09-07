@@ -17,6 +17,7 @@ public:
     QString getProgram();
     QString getWorkingDirectory();
     QStringList getArguments();
+    bool isOutputSuppressed();
 protected:
     virtual QString getSettingsRoot();
 private slots:

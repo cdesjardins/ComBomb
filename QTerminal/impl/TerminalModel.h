@@ -102,6 +102,7 @@ public:
      */
     void clearHistory();
     void clearScreen();
+    void suppressOutput(bool suppress);
     /**
      * Enables monitoring for activity in the session.
      * This will cause notifySessionState() to be emitted
@@ -310,6 +311,7 @@ private:
     bool _hasDarkBackground;
     boost::shared_ptr<TgtIntf> _targetInterface;
     bool _closed;
+    bool _suppressOutput;
 };
 
 #endif // TERMINALMODEL_H

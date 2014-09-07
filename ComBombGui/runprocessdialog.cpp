@@ -7,18 +7,21 @@
 #define CB_RUN_PROCESS_SETTINGS_ROOT    objectName()
 #define CB_RUN_PROCESS_SETTINGS_PB      CB_RUN_PROCESS_SETTINGS_ROOT + "/Process/Browser"
 #define CB_RUN_PROCESS_SETTINGS_WDB     CB_RUN_PROCESS_SETTINGS_ROOT + "/WorkingDir/Browser"
-#define CB_RUN_PROCESS_SETTINGS_PP      CB_RUN_PROCESS_SETTINGS_ROOT + "/Process/Programs"
-#define CB_RUN_PROCESS_SETTINGS_WDP     CB_RUN_PROCESS_SETTINGS_ROOT + "/WorkingDir/Programs"
+#define CB_RUN_PROCESS_SETTINGS_OUTPUT     CB_RUN_PROCESS_SETTINGS_ROOT + "/SupressOutput"
 
 RunProcessDialog::RunProcessDialog(QWidget *parent) :
     CBDialog(parent),
     ui(new Ui::RunProcessDialog)
 {
+    QSettings settings;
     ui->setupUi(this);
+    ui->suppressOutputCheckBox->setChecked(settings.value(CB_RUN_PROCESS_SETTINGS_OUTPUT, true).toBool());
 }
 
 RunProcessDialog::~RunProcessDialog()
 {
+    QSettings settings;
+    settings.setValue(CB_RUN_PROCESS_SETTINGS_OUTPUT, ui->suppressOutputCheckBox->isChecked());
     delete ui;
 }
 
@@ -67,4 +70,9 @@ QStringList RunProcessDialog::getArguments()
 QString RunProcessDialog::getProgram()
 {
     return ui->programComboBox->currentText();
+}
+
+bool RunProcessDialog::isOutputSuppressed()
+{
+    return ui->suppressOutputCheckBox->isChecked();
 }

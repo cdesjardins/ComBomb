@@ -55,6 +55,7 @@ TerminalModel::TerminalModel(const boost::shared_ptr<TgtIntf> &targetInterface) 
     , _hasDarkBackground(false)
     , _targetInterface(targetInterface)
     , _closed(false)
+    , _suppressOutput(false)
 {
     qRegisterMetaType<boost::intrusive_ptr<RefCntBuffer> >();
     //create emulation backend
@@ -274,9 +275,14 @@ void TerminalModel::sendText(const QByteArray &text) const
     }
 }
 
+void TerminalModel::suppressOutput(bool suppress)
+{
+    _suppressOutput = suppress;
+}
+
 void TerminalModel::onReceiveBlock(boost::intrusive_ptr<RefCntBuffer> incoming)
 {
-    if (_closed == false)
+    if ((_closed == false) && (_suppressOutput == false))
     {
         char* buf = boost::asio::buffer_cast<char*>(incoming->_buffer);
         int len = boost::asio::buffer_size(incoming->_buffer);

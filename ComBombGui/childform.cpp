@@ -55,7 +55,7 @@ void ChildForm::onReceiveBlock(boost::intrusive_ptr<RefCntBuffer> incoming)
 
 void ChildForm::runProcess()
 {
-    RunProcessDialog rpd;
+    RunProcessDialog rpd(this);
     if ((_proc != NULL) && (_procError == true))
     {
         deleteProcess();
@@ -71,7 +71,9 @@ void ChildForm::runProcess()
             connect(_proc, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(processDone(int, QProcess::ExitStatus)));
             _proc->setWorkingDirectory(rpd.getWorkingDirectory());
             QStringList args = rpd.getArguments();
+            suppressOutput(rpd.isOutputSuppressed());
             _proc->start(rpd.getProgram(), args);
+
         }
     }
     else
@@ -102,6 +104,7 @@ void ChildForm::processError(QProcess::ProcessError error)
         "Unknown Error"
     };
     _procError = true;
+    suppressOutput(false);
     QString errMsg;
     errMsg.sprintf("Error: (%d) %s", error, errors[error].toLocal8Bit().constData());
     emit updateStatusSignal(errMsg);
@@ -122,4 +125,5 @@ void ChildForm::deleteProcess()
     {
         delete p;
     }
+    suppressOutput(false);
 }

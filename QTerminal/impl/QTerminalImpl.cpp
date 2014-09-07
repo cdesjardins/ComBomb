@@ -130,6 +130,11 @@ QSize QTerminalImpl::sizeHint() const
     return _terminalView->sizeHint();
 }
 
+void QTerminalImpl::suppressOutput(bool suppress)
+{
+    _terminalModel->suppressOutput(suppress);
+}
+
 void QTerminalImpl::setCursorType(CursorType type, bool blinking)
 {
     switch (type)

@@ -47,7 +47,7 @@ public:
     void setCursorType(CursorType type, bool blinking);
     void applyTerminalConfig(const QTerminalConfig &terminalConfig);
     bool eventFilter(QObject *, QEvent *event);
-
+    void suppressOutput(bool suppress);
 public slots:
     void copyClipboard();
     void pasteClipboard();
