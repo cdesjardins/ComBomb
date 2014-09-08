@@ -301,7 +301,6 @@ void Screen::deleteChars(int n)
     Q_ASSERT(n >= 0);
     Q_ASSERT((size_t)_cursorX + n < _screenLines[screenLineIndex(_cursorY)].size());
 
-    //_screenLines[_cursorY].remove(_cursorX, n);
     _screenLines[screenLineIndex(_cursorY)].erase(
             _screenLines[screenLineIndex(_cursorY)].begin() + _cursorX,
             _screenLines[screenLineIndex(_cursorY)].begin() + _cursorX + n);
@@ -443,21 +442,27 @@ void Screen::resizeImage(int new_lines, int new_columns)
         _bottomMargin = _lines - 1; //FIXME: margin lost
         for (int i = 0; i < _cursorY - (new_lines - 1); i++)
         {
-            addHistLine(); scrollUp(0, 1);
+            addHistLine();
+            scrollUp(0, 1);
         }
     }
 
+    qDebug("resize1: %i %i %i", _lines, new_lines, _screenLines.size());
     // create new screen lines
-    _screenLines.resize(new_lines + 1);
-    for (int i = _lines; (i > 0) && (i < new_lines + 1); i++)
+    //_screenLines.resize(new_lines + 1);
+    for (int i = new_lines; i < _lines; i++)
     {
-        _screenLines[i].resize(new_columns);
+        _screenLines.erase(_screenLines.begin() + screenLineIndex(_screenLines.size() - 1));
     }
-
     _lineProperties.resize(new_lines + 1);
-    for (int i = _lines; (i > 0) && (i < new_lines + 1); i++)
+    for (int i = _lines + 1; (i > 0) && (i < new_lines + 1); i++)
     {
+        int index = screenLineIndex(0);
+        _screenLinesHead = (_screenLinesHead + 1) % _screenLines.size();
+        _screenLines.insert(_screenLines.begin() + index);
+        _screenLines[index].resize(new_columns);
         _lineProperties[i] = LINE_DEFAULT;
+        qDebug("resize: %i %i", _screenLinesHead, index);
     }
 
     clearSelection();
@@ -1168,7 +1173,7 @@ void Screen::moveImage(int dest, int sourceBegin, int sourceEnd)
 
     if (dest < sourceBegin)
     {
-        _screenLinesHead++;
+        _screenLinesHead = (_screenLinesHead + 1) % _screenLines.size();
         for (int i = 0; i <= lines; i++)
         {
             _lineProperties[destLine + i] = _lineProperties[sourceBeginLine + i];
@@ -1176,7 +1181,7 @@ void Screen::moveImage(int dest, int sourceBegin, int sourceEnd)
     }
     else
     {
-        _screenLinesHead--;
+        _screenLinesHead = (_screenLinesHead - 1) % _screenLines.size();
         for (int i = lines; i >= 0; i--)
         {
             _lineProperties[destLine + i] = _lineProperties[sourceBeginLine + i];
