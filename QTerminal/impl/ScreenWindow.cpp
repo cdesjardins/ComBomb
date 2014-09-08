@@ -164,6 +164,40 @@ void ScreenWindow::setSelectionEnd(int column, int line)
     emit selectionChanged();
 }
 
+int ScreenWindow::setSelectionFind(const int column, const int line, const int length)
+{
+    int ret = _screen->setSelectionFind(column, line, length);
+
+    _bufferNeedsUpdate = true;
+    emit selectionChanged();
+    return ret;
+}
+
+long ScreenWindow::findText(const QString& searchStr, const bool caseSensitive, const bool searchUp)
+{
+    long ret = -1;
+    for (size_t line = 0; line < (size_t)lineCount();)
+    {
+        QString str;
+        size_t numLines = _screen->writeLineToString(line, str);
+        if (numLines == 0)
+        {
+            break;
+        }
+        else
+        {
+            int index = str.indexOf(searchStr, 0, (caseSensitive == true) ? Qt::CaseSensitive : Qt::CaseInsensitive);
+            if (index > 0)
+            {
+                ret = setSelectionFind(index, line, searchStr.length());
+                break;
+            }
+            line += numLines;
+        }
+    }
+    return ret;
+}
+
 bool ScreenWindow::isSelected(int column, int line)
 {
     return _screen->isSelected(column, qMin(line + currentLine(), endWindowLine()));

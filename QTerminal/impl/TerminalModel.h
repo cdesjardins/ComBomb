@@ -150,7 +150,6 @@ public:
      */
     void sendText(const QString& text) const;
     void sendText(const QByteArray& text) const;
-    void findText(const QString& string, const bool caseSensitive, const bool searchUp);
 
     /** Returns the terminal session's window size in lines and columns. */
     QSize size();

@@ -1166,19 +1166,11 @@ void Screen::moveImage(int dest, int sourceBegin, int sourceEnd)
     int destLine = dest / _columns;
     int sourceBeginLine = sourceBegin / _columns;
 
-    //move screen image and line properties:
-    //the source and destination areas of the image may overlap,
-    //so it matters that we do the copy in the right order -
-    //forwards if dest < sourceBegin or backwards otherwise.
-    //(search the web for 'memmove implementation' for details)
-    //qDebug("move image: %i %i %i", dest, lines, _screenLines.size());
-
     if (dest < sourceBegin)
     {
         _screenLinesHead++;
         for (int i = 0; i <= lines; i++)
         {
-            //_screenLines[destLine + i] = _screenLines[sourceBeginLine + i];
             _lineProperties[destLine + i] = _lineProperties[sourceBeginLine + i];
         }
     }
@@ -1187,7 +1179,6 @@ void Screen::moveImage(int dest, int sourceBegin, int sourceEnd)
         _screenLinesHead--;
         for (int i = lines; i >= 0; i--)
         {
-            //_screenLines[destLine + i] = _screenLines[sourceBeginLine + i];
             _lineProperties[destLine + i] = _lineProperties[sourceBeginLine + i];
         }
     }
@@ -1380,7 +1371,7 @@ void Screen::getSelectionEnd(int& column, int& line)
     }
 }
 
-void Screen::setSelectionStart(/*const ScreenCursor& viewCursor ,*/ const int x, const int y, const bool mode)
+void Screen::setSelectionStart(const int x, const int y, const bool mode)
 {
 //  kDebug(1211) << "setSelBeginXY(" << x << "," << y << ")";
     _selectionBegin = loc(x, y); //+histCursor) ;
@@ -1423,6 +1414,18 @@ void Screen::setSelectionEnd(const int x, const int y)
     }
 }
 
+int Screen::setSelectionFind(const int column, const int line, const int length)
+{
+    int startLine = line + (column / _columns);
+    int startCol = column % (_columns);
+    int endLine = line + ((column + length) / _columns);
+    int endCol =  (column + length) % (_columns) - 1;
+    clearSelection();
+    setSelectionStart(startCol, startLine, false);
+    setSelectionEnd(endCol, endLine);
+    return startLine;
+}
+
 bool Screen::isSelected(const int x, const int y) const
 {
     if (_columnMode)
@@ -1430,11 +1433,13 @@ bool Screen::isSelected(const int x, const int y) const
         int sel_Left, sel_Right;
         if (_selectionTopLeft % _columns < _selectionBottomRight % _columns)
         {
-            sel_Left = _selectionTopLeft; sel_Right = _selectionBottomRight;
+            sel_Left = _selectionTopLeft;
+            sel_Right = _selectionBottomRight;
         }
         else
         {
-            sel_Left = _selectionBottomRight; sel_Right = _selectionTopLeft;
+            sel_Left = _selectionBottomRight;
+            sel_Right = _selectionTopLeft;
         }
         return (x >= sel_Left % _columns) && (x <= sel_Right % _columns) &&
                (y >= _selectionTopLeft / _columns) && (y <= _selectionBottomRight / _columns);
@@ -1460,6 +1465,30 @@ QString Screen::selectedText(bool preserveLineBreaks)
     return result;
 }
 
+size_t Screen::writeLineToString(size_t line, QString &result)
+{
+    size_t ret = 0;
+    QTextStream stream(&result, QIODevice::ReadWrite);
+    LineProperty currentLineProperties;
+    PlainTextDecoder decoder;
+
+    decoder.begin(&stream);
+    do
+    {
+        copyLineToStream(line + ret,
+                         0,
+                         _columns,
+                         &decoder,
+                         false,
+                         false,
+                         &currentLineProperties);
+        ret++;
+    } while (currentLineProperties & LINE_WRAPPED);
+    decoder.end();
+
+    return ret;
+}
+
 bool Screen::isSelectionValid() const
 {
     return (_selectionTopLeft >= 0 && _selectionBottomRight >= 0);
@@ -1482,6 +1511,8 @@ void Screen::writeSelectionToStream(TerminalCharacterDecoder* decoder,
 
     Q_ASSERT(top >= 0 && left >= 0 && bottom >= 0 && right >= 0);
 
+    LineProperty currentLineProperties;
+
     for (int y = top; y <= bottom; y++)
     {
         int start = 0;
@@ -1502,7 +1533,8 @@ void Screen::writeSelectionToStream(TerminalCharacterDecoder* decoder,
                          count,
                          decoder,
                          appendNewLine,
-                         preserveLineBreaks);
+                         preserveLineBreaks,
+                         &currentLineProperties);
     }
 }
 
@@ -1511,7 +1543,8 @@ void Screen::copyLineToStream(int line,
                               int count,
                               TerminalCharacterDecoder* decoder,
                               bool appendNewLine,
-                              bool preserveLineBreaks)
+                              bool preserveLineBreaks,
+                              LineProperty *currentLineProperties)
 {
     //buffer to hold characters for decoding
     //the buffer is static to avoid initialising every
@@ -1523,7 +1556,7 @@ void Screen::copyLineToStream(int line,
 
     assert(count < MAX_CHARS);
 
-    LineProperty currentLineProperties = 0;
+    (*currentLineProperties) = 0;
 
     //determine if the line is in the history buffer or the screen image
     if (line < _hist->getLines())
@@ -1552,7 +1585,7 @@ void Screen::copyLineToStream(int line,
 
         if (_hist->isWrappedLine(line))
         {
-            currentLineProperties |= LINE_WRAPPED;
+            (*currentLineProperties) |= LINE_WRAPPED;
         }
     }
     else
@@ -1579,24 +1612,11 @@ void Screen::copyLineToStream(int line,
         count = qBound(0, count, length - start);
 
         Q_ASSERT(screenLine < _lineProperties.count());
-        currentLineProperties |= _lineProperties[screenLine];
-    }
-
-    //do not decode trailing whitespace characters
-    for (int i = count - 1; i >= 0; i--)
-    {
-        if (QChar(characterBuffer[i]._character).isSpace())
-        {
-            count--;
-        }
-        else
-        {
-            break;
-        }
+        (*currentLineProperties) |= _lineProperties[screenLine];
     }
 
     // add new line character at end
-    const bool omitLineBreak = (currentLineProperties & LINE_WRAPPED) ||
+    const bool omitLineBreak = ((*currentLineProperties) & LINE_WRAPPED) ||
                                !preserveLineBreaks;
 
     if (!omitLineBreak && appendNewLine && (count + 1 < MAX_CHARS))
@@ -1607,7 +1627,7 @@ void Screen::copyLineToStream(int line,
 
     //decode line and write to text stream
     decoder->decodeLine(characterBuffer.begin(),
-                        count, currentLineProperties);
+                        count, *currentLineProperties);
 }
 
 QString Screen::getHistoryLine(int no)

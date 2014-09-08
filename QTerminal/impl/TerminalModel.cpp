@@ -273,11 +273,6 @@ void TerminalModel::sendText(const QByteArray &text) const
     }
 }
 
-void TerminalModel::findText(const QString& string, const bool caseSensitive, const bool searchUp)
-{
-    _emulation->findText(string, caseSensitive, searchUp);
-}
-
 void TerminalModel::suppressOutput(bool suppress)
 {
     _suppressOutput = suppress;

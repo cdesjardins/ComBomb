@@ -196,7 +196,6 @@ public:
      * changes.
      */
     bool programUsesMouse() const;
-
 public slots:
 
     /** Change the size of the emulation's image */

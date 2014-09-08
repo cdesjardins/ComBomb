@@ -124,6 +124,8 @@ public:
      * the window.
      */
     void setSelectionEnd(int column, int line);
+    int setSelectionFind(const int column, const int line, const int length);
+    long findText(const QString& searchStr, const bool caseSensitive, const bool searchUp);
     /**
      * Retrieves the start of the selection within the window.
      */
@@ -208,7 +210,6 @@ public:
      * @param preserveLineBreaks See Screen::selectedText()
      */
     QString selectedText(bool preserveLineBreaks) const;
-
 public slots:
     /**
      * Notifies the window that the contents of the associated terminal screen have changed.

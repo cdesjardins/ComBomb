@@ -2673,36 +2673,8 @@ void TerminalView::dragEnterEvent(QDragEnterEvent* event)
 
 void TerminalView::dropEvent(QDropEvent* event)
 {
-    //  KUrl::List urls = KUrl::List::fromMimeData(event->mimeData());
-
     QString dropText;
-    /*  if (!urls.isEmpty())
-    {
-      for ( int i = 0 ; i < urls.count() ; i++ )
-      {
-          KUrl url = KIO::NetAccess::mostLocalUrl( urls[i] , 0 );
-          QString urlText;
 
-          if (url.isLocalFile())
-              urlText = url.path();
-          else
-              urlText = url.url();
-
-          // in future it may be useful to be able to insert file names with drag-and-drop
-          // without quoting them (this only affects paths with spaces in)
-          urlText = KShell::quoteArg(urlText);
-
-          dropText += urlText;
-
-          if ( i != urls.count()-1 )
-              dropText += ' ';
-      }
-    }
-    else
-    {
-      dropText = event->mimeData()->text();
-    }
-  */
     if (event->mimeData()->hasFormat("text/plain"))
     {
         emit sendStringToEmu(dropText.toLocal8Bit());
@@ -2763,3 +2735,13 @@ void TerminalView::outputSuspended(bool suspended)
     _outputSuspendedLabel->setVisible(suspended);
 }
 
+void TerminalView::findText(const QString& searchStr, const bool caseSensitive, const bool searchUp)
+{
+    long scrollTo = _screenWindow->findText(searchStr, caseSensitive, searchUp);
+    if (scrollTo >= 0)
+    {
+        _screenWindow->scrollTo(scrollTo);
+        _screenWindow->setTrackOutput(_screenWindow->atEndOfOutput());
+        updateImage();
+    }
+}

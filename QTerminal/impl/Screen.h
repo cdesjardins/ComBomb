@@ -416,7 +416,7 @@ public:
      * @param line The line index of the last character in the selection.
      */
     void setSelectionEnd(const int column, const int line);
-
+    int setSelectionFind(const int column, const int line, const int length);
     /**
      * Retrieves the start of the selection or the cursor position if there
      * is no selection.
@@ -463,7 +463,7 @@ public:
      */
     void writeSelectionToStream(TerminalCharacterDecoder* decoder, bool
                                 preserveLineBreaks = true);
-
+    size_t writeLineToString(size_t line, QString &result);
     /** TODO Document me */
     void checkSelection(int from, int to);
 
@@ -539,7 +539,7 @@ private:
     //count - the number of characters on the line to copy
     //decoder - a decoder which coverts terminal characters (an Character array) into text
     //appendNewLine - if true a new line character (\n) is appended to the end of the line
-    void copyLineToStream(int line, int start, int count, TerminalCharacterDecoder* decoder, bool appendNewLine, bool preserveLineBreaks);
+    void copyLineToStream(int line, int start, int count, TerminalCharacterDecoder* decoder, bool appendNewLine, bool preserveLineBreaks, LineProperty *currentLineProperties);
 
     //fills a section of the screen image with the character 'c'
     //the parameters are specified as offsets from the start of the screen image.
