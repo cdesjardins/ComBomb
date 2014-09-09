@@ -71,6 +71,10 @@ void ChildForm::findTextNext(bool backward)
     {
         QTerminal::findText(_lastSearchString, _lastSearchCaseSensitivity, backward, true);
     }
+    else
+    {
+        findText();
+    }
 }
 
 void ChildForm::runProcess()

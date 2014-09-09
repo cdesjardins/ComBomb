@@ -61,6 +61,11 @@
    <header>cbcombobox.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>findWhatComboBox</tabstop>
+  <tabstop>searchUpCheckBox</tabstop>
+  <tabstop>caseSensitiveCheckBox</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
