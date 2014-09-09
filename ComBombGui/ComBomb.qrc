@@ -15,5 +15,7 @@
         <file>images/script_gear.png</file>
         <file>images/page_refresh.png</file>
         <file>images/find.png</file>
+        <file>images/find_next.png</file>
+        <file>images/find_prev.png</file>
     </qresource>
 </RCC>
