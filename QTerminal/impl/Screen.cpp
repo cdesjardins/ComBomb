@@ -446,9 +446,7 @@ void Screen::resizeImage(int new_lines, int new_columns)
         }
     }
 
-    qDebug("resize1: %i %i %i", _lines, new_lines, _screenLines.size());
     // create new screen lines
-
     _screenLines.resize(new_lines + 1);
     _lineProperties.resize(new_lines + 1);
     for (int i = _lines + 1; (i > 0) && (i < new_lines + 1); i++)
