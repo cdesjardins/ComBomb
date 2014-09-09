@@ -457,9 +457,9 @@ void Screen::resizeImage(int new_lines, int new_columns)
     _lineProperties.resize(new_lines + 1);
     for (int i = _lines + 1; (i > 0) && (i < new_lines + 1); i++)
     {
-        int index = screenLineIndex(0);
+        int index = screenLineIndex(-1);
         _screenLinesHead = (_screenLinesHead + 1) % _screenLines.size();
-        _screenLines.insert(_screenLines.begin() + index);
+        _screenLines.insert(_screenLines.begin() + index, std::vector<Character>());
         _screenLines[index].resize(new_columns);
         _lineProperties[i] = LINE_DEFAULT;
         qDebug("resize: %i %i", _screenLinesHead, index);

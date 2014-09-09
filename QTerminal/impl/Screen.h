@@ -31,7 +31,6 @@
 #include <QtCore/QVarLengthArray>
 #ifndef Q_MOC_RUN
 #include <boost/smart_ptr.hpp>
-#include <boost/circular_buffer.hpp>
 #endif
 // Konsole
 #include "Character.h"
@@ -578,7 +577,7 @@ private:
     int _lines;
     int _columns;
 
-    boost::circular_buffer<std::vector<Character> > _screenLines;             // [lines]
+    std::vector<std::vector<Character> > _screenLines;             // [lines]
     int _screenLinesHead;
     int _scrolledLines;
     QRect _lastScrolledRegion;
