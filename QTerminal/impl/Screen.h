@@ -570,7 +570,7 @@ private:
     void copyFromHistory(std::vector<Character>::iterator dest, int startLine, int count) const;
     size_t screenLineIndex(const size_t index) const
     {
-        return ((index + _screenLinesHead) % _screenLines.size());
+        return index;
     }
 
     // screen image ----------------
@@ -578,7 +578,6 @@ private:
     int _columns;
 
     std::vector<std::vector<Character> > _screenLines;             // [lines]
-    int _screenLinesHead;
     int _scrolledLines;
     QRect _lastScrolledRegion;
 

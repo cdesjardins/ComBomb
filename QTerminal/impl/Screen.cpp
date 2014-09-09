@@ -65,7 +65,6 @@ Character Screen::_defaultChar = Character(' ',
 Screen::Screen(const boost::shared_ptr<HistoryScroll> &hist, int l, int c)
     : _lines(l),
     _columns(c),
-    _screenLinesHead(0),
     _scrolledLines(0),
     _droppedLines(0),
     _hist(hist),
@@ -449,20 +448,13 @@ void Screen::resizeImage(int new_lines, int new_columns)
 
     qDebug("resize1: %i %i %i", _lines, new_lines, _screenLines.size());
     // create new screen lines
-    //_screenLines.resize(new_lines + 1);
-    for (int i = new_lines; i < _lines; i++)
-    {
-        _screenLines.erase(_screenLines.begin() + screenLineIndex(_screenLines.size() - 1));
-    }
+
+    _screenLines.resize(new_lines + 1);
     _lineProperties.resize(new_lines + 1);
     for (int i = _lines + 1; (i > 0) && (i < new_lines + 1); i++)
     {
-        int index = screenLineIndex(-1);
-        _screenLinesHead = (_screenLinesHead + 1) % _screenLines.size();
-        _screenLines.insert(_screenLines.begin() + index, std::vector<Character>());
-        _screenLines[index].resize(new_columns);
+        _screenLines[i].resize(new_columns);
         _lineProperties[i] = LINE_DEFAULT;
-        qDebug("resize: %i %i", _screenLinesHead, index);
     }
 
     clearSelection();
@@ -1173,17 +1165,17 @@ void Screen::moveImage(int dest, int sourceBegin, int sourceEnd)
 
     if (dest < sourceBegin)
     {
-        _screenLinesHead = (_screenLinesHead + 1) % _screenLines.size();
         for (int i = 0; i <= lines; i++)
         {
+            _screenLines[destLine + i] = _screenLines[sourceBeginLine + i];
             _lineProperties[destLine + i] = _lineProperties[sourceBeginLine + i];
         }
     }
     else
     {
-        _screenLinesHead = (_screenLinesHead - 1) % _screenLines.size();
         for (int i = lines; i >= 0; i--)
         {
+            _screenLines[destLine + i] = _screenLines[sourceBeginLine + i];
             _lineProperties[destLine + i] = _lineProperties[sourceBeginLine + i];
         }
     }
