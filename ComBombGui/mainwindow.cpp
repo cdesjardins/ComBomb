@@ -48,6 +48,8 @@ void MainWindow::enableMenuItems(bool enabled)
     _ui->actionSelect_All->setEnabled(enabled);
     _ui->action_Clear_scrollback->setEnabled(enabled);
     _ui->action_Find->setEnabled(enabled);
+    _ui->actionFind_next->setEnabled(enabled);
+    _ui->actionFind_prev->setEnabled(enabled);
 }
 
 MainWindow::~MainWindow()
@@ -241,5 +243,23 @@ void MainWindow::on_action_Find_triggered()
     if (activeWindow != NULL)
     {
         activeWindow->findText();
+    }
+}
+
+void MainWindow::on_actionFind_next_triggered()
+{
+    ChildForm* activeWindow = getActiveChildWindow();
+    if (activeWindow != NULL)
+    {
+        activeWindow->findTextNext(false);
+    }
+}
+
+void MainWindow::on_actionFind_prev_triggered()
+{
+    ChildForm* activeWindow = getActiveChildWindow();
+    if (activeWindow != NULL)
+    {
+        activeWindow->findTextNext(true);
     }
 }

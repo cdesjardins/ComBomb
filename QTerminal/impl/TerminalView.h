@@ -408,7 +408,7 @@ public:
     /** Returns the terminal screen section which is displayed in this widget.  See setScreenWindow() */
     ScreenWindow* screenWindow() const;
 
-    void findText(const QString& searchStr, const bool caseSensitive, const bool searchUp);
+    void findText(const QString& searchStr, const bool caseSensitive, const bool searchUp, const bool cont);
 
 public slots:
 

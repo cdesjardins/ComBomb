@@ -125,7 +125,7 @@ public:
      */
     void setSelectionEnd(int column, int line);
     int setSelectionFind(const int column, const int line, const int length);
-    long findText(const QString& searchStr, const bool caseSensitive, const bool searchUp);
+    long findText(const QString& searchStr, const bool caseSensitive, const bool searchUp, const bool cont);
     /**
      * Retrieves the start of the selection within the window.
      */
@@ -250,6 +250,8 @@ private:
     bool _trackOutput; // see setTrackOutput() , trackOutput()
     int _scrollCount;  // count of lines which the window has been scrolled by since
                        // the last call to resetScrollCount()
+    int _searchLine;
+    int _searchCol;
 };
 
 #endif // SCREENWINDOW_H

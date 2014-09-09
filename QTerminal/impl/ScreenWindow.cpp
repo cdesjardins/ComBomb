@@ -36,6 +36,8 @@ ScreenWindow::ScreenWindow(QObject* parent)
     , _currentLine(0)
     , _trackOutput(true)
     , _scrollCount(0)
+    , _searchLine(0)
+    , _searchCol(0)
 {
 }
 
@@ -173,10 +175,15 @@ int ScreenWindow::setSelectionFind(const int column, const int line, const int l
     return ret;
 }
 
-long ScreenWindow::findText(const QString& searchStr, const bool caseSensitive, const bool searchUp)
+long ScreenWindow::findText(const QString& searchStr, const bool caseSensitive, const bool searchUp, const bool cont)
 {
     long ret = -1;
-    for (size_t line = 0; line < (size_t)lineCount();)
+    if (cont == false)
+    {
+        _searchLine = 0;
+        _searchCol = 0;
+    }
+    for (size_t line = _searchLine; line < (size_t)lineCount();)
     {
         QString str;
         size_t numLines = _screen->writeLineToString(line, str);
@@ -186,14 +193,22 @@ long ScreenWindow::findText(const QString& searchStr, const bool caseSensitive, 
         }
         else
         {
-            int index = str.indexOf(searchStr, 0, (caseSensitive == true) ? Qt::CaseSensitive : Qt::CaseInsensitive);
-            if (index > 0)
+            int index = str.indexOf(searchStr, _searchCol, (caseSensitive == true) ? Qt::CaseSensitive : Qt::CaseInsensitive);
+            if (index >= 0)
             {
                 ret = setSelectionFind(index, line, searchStr.length());
+                _searchLine = line;
+                _searchCol = (searchUp == true) ? index - 1 : index + 1;
                 break;
             }
             line += numLines;
         }
+        _searchCol = 0;
+    }
+    if (ret == -1)
+    {
+        _searchLine = 0;
+        _searchCol = 0;
     }
     return ret;
 }

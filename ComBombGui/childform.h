@@ -18,6 +18,7 @@ public:
     explicit ChildForm(const QTerminalConfig &terminalConfig, const boost::shared_ptr<TgtIntf> &targetInterface, QWidget* parent = 0);
     void runProcess();
     void findText();
+    void findTextNext(bool backward);
     virtual ~ChildForm();
 private slots:
     void updateTitleSlot(QString title);
@@ -37,6 +38,8 @@ private:
     Ui::ChildForm* ui;
     QProcess *_proc;
     bool _procError;
+    QString _lastSearchString;
+    bool _lastSearchCaseSensitivity;
 };
 
 #endif // CHILDFORM_H

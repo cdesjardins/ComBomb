@@ -44,6 +44,10 @@ private slots:
 
     void on_action_Find_triggered();
 
+    void on_actionFind_next_triggered();
+
+    void on_actionFind_prev_triggered();
+
 signals:
     void findSignal();
 private:

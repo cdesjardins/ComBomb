@@ -42,7 +42,7 @@ public:
     void setSize(int h, int v);
     void sendText(const QString& text);
     void sendText(const QByteArray& text);
-    void findText(const QString& searchStr, const bool caseSensitive, const bool searchUp);
+    void findText(const QString& searchStr, const bool caseSensitive, const bool searchUp, const bool cont);
     void connectToRecvText(QObject *who);
 
     void setCursorType(CursorType type, bool blinking);

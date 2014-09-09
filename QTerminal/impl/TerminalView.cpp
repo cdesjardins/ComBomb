@@ -2735,9 +2735,9 @@ void TerminalView::outputSuspended(bool suspended)
     _outputSuspendedLabel->setVisible(suspended);
 }
 
-void TerminalView::findText(const QString& searchStr, const bool caseSensitive, const bool searchUp)
+void TerminalView::findText(const QString& searchStr, const bool caseSensitive, const bool searchUp, const bool cont)
 {
-    long scrollTo = _screenWindow->findText(searchStr, caseSensitive, searchUp);
+    long scrollTo = _screenWindow->findText(searchStr, caseSensitive, searchUp, cont);
     if (scrollTo >= 0)
     {
         _screenWindow->scrollTo(scrollTo);

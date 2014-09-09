@@ -59,7 +59,17 @@ void ChildForm::findText()
     FindDialog fd(this);
     if (fd.exec() == FindDialog::Accepted)
     {
-        QTerminal::findText(fd.getString(), fd.getCaseSensitivity(), fd.getSearchUp());
+        _lastSearchString = fd.getString();
+        _lastSearchCaseSensitivity = fd.getCaseSensitivity();
+        QTerminal::findText(fd.getString(), fd.getCaseSensitivity(), fd.getSearchUp(), false);
+    }
+}
+
+void ChildForm::findTextNext(bool backward)
+{
+    if (_lastSearchString.isNull() == false)
+    {
+        QTerminal::findText(_lastSearchString, _lastSearchCaseSensitivity, backward, true);
     }
 }
 
