@@ -298,12 +298,12 @@ char Emulation::getErase() const
 
 void Emulation::setImageSize(int lines, int columns)
 {
-    qDebug() << "Resizing image to: " << lines << "by" << columns << QTime::currentTime().msec();
+    //qDebug() << "Resizing image to: " << lines << "by" << columns << QTime::currentTime().msec();
     Q_ASSERT(lines > 0);
     Q_ASSERT(columns > 0);
 
     _screen[0]->resizeImage(lines, columns);
-    //_screen[1]->resizeImage(lines, columns);
+    _screen[1]->resizeImage(lines, columns);
 
     emit imageSizeChanged(lines, columns);
 
