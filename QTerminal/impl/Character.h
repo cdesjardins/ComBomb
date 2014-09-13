@@ -39,13 +39,15 @@ static const int LINE_DOUBLEWIDTH   = (1 << 1);
 static const int LINE_DOUBLEHEIGHT  = (1 << 2);
 
 #define DEFAULT_RENDITION  0
-#define RE_BOLD            (1 << 0)
-#define RE_BLINK           (1 << 1)
-#define RE_UNDERLINE       (1 << 2)
-#define RE_REVERSE         (1 << 3) // Screen only
-#define RE_INTENSIVE       (1 << 3) // Widget only
-#define RE_CURSOR          (1 << 4)
-#define RE_EXTENDED_CHAR   (1 << 5)
+#define RENDITION_BOLD            (1 << 0)
+#define RENDITION_BLINK           (1 << 1)
+#define RENDITION_UNDERLINE       (1 << 2)
+#define RENDITION_REVERSE         (1 << 3) // Screen only
+#define RENDITION_INTENSIVE       (1 << 3) // Widget only
+#define RENDITION_CURSOR          (1 << 4)
+#define RENDITION_EXTENDED_CHAR   (1 << 5)
+#define RENDITION_RENDER          (1 << 6)
+
 
 /**
  * A single character in the terminal which consists of a unicode character
@@ -68,7 +70,7 @@ public:
         : _character(_c), _rendition(_r), _foregroundColor(_f), _backgroundColor(_b)
     {
     }
-
+private:
     union
     {
         /** The unicode character value for this character. */
@@ -82,6 +84,23 @@ public:
          */
         quint16 _charSequence;
     };
+public:
+    quint16 getChar() const
+    {
+        return _character;
+    }
+
+    quint16 getCharSequence() const
+    {
+        return _charSequence;
+    }
+
+    void setChar(quint16 ch)
+    {
+        _character = ch;
+    }
+
+
 
     /** A combination of RENDITION flags which specify options for drawing the character. */
     quint8 _rendition;

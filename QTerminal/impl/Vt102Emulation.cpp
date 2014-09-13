@@ -681,17 +681,17 @@ void Vt102Emulation::tau(int token, int p, int q)
         case TY_CSI_PS('u',   0):      restoreCursor        (          ); break;
 
         case TY_CSI_PS('m',   0): _screen[_currentScreenIndex]->setDefaultRendition  (          ); break;
-        case TY_CSI_PS('m',   1): _screen[_currentScreenIndex]->setRendition     (RE_BOLD); break;     //VT100
-        case TY_CSI_PS('m',   4): _screen[_currentScreenIndex]->setRendition     (RE_UNDERLINE); break; //VT100
-        case TY_CSI_PS('m',   5): _screen[_currentScreenIndex]->setRendition     (RE_BLINK); break;    //VT100
-        case TY_CSI_PS('m',   7): _screen[_currentScreenIndex]->setRendition     (RE_REVERSE); break;
+        case TY_CSI_PS('m',   1): _screen[_currentScreenIndex]->setRendition     (RENDITION_BOLD); break;     //VT100
+        case TY_CSI_PS('m',   4): _screen[_currentScreenIndex]->setRendition     (RENDITION_UNDERLINE); break; //VT100
+        case TY_CSI_PS('m',   5): _screen[_currentScreenIndex]->setRendition     (RENDITION_BLINK); break;    //VT100
+        case TY_CSI_PS('m',   7): _screen[_currentScreenIndex]->setRendition     (RENDITION_REVERSE); break;
         case TY_CSI_PS('m',  10): /* IGNORED: mapping related          */ break; //LINUX
         case TY_CSI_PS('m',  11): /* IGNORED: mapping related          */ break; //LINUX
         case TY_CSI_PS('m',  12): /* IGNORED: mapping related          */ break; //LINUX
-        case TY_CSI_PS('m',  22): _screen[_currentScreenIndex]->resetRendition     (RE_BOLD); break;
-        case TY_CSI_PS('m',  24): _screen[_currentScreenIndex]->resetRendition     (RE_UNDERLINE); break;
-        case TY_CSI_PS('m',  25): _screen[_currentScreenIndex]->resetRendition     (RE_BLINK); break;
-        case TY_CSI_PS('m',  27): _screen[_currentScreenIndex]->resetRendition     (RE_REVERSE); break;
+        case TY_CSI_PS('m',  22): _screen[_currentScreenIndex]->resetRendition     (RENDITION_BOLD); break;
+        case TY_CSI_PS('m',  24): _screen[_currentScreenIndex]->resetRendition     (RENDITION_UNDERLINE); break;
+        case TY_CSI_PS('m',  25): _screen[_currentScreenIndex]->resetRendition     (RENDITION_BLINK); break;
+        case TY_CSI_PS('m',  27): _screen[_currentScreenIndex]->resetRendition     (RENDITION_REVERSE); break;
 
         case TY_CSI_PS('m',   30): _screen[_currentScreenIndex]->setForeColor         (COLOR_SPACE_SYSTEM,  0); break;
         case TY_CSI_PS('m',   31): _screen[_currentScreenIndex]->setForeColor         (COLOR_SPACE_SYSTEM,  1); break;

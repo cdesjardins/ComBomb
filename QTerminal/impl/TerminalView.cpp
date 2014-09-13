@@ -526,7 +526,7 @@ void TerminalView::drawLineCharString(QPainter& painter, int x, int y, const QSt
 {
     const QPen& currentPen = painter.pen();
 
-    if (attributes->_rendition & RE_BOLD)
+    if (attributes->_rendition & RENDITION_BOLD)
     {
         QPen boldPen(currentPen);
         boldPen.setWidth(3);
@@ -663,14 +663,14 @@ void TerminalView::drawCharacters(QPainter& painter,
                                   bool invertCharacterColor)
 {
     // don't draw text which is currently blinking
-    if (_blinking && (style->_rendition & RE_BLINK))
+    if (_blinking && (style->_rendition & RENDITION_BLINK))
     {
         return;
     }
 
     // setup bold and underline
-    bool useBold = style->_rendition & RE_BOLD || style->isBold(_colorTable) || font().bold();
-    bool useUnderline = style->_rendition & RE_UNDERLINE || font().underline();
+    bool useBold = style->_rendition & RENDITION_BOLD || style->isBold(_colorTable) || font().bold();
+    bool useUnderline = style->_rendition & RENDITION_UNDERLINE || font().underline();
 
     QFont font = painter.font();
     if (font.bold() != useBold
@@ -727,7 +727,7 @@ void TerminalView::drawTextFragment(QPainter& painter,
     // this may alter the foreground and background colors
     bool invertCharacterColor = false;
 
-    if (style->_rendition & RE_CURSOR)
+    if (style->_rendition & RENDITION_CURSOR)
     {
         drawCursor(painter, rect, foregroundColor, backgroundColor, invertCharacterColor);
     }
@@ -878,14 +878,14 @@ int TerminalView::resizePaint(const int columnsToUpdate, const std::vector<Chara
     CharacterColor _clipboard;     // undefined
     for (int x = 0; x < columnsToUpdate; x++)
     {
-        _hasBlinker |= (newLine[x]._rendition & RE_BLINK);
+        _hasBlinker |= (newLine[x]._rendition & RENDITION_BLINK);
 
         // Start drawing if this character or the next one differs.
         // We also take the next one into account to handle the situation
         // where characters exceed their cell width.
         if (dirtyMask[x])
         {
-            quint16 c = newLine[x + 0]._character;
+            quint16 c = newLine[x + 0].getChar();
             if (!c)
             {
                 continue;
@@ -893,7 +893,7 @@ int TerminalView::resizePaint(const int columnsToUpdate, const std::vector<Chara
             int p = 0;
             disstrU[p++] = c; //fontMap(c);
             bool lineDraw = isLineChar(c);
-            bool doubleWidth = (x + 1 == columnsToUpdate) ? false : (newLine[x + 1]._character == 0);
+            bool doubleWidth = (x + 1 == columnsToUpdate) ? false : (newLine[x + 1].getChar() == 0);
             cr = newLine[x]._rendition;
             _clipboard = newLine[x]._backgroundColor;
             if (newLine[x]._foregroundColor != cf)
@@ -905,11 +905,11 @@ int TerminalView::resizePaint(const int columnsToUpdate, const std::vector<Chara
             {
                 const Character& ch = newLine[x + len];
 
-                if (!ch._character)
+                if (!ch.getChar())
                 {
                     continue; // Skip trailing part of multi-col chars.
                 }
-                bool nextIsDoubleWidth = (x + len + 1 == columnsToUpdate) ? false : (newLine[x + len + 1]._character == 0);
+                bool nextIsDoubleWidth = (x + len + 1 == columnsToUpdate) ? false : (newLine[x + len + 1].getChar() == 0);
 
                 if (ch._foregroundColor != cf ||
                         ch._backgroundColor != _clipboard ||
@@ -1233,7 +1233,7 @@ void TerminalView::drawContents(QPainter &paint, const QRect &rect)
     QChar* disstrU = new QChar[bufferSize];
     for (int y = leftUpperY; y <= rightLowerY; y++)
     {
-        quint16 c = _image[loc(leftUpperX, y)]._character;
+        quint16 c = _image[loc(leftUpperX, y)].getChar();
         int x = leftUpperX;
         if (!c && x)
         {
@@ -1245,12 +1245,12 @@ void TerminalView::drawContents(QPainter &paint, const QRect &rect)
             int p = 0;
 
             // is this a single character or a sequence of characters ?
-            if (_image[loc(x, y)]._rendition & RE_EXTENDED_CHAR)
+            if (_image[loc(x, y)]._rendition & RENDITION_EXTENDED_CHAR)
             {
                 // sequence of characters
                 ushort extendedCharLength = 0;
                 ushort* chars = ExtendedCharTable::instance
-                                .lookupExtendedChar(_image[loc(x, y)]._charSequence, extendedCharLength);
+                                .lookupExtendedChar(_image[loc(x, y)].getCharSequence(), extendedCharLength);
                 for (int index = 0; index < extendedCharLength; index++)
                 {
                     Q_ASSERT(p < bufferSize);
@@ -1260,7 +1260,7 @@ void TerminalView::drawContents(QPainter &paint, const QRect &rect)
             else
             {
                 // single character
-                c = _image[loc(x, y)]._character;
+                c = _image[loc(x, y)].getChar();
                 if (c)
                 {
                     Q_ASSERT(p < bufferSize);
@@ -1269,7 +1269,7 @@ void TerminalView::drawContents(QPainter &paint, const QRect &rect)
             }
 
             bool lineDraw = isLineChar(c);
-            bool doubleWidth = (_image[qMin(loc(x, y) + 1, _imageSize)]._character == 0);
+            bool doubleWidth = (_image[qMin(loc(x, y) + 1, _imageSize)].getChar() == 0);
             CharacterColor currentForeground = _image[loc(x, y)]._foregroundColor;
             CharacterColor currentBackground = _image[loc(x, y)]._backgroundColor;
             quint8 currentRendition = _image[loc(x, y)]._rendition;
@@ -1278,8 +1278,8 @@ void TerminalView::drawContents(QPainter &paint, const QRect &rect)
                    _image[loc(x + len, y)]._foregroundColor == currentForeground &&
                    _image[loc(x + len, y)]._backgroundColor == currentBackground &&
                    _image[loc(x + len, y)]._rendition == currentRendition &&
-                   (_image[qMin(loc(x + len, y) + 1, _imageSize)]._character == 0) == doubleWidth &&
-                   isLineChar(c = _image[loc(x + len, y)]._character) == lineDraw) // Assignment!
+                   (_image[qMin(loc(x + len, y) + 1, _imageSize)].getChar() == 0) == doubleWidth &&
+                   isLineChar(c = _image[loc(x + len, y)].getChar()) == lineDraw) // Assignment!
             {
                 if (c)
                 {
@@ -1291,7 +1291,7 @@ void TerminalView::drawContents(QPainter &paint, const QRect &rect)
                 }
                 len++;
             }
-            if ((x + len < _usedColumns) && (!_image[loc(x + len, y)]._character))
+            if ((x + len < _usedColumns) && (!_image[loc(x + len, y)].getChar()))
             {
                 len++; // Adjust for trailing part of multi-column character
             }
@@ -1786,9 +1786,9 @@ void TerminalView::extendSelection(const QPoint& position)
         i = loc(left.x(), left.y());
         if (i >= 0 && i <= _imageSize)
         {
-            selClass = charClass(_image[i]._character);
+            selClass = charClass(_image[i].getChar());
             while (((left.x() > 0) || (left.y() > 0 && (_lineProperties[left.y() - 1] & LINE_WRAPPED)))
-                   && charClass(_image[i - 1]._character) == selClass)
+                   && charClass(_image[i - 1].getChar()) == selClass)
             {
                 i--;
                 if (left.x() > 0)
@@ -1808,9 +1808,9 @@ void TerminalView::extendSelection(const QPoint& position)
         i = loc(right.x(), right.y());
         if (i >= 0 && i <= _imageSize)
         {
-            selClass = charClass(_image[i]._character);
+            selClass = charClass(_image[i].getChar());
             while (((right.x() < _usedColumns - 1) || (right.y() < _usedLines - 1 && (_lineProperties[right.y()] & LINE_WRAPPED)))
-                   && charClass(_image[i + 1]._character) == selClass)
+                   && charClass(_image[i + 1].getChar()) == selClass)
             {
                 i++;
                 if (right.x() < _usedColumns - 1)
@@ -1900,10 +1900,10 @@ void TerminalView::extendSelection(const QPoint& position)
             i = loc(right.x(), right.y());
             if (i >= 0 && i <= _imageSize)
             {
-                selClass = charClass(_image[i - 1]._character);
+                selClass = charClass(_image[i - 1].getChar());
                 if (selClass == ' ')
                 {
-                    while (right.x() < _usedColumns - 1 && charClass(_image[i + 1]._character) == selClass && (right.y() < _usedLines - 1) &&
+                    while (right.x() < _usedColumns - 1 && charClass(_image[i + 1].getChar()) == selClass && (right.y() < _usedLines - 1) &&
                            !(_lineProperties[right.y()] & LINE_WRAPPED))
                     {
                         i++;
@@ -2108,12 +2108,12 @@ void TerminalView::mouseDoubleClickEvent(QMouseEvent* ev)
     _wordSelectionMode = true;
 
     // find word boundaries...
-    int selClass = charClass(_image[i]._character);
+    int selClass = charClass(_image[i].getChar());
     {
         // find the start of the word
         int x = bgnSel.x();
         while (((x > 0) || (bgnSel.y() > 0 && (_lineProperties[bgnSel.y() - 1] & LINE_WRAPPED)))
-               && charClass(_image[i - 1]._character) == selClass)
+               && charClass(_image[i - 1].getChar()) == selClass)
         {
             i--;
             if (x > 0)
@@ -2134,7 +2134,7 @@ void TerminalView::mouseDoubleClickEvent(QMouseEvent* ev)
         i = loc(endSel.x(), endSel.y());
         x = endSel.x();
         while (((x < _usedColumns - 1) || (endSel.y() < _usedLines - 1 && (_lineProperties[endSel.y()] & LINE_WRAPPED)))
-               && charClass(_image[i + 1]._character) == selClass)
+               && charClass(_image[i + 1].getChar()) == selClass)
         {
             i++;
             if (x < _usedColumns - 1)
@@ -2151,7 +2151,7 @@ void TerminalView::mouseDoubleClickEvent(QMouseEvent* ev)
         endSel.setX(x);
 
         // In word selection mode don't select @ (64) if at end of word.
-        if ((QChar(_image[i]._character) == '@') && ((endSel.x() - bgnSel.x()) > 0))
+        if ((QChar(_image[i].getChar()) == '@') && ((endSel.x() - bgnSel.x()) > 0))
         {
             endSel.setX(x - 1);
         }
@@ -2225,13 +2225,13 @@ void TerminalView::mouseTripleClickEvent(QMouseEvent* ev)
     {
         // find word boundary start
         int i = loc(_iPntSel.x(), _iPntSel.y());
-        int selClass = charClass(_image[i]._character);
+        int selClass = charClass(_image[i].getChar());
         int x = _iPntSel.x();
 
         while (((x > 0) ||
                 (_iPntSel.y() > 0 && (_lineProperties[_iPntSel.y() - 1] & LINE_WRAPPED))
                 )
-               && charClass(_image[i - 1]._character) == selClass)
+               && charClass(_image[i - 1].getChar()) == selClass)
         {
             i--;
             if (x > 0)
@@ -2573,7 +2573,7 @@ void TerminalView::clearImage()
     // We initialize _image[_imageSize] too. See makeImage()
     for (int i = 0; i <= _imageSize; i++)
     {
-        _image[i]._character = ' ';
+        _image[i].setChar(' ');
         _image[i]._foregroundColor = CharacterColor(COLOR_SPACE_DEFAULT,
                                                    DEFAULT_FORE_COLOR);
         _image[i]._backgroundColor = CharacterColor(COLOR_SPACE_DEFAULT,

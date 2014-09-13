@@ -533,7 +533,7 @@ void Screen::effectiveRendition()
     //OLD VERSION:
     //_effectiveCursorRe = _cursorRe & (RE_UNDERLINE | RE_BLINK);
 
-    if (_cursorRe & RE_REVERSE)
+    if (_cursorRe & RENDITION_REVERSE)
     {
         _effectiveCursorFg = _cursorBg;
         _effectiveCursorBg = _cursorFg;
@@ -544,7 +544,7 @@ void Screen::effectiveRendition()
         _effectiveCursorBg = _cursorBg;
     }
 
-    if (_cursorRe & RE_BOLD)
+    if (_cursorRe & RENDITION_BOLD)
     {
         _effectiveCursorFg.toggleIntensive();
     }
@@ -662,7 +662,7 @@ void Screen::getImage(std::vector<Character> &dest, int size, int startLine, int
     int cursorIndex = loc(_cursorX, _cursorY + linesInHistoryBuffer);
     if (getMode(MODE_Cursor) && cursorIndex < _columns * mergedLines)
     {
-        dest[cursorIndex]._rendition |= RE_CURSOR;
+        dest[cursorIndex]._rendition |= RENDITION_CURSOR;
     }
 }
 
@@ -745,7 +745,7 @@ void Screen::BackSpace()
 
     if (BS_CLEARS)
     {
-        _screenLines[screenLineIndex(_cursorY)][_cursorX]._character = ' ';
+        _screenLines[screenLineIndex(_cursorY)][_cursorX].setChar(' ');
     }
 }
 
@@ -758,8 +758,11 @@ void Screen::Tabulate(int n)
     }
     while ((n > 0) && (_cursorX < _columns - 1))
     {
-        cursorRight(1); while ((_cursorX < _columns - 1) && !_tabstops[_cursorX])
+        cursorRight(1);
+        while ((_cursorX < _columns - 1) && !_tabstops[_cursorX])
+        {
             cursorRight(1);
+        }
         n--;
     }
 }
@@ -898,10 +901,10 @@ void Screen::ShowCharacter(unsigned short c)
 
     Character& currentChar = _screenLines[screenLineIndex(_cursorY)][_cursorX];
 
-    currentChar._character = c;
+    currentChar.setChar(c);
     currentChar._foregroundColor = _effectiveCursorFg;
     currentChar._backgroundColor = _effectiveCursorBg;
-    currentChar._rendition = _effectiveCursorRe;
+    currentChar._rendition = _effectiveCursorRe | RENDITION_RENDER;
 
     int i = 0;
     int newCursorX = _cursorX + w--;
@@ -915,7 +918,7 @@ void Screen::ShowCharacter(unsigned short c)
         }
 
         Character& ch = _screenLines[screenLineIndex(_cursorY)][_cursorX + i];
-        ch._character = 0;
+        ch.setChar(0);
         ch._foregroundColor = _effectiveCursorFg;
         ch._backgroundColor = _effectiveCursorBg;
         ch._rendition = _effectiveCursorRe;
@@ -1610,6 +1613,18 @@ void Screen::copyLineToStream(int line,
         (*currentLineProperties) |= _lineProperties[screenLine];
     }
 
+    //do not decode trailing whitespace characters
+    for (int i = count - 1; i >= 0; i--)
+    {
+       if (((characterBuffer[i]._rendition & RENDITION_RENDER) == 0) && QChar(characterBuffer[i].getChar()).isSpace())
+       {
+           count--;
+       }
+       else
+       {
+           break;
+       }
+    }
     // add new line character at end
     const bool omitLineBreak = ((*currentLineProperties) & LINE_WRAPPED) ||
                                !preserveLineBreaks;

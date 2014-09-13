@@ -73,7 +73,7 @@ void PlainTextDecoder::decodeLine(const std::vector<Character>::const_iterator& 
     {
         for (int i = count - 1; i >= 0; i--)
         {
-            if (characters[i]._character != ' ')
+            if (characters[i].getChar() != ' ')
             {
                 break;
             }
@@ -86,7 +86,7 @@ void PlainTextDecoder::decodeLine(const std::vector<Character>::const_iterator& 
 
     for (int i = 0; i < outputCount; i++)
     {
-        plainText.append(QChar(characters[i]._character));
+        plainText.append(QChar(characters[i].getChar()));
     }
 
     *_output << plainText;
@@ -136,7 +136,7 @@ void HTMLDecoder::decodeLine(const std::vector<Character>::const_iterator& chara
 
     for (int i = 0; i < count; i++)
     {
-        QChar ch(characters[i]._character);
+        QChar ch(characters[i].getChar());
 
         //check if appearance of character is different from previous char
         if (characters[i]._rendition != _lastRendition  ||
@@ -155,13 +155,13 @@ void HTMLDecoder::decodeLine(const std::vector<Character>::const_iterator& chara
             //build up style string
             QString style;
 
-            if (_lastRendition & RE_BOLD ||
+            if (_lastRendition & RENDITION_BOLD ||
                 (_colorTable && characters[i].isBold(_colorTable)))
             {
                 style.append("font-weight:bold;");
             }
 
-            if (_lastRendition & RE_UNDERLINE)
+            if (_lastRendition & RENDITION_UNDERLINE)
             {
                 style.append("font-decoration:underline;");
             }
