@@ -81,7 +81,7 @@ void TgtSerialIntf::tgtStopService()
 {
     _serialServiceThreadRun = false;
     //_service.stop();
-    if ((_serialServiceThread->joinable() == true) && (boost::this_thread::get_id() != _serialServiceThread->get_id()))
+    if ((_serialServiceThread != NULL) && (_serialServiceThread->joinable() == true) && (boost::this_thread::get_id() != _serialServiceThread->get_id()))
     {
         _serialServiceThread->join();
     }
@@ -132,7 +132,7 @@ int TgtSerialIntf::tgtBreakConnection(bool joinWriter)
     if (_serialWriterThreadRun == true)
     {
         _serialWriterThreadRun = false;
-        if ((_serialWriterThread->joinable()) && (joinWriter == true))
+        if ((_serialWriterThread != NULL) && (_serialWriterThread->joinable()) && (joinWriter == true))
         {
             _serialWriterThread->join();
         }
