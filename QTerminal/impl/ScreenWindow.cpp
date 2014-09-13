@@ -124,9 +124,9 @@ std::vector<LineProperty> ScreenWindow::getLineProperties()
     return result;
 }
 
-QString ScreenWindow::selectedText(bool preserveLineBreaks) const
+QString ScreenWindow::selectedText() const
 {
-    return _screen->selectedText(preserveLineBreaks);
+    return _screen->selectedText();
 }
 
 void ScreenWindow::getSelectionStart(int& column, int& line)

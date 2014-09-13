@@ -666,8 +666,6 @@ private:
     int _actSel;     // selection state
     bool _wordSelectionMode;
     bool _lineSelectionMode;
-    bool _preserveLineBreaks;
-    bool _columnSelectionMode;
 
     QClipboard* _clipboard;
     boost::scoped_ptr<QScrollBar> _scrollBar;

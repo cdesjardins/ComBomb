@@ -1450,14 +1450,14 @@ bool Screen::isSelected(const int x, const int y) const
     }
 }
 
-QString Screen::selectedText(bool preserveLineBreaks)
+QString Screen::selectedText()
 {
     QString result;
     QTextStream stream(&result, QIODevice::ReadWrite);
 
     PlainTextDecoder decoder;
     decoder.begin(&stream);
-    writeSelectionToStream(&decoder, preserveLineBreaks);
+    writeSelectionToStream(&decoder);
     decoder.end();
 
     return result;
@@ -1478,7 +1478,6 @@ size_t Screen::writeLineToString(size_t line, QString &result)
                          _columns,
                          &decoder,
                          false,
-                         false,
                          &currentLineProperties);
         ret++;
     } while (currentLineProperties & LINE_WRAPPED);
@@ -1492,8 +1491,7 @@ bool Screen::isSelectionValid() const
     return (_selectionTopLeft >= 0 && _selectionBottomRight >= 0);
 }
 
-void Screen::writeSelectionToStream(TerminalCharacterDecoder* decoder,
-                                    bool preserveLineBreaks)
+void Screen::writeSelectionToStream(TerminalCharacterDecoder* decoder)
 {
     // do nothing if selection is invalid
     if (!isSelectionValid())
@@ -1531,7 +1529,6 @@ void Screen::writeSelectionToStream(TerminalCharacterDecoder* decoder,
                          count,
                          decoder,
                          appendNewLine,
-                         preserveLineBreaks,
                          &currentLineProperties);
     }
 }
@@ -1541,7 +1538,6 @@ void Screen::copyLineToStream(int line,
                               int count,
                               TerminalCharacterDecoder* decoder,
                               bool appendNewLine,
-                              bool preserveLineBreaks,
                               LineProperty *currentLineProperties)
 {
     //buffer to hold characters for decoding
@@ -1626,8 +1622,7 @@ void Screen::copyLineToStream(int line,
        }
     }
     // add new line character at end
-    const bool omitLineBreak = ((*currentLineProperties) & LINE_WRAPPED) ||
-                               !preserveLineBreaks;
+    const bool omitLineBreak = ((*currentLineProperties) & LINE_WRAPPED);
 
     if (!omitLineBreak && appendNewLine && (count + 1 < MAX_CHARS))
     {
@@ -1645,7 +1640,7 @@ QString Screen::getHistoryLine(int no)
     _selectionBegin = loc(0, no);
     _selectionTopLeft = _selectionBegin;
     _selectionBottomRight = loc(_columns - 1, no);
-    return selectedText(false);
+    return selectedText();
 }
 
 void Screen::addHistLine()

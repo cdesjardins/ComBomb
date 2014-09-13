@@ -209,7 +209,7 @@ public:
      *
      * @param preserveLineBreaks See Screen::selectedText()
      */
-    QString selectedText(bool preserveLineBreaks) const;
+    QString selectedText() const;
 public slots:
     /**
      * Notifies the window that the contents of the associated terminal screen have changed.

@@ -286,8 +286,6 @@ TerminalView::TerminalView(QWidget* parent)
     , _actSel(0)
     , _wordSelectionMode(false)
     , _lineSelectionMode(false)
-    , _preserveLineBreaks(false)
-    , _columnSelectionMode(false)
     , _scrollbarLocation(NoScrollBar)
     , _wordCharacters("")
     , _bellMode(SystemBeepBell)
@@ -1535,7 +1533,7 @@ void TerminalView::selectAll()
 {
     _screenWindow->setSelectionAll();
 
-    setSelection(_screenWindow->selectedText(true));
+    setSelection(_screenWindow->selectedText());
 }
 
 void TerminalView::mousePressEvent(QMouseEvent* ev)
@@ -1586,9 +1584,6 @@ void TerminalView::mousePressEvent(QMouseEvent* ev)
         {
             // No reason to ever start a drag event
             dragInfo.state = diNone;
-
-            _preserveLineBreaks = !((ev->modifiers() & Qt::ControlModifier) && !(ev->modifiers() & Qt::AltModifier));
-            _columnSelectionMode = (ev->modifiers() & Qt::AltModifier) && (ev->modifiers() & Qt::ControlModifier);
 
             if (_mouseMarks || (ev->modifiers() & Qt::ShiftModifier))
             {
@@ -1895,7 +1890,7 @@ void TerminalView::extendSelection(const QPoint& position)
 
         // Find left (left_not_right ? from start : from here)
         QPoint right = left_not_right ? _iPntSelCorr : here;
-        if (right.x() > 0 && !_columnSelectionMode)
+        if (right.x() > 0)
         {
             i = loc(right.x(), right.y());
             if (i >= 0 && i <= _imageSize)
@@ -1948,28 +1943,14 @@ void TerminalView::extendSelection(const QPoint& position)
 
     if (_actSel < 2 || swapping)
     {
-        if (_columnSelectionMode && !_lineSelectionMode && !_wordSelectionMode)
-        {
-            _screenWindow->setSelectionStart(ohere.x(), ohere.y(), true);
-        }
-        else
-        {
-            _screenWindow->setSelectionStart(ohere.x() - 1 - offset, ohere.y(), false);
-        }
+        _screenWindow->setSelectionStart(ohere.x() - 1 - offset, ohere.y(), false);
     }
 
     _actSel = 2; // within selection
     _pntSel = here;
     _pntSel.ry() += _scrollBar->value();
 
-    if (_columnSelectionMode && !_lineSelectionMode && !_wordSelectionMode)
-    {
-        _screenWindow->setSelectionEnd(here.x(), here.y());
-    }
-    else
-    {
-        _screenWindow->setSelectionEnd(here.x() + offset, here.y());
-    }
+    _screenWindow->setSelectionEnd(here.x() + offset, here.y());
 }
 
 void TerminalView::mouseReleaseEvent(QMouseEvent* ev)
@@ -1996,7 +1977,7 @@ void TerminalView::mouseReleaseEvent(QMouseEvent* ev)
         {
             if (_actSel > 1)
             {
-                setSelection(_screenWindow->selectedText(_preserveLineBreaks));
+                setSelection(_screenWindow->selectedText());
             }
 
             _actSel = 0;
@@ -2160,7 +2141,7 @@ void TerminalView::mouseDoubleClickEvent(QMouseEvent* ev)
 
         _screenWindow->setSelectionEnd(endSel.x(), endSel.y());
 
-        setSelection(_screenWindow->selectedText(_preserveLineBreaks));
+        setSelection(_screenWindow->selectedText());
     }
 
     _possibleTripleClick = true;
@@ -2259,11 +2240,11 @@ void TerminalView::mouseTripleClickEvent(QMouseEvent* ev)
 
     _screenWindow->setSelectionEnd(_columns - 1, _iPntSel.y());
 
-    setSelection(_screenWindow->selectedText(_preserveLineBreaks));
+    setSelection(_screenWindow->selectedText());
 
     _iPntSel.ry() += _scrollBar->value();
 
-    emit tripleClicked(_screenWindow->selectedText(_preserveLineBreaks));
+    emit tripleClicked(_screenWindow->selectedText());
 }
 
 bool TerminalView::focusNextPrevChild(bool next)
@@ -2353,7 +2334,7 @@ void TerminalView::copyClipboard()
         return;
     }
 
-    QString text = _screenWindow->selectedText(_preserveLineBreaks);
+    QString text = _screenWindow->selectedText();
     QApplication::clipboard()->setText(text);
 }
 
