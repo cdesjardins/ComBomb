@@ -279,7 +279,6 @@ TerminalView::TerminalView(QWidget* parent)
     , _contentHeight(1)
     , _contentWidth(1)
     , _image(0)
-    , _randomSeed(0)
     , _resizing(false)
     , _terminalSizeHint(false)
     , _terminalSizeStartup(true)
@@ -733,16 +732,6 @@ void TerminalView::drawTextFragment(QPainter& painter,
     drawCharacters(painter, rect, text, style, invertCharacterColor);
 
     painter.restore();
-}
-
-void TerminalView::setRandomSeed(uint randomSeed)
-{
-    _randomSeed = randomSeed;
-}
-
-uint TerminalView::randomSeed() const
-{
-    return _randomSeed;
 }
 
 #if 0

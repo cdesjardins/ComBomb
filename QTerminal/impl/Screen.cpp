@@ -1370,7 +1370,6 @@ void Screen::getSelectionEnd(int& column, int& line)
 
 void Screen::setSelectionStart(const int x, const int y)
 {
-//  kDebug(1211) << "setSelBeginXY(" << x << "," << y << ")";
     _selectionBegin = loc(x, y); //+histCursor) ;
 
     /* FIXME, HACK to correct for x too far to the right... */
@@ -1385,12 +1384,11 @@ void Screen::setSelectionStart(const int x, const int y)
 
 void Screen::setSelectionEnd(const int x, const int y)
 {
-//  kDebug(1211) << "setSelExtentXY(" << x << "," << y << ")";
     if (_selectionBegin == -1)
     {
         return;
     }
-    int l =  loc(x, y); // + histCursor);
+    int l =  loc(x, y);
 
     if (l < _selectionBegin)
     {
