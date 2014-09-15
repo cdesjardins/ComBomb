@@ -142,16 +142,16 @@ void ScreenWindow::getSelectionEnd(int& column, int& line)
 
 void ScreenWindow::setSelectionAll()
 {
-    _screen->setSelectionStart(0, 0, false);
+    _screen->setSelectionStart(0, 0);
     _screen->setSelectionEnd(windowColumns(), endWindowLine());
 
     _bufferNeedsUpdate = true;
     emit selectionChanged();
 }
 
-void ScreenWindow::setSelectionStart(int column, int line, bool columnMode)
+void ScreenWindow::setSelectionStart(int column, int line)
 {
-    _screen->setSelectionStart(column, qMin(line + currentLine(), endWindowLine()), columnMode);
+    _screen->setSelectionStart(column, qMin(line + currentLine(), endWindowLine()));
 
     _bufferNeedsUpdate = true;
     emit selectionChanged();

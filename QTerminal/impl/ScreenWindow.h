@@ -118,7 +118,7 @@ public:
      * Sets the start of the selection to the given @p line and @p column within
      * the window.
      */
-    void setSelectionStart(int column, int line, bool columnMode);
+    void setSelectionStart(int column, int line);
     /**
      * Sets the end of the selection to the given @p line and @p column within
      * the window.

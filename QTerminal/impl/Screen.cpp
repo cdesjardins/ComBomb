@@ -77,7 +77,6 @@ Screen::Screen(const boost::shared_ptr<HistoryScroll> &hist, int l, int c)
     _selectionBegin(0),
     _selectionTopLeft(0),
     _selectionBottomRight(0),
-    _columnMode(false),
     _effectiveCursorFg(CharacterColor()),
     _effectiveCursorBg(CharacterColor()),
     _effectiveCursorRe(0),
@@ -1369,7 +1368,7 @@ void Screen::getSelectionEnd(int& column, int& line)
     }
 }
 
-void Screen::setSelectionStart(const int x, const int y, const bool mode)
+void Screen::setSelectionStart(const int x, const int y)
 {
 //  kDebug(1211) << "setSelBeginXY(" << x << "," << y << ")";
     _selectionBegin = loc(x, y); //+histCursor) ;
@@ -1382,7 +1381,6 @@ void Screen::setSelectionStart(const int x, const int y, const bool mode)
 
     _selectionBottomRight = _selectionBegin;
     _selectionTopLeft = _selectionBegin;
-    _columnMode = mode;
 }
 
 void Screen::setSelectionEnd(const int x, const int y)
@@ -1419,35 +1417,15 @@ int Screen::setSelectionFind(const int column, const int line, const int length)
     int endLine = line + ((column + length) / _columns);
     int endCol =  (column + length) % (_columns) - 1;
     clearSelection();
-    setSelectionStart(startCol, startLine, false);
+    setSelectionStart(startCol, startLine);
     setSelectionEnd(endCol, endLine);
     return startLine;
 }
 
 bool Screen::isSelected(const int x, const int y) const
 {
-    if (_columnMode)
-    {
-        int sel_Left, sel_Right;
-        if (_selectionTopLeft % _columns < _selectionBottomRight % _columns)
-        {
-            sel_Left = _selectionTopLeft;
-            sel_Right = _selectionBottomRight;
-        }
-        else
-        {
-            sel_Left = _selectionBottomRight;
-            sel_Right = _selectionTopLeft;
-        }
-        return (x >= sel_Left % _columns) && (x <= sel_Right % _columns) &&
-               (y >= _selectionTopLeft / _columns) && (y <= _selectionBottomRight / _columns);
-    }
-    else
-    {
-        //int pos = loc(x,y+histCursor);
-        int pos = loc(x, y);
-        return (pos >= _selectionTopLeft && pos <= _selectionBottomRight);
-    }
+    int pos = loc(x, y);
+    return (pos >= _selectionTopLeft && pos <= _selectionBottomRight);
 }
 
 QString Screen::getSelectedText()
@@ -1512,13 +1490,13 @@ void Screen::writeSelectionToStream(TerminalCharacterDecoder* decoder)
     for (int y = top; y <= bottom; y++)
     {
         int start = 0;
-        if (y == top || _columnMode)
+        if (y == top)
         {
             start = left;
         }
 
         int count = -1;
-        if (y == bottom || _columnMode)
+        if (y == bottom)
         {
             count = right - start + 1;
         }

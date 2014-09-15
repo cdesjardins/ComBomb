@@ -1876,6 +1876,7 @@ void TerminalView::extendSelection(const QPoint& position)
     int offset = 0;
     if (!_wordSelectionMode && !_lineSelectionMode)
     {
+
         int i = 0;
         int selClass = 0;
 
@@ -1896,9 +1897,11 @@ void TerminalView::extendSelection(const QPoint& position)
             if (i >= 0 && i <= _imageSize)
             {
                 selClass = charClass(_image[i - 1].getChar());
-                if (selClass == ' ')
+                if ((selClass == ' ') && ((_image[i]._rendition & RENDITION_RENDER) == 0))
                 {
-                    while (right.x() < _usedColumns - 1 && charClass(_image[i + 1].getChar()) == selClass && (right.y() < _usedLines - 1) &&
+                    while ((right.x() < _usedColumns - 1) &&
+                           (charClass(_image[i + 1].getChar()) == selClass) &&
+                           (right.y() < _usedLines - 1) &&
                            !(_lineProperties[right.y()] & LINE_WRAPPED))
                     {
                         i++;
@@ -1943,7 +1946,7 @@ void TerminalView::extendSelection(const QPoint& position)
 
     if (_actSel < 2 || swapping)
     {
-        _screenWindow->setSelectionStart(ohere.x() - 1 - offset, ohere.y(), false);
+        _screenWindow->setSelectionStart(ohere.x() - 1 - offset, ohere.y());
     }
 
     _actSel = 2; // within selection
@@ -2109,7 +2112,7 @@ void TerminalView::mouseDoubleClickEvent(QMouseEvent* ev)
         }
 
         bgnSel.setX(x);
-        _screenWindow->setSelectionStart(bgnSel.x(), bgnSel.y(), false);
+        _screenWindow->setSelectionStart(bgnSel.x(), bgnSel.y());
 
         // find the end of the word
         i = loc(endSel.x(), endSel.y());
@@ -2226,12 +2229,12 @@ void TerminalView::mouseTripleClickEvent(QMouseEvent* ev)
             }
         }
 
-        _screenWindow->setSelectionStart(x, _iPntSel.y(), false);
+        _screenWindow->setSelectionStart(x, _iPntSel.y());
         _tripleSelBegin = QPoint(x, _iPntSel.y());
     }
     else if (_tripleClickMode == SelectWholeLine)
     {
-        _screenWindow->setSelectionStart(0, _iPntSel.y(), false);
+        _screenWindow->setSelectionStart(0, _iPntSel.y());
         _tripleSelBegin = QPoint(0, _iPntSel.y());
     }
 

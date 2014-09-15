@@ -406,7 +406,7 @@ public:
      * @param line The line index of the first character in the selection.
      * @param columnmode True if the selection is in column mode.
      */
-    void setSelectionStart(const int column, const int line, const bool _columnMode);
+    void setSelectionStart(const int column, const int line);
 
     /**
      * Sets the end of the current selection.
@@ -611,7 +611,6 @@ private:
     int _selectionBegin; // The first location selected.
     int _selectionTopLeft;    // TopLeft Location.
     int _selectionBottomRight;    // Bottom Right Location.
-    bool _columnMode;  // Column selection mode
 
     // effective colors and rendition ------------
     CharacterColor _effectiveCursorFg;      // These are derived from
