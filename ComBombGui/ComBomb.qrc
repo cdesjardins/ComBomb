@@ -19,5 +19,6 @@
         <file>images/find_prev.png</file>
         <file>images/ComBomb48.png</file>
         <file>images/ComBomb128.png</file>
+        <file>images/find_under.png</file>
     </qresource>
 </RCC>

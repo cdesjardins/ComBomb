@@ -442,7 +442,7 @@ public:
      * @param preserveLineBreaks Specifies whether new line characters should
      * be inserted into the returned text at the end of each terminal line.
      */
-    QString selectedText();
+    QString getSelectedText();
 
     /**
      * Sets the selection to line @p no in the history and returns

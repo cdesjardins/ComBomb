@@ -15,6 +15,7 @@ public:
     explicit FindDialog(QWidget *parent = 0);
     ~FindDialog();
     QString getString();
+    void addString(const QString& newStr);
     bool getCaseSensitivity();
     bool getSearchUp();
     virtual QString getSettingsRoot();

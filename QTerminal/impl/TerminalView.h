@@ -409,6 +409,7 @@ public:
     ScreenWindow* screenWindow() const;
 
     void findText(const QString& searchStr, const bool caseSensitive, const bool searchUp, const bool cont);
+    QString findTextHighlighted(const bool caseSensitive);
 
 public slots:
 

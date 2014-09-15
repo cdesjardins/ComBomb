@@ -130,6 +130,11 @@ void QTerminalImpl::findText(const QString& searchStr, const bool caseSensitive,
     _terminalView->findText(searchStr, caseSensitive, searchUp, cont);
 }
 
+QString QTerminalImpl::findTextHighlighted(const bool caseSensitive)
+{
+    return _terminalView->findTextHighlighted(caseSensitive);
+}
+
 QSize QTerminalImpl::sizeHint() const
 {
     return _terminalView->sizeHint();

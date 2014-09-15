@@ -13,6 +13,7 @@ FindDialog::FindDialog(QWidget *parent) :
     ui->setupUi(this);
     ui->caseSensitiveCheckBox->setChecked(settings.value(CB_FIND_CASE_SENSITIVE, false).toBool());
     ui->searchUpCheckBox->setChecked(settings.value(CB_FIND_SEARCH_UP, false).toBool());
+    ui->findWhatComboBox->restoreComboBox();
 }
 
 FindDialog::~FindDialog()
@@ -20,12 +21,18 @@ FindDialog::~FindDialog()
     QSettings settings;
     settings.setValue(CB_FIND_CASE_SENSITIVE, ui->caseSensitiveCheckBox->isChecked());
     settings.setValue(CB_FIND_SEARCH_UP, ui->searchUpCheckBox->isChecked());
+    ui->findWhatComboBox->saveComboBox();
     delete ui;
 }
 
 QString FindDialog::getString()
 {
     return ui->findWhatComboBox->currentText();
+}
+
+void FindDialog::addString(const QString& newStr)
+{
+    ui->findWhatComboBox->setCurrentText(newStr);
 }
 
 bool FindDialog::getCaseSensitivity()

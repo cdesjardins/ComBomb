@@ -19,6 +19,7 @@ public:
     void runProcess();
     void findText();
     void findTextNext(bool backward);
+    void findTextHighlighted();
     virtual ~ChildForm();
 private slots:
     void updateTitleSlot(QString title);

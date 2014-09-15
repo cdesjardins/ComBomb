@@ -1533,7 +1533,7 @@ void TerminalView::selectAll()
 {
     _screenWindow->setSelectionAll();
 
-    setSelection(_screenWindow->selectedText());
+    setSelection(_screenWindow->getSelectedText());
 }
 
 void TerminalView::mousePressEvent(QMouseEvent* ev)
@@ -1977,7 +1977,7 @@ void TerminalView::mouseReleaseEvent(QMouseEvent* ev)
         {
             if (_actSel > 1)
             {
-                setSelection(_screenWindow->selectedText());
+                setSelection(_screenWindow->getSelectedText());
             }
 
             _actSel = 0;
@@ -2141,7 +2141,7 @@ void TerminalView::mouseDoubleClickEvent(QMouseEvent* ev)
 
         _screenWindow->setSelectionEnd(endSel.x(), endSel.y());
 
-        setSelection(_screenWindow->selectedText());
+        setSelection(_screenWindow->getSelectedText());
     }
 
     _possibleTripleClick = true;
@@ -2240,11 +2240,11 @@ void TerminalView::mouseTripleClickEvent(QMouseEvent* ev)
 
     _screenWindow->setSelectionEnd(_columns - 1, _iPntSel.y());
 
-    setSelection(_screenWindow->selectedText());
+    setSelection(_screenWindow->getSelectedText());
 
     _iPntSel.ry() += _scrollBar->value();
 
-    emit tripleClicked(_screenWindow->selectedText());
+    emit tripleClicked(_screenWindow->getSelectedText());
 }
 
 bool TerminalView::focusNextPrevChild(bool next)
@@ -2334,7 +2334,7 @@ void TerminalView::copyClipboard()
         return;
     }
 
-    QString text = _screenWindow->selectedText();
+    QString text = _screenWindow->getSelectedText();
     QApplication::clipboard()->setText(text);
 }
 
@@ -2718,11 +2718,18 @@ void TerminalView::outputSuspended(bool suspended)
 
 void TerminalView::findText(const QString& searchStr, const bool caseSensitive, const bool searchUp, const bool cont)
 {
-    long scrollTo = _screenWindow->findText(searchStr, caseSensitive, searchUp, cont);
-    if (scrollTo >= 0)
+    if (_screenWindow->findText(searchStr, caseSensitive, searchUp, cont))
     {
-        _screenWindow->scrollTo(scrollTo);
-        _screenWindow->setTrackOutput(_screenWindow->atEndOfOutput());
         updateImage();
     }
+}
+
+QString TerminalView::findTextHighlighted(const bool caseSensitive)
+{
+    QString searchStr;
+    if (_screenWindow->findTextHighlighted(&searchStr, caseSensitive))
+    {
+        updateImage();
+    }
+    return searchStr;
 }

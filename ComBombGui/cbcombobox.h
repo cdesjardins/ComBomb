@@ -11,6 +11,8 @@ public:
     virtual ~CBComboBox();
     void addOrUpdateItem(const QString &item);
     void setDefault(const QString &defaultVal);
+    void restoreComboBox();
+    void saveComboBox();
 signals:
 
 public slots:
@@ -19,15 +21,15 @@ protected:
     virtual void showEvent(QShowEvent* event);
     virtual void hideEvent(QHideEvent* event);
     QString getName();
-    void saveComboBox();
     void saveEditableComboBox();
     void saveStaticComboBox();
 
-    void restoreComboBox();
     void restoreEditableComboBox();
     void restoreStaticComboBox();
 private:
     QString _default;
+    bool _saved;
+    bool _restored;
 };
 
 #endif // CBCOMBOBOX_H

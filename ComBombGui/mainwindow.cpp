@@ -50,6 +50,7 @@ void MainWindow::enableMenuItems(bool enabled)
     _ui->action_Find->setEnabled(enabled);
     _ui->actionFind_next->setEnabled(enabled);
     _ui->actionFind_prev->setEnabled(enabled);
+    _ui->actionFind_highlighted_text->setEnabled(enabled);
 }
 
 MainWindow::~MainWindow()
@@ -261,5 +262,14 @@ void MainWindow::on_actionFind_prev_triggered()
     if (activeWindow != NULL)
     {
         activeWindow->findTextNext(true);
+    }
+}
+
+void MainWindow::on_actionFind_highlighted_text_triggered()
+{
+    ChildForm* activeWindow = getActiveChildWindow();
+    if (activeWindow != NULL)
+    {
+        activeWindow->findTextHighlighted();
     }
 }

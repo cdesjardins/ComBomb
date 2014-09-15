@@ -56,6 +56,7 @@
     </property>
     <addaction name="action_Find"/>
     <addaction name="actionFind_next"/>
+    <addaction name="actionFind_highlighted_text"/>
     <addaction name="separator"/>
     <addaction name="actionCopy"/>
     <addaction name="actionPaste"/>
@@ -82,6 +83,7 @@
    <addaction name="separator"/>
    <addaction name="action_Find"/>
    <addaction name="actionFind_next"/>
+   <addaction name="actionFind_highlighted_text"/>
    <addaction name="separator"/>
    <addaction name="actionFile_clipboard"/>
    <addaction name="action_Options"/>
@@ -208,7 +210,7 @@
     <string>&amp;Find</string>
    </property>
    <property name="toolTip">
-    <string>Find text in window</string>
+    <string>Find text</string>
    </property>
   </action>
   <action name="actionFind_next">
@@ -239,6 +241,18 @@
    </property>
    <property name="shortcut">
     <string>Shift+F3</string>
+   </property>
+  </action>
+  <action name="actionFind_highlighted_text">
+   <property name="icon">
+    <iconset resource="ComBomb.qrc">
+     <normaloff>:/images/find_under.png</normaloff>:/images/find_under.png</iconset>
+   </property>
+   <property name="text">
+    <string>Find highlighted text</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F3</string>
    </property>
   </action>
  </widget>

@@ -77,6 +77,17 @@ void ChildForm::findTextNext(bool backward)
     }
 }
 
+void ChildForm::findTextHighlighted()
+{
+    FindDialog fd(this);
+    QString lastSearchStr = QTerminal::findTextHighlighted(fd.getCaseSensitivity());
+    if (lastSearchStr.length() > 0)
+    {
+        _lastSearchString = lastSearchStr;
+        fd.addString(_lastSearchString);
+    }
+}
+
 void ChildForm::runProcess()
 {
     RunProcessDialog rpd(this);

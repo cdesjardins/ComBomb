@@ -125,7 +125,8 @@ public:
      */
     void setSelectionEnd(int column, int line);
     int setSelectionFind(const int column, const int line, const int length);
-    long findText(const QString& searchStr, const bool caseSensitive, const bool searchUp, const bool cont);
+    bool findText(const QString& searchStr, const bool caseSensitive, const bool searchUp, const bool cont);
+    bool findTextHighlighted(QString* searchStr, const bool caseSensitive);
     /**
      * Retrieves the start of the selection within the window.
      */
@@ -207,9 +208,9 @@ public:
     /**
      * Returns the text which is currently selected.
      *
-     * @param preserveLineBreaks See Screen::selectedText()
+     * @param preserveLineBreaks See Screen::getSelectedText()
      */
-    QString selectedText() const;
+    QString getSelectedText() const;
 public slots:
     /**
      * Notifies the window that the contents of the associated terminal screen have changed.
@@ -237,6 +238,7 @@ signals:
     void selectionChanged();
 
 private:
+    void setSearchPosition(const int searchCol, const int searchLine);
     int endWindowLine() const;
     void fillUnusedArea();
 

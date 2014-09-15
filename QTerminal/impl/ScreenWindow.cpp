@@ -124,22 +124,21 @@ std::vector<LineProperty> ScreenWindow::getLineProperties()
     return result;
 }
 
-QString ScreenWindow::selectedText() const
+QString ScreenWindow::getSelectedText() const
 {
-    return _screen->selectedText();
+    return _screen->getSelectedText();
 }
 
 void ScreenWindow::getSelectionStart(int& column, int& line)
 {
     _screen->getSelectionStart(column, line);
-    line -= currentLine();
 }
 
 void ScreenWindow::getSelectionEnd(int& column, int& line)
 {
     _screen->getSelectionEnd(column, line);
-    line -= currentLine();
 }
+
 
 void ScreenWindow::setSelectionAll()
 {
@@ -175,13 +174,19 @@ int ScreenWindow::setSelectionFind(const int column, const int line, const int l
     return ret;
 }
 
-long ScreenWindow::findText(const QString& searchStr, const bool caseSensitive, const bool searchUp, const bool cont)
+void ScreenWindow::setSearchPosition(const int searchCol, const int searchLine)
 {
-    long ret = -1;
+    _searchLine = searchLine;
+    _searchCol = searchCol;
+}
+
+bool ScreenWindow::findText(const QString& searchStr, const bool caseSensitive, const bool searchUp, const bool cont)
+{
+    bool ret = false;
+    long scrollToLine = -1;
     if (cont == false)
     {
-        _searchLine = 0;
-        _searchCol = 0;
+        setSearchPosition(0, 0);
     }
     for (size_t line = _searchLine; line < (size_t)lineCount();)
     {
@@ -196,7 +201,7 @@ long ScreenWindow::findText(const QString& searchStr, const bool caseSensitive, 
             int index = str.indexOf(searchStr, _searchCol, (caseSensitive == true) ? Qt::CaseSensitive : Qt::CaseInsensitive);
             if (index >= 0)
             {
-                ret = setSelectionFind(index, line, searchStr.length());
+                scrollToLine = setSelectionFind(index, line, searchStr.length());
                 _searchLine = line;
                 _searchCol = (searchUp == true) ? index - 1 : index + 1;
                 break;
@@ -205,10 +210,35 @@ long ScreenWindow::findText(const QString& searchStr, const bool caseSensitive, 
         }
         _searchCol = 0;
     }
-    if (ret == -1)
+    if (scrollToLine == -1)
     {
-        _searchLine = 0;
-        _searchCol = 0;
+        setSearchPosition(0, 0);
+    }
+    else
+    {
+        ret = true;
+        scrollTo(scrollToLine);
+        setTrackOutput(atEndOfOutput());
+    }
+
+    return ret;
+}
+
+bool ScreenWindow::findTextHighlighted(QString* searchStr, const bool caseSensitive)
+{
+    bool ret = false;
+    *searchStr = getSelectedText();
+    if (searchStr->length() > 0)
+    {
+        int column = 0;
+        int line = 0;
+        getSelectionEnd(column, line);
+        setSearchPosition(column, line);
+        ret = findText(*searchStr, caseSensitive, false, true);
+        if (ret == false)
+        {
+            ret = findText(*searchStr, caseSensitive, false, false);
+        }
     }
     return ret;
 }

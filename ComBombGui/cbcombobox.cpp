@@ -3,7 +3,9 @@
 #include <QDialog>
 
 CBComboBox::CBComboBox(QWidget *parent) :
-    QComboBox(parent)
+    QComboBox(parent),
+    _saved(false),
+    _restored(false)
 {
 }
 
@@ -40,13 +42,17 @@ void CBComboBox::hideEvent(QHideEvent*)
 
 void CBComboBox::saveComboBox()
 {
-    if (isEditable() == true)
+    if (_saved == false)
     {
-        saveEditableComboBox();
-    }
-    else
-    {
-        saveStaticComboBox();
+        _saved = true;
+        if (isEditable() == true)
+        {
+            saveEditableComboBox();
+        }
+        else
+        {
+            saveStaticComboBox();
+        }
     }
 }
 
@@ -82,13 +88,17 @@ void CBComboBox::saveEditableComboBox()
 
 void CBComboBox::restoreComboBox()
 {
-    if (isEditable() == true)
+    if (_restored == false)
     {
-        restoreEditableComboBox();
-    }
-    else
-    {
-        restoreStaticComboBox();
+        _restored = true;
+        if (isEditable() == true)
+        {
+            restoreEditableComboBox();
+        }
+        else
+        {
+            restoreStaticComboBox();
+        }
     }
 }
 

@@ -48,6 +48,8 @@ private slots:
 
     void on_actionFind_prev_triggered();
 
+    void on_actionFind_highlighted_text_triggered();
+
 signals:
     void findSignal();
 private:

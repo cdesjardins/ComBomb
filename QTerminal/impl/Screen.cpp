@@ -1450,7 +1450,7 @@ bool Screen::isSelected(const int x, const int y) const
     }
 }
 
-QString Screen::selectedText()
+QString Screen::getSelectedText()
 {
     QString result;
     QTextStream stream(&result, QIODevice::ReadWrite);
@@ -1640,7 +1640,7 @@ QString Screen::getHistoryLine(int no)
     _selectionBegin = loc(0, no);
     _selectionTopLeft = _selectionBegin;
     _selectionBottomRight = loc(_columns - 1, no);
-    return selectedText();
+    return getSelectedText();
 }
 
 void Screen::addHistLine()
