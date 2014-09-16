@@ -86,6 +86,10 @@ void ChildForm::findTextHighlighted()
         _lastSearchString = lastSearchStr;
         fd.addString(_lastSearchString);
     }
+    else
+    {
+        emit updateStatusSignal("No text is highlighted");
+    }
 }
 
 void ChildForm::runProcess()

@@ -212,6 +212,9 @@
    <property name="toolTip">
     <string>Find text</string>
    </property>
+   <property name="shortcut">
+    <string>Alt+F3</string>
+   </property>
   </action>
   <action name="actionFind_next">
    <property name="icon">
