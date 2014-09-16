@@ -503,6 +503,7 @@ void Vt102Emulation::updateTitle()
 
 void Vt102Emulation::tokenDebug(int token, int p)
 {
+#ifdef QT_DEBUG
     int N = (token >> 0) & 0xff;
     int A = (token >> 8) & 0xff;
     switch (N)
@@ -541,6 +542,7 @@ void Vt102Emulation::tokenDebug(int token, int p)
         case 10: qDebug("CSI-PE-%c", (token >> 8) & 0xff);
             break;
     }
+#endif
 }
 
 // Interpreting Codes ---------------------------------------------------------
