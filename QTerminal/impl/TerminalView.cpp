@@ -2725,3 +2725,8 @@ QString TerminalView::findTextHighlighted(const bool caseSensitive)
     }
     return searchStr;
 }
+
+void TerminalView::setTrackOutput(bool trackOutput)
+{
+    _screenWindow->setTrackOutput(trackOutput);
+}

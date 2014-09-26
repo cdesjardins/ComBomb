@@ -397,6 +397,7 @@ public:
     void setScreenWindow(ScreenWindow* window);
     /** Returns the terminal screen section which is displayed in this widget.  See setScreenWindow() */
     ScreenWindow* screenWindow() const;
+    void setTrackOutput(bool trackOutput);
 
     void findText(const QString& searchStr, const bool caseSensitive, const bool searchUp, const bool cont);
     QString findTextHighlighted(const bool caseSensitive);

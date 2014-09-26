@@ -202,4 +202,5 @@ void QTerminalImpl::selectAll()
 void QTerminalImpl::clearScrollback()
 {
     _terminalModel->clearScreen();
+    _terminalView->setTrackOutput(true);
 }
