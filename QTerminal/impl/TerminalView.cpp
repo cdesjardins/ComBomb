@@ -1880,6 +1880,7 @@ void TerminalView::extendSelection(const QPoint& position)
 
         // Find left (left_not_right ? from start : from here)
         QPoint right = left_not_right ? _iPntSelCorr : here;
+
         if (right.x() > 0)
         {
             i = loc(right.x(), right.y());
@@ -1890,7 +1891,7 @@ void TerminalView::extendSelection(const QPoint& position)
                 {
                     while ((right.x() < _usedColumns - 1) &&
                            (charClass(_image[i + 1].getChar()) == selClass) &&
-                           (right.y() < _usedLines - 1) &&
+                           (right.y() < _usedLines) &&
                            !(_lineProperties[right.y()] & LINE_WRAPPED))
                     {
                         i++;

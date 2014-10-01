@@ -55,10 +55,6 @@
 #define loc(X, Y) ((Y)*_columns + (X))
 #endif
 
-Character Screen::_defaultChar = Character(' ',
-                                          CharacterColor(COLOR_SPACE_DEFAULT, DEFAULT_FORE_COLOR),
-                                          CharacterColor(COLOR_SPACE_DEFAULT, DEFAULT_BACK_COLOR),
-                                          DEFAULT_RENDITION);
 
 //#define REVERSE_WRAPPED_LINES  // for wrapped line debug
 
@@ -568,11 +564,11 @@ void Screen::copyFromHistory(std::vector<Character>::iterator dest, int startLin
         const int length = qMin(_columns, _hist->getLineLen(line));
         const int destLineOffset  = (line - startLine) * _columns;
 
-        _hist->getCells(line, 0, length, dest + destLineOffset, _defaultChar);
+        _hist->getCells(line, 0, length, dest + destLineOffset, Character());
 
         for (int column = length; column < _columns; column++)
         {
-            dest[destLineOffset + column] = _defaultChar;
+            dest[destLineOffset + column] = Character();
         }
 
         // invert selected text
@@ -605,7 +601,7 @@ void Screen::copyFromScreen(std::vector<Character>::iterator dest, int startLine
 
             if ((size_t)(srcIndex % _columns) >= _screenLines[screenLineIndex(srcIndex / _columns)].size())
             {
-                dest[destIndex] = _defaultChar;
+                dest[destIndex] = Character();
             }
             else
             {
@@ -775,8 +771,11 @@ void Screen::backTabulate(int n)
     }
     while ((n > 0) && (_cursorX > 0))
     {
-        cursorLeft(1); while ((_cursorX > 0) && !_tabstops[_cursorX])
+        cursorLeft(1);
+        while ((_cursorX > 0) && !_tabstops[_cursorX])
+        {
             cursorLeft(1);
+        }
         n--;
     }
 }
@@ -1551,7 +1550,7 @@ void Screen::copyLineToStream(int line,
         assert(count >= 0);
         assert((start + count) <= _hist->getLineLen(line));
 
-        _hist->getCells(line, start, count, characterBuffer.begin(), _defaultChar);
+        _hist->getCells(line, start, count, characterBuffer.begin(), Character());
 
         if (_hist->isWrappedLine(line))
         {
@@ -1722,7 +1721,7 @@ void Screen::fillWithDefaultChar(std::vector<Character>::iterator dest, int coun
 {
     for (int i = 0; i < count; i++)
     {
-        dest[i] = _defaultChar;
+        dest[i] = Character();
     }
 }
 
