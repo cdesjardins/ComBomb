@@ -180,7 +180,7 @@
      <normaloff>:/images/gear_in.png</normaloff>:/images/gear_in.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;Options</string>
+    <string>O&amp;ptions</string>
    </property>
   </action>
   <action name="action_Run_Process">
