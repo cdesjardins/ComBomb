@@ -65,7 +65,7 @@ void ChildForm::findText()
     }
 }
 
-void ChildForm::findTextNext(bool backward)
+void ChildForm::findTextNext(const bool backward)
 {
     if (_lastSearchString.isNull() == false)
     {
@@ -73,6 +73,11 @@ void ChildForm::findTextNext(bool backward)
     }
     else
     {
+        {
+            // new scope to force destructor
+            FindDialog fd(this);
+            fd.setSearchUp(backward);
+        }
         findText();
     }
 }

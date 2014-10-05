@@ -238,7 +238,10 @@ signals:
     void selectionChanged();
 
 private:
-    void setSearchPosition(const int searchCol, const int searchLine);
+    long findTextForward(const QString& searchStr, const bool caseSensitive);
+    long findTextBackward(const QString& searchStr, const bool caseSensitive);
+    void resetSearchPosition(const int searchCol);
+    void setSearchPosition(const int searchCol, const int searchLine, const int length, const bool searchUp);
     int endWindowLine() const;
     void fillUnusedArea();
 
@@ -252,8 +255,10 @@ private:
     bool _trackOutput; // see setTrackOutput() , trackOutput()
     int _scrollCount;  // count of lines which the window has been scrolled by since
                        // the last call to resetScrollCount()
-    int _searchLine;
-    int _searchCol;
+    int _searchLineForward;
+    int _searchLineBackward;
+    int _searchColForward;
+    int _searchColBackward;
 };
 
 #endif // SCREENWINDOW_H

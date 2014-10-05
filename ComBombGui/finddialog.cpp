@@ -45,6 +45,11 @@ bool FindDialog::getSearchUp()
     return ui->searchUpCheckBox->isChecked();
 }
 
+void FindDialog::setSearchUp(bool searchUp)
+{
+    ui->searchUpCheckBox->setChecked(searchUp);
+}
+
 QString FindDialog::getSettingsRoot()
 {
     return objectName();

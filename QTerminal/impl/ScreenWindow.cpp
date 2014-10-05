@@ -36,8 +36,10 @@ ScreenWindow::ScreenWindow(QObject* parent)
     , _currentLine(0)
     , _trackOutput(true)
     , _scrollCount(0)
-    , _searchLine(0)
-    , _searchCol(0)
+    , _searchLineForward(0)
+    , _searchLineBackward(0)
+    , _searchColForward(0)
+    , _searchColBackward(-1)
 {
 }
 
@@ -174,10 +176,31 @@ int ScreenWindow::setSelectionFind(const int column, const int line, const int l
     return ret;
 }
 
-void ScreenWindow::setSearchPosition(const int searchCol, const int searchLine)
+void ScreenWindow::resetSearchPosition(const int searchCol)
 {
-    _searchLine = searchLine;
-    _searchCol = searchCol;
+    _searchLineForward = 0;
+    _searchLineBackward = 0;
+    _searchColForward = searchCol;
+    _searchColBackward = searchCol - 1;
+    qDebug("reset %i %i %i %i", _searchLineForward, _searchLineBackward, _searchColForward, _searchColBackward);
+}
+
+void ScreenWindow::setSearchPosition(const int searchCol, const int searchLine, const int length, const bool searchUp)
+{
+    int curLine = lineCount() - searchLine - 1;
+    if (searchUp == false)
+    {
+        _searchLineForward = searchLine;
+        _searchLineBackward = curLine;
+    }
+    else
+    {
+        _searchLineForward = curLine;
+        _searchLineBackward = searchLine;
+    }
+    _searchColForward = searchCol + 1;
+    _searchColBackward = -(length - searchCol) - 1;
+
 }
 
 bool ScreenWindow::findText(const QString& searchStr, const bool caseSensitive, const bool searchUp, const bool cont)
@@ -186,33 +209,19 @@ bool ScreenWindow::findText(const QString& searchStr, const bool caseSensitive, 
     long scrollToLine = -1;
     if (cont == false)
     {
-        setSearchPosition(0, 0);
+        resetSearchPosition(0);
     }
-    for (size_t line = _searchLine; line < (size_t)lineCount();)
+    if (searchUp)
     {
-        QString str;
-        size_t numLines = _screen->writeLineToString(line, str);
-        if (numLines == 0)
-        {
-            break;
-        }
-        else
-        {
-            int index = str.indexOf(searchStr, _searchCol, (caseSensitive == true) ? Qt::CaseSensitive : Qt::CaseInsensitive);
-            if (index >= 0)
-            {
-                scrollToLine = setSelectionFind(index, line, searchStr.length());
-                _searchLine = line;
-                _searchCol = (searchUp == true) ? index - 1 : index + 1;
-                break;
-            }
-            line += numLines;
-        }
-        _searchCol = 0;
+        scrollToLine = findTextBackward(searchStr, caseSensitive);
+    }
+    else
+    {
+        scrollToLine = findTextForward(searchStr, caseSensitive);
     }
     if (scrollToLine == -1)
     {
-        setSearchPosition(0, 0);
+        resetSearchPosition(0);
     }
     else
     {
@@ -224,6 +233,63 @@ bool ScreenWindow::findText(const QString& searchStr, const bool caseSensitive, 
     return ret;
 }
 
+long ScreenWindow::findTextForward(const QString& searchStr, const bool caseSensitive)
+{
+    long scrollToLine = -1;
+    for (size_t line = _searchLineForward; line < (size_t)lineCount();)
+    {
+        QString str;
+        size_t numLines = _screen->writeLineToString(line, str);
+        if (numLines == 0)
+        {
+            break;
+        }
+        else
+        {
+            qDebug("looking atF %i %i", _searchColForward, line);
+            int index = str.indexOf(searchStr, _searchColForward, (caseSensitive == true) ? Qt::CaseSensitive : Qt::CaseInsensitive);
+            if (index >= 0)
+            {
+                scrollToLine = setSelectionFind(index, line, searchStr.length());
+                setSearchPosition(index, line, str.length(), false);
+                break;
+            }
+            line += numLines;
+        }
+        _searchColForward = 0;
+    }
+    return scrollToLine;
+}
+
+long ScreenWindow::findTextBackward(const QString& searchStr, const bool caseSensitive)
+{
+    long scrollToLine = -1;
+    for (size_t line = _searchLineBackward; line < (size_t)lineCount();)
+    {
+        QString str;
+        int curLine = lineCount() - line - 1;
+        size_t numLines = _screen->writeLineToString(curLine, str);
+        if (numLines == 0)
+        {
+            break;
+        }
+        else
+        {
+            qDebug("looking atB %i %i", _searchColBackward, curLine);
+            int index = str.lastIndexOf(searchStr, _searchColBackward, (caseSensitive == true) ? Qt::CaseSensitive : Qt::CaseInsensitive);
+            if (index >= 0)
+            {
+                scrollToLine = setSelectionFind(index, curLine, searchStr.length());
+                setSearchPosition(index, line, str.length(), true);
+                break;
+            }
+            line += numLines;
+        }
+        _searchColBackward = -1;
+    }
+    return scrollToLine;
+}
+
 bool ScreenWindow::findTextHighlighted(QString* searchStr, const bool caseSensitive)
 {
     bool ret = false;
@@ -233,7 +299,7 @@ bool ScreenWindow::findTextHighlighted(QString* searchStr, const bool caseSensit
         int column = 0;
         int line = 0;
         getSelectionEnd(column, line);
-        setSearchPosition(column + 1, line);
+        resetSearchPosition(column + 1);
         ret = findText(*searchStr, caseSensitive, false, true);
         if (ret == false)
         {

@@ -18,7 +18,7 @@ public:
     explicit ChildForm(const QTerminalConfig &terminalConfig, const boost::shared_ptr<TgtIntf> &targetInterface, QWidget* parent = 0);
     void runProcess();
     void findText();
-    void findTextNext(bool backward);
+    void findTextNext(const bool backward);
     void findTextHighlighted();
     virtual ~ChildForm();
 private slots:

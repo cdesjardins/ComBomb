@@ -18,6 +18,7 @@ public:
     void addString(const QString& newStr);
     bool getCaseSensitivity();
     bool getSearchUp();
+    void setSearchUp(bool searchUp);
     virtual QString getSettingsRoot();
 private:
     Ui::FindDialog *ui;

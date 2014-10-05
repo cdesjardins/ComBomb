@@ -34,7 +34,7 @@
      <x>0</x>
      <y>0</y>
      <width>917</width>
-     <height>21</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -60,6 +60,7 @@
      <string>&amp;Edit</string>
     </property>
     <addaction name="action_Find"/>
+    <addaction name="actionFind_prev"/>
     <addaction name="actionFind_next"/>
     <addaction name="actionFind_highlighted_text"/>
     <addaction name="separator"/>
@@ -82,6 +83,7 @@
    <addaction name="actionOpen"/>
    <addaction name="separator"/>
    <addaction name="action_Find"/>
+   <addaction name="actionFind_prev"/>
    <addaction name="actionFind_next"/>
    <addaction name="actionFind_highlighted_text"/>
    <addaction name="separator"/>
