@@ -1438,17 +1438,38 @@ QString Screen::getSelectedText()
     return result;
 }
 
-size_t Screen::writeLineToString(size_t line, QString &result)
+long Screen::findLineStart(const long line)
 {
-    size_t ret = 0;
+    long ret = line;
+    std::vector<LineProperty> lineProps;
+    for (long curLine = line - 1; curLine >= 0; curLine--)
+    {
+        lineProps = getLineProperties(curLine, curLine);
+        if ((lineProps[0] & LINE_WRAPPED) == 0)
+        {
+            ret = curLine + 1;
+            break;
+        }
+        if ((curLine == 0) && (lineProps[0] & LINE_WRAPPED))
+        {
+            ret = curLine;
+        }
+    }
+    return ret;
+}
+
+long Screen::writeLineToString(long *line, QString &result)
+{
+    long ret = 0;
     QTextStream stream(&result, QIODevice::ReadWrite);
     LineProperty currentLineProperties;
     PlainTextDecoder decoder;
 
+    *line = findLineStart(*line);
     decoder.begin(&stream);
     do
     {
-        copyLineToStream(line + ret,
+        copyLineToStream((*line) + ret,
                          0,
                          _columns,
                          &decoder,

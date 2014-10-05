@@ -461,7 +461,7 @@ public:
      * be inserted into the returned text at the end of each terminal line.
      */
     void writeSelectionToStream(TerminalCharacterDecoder* decoder);
-    size_t writeLineToString(size_t line, QString &result);
+    long writeLineToString(long *line, QString &result);
     /** TODO Document me */
     void checkSelection(int from, int to);
 
@@ -528,7 +528,7 @@ public:
     static void fillWithDefaultChar(std::vector<Character>::iterator dest, int count);
 
 private:
-
+    long findLineStart(const long line);
     //copies a line of text from the screen or history into a stream using a
     //specified character decoder
     //line - the line number to copy, from 0 (the earliest line in the history) up to

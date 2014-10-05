@@ -238,8 +238,6 @@ signals:
     void selectionChanged();
 
 private:
-    long findTextForward(const QString& searchStr, const bool caseSensitive);
-    long findTextBackward(const QString& searchStr, const bool caseSensitive);
     void resetSearchPosition(const int searchCol);
     void setSearchPosition(const int searchCol, const int searchLine, const int length, const bool searchUp);
     int endWindowLine() const;
