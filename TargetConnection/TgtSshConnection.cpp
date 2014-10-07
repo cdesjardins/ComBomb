@@ -312,14 +312,18 @@ bool TgtSshIntf::sshSend()
         }
         else if (bytesCopied < (int)boost::asio::buffer_size(b->_buffer))
         {
+#ifdef QT_DEBUG
             qDebug("Didnt write everything");
+#endif
         }
         else
         {
             status = cryptFlushData(_sshData->_cryptSession);
             if (cryptStatusError(status))
             {
+#ifdef QT_DEBUG
                 qDebug("Unable to flush data");
+#endif
                 ret = false;
             }
         }

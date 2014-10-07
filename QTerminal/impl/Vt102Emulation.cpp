@@ -1455,7 +1455,7 @@ void Vt102Emulation::scan_buffer_report()
 
 void Vt102Emulation::ReportErrorToken()
 {
-#ifndef NDEBUG
+#ifdef QT_DEBUG
     scan_buffer_report();
 #endif
 }

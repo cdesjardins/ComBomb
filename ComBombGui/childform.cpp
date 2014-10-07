@@ -170,5 +170,4 @@ void ChildForm::deleteProcess()
         delete p;
     }
     suppressOutput(false);
-    qDebug("Process done");
 }
