@@ -278,8 +278,8 @@ bool ScreenWindow::findTextHighlighted(QString* searchStr, const bool caseSensit
     {
         int column = 0;
         int line = 0;
-        getSelectionEnd(column, line);
-        resetSearchPosition(column + 1);
+        getSelectionStart(column, line);
+        setSearchPosition(column + 1, line, searchStr->length(), false);
         ret = findText(*searchStr, caseSensitive, false, true);
         if (ret == false)
         {

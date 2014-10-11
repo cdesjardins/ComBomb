@@ -167,7 +167,9 @@ void OpenDialog::addComPorts()
 void OpenDialog::on_browseButton_clicked()
 {
     QString fileName;
-    fileName = QFileDialog::getOpenFileName(this, tr("All files"), NULL, tr("All files (*.*)"));
+    QString startDir = ui->fileNameComboBox->currentText();
+
+    fileName = QFileDialog::getOpenFileName(this, tr("All files"), startDir, tr("All files (*.*)"));
     ui->fileNameComboBox->insertItem(0, fileName);
     ui->fileNameComboBox->setCurrentIndex(0);
 }

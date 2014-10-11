@@ -80,8 +80,11 @@ void CBComboBox::saveEditableComboBox()
     i = 0;
     for (QStringList::iterator it = itemList.begin(); it != itemList.end(); it++, i++)
     {
-        settings.setArrayIndex(i);
-        settings.setValue("Item", *it);
+        if (it->length() > 0)
+        {
+            settings.setArrayIndex(i);
+            settings.setValue("Item", *it);
+        }
     }
     settings.endArray();
 }
