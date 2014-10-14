@@ -471,7 +471,7 @@ void Vt102Emulation::XtermHack()
     }
     if (pbuf[i] != ';')
     {
-        ReportErrorToken(); return;
+        /*ReportErrorToken();*/ return;
     }
     QChar* str = new QChar[ppos - i - 2];
     for (int j = 0; j < ppos - i - 2; j++)
@@ -919,7 +919,7 @@ void Vt102Emulation::tau(int token, int p, int q)
 
         case TY_CSI_PG('c'):  reportSecondaryAttributes(          ); break;    //VT100
 
-        default: ReportErrorToken(); tokenDebug(token, p);   break;
+        default: /*ReportErrorToken(); tokenDebug(token, p);*/   break;
     }
     ;
 }

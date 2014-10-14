@@ -165,9 +165,9 @@ unsigned short vt100_graphics[32] =
 #include <iomanip>
 void TerminalView::fontChange(const QFont&)
 {
-    QFontMetrics fm(font());
-    int leading = fm.leading();
-    _fontHeight = fm.height();
+    _fontMetrics = QFontMetrics(font());
+    int leading = _fontMetrics.leading();
+    _fontHeight = _fontMetrics.height();
     if (leading > 0)
     {
         _fontHeight += leading;
@@ -177,14 +177,14 @@ void TerminalView::fontChange(const QFont&)
     // "Base character width on widest ASCII character. This prevents too wide
     //  characters in the presence of double wide (e.g. Japanese) characters."
     // Get the width from representative normal width characters
-    _fontWidth = (double)fm.width(REPCHAR) / (double)strlen(REPCHAR);
+    _fontWidth = (double)_fontMetrics.width(REPCHAR) / (double)strlen(REPCHAR);
 
     _fixedFont = true;
 
-    int fw = fm.width(REPCHAR[0]);
+    int fw = _fontMetrics.width(REPCHAR[0]);
     for (unsigned int i = 1; i < strlen(REPCHAR); i++)
     {
-        if (fw != fm.width(REPCHAR[i]))
+        if (fw != _fontMetrics.width(REPCHAR[i]))
         {
             _fixedFont = false;
             break;
@@ -196,7 +196,7 @@ void TerminalView::fontChange(const QFont&)
         _fontWidth = 1;
     }
 
-    _fontAscent = fm.ascent();
+    _fontAscent = _fontMetrics.ascent();
 #if 0
     std::stringstream s;
     s
@@ -210,16 +210,16 @@ void TerminalView::fontChange(const QFont&)
         << std::setw(3) <<  font().strikeOut()
         << std::setw(3) <<  font().fixedPitch()
         << std::setw(3) <<  font().rawMode()
-        << std::setw(3) <<  fm.ascent()
-        << std::setw(3) <<  fm.averageCharWidth()
-        << std::setw(3) <<  fm.descent()
-        << std::setw(3) <<  fm.height()
-        << std::setw(3) <<  fm.leading()
-        << std::setw(3) <<  fm.lineSpacing()
-        << std::setw(3) <<  fm.lineWidth()
-        << std::setw(3) <<  fm.maxWidth()
-        << std::setw(3) <<  fm.overlinePos()
-        << std::setw(3) <<  fm.xHeight();
+        << std::setw(3) <<  _fontMetrics.ascent()
+        << std::setw(3) <<  _fontMetrics.averageCharWidth()
+        << std::setw(3) <<  _fontMetrics.descent()
+        << std::setw(3) <<  _fontMetrics.height()
+        << std::setw(3) <<  _fontMetrics.leading()
+        << std::setw(3) <<  _fontMetrics.lineSpacing()
+        << std::setw(3) <<  _fontMetrics.lineWidth()
+        << std::setw(3) <<  _fontMetrics.maxWidth()
+        << std::setw(3) <<  _fontMetrics.overlinePos()
+        << std::setw(3) <<  _fontMetrics.xHeight();
 
     qDebug("%s", s.str().c_str());
 #endif
@@ -299,6 +299,7 @@ TerminalView::TerminalView(QWidget* parent)
     , _blendColor(qRgba(0, 0, 0, 0xff))
     , _cursorShape(BlockCursor)
     , _readonly(false)
+    , _fontMetrics(font())
 {
     // terminal applications are not designed with Right-To-Left in mind,
     // so the layout is forced to Left-To-Right
@@ -796,29 +797,17 @@ void TerminalView::scrollImage(int lines, const QRect& screenWindowRegion)
 
     QRect scrollRect;
 
-    //void* firstCharPos = &_image[region.top() * this->_columns];
-    //void* lastCharPos = &_image[(region.top() + abs(lines)) * this->_columns];
-
     int top = _topMargin + (region.top() * _fontHeight);
     int linesToMove = region.height() - abs(lines);
-    //int bytesToMove = linesToMove *
-    //                  this->_columns *
-    //                  sizeof(Character);
 
     Q_ASSERT(linesToMove > 0);
-    //Q_ASSERT(bytesToMove > 0);
 
     //scroll internal image
     if (lines > 0)
     {
-        // check that the memory areas that we are going to move are valid
-        //Q_ASSERT((char*)lastCharPos + bytesToMove <
-        //         (char*)(_image + (this->_lines * this->_columns)));
-
         Q_ASSERT((lines * this->_columns) < _imageSize);
 
         //scroll internal image down
-        //memmove(firstCharPos, lastCharPos, bytesToMove);
         for (int index = region.top() * this->_columns; index < (linesToMove * this->_columns); index++)
         {
             _image[index] = _image[region.top() + abs(lines) * this->_columns + index];
@@ -832,12 +821,6 @@ void TerminalView::scrollImage(int lines, const QRect& screenWindowRegion)
     }
     else
     {
-        // check that the memory areas that we are going to move are valid
-        //Q_ASSERT((char*)firstCharPos + bytesToMove <
-        //         (char*)(_image + (this->_lines * this->_columns)));
-
-        //scroll internal image up
-        //memmove(lastCharPos, firstCharPos, bytesToMove);
         for (int index = region.top() + abs(lines) * this->_columns; index < (linesToMove * this->_columns); index++)
         {
             _image[index] = _image[region.top() * this->_columns + index];
@@ -1032,10 +1015,18 @@ void TerminalView::updateImage()
 
         // replace the line of characters in the old _image with the
         // current line of the new _image
-        //memcpy((void*)currentLine, (const void*)newLine, columnsToUpdate * sizeof(Character));
         for (int index = 0; index < columnsToUpdate; index++)
         {
-            currentLine[index] = newLine[index];
+            if (_fontMetrics.inFont(newLine[index].getChar()) == false)
+            {
+                Character ch = newLine[index];
+                ch.setChar('?');
+                currentLine[index] = ch;
+            }
+            else
+            {
+                currentLine[index] = newLine[index];
+            }
         }
     }
 
@@ -1266,7 +1257,7 @@ void TerminalView::drawContents(QPainter &paint, const QRect &rect)
                    _image[loc(x + len, y)]._backgroundColor == currentBackground &&
                    _image[loc(x + len, y)]._rendition == currentRendition &&
                    (_image[qMin(loc(x + len, y) + 1, _imageSize)].getChar() == 0) == doubleWidth &&
-                   isLineChar(c = _image[loc(x + len, y)].getChar()) == lineDraw) // Assignment!
+                   (isLineChar(c = _image[loc(x + len, y)].getChar()) == lineDraw)) // Assignment!
             {
                 if (c)
                 {

@@ -717,6 +717,7 @@ private:
     static const int DEFAULT_TOP_MARGIN = 2;
 
     bool _readonly;
+    QFontMetrics _fontMetrics;
 };
 
 #endif // TERMINALVIEW_H
