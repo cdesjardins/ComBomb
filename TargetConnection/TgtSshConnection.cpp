@@ -63,6 +63,7 @@ struct TgtSshImpl
     volatile bool _sshThreadRun;
     boost::scoped_ptr<boost::thread> _sshThread;
     boost::shared_ptr<TgtSshInit> _sshInit;
+    boost::intrusive_ptr<RefCntBuffer> _currentIncomingBuffer;
 };
 
 boost::shared_ptr<TgtSshIntf> TgtSshIntf::createSshConnection(const boost::shared_ptr<const TgtConnectionConfig> &config)
@@ -336,27 +337,27 @@ bool TgtSshIntf::sshRecv()
     int outDataLength;
     int status;
     bool ret = true;
-    boost::intrusive_ptr<RefCntBuffer> currentIncomingBuffer;
+
     do
     {
         outDataLength = 0;
-        if (currentIncomingBuffer == NULL)
+        if (_sshData->_currentIncomingBuffer == NULL)
         {
-            _bufferPool->dequeue(currentIncomingBuffer, 100);
+            _bufferPool->dequeue(_sshData->_currentIncomingBuffer, 100);
         }
-        if (currentIncomingBuffer != NULL)
+        if (_sshData->_currentIncomingBuffer != NULL)
         {
-            char* data = boost::asio::buffer_cast<char*>(currentIncomingBuffer->_buffer);
-            status = cryptPopData(_sshData->_cryptSession, data, boost::asio::buffer_size(currentIncomingBuffer->_buffer), &outDataLength);
+            char* data = boost::asio::buffer_cast<char*>(_sshData->_currentIncomingBuffer->_buffer);
+            status = cryptPopData(_sshData->_cryptSession, data, boost::asio::buffer_size(_sshData->_currentIncomingBuffer->_buffer), &outDataLength);
             if (cryptStatusError(status))
             {
                 ret = false;
             }
             else if (outDataLength > 0)
             {
-                currentIncomingBuffer->_buffer = boost::asio::buffer(currentIncomingBuffer->_buffer, outDataLength);
-                _incomingData.enqueue(currentIncomingBuffer);
-                currentIncomingBuffer.reset();
+                _sshData->_currentIncomingBuffer->_buffer = boost::asio::buffer(_sshData->_currentIncomingBuffer->_buffer, outDataLength);
+                _incomingData.enqueue(_sshData->_currentIncomingBuffer);
+                _sshData->_currentIncomingBuffer.reset();
             }
         }
     } while ((outDataLength > 0) && (cryptStatusOK(status)) && (_sshData->_sshThreadRun == true));
