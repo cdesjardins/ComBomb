@@ -915,6 +915,21 @@ int TerminalView::resizePaint(const int columnsToUpdate, const std::vector<Chara
     return updateLine;
 }
 
+bool TerminalView::inFont(QChar ch)
+{
+    bool ret = true;
+
+    if (ch == QChar::ReplacementCharacter)
+    {
+        ret = false;
+    }
+    else
+    {
+        ret = _fontMetrics.inFont(ch);
+    }
+    return ret;
+}
+
 void TerminalView::updateImage()
 {
     if (!_screenWindow)
@@ -1017,7 +1032,7 @@ void TerminalView::updateImage()
         // current line of the new _image
         for (int index = 0; index < columnsToUpdate; index++)
         {
-            if (_fontMetrics.inFont(newLine[index].getChar()) == false)
+            if (inFont(newLine[index].getChar()) == false)
             {
                 Character ch = newLine[index];
                 ch.setChar('?');

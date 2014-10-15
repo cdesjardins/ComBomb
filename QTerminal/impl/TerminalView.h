@@ -572,7 +572,7 @@ private:
 
     // draws the preedit string for input methods
     void drawInputMethodPreeditString(QPainter& painter, const QRect& rect);
-
+    bool inFont(QChar ch);
     // --
 
     // maps an area in the character image to an area on the widget
