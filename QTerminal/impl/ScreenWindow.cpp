@@ -145,7 +145,7 @@ void ScreenWindow::getSelectionEnd(int& column, int& line)
 void ScreenWindow::setSelectionAll()
 {
     _screen->setSelectionStart(0, 0);
-    _screen->setSelectionEnd(windowColumns(), endWindowLine());
+    _screen->setSelectionEnd(windowColumns(), lineCount());
 
     _bufferNeedsUpdate = true;
     emit selectionChanged();
