@@ -2,6 +2,9 @@
 
 import shutil, sys, os, platform, createVersion, zipfile, tarfile
 from subprocess import call
+from subprocess import Popen, PIPE
+
+releaseNotes = "releasenotes.txt"
 
 def rmerror(function, path, excinfo):
     exc_type, exc_value, exc_traceback = excinfo
@@ -40,6 +43,7 @@ def zipItWindows(filename, qtDir):
         qtDir + "/../plugins/platforms/qwindows.dll": "platforms/qwindows.dll",
         msvs10Dir + "msvcr100.dll": "msvcr100.dll",
         msvs10Dir + "msvcp100.dll": "msvcp100.dll",
+        releaseNotes : releaseNotes,
     }
     filename += ".zip"
     combombZip = zipfile.ZipFile(filename, "w")
@@ -57,6 +61,7 @@ def zipItPosix(filename, qtDir):
         qtDir + "/../lib/libicuuc.so.52": "ComBomb/libicuuc.so.52",
         qtDir + "/../lib/libicudata.so.52": "ComBomb/libicudata.so.52",
         qtDir + "/../plugins/platforms/libqxcb.so": "ComBomb/platforms/libqxcb.so",
+        releaseNotes : releaseNotes,
     }
     filename += ".tar.bz2"
     file = tarfile.open(filename, "w:bz2")
@@ -74,6 +79,13 @@ def zipIt(gitVerStr, qtDir):
     else:
         zipItPosix(filename, qtDir)
     
+def buildLog():
+    logFile = open('releasenotes.txt', 'w')
+    process = Popen(["git", "log", "--pretty=\"format:%an %ai %d %s\""], stdout=logFile)
+    process.wait()
+    logFile.flush()
+    logFile.close()
+
 def main(argv):
     delBuildTree("build")
     os.makedirs("build")
@@ -91,6 +103,7 @@ def main(argv):
     else:
         call(["make", "-j"])
         pass
+    buildLog()
     zipIt(gitVerStr, qtDir)
     
     print("Done")
