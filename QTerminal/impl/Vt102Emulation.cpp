@@ -501,9 +501,9 @@ void Vt102Emulation::updateTitle()
     _pendingTitleUpdates.clear();
 }
 
+#ifdef QT_DEBUG
 void Vt102Emulation::tokenDebug(int token, int p)
 {
-#ifdef QT_DEBUG
     int N = (token >> 0) & 0xff;
     int A = (token >> 8) & 0xff;
     switch (N)
@@ -542,8 +542,8 @@ void Vt102Emulation::tokenDebug(int token, int p)
         case 10: qDebug("CSI-PE-%c", (token >> 8) & 0xff);
             break;
     }
-#endif
 }
+#endif
 
 // Interpreting Codes ---------------------------------------------------------
 
@@ -1441,6 +1441,7 @@ static void hexdump(int* s, int len)
     qDebug(stream.str().c_str());
 }
 
+#ifdef QT_DEBUG
 void Vt102Emulation::scan_buffer_report()
 {
     if (ppos == 0 || (ppos == 1 && (pbuf[0] & 0xff) >= 32))
@@ -1450,13 +1451,9 @@ void Vt102Emulation::scan_buffer_report()
     hexdump(pbuf, ppos);
 }
 
-/*!
-*/
-
 void Vt102Emulation::ReportErrorToken()
 {
-#ifdef QT_DEBUG
     scan_buffer_report();
-#endif
 }
+#endif
 

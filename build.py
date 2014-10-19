@@ -61,7 +61,7 @@ def zipItPosix(filename, qtDir):
         qtDir + "/../lib/libicuuc.so.52": "ComBomb/libicuuc.so.52",
         qtDir + "/../lib/libicudata.so.52": "ComBomb/libicudata.so.52",
         qtDir + "/../plugins/platforms/libqxcb.so": "ComBomb/platforms/libqxcb.so",
-        releaseNotes : releaseNotes,
+        releaseNotes : "ComBomb/" + releaseNotes,
     }
     filename += ".tar.bz2"
     file = tarfile.open(filename, "w:bz2")
@@ -81,7 +81,7 @@ def zipIt(gitVerStr, qtDir):
     
 def buildLog():
     logFile = open('releasenotes.txt', 'w')
-    process = Popen(["git", "log", "--pretty=\"format:%an %ai %d %s\""], stdout=logFile)
+    process = Popen(["git", "log", "--pretty=%an %ai %d %s"], stdout=logFile)
     process.wait()
     logFile.flush()
     logFile.close()
