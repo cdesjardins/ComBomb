@@ -67,22 +67,21 @@ void CBComboBox::saveEditableComboBox()
 {
     QSettings settings;
     QStringList itemList;
+    QString name = getName();
     int i;
-    QString cur = currentText();
-    itemList.append(cur);
+    itemList.append(currentText());
     for (i = 0; i < count(); i++)
     {
         itemList.append(itemText(i));
     }
     itemList.removeDuplicates();
-    QString name = getName();
     settings.beginWriteArray(name);
     i = 0;
-    for (QStringList::iterator it = itemList.begin(); it != itemList.end(); it++, i++)
+    for (QStringList::iterator it = itemList.begin(); it != itemList.end(); it++)
     {
-        if (it->length() > 0)
+        if ((it->length() > 0) || (it == itemList.begin()))
         {
-            settings.setArrayIndex(i);
+            settings.setArrayIndex(i++);
             settings.setValue("Item", *it);
         }
     }
