@@ -38,6 +38,7 @@ MainWindow::MainWindow(QWidget* parent) :
     setCentralWidget(_mdiArea);
     enableMenuItems(false);
     readSettings();
+    _runProcessIconText = _ui->action_Run_Process->iconText();
 }
 
 void MainWindow::enableMenuItems(bool enabled)
@@ -51,6 +52,20 @@ void MainWindow::enableMenuItems(bool enabled)
     _ui->actionFind_next->setEnabled(enabled);
     _ui->actionFind_prev->setEnabled(enabled);
     _ui->actionFind_highlighted_text->setEnabled(enabled);
+}
+
+void MainWindow::swapProcessIcon(bool processRunning)
+{
+    if (processRunning == true)
+    {
+        _ui->action_Run_Process->setIcon(QIcon(":/images/script_delete.png"));
+        _ui->action_Run_Process->setIconText("Stop process");
+    }
+    else
+    {
+        _ui->action_Run_Process->setIcon(QIcon(":/images/script_gear.png"));
+        _ui->action_Run_Process->setIconText(_runProcessIconText);
+    }
 }
 
 MainWindow::~MainWindow()

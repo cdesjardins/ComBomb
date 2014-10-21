@@ -22,6 +22,7 @@ public:
     virtual ~MainWindow();
     static void errorBox(QString errMsg);
     ChildForm* getActiveChildWindow();
+    void swapProcessIcon(bool processRunning);
 protected:
     explicit MainWindow(QWidget* parent = 0);
     void enableMenuItems(bool enabled);
@@ -41,15 +42,10 @@ private slots:
     void on_action_Run_Process_triggered();
     void on_action_Clear_scrollback_triggered();
     void on_actionSelect_All_triggered();
-
     void on_action_Find_triggered();
-
     void on_actionFind_next_triggered();
-
     void on_actionFind_prev_triggered();
-
     void on_actionFind_highlighted_text_triggered();
-
 signals:
     void findSignal();
 private:
@@ -59,6 +55,7 @@ private:
     FileClipboardDialog* _fileClipboardDialog;
     static MainWindow* _instance;
     boost::atomic<int> _windowCnt;
+    QString _runProcessIconText;
 };
 
 #endif // MAINWINDOW_H

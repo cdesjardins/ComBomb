@@ -100,6 +100,10 @@ void ChildForm::findTextHighlighted()
 void ChildForm::runProcess()
 {
     RunProcessDialog rpd(this);
+    // If the process failed to start, then it
+    // cannot be deleted from the processError call
+    // because it may be called from within the call to
+    // _proc->start()... so _proc cannot be deleted...
     if ((_proc != NULL) && (_procError == true))
     {
         deleteProcess();
@@ -116,13 +120,14 @@ void ChildForm::runProcess()
             _proc->setWorkingDirectory(rpd.getWorkingDirectory());
             QStringList args = rpd.getArguments();
             suppressOutput(rpd.isOutputSuppressed());
+            MainWindow::getMainWindow()->swapProcessIcon(true);
             _proc->start(rpd.getProgram(), args);
-
         }
     }
     else
     {
-        emit updateStatusSignal("Process already running");
+        deleteProcess();
+        emit updateStatusSignal("Stopping process");
     }
 }
 
@@ -138,20 +143,29 @@ void ChildForm::readFromStdout()
 
 void ChildForm::processError(QProcess::ProcessError error)
 {
+    QString errMsg;
     QString errors[] =
     {
-        "Failed To Start",
-        "Crashed",
-        "Timedout",
-        "Read Error",
-        "Write Error",
-        "Unknown Error"
+        "failed to start",
+        "crashed",
+        "timedout",
+        "read error",
+        "write error",
+        "unknown error"
     };
     _procError = true;
     suppressOutput(false);
-    QString errMsg;
-    errMsg.sprintf("Error: (%d) %s", error, errors[error].toLocal8Bit().constData());
+    errMsg.sprintf("Error: (%d) Process ", error);
+    if (error < sizeof(errors) / sizeof(errors[0]))
+    {
+        errMsg.append(errors[error].toLocal8Bit().constData());
+    }
+    else
+    {
+        errMsg.append("error");
+    }
     emit updateStatusSignal(errMsg);
+    MainWindow::getMainWindow()->swapProcessIcon(false);
 }
 
 void ChildForm::processDone(int , QProcess::ExitStatus )
@@ -170,4 +184,5 @@ void ChildForm::deleteProcess()
         delete p;
     }
     suppressOutput(false);
+    MainWindow::getMainWindow()->swapProcessIcon(false);
 }
