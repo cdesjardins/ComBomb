@@ -18,6 +18,11 @@ MainWindow* MainWindow::getMainWindow(QWidget* parent)
     return _instance;
 }
 
+ErrorDialog* MainWindow::getErrorWindow()
+{
+    return getMainWindow()->_errorDialog;
+}
+
 void MainWindow::destroyMainWindow()
 {
     if (_instance != NULL)
@@ -32,6 +37,7 @@ MainWindow::MainWindow(QWidget* parent) :
     _ui(new Ui::MainWindow),
     _mdiArea(new QMdiArea()),
     _fileClipboardDialog(new FileClipboardDialog(this)),
+    _errorDialog(new ErrorDialog(this)),
     _windowCnt(0)
 {
     _ui->setupUi(this);
@@ -71,6 +77,7 @@ void MainWindow::swapProcessIcon(bool processRunning)
 MainWindow::~MainWindow()
 {
     delete _fileClipboardDialog;
+    delete _errorDialog;
     delete _mdiArea;
     delete _ui;
 }
@@ -216,6 +223,18 @@ void MainWindow::on_actionFile_clipboard_triggered()
     else
     {
         _fileClipboardDialog->show();
+    }
+}
+
+void MainWindow::on_action_error_window_triggered()
+{
+    if (_errorDialog->isVisible() == true)
+    {
+        _errorDialog->hide();
+    }
+    else
+    {
+        _errorDialog->show();
     }
 }
 

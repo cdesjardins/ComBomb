@@ -24,6 +24,7 @@ ChildForm::ChildForm(const QTerminalConfig &terminalConfig, const boost::shared_
     setAttribute(Qt::WA_DeleteOnClose, true);
     connectToRecvText(this);
     emit openWindowSignal();
+    _errorTab = MainWindow::getErrorWindow()->addTab(szTitle.c_str());
 }
 
 void ChildForm::updateTitleSlot(QString title)
@@ -33,6 +34,7 @@ void ChildForm::updateTitleSlot(QString title)
 
 ChildForm::~ChildForm()
 {
+    MainWindow::getErrorWindow()->removeTab(_errorTab);
     delete ui;
 }
 
@@ -115,6 +117,7 @@ void ChildForm::runProcess()
             _procError = false;
             _proc = new QProcess(this);
             connect(_proc, SIGNAL(readyReadStandardOutput()), this, SLOT(readFromStdout()));
+            connect(_proc, SIGNAL(readyReadStandardError()), this, SLOT(readFromStderr()));
             connect(_proc, SIGNAL(error(QProcess::ProcessError)), this, SLOT(processError(QProcess::ProcessError)));
             connect(_proc, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(processDone(int, QProcess::ExitStatus)));
             _proc->setWorkingDirectory(rpd.getWorkingDirectory());
@@ -139,6 +142,11 @@ void ChildForm::readFromStdout()
         sendText(_proc->readAllStandardOutput());
     }
     _processMutex.unlock();
+}
+
+void ChildForm::readFromStderr()
+{
+    MainWindow::getErrorWindow()->addText(_errorTab, _proc->readAllStandardError());
 }
 
 void ChildForm::processError(QProcess::ProcessError error)

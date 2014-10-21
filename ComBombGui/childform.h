@@ -24,6 +24,7 @@ public:
 private slots:
     void updateTitleSlot(QString title);
     void readFromStdout();
+    void readFromStderr();
     void processError(QProcess::ProcessError error);
     void processDone(int returnCode, QProcess::ExitStatus status);
     void onReceiveBlock(boost::intrusive_ptr<RefCntBuffer> incoming);
@@ -41,6 +42,7 @@ private:
     bool _procError;
     QString _lastSearchString;
     bool _lastSearchCaseSensitivity;
+    int _errorTab;
 };
 
 #endif // CHILDFORM_H

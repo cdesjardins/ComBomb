@@ -21,5 +21,6 @@
         <file>images/ComBomb128.png</file>
         <file>images/find_under.png</file>
         <file>images/script_delete.png</file>
+        <file>images/script_error.png</file>
     </qresource>
 </RCC>
