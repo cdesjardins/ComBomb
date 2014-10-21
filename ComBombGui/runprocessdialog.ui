@@ -126,6 +126,14 @@
    <header>cbcombobox.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>programComboBox</tabstop>
+  <tabstop>programBrowseButton</tabstop>
+  <tabstop>argumentsComboBox</tabstop>
+  <tabstop>workingDirComboBox</tabstop>
+  <tabstop>workingDirBrowseButton</tabstop>
+  <tabstop>suppressOutputCheckBox</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
