@@ -125,6 +125,11 @@ void QTerminalImpl::sendText(const QByteArray& text)
     _terminalModel->sendText(text);
 }
 
+void QTerminalImpl::recvText(const QByteArray& data)
+{
+    _terminalModel->receiveBlock(data);
+}
+
 void QTerminalImpl::findText(const QString& searchStr, const bool caseSensitive, const bool searchUp, const bool cont)
 {
     _terminalView->findText(searchStr, caseSensitive, searchUp, cont);

@@ -150,7 +150,7 @@ public:
      */
     void sendText(const QString& text) const;
     void sendText(const QByteArray& text) const;
-
+    void receiveBlock(const QByteArray& data);
     /** Returns the terminal session's window size in lines and columns. */
     QSize size();
     /**
@@ -208,11 +208,6 @@ signals:
      * Emitted when the terminal process exits.
      */
     void finished();
-
-    /**
-     * Emitted when output is received from the terminal process.
-     */
-    void receivedData(const QString& text);
 
     /** Emitted when the session's title has changed. */
     void titleChanged();

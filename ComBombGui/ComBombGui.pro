@@ -30,8 +30,7 @@ SOURCES += main.cpp\
     cbcombobox.cpp \
     cblistwidget.cpp \
     cbdialog.cpp \
-    finddialog.cpp \
-    errordialog.cpp
+    finddialog.cpp
 
 HEADERS  += mainwindow.h \
     childform.h \
@@ -46,8 +45,7 @@ HEADERS  += mainwindow.h \
     cbcombobox.h \
     cblistwidget.h \
     cbdialog.h \
-    finddialog.h \
-    errordialog.h
+    finddialog.h
 
 FORMS    += mainwindow.ui \
     childform.ui \
@@ -56,8 +54,7 @@ FORMS    += mainwindow.ui \
     fileclipboarddialog.ui \
     configdialog.ui \
     runprocessdialog.ui \
-    finddialog.ui \
-    errordialog.ui
+    finddialog.ui
 
 RESOURCES += \
     ComBomb.qrc

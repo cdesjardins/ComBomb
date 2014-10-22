@@ -2,7 +2,6 @@
 #define CB_MAINWINDOW_H
 
 #include "fileclipboarddialog.h"
-#include "errordialog.h"
 #include "opendialog.h"
 #include "childform.h"
 #include <QMdiArea>
@@ -19,7 +18,6 @@ class MainWindow : public QMainWindow
 
 public:
     static MainWindow* getMainWindow(QWidget* parent = 0);
-    static ErrorDialog* getErrorWindow();
     static void destroyMainWindow();
     virtual ~MainWindow();
     static void errorBox(QString errMsg);
@@ -48,7 +46,6 @@ private slots:
     void on_actionFind_next_triggered();
     void on_actionFind_prev_triggered();
     void on_actionFind_highlighted_text_triggered();
-    void on_action_error_window_triggered();
 
 signals:
     void findSignal();
@@ -57,7 +54,6 @@ private:
     Ui::MainWindow* _ui;
     QMdiArea* _mdiArea;
     FileClipboardDialog* _fileClipboardDialog;
-    ErrorDialog* _errorDialog;
     static MainWindow* _instance;
     boost::atomic<int> _windowCnt;
     QString _runProcessIconText;

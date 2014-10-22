@@ -17,7 +17,10 @@ public:
     QString getProgram();
     QString getWorkingDirectory();
     QStringList getArguments();
+    bool isStdoutRedirected();
+    bool isStderrRedirected();
     bool isOutputSuppressed();
+
 protected:
     virtual QString getSettingsRoot();
 private slots:

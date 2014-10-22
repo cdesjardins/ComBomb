@@ -36,13 +36,15 @@ protected:
     virtual void closeEvent(QCloseEvent* event);
 private:
     void deleteProcess();
+    void readFromProc(bool isStdout);
     QMutex _processMutex;
     Ui::ChildForm* ui;
     QProcess *_proc;
     bool _procError;
     QString _lastSearchString;
     bool _lastSearchCaseSensitivity;
-    int _errorTab;
+    bool _redirectStdout;
+    bool _redirectStderr;
 };
 
 #endif // CHILDFORM_H

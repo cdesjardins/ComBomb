@@ -134,7 +134,6 @@ void ConfigDialog::on_buttonBox_accepted()
     {
         w->applyTerminalConfig(terminalConfig);
     }
-    MainWindow::getErrorWindow()->setFont(terminalConfig._font);
 }
 
 bool ConfigDialog::getTerminalConfig(QTerminalConfig *terminalConfig)

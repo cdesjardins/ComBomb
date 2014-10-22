@@ -264,7 +264,6 @@ void TerminalModel::sendText(const QString &text) const
     }
 }
 
-
 void TerminalModel::sendText(const QByteArray &text) const
 {
     if (_closed == false)
@@ -286,6 +285,11 @@ void TerminalModel::onReceiveBlock(boost::intrusive_ptr<RefCntBuffer> incoming)
         int len = boost::asio::buffer_size(incoming->_buffer);
         _emulation->receiveData(buf, len);
     }
+}
+
+void TerminalModel::receiveBlock(const QByteArray& data)
+{
+    _emulation->receiveData(data.constData(), data.length());
 }
 
 TerminalModel::~TerminalModel()

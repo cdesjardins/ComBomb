@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>202</height>
+    <height>248</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,7 +24,7 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="4" column="1">
-       <widget class="QLabel" name="label_2">
+       <widget class="QLabel" name="argumentsLabel">
         <property name="text">
          <string>Arguments</string>
         </property>
@@ -57,14 +57,14 @@
        </widget>
       </item>
       <item row="7" column="1">
-       <widget class="QLabel" name="label_3">
+       <widget class="QLabel" name="workingDirLabel">
         <property name="text">
          <string>Working Directory</string>
         </property>
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QLabel" name="label">
+       <widget class="QLabel" name="programLabel">
         <property name="text">
          <string>Program</string>
         </property>
@@ -97,7 +97,27 @@
      </layout>
     </widget>
    </item>
-   <item row="2" column="1">
+   <item row="2" column="0">
+    <widget class="QCheckBox" name="stdoutCheckBox">
+     <property name="text">
+      <string>Redirect stdout to remote end</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QCheckBox" name="suppressOutputCheckBox">
+     <property name="text">
+      <string>Suppress output</string>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -107,13 +127,10 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
-    <widget class="QCheckBox" name="suppressOutputCheckBox">
+   <item row="3" column="0">
+    <widget class="QCheckBox" name="stderrCheckBox">
      <property name="text">
-      <string>Suppress output</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
+      <string>Redirect stderr to remote end</string>
      </property>
     </widget>
    </item>

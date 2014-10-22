@@ -24,7 +24,6 @@ ChildForm::ChildForm(const QTerminalConfig &terminalConfig, const boost::shared_
     setAttribute(Qt::WA_DeleteOnClose, true);
     connectToRecvText(this);
     emit openWindowSignal();
-    _errorTab = MainWindow::getErrorWindow()->addTab(szTitle.c_str());
 }
 
 void ChildForm::updateTitleSlot(QString title)
@@ -34,7 +33,6 @@ void ChildForm::updateTitleSlot(QString title)
 
 ChildForm::~ChildForm()
 {
-    MainWindow::getErrorWindow()->removeTab(_errorTab);
     delete ui;
 }
 
@@ -115,6 +113,9 @@ void ChildForm::runProcess()
         if (rpd.exec() == RunProcessDialog::Accepted)
         {
             _procError = false;
+            _redirectStdout = rpd.isStdoutRedirected();
+            _redirectStderr = rpd.isStderrRedirected();
+
             _proc = new QProcess(this);
             connect(_proc, SIGNAL(readyReadStandardOutput()), this, SLOT(readFromStdout()));
             connect(_proc, SIGNAL(readyReadStandardError()), this, SLOT(readFromStderr()));
@@ -136,17 +137,43 @@ void ChildForm::runProcess()
 
 void ChildForm::readFromStdout()
 {
-    _processMutex.lock();
-    if (_proc != NULL)
-    {
-        sendText(_proc->readAllStandardOutput());
-    }
-    _processMutex.unlock();
+    readFromProc(true);
 }
 
 void ChildForm::readFromStderr()
 {
-    MainWindow::getErrorWindow()->addText(_errorTab, _proc->readAllStandardError());
+    readFromProc(false);
+}
+
+void ChildForm::readFromProc(bool isStdout)
+{
+    bool redirect = false;
+    _processMutex.lock();
+    QByteArray output;
+    if (_proc != NULL)
+    {
+        if (isStdout == true)
+        {
+            output = _proc->readAllStandardOutput();
+            redirect = _redirectStdout;
+        }
+        else
+        {
+            output = _proc->readAllStandardError();
+            redirect = _redirectStderr;
+        }
+    }
+    if (output.length() > 0)
+    {
+        if (redirect == true)
+        {
+            sendText(output);
+        }
+        else
+        {
+            recvText(output);
+        }
+    }
 }
 
 void ChildForm::processError(QProcess::ProcessError error)
