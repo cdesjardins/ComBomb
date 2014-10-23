@@ -23,11 +23,9 @@ protected:
     virtual QString getSettingsRoot();
 private slots:
     void sendItemTriggered(int index);
-
     void on_fileClipboardTable_cellChanged(int row, int column);
-
     void on_newLineCheckBox_toggled(bool checked);
-
+    void on_sendButton_clicked();
 private:
     Ui::FileClipboardDialog* ui;
     FileClipboardHeader* _fileClipboardHeader;

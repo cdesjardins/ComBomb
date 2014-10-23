@@ -71,7 +71,7 @@ void FileClipboardDialog::loadFileClipboardSettings()
 void FileClipboardDialog::sendItemTriggered(int index)
 {
     QTableWidgetItem* item = ui->fileClipboardTable->item(index, 0);
-    if (item->text().length() > 0)
+    if ((item != NULL) && (item->text().length() > 0))
     {
         ChildForm* c = MainWindow::getMainWindow()->getActiveChildWindow();
         if (c != NULL)
@@ -83,6 +83,7 @@ void FileClipboardDialog::sendItemTriggered(int index)
             }
 
             c->sendText(text);
+            c->setTrackOutput(true);
             QApplication::setActiveWindow(MainWindow::getMainWindow());
         }
     }
@@ -108,4 +109,9 @@ void FileClipboardDialog::loadNewLineSettings()
     QSettings settings;
     bool sendNewLineChecked = settings.value(CB_FILE_CLIBBOARD_SETTINGS_ROOT "SendNewLine").toBool();
     ui->newLineCheckBox->setChecked(sendNewLineChecked);
+}
+
+void FileClipboardDialog::on_sendButton_clicked()
+{
+    sendItemTriggered(ui->fileClipboardTable->currentRow());
 }

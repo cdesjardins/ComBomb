@@ -51,6 +51,7 @@ public:
     void applyTerminalConfig(const QTerminalConfig &terminalConfig);
     bool eventFilter(QObject *, QEvent *event);
     void suppressOutput(bool suppress);
+    void setTrackOutput(bool trackOutput);
 public slots:
     void copyClipboard();
     void pasteClipboard();
