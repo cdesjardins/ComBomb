@@ -44,7 +44,7 @@ def zipItWindows(filename, qtDir):
         msvs10Dir + "msvcr100.dll": "msvcr100.dll",
         msvs10Dir + "msvcp100.dll": "msvcp100.dll",
         releaseNotes : releaseNotes,
-        "addons/savetofile.py" : "addons/savetofile.py",
+        "../addons/savetofile.py" : "addons/savetofile.py",
     }
     filename += ".zip"
     combombZip = zipfile.ZipFile(filename, "w")
