@@ -44,6 +44,7 @@ def zipItWindows(filename, qtDir):
         msvs10Dir + "msvcr100.dll": "msvcr100.dll",
         msvs10Dir + "msvcp100.dll": "msvcp100.dll",
         releaseNotes : releaseNotes,
+        "addons/savetofile.py" : "addons/savetofile.py",
     }
     filename += ".zip"
     combombZip = zipfile.ZipFile(filename, "w")
@@ -62,6 +63,7 @@ def zipItPosix(filename, qtDir):
         qtDir + "/../lib/libicudata.so.52": "ComBomb/libicudata.so.52",
         qtDir + "/../plugins/platforms/libqxcb.so": "ComBomb/platforms/libqxcb.so",
         releaseNotes : "ComBomb/" + releaseNotes,
+        "../addons/savetofile.py" : "ComBomb/addons/savetofile.py",
     }
     filename += ".tar.bz2"
     file = tarfile.open(filename, "w:bz2")
