@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 import sys, traceback, tarfile, os, platform, shutil, tempfile, errno, re, urllib2
 from subprocess import call
-boostname = "boost_1_56_0"
+boostname = "boost_1_57_0"
 boostfile = boostname + ".tar.bz2"
-boosturl = "http://downloads.sourceforge.net/project/boost/boost/1.56.0/" + boostfile
+boosturl = "http://downloads.sourceforge.net/project/boost/boost/1.57.0/" + boostfile
 boostdir = boostname + "/boost"
 
 def downloadBoost():

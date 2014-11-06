@@ -101,17 +101,17 @@ else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../cl/debug/cl3
 
 
 # Boost
-
+BOOSTVER = 1_57_0
 QMAKE_CXXFLAGS += -DBOOST_ALL_NO_LIB
 
 win32:QMAKE_CXXFLAGS += -D_WIN32_WINNT=0x0501
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../boost_1_56_0/stage/release/ -llibboost_system -llibboost_thread -llibboost_chrono
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../boost_1_56_0/stage/debug/ -llibboost_system -llibboost_thread -llibboost_chrono
-else:unix: LIBS += $$PWD/../boost_1_56_0/stage/lib/libboost_system.a $$PWD/../boost_1_56_0/stage/lib/libboost_thread.a $$PWD/../boost_1_56_0/stage/lib/libboost_chrono.a
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../boost_$${BOOSTVER}/stage/release/ -llibboost_system -llibboost_thread -llibboost_chrono
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../boost_$${BOOSTVER}/stage/debug/ -llibboost_system -llibboost_thread -llibboost_chrono
+else:unix: LIBS += $$PWD/../boost_$${BOOSTVER}/stage/lib/libboost_system.a $$PWD/../boost_$${BOOSTVER}/stage/lib/libboost_thread.a $$PWD/../boost_$${BOOSTVER}/stage/lib/libboost_chrono.a
 
-INCLUDEPATH += $$PWD/../boost_1_56_0
-DEPENDPATH += $$PWD/../boost_1_56_0
+INCLUDEPATH += $$PWD/../boost_$${BOOSTVER}
+DEPENDPATH += $$PWD/../boost_$${BOOSTVER}
 
 OTHER_FILES += \
     ComBomb.rc
