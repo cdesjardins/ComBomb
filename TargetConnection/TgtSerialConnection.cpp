@@ -131,7 +131,7 @@ void TgtSerialIntf::tgtReadCallback(const boost::system::error_code& error, cons
         {
             buffer = _currentIncomingBuffer->_buffer;
         }
-        _port->async_read_some(boost::asio::buffer(buffer),
+        _port->async_read_some(boost::asio::buffer(buffer, boost::asio::buffer_size(buffer) - 1),
                                boost::bind(&TgtSerialIntf::tgtReadCallback, this,
                                            boost::asio::placeholders::error,
                                            boost::asio::placeholders::bytes_transferred));

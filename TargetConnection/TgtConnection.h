@@ -20,3 +20,4 @@
 #include "TgtTelnetConnection.h"
 #include "TgtSerialConnection.h"
 #include "TgtSshConnection.h"
+#include "TgtProcessConnection.h"

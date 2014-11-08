@@ -65,9 +65,13 @@ void ChildForm::onReceiveBlock(boost::intrusive_ptr<RefCntBuffer> incoming)
     _processMutex.lock();
     if (_proc != NULL)
     {
-        char* buf = boost::asio::buffer_cast<char*>(incoming->_buffer);
-        int len = boost::asio::buffer_size(incoming->_buffer);
-        _proc->write(buf, len);
+        qint64 sentBytes;
+        do
+        {
+            char* buf = boost::asio::buffer_cast<char*>(incoming->_buffer);
+            sentBytes = _proc->write(buf, boost::asio::buffer_size(incoming->_buffer));
+            incoming->_buffer = boost::asio::buffer(incoming->_buffer + sentBytes);
+        } while ((sentBytes > 0) && (boost::asio::buffer_size(incoming->_buffer) > 0));
     }
     _processMutex.unlock();
 }
@@ -181,6 +185,7 @@ void ChildForm::readFromProc(bool isStdout)
             redirect = _redirectStderr;
         }
     }
+    _processMutex.unlock();
     if (output.length() > 0)
     {
         if (redirect == true)

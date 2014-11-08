@@ -66,13 +66,12 @@ int TgtFileIntf::tgtRead(boost::intrusive_ptr<RefCntBuffer> &b)
         if (_bufferPool->dequeue(currentIncomingBuffer, 100) == true)
         {
             char* data = boost::asio::buffer_cast<char*>(currentIncomingBuffer->_buffer);
-            _inputFile.read(data, boost::asio::buffer_size(currentIncomingBuffer->_buffer));
+            _inputFile.read(data, boost::asio::buffer_size(currentIncomingBuffer->_buffer) - 1);
             ret = (size_t)_inputFile.gcount();
             if (ret > 0)
             {
                 currentIncomingBuffer->_buffer = boost::asio::buffer(currentIncomingBuffer->_buffer, ret);
                 _incomingData.enqueue(currentIncomingBuffer);
-                _bufferPool->dequeue(currentIncomingBuffer, 100);
             }
         }
     }

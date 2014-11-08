@@ -107,6 +107,15 @@ boost::shared_ptr<const TgtSerialIntf::TgtConnectionConfig> OpenDialog::getSeria
     return ret;
 }
 
+boost::shared_ptr<const TgtProcessIntf::TgtConnectionConfig> OpenDialog::getProcessConfig() const
+{
+    boost::shared_ptr<TgtProcessIntf::TgtConnectionConfig> ret(new TgtProcessIntf::TgtConnectionConfig(
+                                                                   ui->programComboBox->currentText().toLocal8Bit().constData(),
+                                                                   ui->workingDirComboBox->currentText().toLocal8Bit().constData(),
+                                                                   ui->argumentsComboBox->currentText().toLocal8Bit().constData()));
+    return ret;
+}
+
 OpenDialog::~OpenDialog()
 {
     delete ui;

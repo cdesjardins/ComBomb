@@ -31,11 +31,6 @@ TgtIntf::TgtIntf(const boost::shared_ptr<const TgtConnectionConfigBase> &config)
     _connectionConfig(config),
     _running(true)
 {
-#ifdef CB_TRAP_TO_FILE
-    std::string trapFileName("debug.cbd");
-    _trapFile.open(trapFileName.c_str(), std::ios::out | std::ios::binary);
-#endif
-
     m_nTotalTx = 0;
     m_nTotalRx = 0;
 }
@@ -43,9 +38,6 @@ TgtIntf::TgtIntf(const boost::shared_ptr<const TgtConnectionConfigBase> &config)
 TgtIntf::~TgtIntf(void)
 {
     _running = false;
-#ifdef CB_TRAP_TO_FILE
-    _trapFile.close();
-#endif
 }
 
 int TgtIntf::tgtRead(boost::intrusive_ptr<RefCntBuffer> &b)
@@ -56,9 +48,6 @@ int TgtIntf::tgtRead(boost::intrusive_ptr<RefCntBuffer> &b)
         ret = boost::asio::buffer_size(b->_buffer);
         char* data = boost::asio::buffer_cast<char*>(b->_buffer);
         data[ret] = 0;
-#ifdef CB_TRAP_TO_FILE
-        _trapFile.write(data, ret);
-#endif
         m_nTotalRx += ret;
     }
     return ret;

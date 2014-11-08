@@ -366,7 +366,7 @@ bool TgtSshIntf::sshRecv()
         if (_sshData->_currentIncomingBuffer != NULL)
         {
             char* data = boost::asio::buffer_cast<char*>(_sshData->_currentIncomingBuffer->_buffer);
-            status = cryptPopData(_sshData->_cryptSession, data, boost::asio::buffer_size(_sshData->_currentIncomingBuffer->_buffer), &outDataLength);
+            status = cryptPopData(_sshData->_cryptSession, data, boost::asio::buffer_size(_sshData->_currentIncomingBuffer->_buffer) - 1, &outDataLength);
             if (cryptStatusError(status))
             {
                 ret = false;

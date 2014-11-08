@@ -15,7 +15,8 @@ SOURCES += \
     TgtTelnetConnection.cpp \
     TgtSshConnection.cpp \
     TgtSerialConnection.cpp \
-    TgtFileConnection.cpp
+    TgtFileConnection.cpp \
+    TgtProcessConnection.cpp
 
 HEADERS += \
     TgtTelnetConnection.h \
@@ -23,7 +24,8 @@ HEADERS += \
     TgtSerialConnection.h \
     TgtFileConnection.h \
     TgtConnection.h \
-    CBException.h
+    CBException.h \
+    TgtProcessConnection.h
 unix:!symbian {
     maemo5 {
         target.path = /opt/usr/lib

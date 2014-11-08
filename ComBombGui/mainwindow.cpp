@@ -115,22 +115,31 @@ void MainWindow::on_actionOpen_triggered()
             boost::shared_ptr<TgtIntf> intf;
             switch (openDialog.getConnectionType())
             {
+                case OpenDialog::CB_CONN_SSH:
+                {
+                    boost::shared_ptr<const TgtSshIntf::TgtConnectionConfig> p = openDialog.getSshConfig();
+                    intf = TgtSshIntf::createSshConnection(p);
+                }
+                break;
+
                 case OpenDialog::CB_CONN_SERIAL:
                 {
                     boost::shared_ptr<const TgtSerialIntf::TgtConnectionConfig> p = openDialog.getSerialConfig();
                     intf = TgtSerialIntf::createSerialConnection(p);
                 }
                 break;
+
+                case OpenDialog::CB_CONN_PROCESS:
+                {
+                    boost::shared_ptr<const TgtProcessIntf::TgtConnectionConfig> p = openDialog.getProcessConfig();
+                    intf = TgtProcessIntf::createProcessConnection(p);
+                }
+                break;
+
                 case OpenDialog::CB_CONN_FILE:
                 {
                     boost::shared_ptr<const TgtFileIntf::TgtConnectionConfig> p = openDialog.getFileConfig();
                     intf = TgtFileIntf::createFileConnection(p);
-                }
-                break;
-                case OpenDialog::CB_CONN_SSH:
-                {
-                    boost::shared_ptr<const TgtSshIntf::TgtConnectionConfig> p = openDialog.getSshConfig();
-                    intf = TgtSshIntf::createSshConnection(p);
                 }
                 break;
             }

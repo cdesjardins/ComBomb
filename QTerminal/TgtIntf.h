@@ -31,7 +31,6 @@
 #include "../unparam.h"
 #include <QWidget>
 #include <fstream>
-//#define CB_TRAP_TO_FILE
 
 class TgtIntf : public QWidget
 {
@@ -82,9 +81,6 @@ protected:
 private:
     bool _running;
     boost::mutex _disconnectMutex;
-#ifdef CB_TRAP_TO_FILE
-    std::ofstream _trapFile;
-#endif
 };
 
 
