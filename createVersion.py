@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 #
 #   ComBomb - Terminal emulator
 #   Copyright (C) 2014  Chris Desjardins
@@ -17,7 +18,6 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-#!/usr/bin/env python
 import sys, os
 from subprocess import Popen, PIPE
 

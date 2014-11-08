@@ -21,4 +21,10 @@ Requires:
 python 2.6, or 2.7
 git must be in the path (for version number generation)
 
+ComBomb uses the following components:
 
+Cryptlib is used for ssh, Copyright 1992-2010 Peter Gutmann.
+http://www.cs.auckland.ac.nz/~pgut001/cryptlib/
+
+Icons from Free FatCow-Farm Fresh Icons
+http://www.fatcow.com/free-icons
