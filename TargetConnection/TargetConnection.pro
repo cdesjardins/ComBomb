@@ -15,14 +15,12 @@ SOURCES += \
     TgtTelnetConnection.cpp \
     TgtSshConnection.cpp \
     TgtSerialConnection.cpp \
-    TgtFileConnection.cpp \
     TgtProcessConnection.cpp
 
 HEADERS += \
     TgtTelnetConnection.h \
     TgtSshConnection.h \
     TgtSerialConnection.h \
-    TgtFileConnection.h \
     TgtConnection.h \
     CBException.h \
     TgtProcessConnection.h

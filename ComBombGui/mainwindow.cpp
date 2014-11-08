@@ -135,19 +135,15 @@ void MainWindow::on_actionOpen_triggered()
                     intf = TgtProcessIntf::createProcessConnection(p);
                 }
                 break;
-
-                case OpenDialog::CB_CONN_FILE:
-                {
-                    boost::shared_ptr<const TgtFileIntf::TgtConnectionConfig> p = openDialog.getFileConfig();
-                    intf = TgtFileIntf::createFileConnection(p);
-                }
-                break;
             }
             QTerminalConfig terminalConfig;
             ConfigDialog::getTerminalConfig(&terminalConfig);
             ChildForm* childForm = new ChildForm(terminalConfig, intf, this);
             connect(intf.get(), SIGNAL(updateStatusSignal(QString)), this, SLOT(updateStatusSlot(QString)));
-
+            if (openDialog.newlines() == true)
+            {
+                childForm->newlineToggle();
+            }
             QMdiSubWindow* subWindow = _mdiArea->addSubWindow(childForm);
             subWindow->show();
             _ui->statusBar->showMessage("Opened connection", 5000);

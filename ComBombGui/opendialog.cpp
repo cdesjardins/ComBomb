@@ -28,6 +28,9 @@
 
 #define CB_OPEN_SETTINGS_ROOT   "OpenDialog/"
 #define CB_OPEN_CONN_TYPE       CB_OPEN_SETTINGS_ROOT "ConnectionType"
+#define CB_OPEN_CONN_CRLF       CB_OPEN_SETTINGS_ROOT "NewLines"
+#define CB_OPEN_CONN_PB         CB_OPEN_SETTINGS_ROOT "Process/Browser"
+#define CB_OPEN_CONN_WDB        CB_OPEN_SETTINGS_ROOT "WorkingDir/Browser"
 
 OpenDialog::OpenDialog(QWidget* parent) :
     QDialog(parent),
@@ -44,22 +47,12 @@ OpenDialog::OpenDialog(QWidget* parent) :
     ui->passwordLineEdit->setEchoMode(QLineEdit::Password);
     QSettings settings;
     ui->tabWidget->setCurrentIndex(settings.value(CB_OPEN_CONN_TYPE, CB_CONN_SSH).toInt());
+    ui->newLineCheckBox->setChecked(settings.value(CB_OPEN_CONN_CRLF, false).toBool());
 }
 
 OpenDialog::ConnectionType OpenDialog::getConnectionType()
 {
     ConnectionType ret = (ConnectionType)ui->tabWidget->currentIndex();
-    return ret;
-}
-
-void OpenDialog::addFileConfig(const TgtFileIntf::TgtConnectionConfig &config)
-{
-    ui->fileNameComboBox->addItem(config._fileName.c_str());
-}
-
-boost::shared_ptr<const TgtFileIntf::TgtConnectionConfig> OpenDialog::getFileConfig() const
-{
-    boost::shared_ptr<TgtFileIntf::TgtConnectionConfig> ret(new TgtFileIntf::TgtConnectionConfig(ui->fileNameComboBox->currentText().toLocal8Bit().constData()));
     return ret;
 }
 
@@ -191,16 +184,6 @@ void OpenDialog::addComPorts()
     }
 }
 
-void OpenDialog::on_browseButton_clicked()
-{
-    QString fileName;
-    QString startDir = ui->fileNameComboBox->currentText();
-
-    fileName = QFileDialog::getOpenFileName(this, tr("All files"), startDir, tr("All files (*.*)"));
-    ui->fileNameComboBox->insertItem(0, fileName);
-    ui->fileNameComboBox->setCurrentIndex(0);
-}
-
 void OpenDialog::on_privKeyBrowseButton_clicked()
 {
     QString fileName;
@@ -221,4 +204,35 @@ void OpenDialog::on__buttonBox_accepted()
 {
     QSettings settings;
     settings.setValue(CB_OPEN_CONN_TYPE, getConnectionType());
+    settings.setValue(CB_OPEN_CONN_CRLF, newlines());
+}
+
+bool OpenDialog::newlines()
+{
+    return ui->newLineCheckBox->isChecked();
+}
+
+void OpenDialog::on_programBrowseButton_clicked()
+{
+    QSettings settings;
+    QString fileName;
+    QString dirName = settings.value(CB_OPEN_CONN_PB, QString()).toString();
+    fileName = QFileDialog::getOpenFileName(this, tr("Programs"), dirName, tr("Executable files (*.exe);;All files (*.*)"));
+    if (fileName.isNull() == false)
+    {
+        settings.setValue(CB_OPEN_CONN_PB, QFileInfo(fileName).canonicalPath());
+        ui->programComboBox->addOrUpdateItem(fileName);
+    }
+}
+
+void OpenDialog::on_workingDirButton_clicked()
+{
+    QSettings settings;
+    QString dirName = settings.value(CB_OPEN_CONN_WDB, QString()).toString();
+    dirName = QFileDialog::getExistingDirectory(this, tr("Working directory"), dirName);
+    if (dirName.isNull() == false)
+    {
+       settings.setValue(CB_OPEN_CONN_WDB, dirName);
+       ui->workingDirComboBox->addOrUpdateItem(dirName);
+    }
 }

@@ -36,7 +36,6 @@ public:
         CB_CONN_SSH,
         CB_CONN_SERIAL,
         CB_CONN_PROCESS,
-        CB_CONN_FILE
     };
 
     explicit OpenDialog(QWidget* parent = 0);
@@ -45,18 +44,20 @@ public:
     boost::shared_ptr<const TgtSshIntf::TgtConnectionConfig> getSshConfig() const;
     boost::shared_ptr<const TgtSerialIntf::TgtConnectionConfig> getSerialConfig() const;
     boost::shared_ptr<const TgtProcessIntf::TgtConnectionConfig> getProcessConfig() const;
-    boost::shared_ptr<const TgtFileIntf::TgtConnectionConfig> getFileConfig() const;
-
-    void addFileConfig(const TgtFileIntf::TgtConnectionConfig &config);
     void addSshConfig(const TgtSshIntf::TgtConnectionConfig &config);
 
     ConnectionType getConnectionType();
 
+    bool newlines();
+
 private slots:
-    void on_browseButton_clicked();
     void hostNameSelectionChanged(int x);
     void on_privKeyBrowseButton_clicked();
     void on__buttonBox_accepted();
+
+    void on_programBrowseButton_clicked();
+
+    void on_workingDirButton_clicked();
 
 private:
     void addComPorts();
