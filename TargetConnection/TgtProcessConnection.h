@@ -20,6 +20,9 @@
 #define CB_TGT_PROCESS_CONNECTION_H
 
 #include "QTerminal/TgtIntf.h"
+#ifndef Q_MOC_RUN
+#include <boost/thread.hpp>
+#endif
 #include <QProcess>
 #include <QMutex>
 

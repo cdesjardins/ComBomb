@@ -16,9 +16,10 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 #include "TgtProcessConnection.h"
 #include <boost/bind.hpp>
-#include <boost/thread.hpp>
+
 
 boost::shared_ptr<TgtProcessIntf> TgtProcessIntf::createProcessConnection(const boost::shared_ptr<const TgtConnectionConfig> &config)
 {
