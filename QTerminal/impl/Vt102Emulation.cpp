@@ -1419,6 +1419,7 @@ char Vt102Emulation::getErase() const
     \sa ReportErrorToken
 */
 
+#ifdef QT_DEBUG
 static void hexdump(int* s, int len)
 {
     int i;
@@ -1441,7 +1442,6 @@ static void hexdump(int* s, int len)
     qDebug(stream.str().c_str());
 }
 
-#ifdef QT_DEBUG
 void Vt102Emulation::scan_buffer_report()
 {
     if (ppos == 0 || (ppos == 1 && (pbuf[0] & 0xff) >= 32))
