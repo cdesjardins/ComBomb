@@ -49,6 +49,7 @@ protected:
 private slots:
     void openWindowSlot();
     void closeWindowSlot();
+    void subWindowActivatedSlot(QMdiSubWindow* subWindow);
     void updateStatusSlot(QString status);
     void on_actionOpen_triggered();
     void on_actionExit_triggered();

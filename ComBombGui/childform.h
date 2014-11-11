@@ -38,6 +38,7 @@ public:
     void findText();
     void findTextNext(const bool backward);
     void findTextHighlighted();
+    bool isProcessRunning();
     virtual ~ChildForm();
 private slots:
     void updateTitleSlot(QString title);

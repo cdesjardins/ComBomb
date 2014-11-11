@@ -57,6 +57,7 @@ MainWindow::MainWindow(QWidget* parent) :
     enableMenuItems(false);
     readSettings();
     _runProcessIconText = _ui->action_Run_Process->text();
+    connect(_mdiArea, SIGNAL(subWindowActivated(QMdiSubWindow*)), this, SLOT(subWindowActivatedSlot(QMdiSubWindow*)));
 }
 
 void MainWindow::enableMenuItems(bool enabled)
@@ -187,6 +188,15 @@ void MainWindow::closeWindowSlot()
     if (cnt == 1)
     {
         enableMenuItems(false);
+    }
+}
+
+void MainWindow::subWindowActivatedSlot(QMdiSubWindow* subWindow)
+{
+    if (subWindow != NULL)
+    {
+        ChildForm* childForm = dynamic_cast<ChildForm*>(subWindow->widget());
+        swapProcessIcon(childForm->isProcessRunning());
     }
 }
 

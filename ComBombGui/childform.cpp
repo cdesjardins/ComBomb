@@ -244,3 +244,8 @@ void ChildForm::deleteProcess()
     suppressOutput(false);
     MainWindow::getMainWindow()->swapProcessIcon(false);
 }
+
+bool ChildForm::isProcessRunning()
+{
+    return ((_procError == false) && (_proc != NULL));
+}
