@@ -25,6 +25,7 @@
 #define TERMINAL_CHARACTER_DECODER_H
 
 #include "Character.h"
+#include <vector>
 
 class QTextStream;
 
