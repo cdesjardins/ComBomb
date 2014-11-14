@@ -27,7 +27,7 @@ CBListWidget::CBListWidget(QWidget* parent)
 
 void CBListWidget::itemChangedSlot(QListWidgetItem* changedItem)
 {
-    QListWidgetItem* lastItem = item (count() - 1);
+    QListWidgetItem* lastItem = item(count() - 1);
     if (lastItem == changedItem)
     {
         if (changedItem->text().length() > 0)
@@ -48,7 +48,7 @@ void CBListWidget::addBlankItem()
 {
     QListWidgetItem* newBlankItem;
     newBlankItem = new QListWidgetItem("");
-    newBlankItem->setFlags(newBlankItem->flags () | Qt::ItemIsEditable);
+    newBlankItem->setFlags(newBlankItem->flags() | Qt::ItemIsEditable);
     addItem(newBlankItem);
 }
 

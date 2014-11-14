@@ -576,7 +576,7 @@ private:
     int _lines;
     int _columns;
 
-    std::vector<std::vector<Character> > _screenLines;             // [lines]
+    std::vector<std::vector<Character> > _screenLines; // [lines]
     int _scrolledLines;
     QRect _lastScrolledRegion;
 
@@ -592,13 +592,13 @@ private:
     int _cursorY;
 
     // cursor color and rendition info
-    CharacterColor _cursorFg;      // foreground
-    CharacterColor _cursorBg;      // background
-    quint8 _cursorRe;      // rendition
+    CharacterColor _cursorFg; // foreground
+    CharacterColor _cursorBg; // background
+    quint8 _cursorRe; // rendition
 
     // margins ----------------
-    int _topMargin;      // top margin
-    int _bottomMargin;      // bottom margin
+    int _topMargin; // top margin
+    int _bottomMargin; // bottom margin
 
     // states ----------------
     ScreenParm _currParm;
@@ -609,13 +609,13 @@ private:
 
     // selection -------------------
     int _selectionBegin; // The first location selected.
-    int _selectionTopLeft;    // TopLeft Location.
-    int _selectionBottomRight;    // Bottom Right Location.
+    int _selectionTopLeft; // TopLeft Location.
+    int _selectionBottomRight; // Bottom Right Location.
 
     // effective colors and rendition ------------
-    CharacterColor _effectiveCursorFg;      // These are derived from
-    CharacterColor _effectiveCursorBg;      // the cu_* variables above
-    quint8 _effectiveCursorRe;      // to speed up operation
+    CharacterColor _effectiveCursorFg; // These are derived from
+    CharacterColor _effectiveCursorBg; // the cu_* variables above
+    quint8 _effectiveCursorRe; // to speed up operation
 
     //
     // save cursor, rendition & states ------------

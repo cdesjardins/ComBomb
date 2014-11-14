@@ -57,8 +57,8 @@ struct CharCodes
     // coding info
     char charset[4]; //
     int  cu_cs;    // actual charset.
-    bool graphic;  // Some VT100 tricks
-    bool pound;    // Some VT100 tricks
+    bool graphic; // Some VT100 tricks
+    bool pound; // Some VT100 tricks
     bool sa_graphic; // saved graphic
     bool sa_pound; // saved pound
 };

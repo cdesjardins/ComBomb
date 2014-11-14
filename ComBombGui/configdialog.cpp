@@ -113,7 +113,7 @@ void ConfigDialog::populateComPortListWidget()
     for (QStringList::iterator it = comPorts.begin(); it != comPorts.end(); ++it)
     {
         item = new QListWidgetItem(*it);
-        item->setFlags(item->flags () | Qt::ItemIsEditable);
+        item->setFlags(item->flags() | Qt::ItemIsEditable);
         ui->comPortsList->insertItem(row++, item);
     }
 }

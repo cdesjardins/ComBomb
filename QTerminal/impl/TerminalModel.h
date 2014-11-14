@@ -300,7 +300,7 @@ private:
 
     boost::scoped_ptr<SelfListener> _selfListener;
 
-    QColor _modifiedBackground;       // as set by: echo -en '\033]11;Color\007
+    QColor _modifiedBackground; // as set by: echo -en '\033]11;Color\007
 
     QString _profileKey;
 

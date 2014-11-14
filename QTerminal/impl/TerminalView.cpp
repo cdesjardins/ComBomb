@@ -598,7 +598,7 @@ void TerminalView::drawBackground(QPainter& painter, const QRect& rect, const QC
 void TerminalView::drawCursor(QPainter& painter,
                               const QRect& rect,
                               const QColor& foregroundColor,
-                              const QColor& /*backgroundColor*/,
+                              const QColor&/*backgroundColor*/,
                               bool& invertCharacterColor)
 {
     QRect cursorRect = rect;
@@ -844,8 +844,8 @@ int TerminalView::resizePaint(const int columnsToUpdate, const std::vector<Chara
     int len;
     int updateLine = 0;
     int cr  = -1; // undefined
-    CharacterColor cf;     // undefined
-    CharacterColor _clipboard;     // undefined
+    CharacterColor cf; // undefined
+    CharacterColor _clipboard; // undefined
     for (int x = 0; x < columnsToUpdate; x++)
     {
         _hasBlinker |= (newLine[x]._rendition & RENDITION_BLINK);
@@ -1145,7 +1145,7 @@ void TerminalView::paintEvent(QPaintEvent* pe)
     QPainter paint(this);
     //qDebug("%s %d paintEvent %d %d", __FILE__, __LINE__, paint.window().top(), paint.window().right());
 
-    foreach (QRect rect, (pe->region() & contentsRect()).rects())
+    foreach(QRect rect, (pe->region() & contentsRect()).rects())
     {
         drawBackground(paint, rect, palette().background().color());
         drawContents(paint, rect);
@@ -1621,7 +1621,7 @@ void TerminalView::mousePressEvent(QMouseEvent* ev)
         }
     }
 
-    QWidget::mousePressEvent (ev);
+    QWidget::mousePressEvent(ev);
 }
 
 void TerminalView::mouseMoveEvent(QMouseEvent* ev)
@@ -2584,7 +2584,7 @@ void TerminalView::calcGeometry()
     }
 
     _topMargin = DEFAULT_TOP_MARGIN;
-    _contentHeight = contentsRect().height() - 2 * DEFAULT_TOP_MARGIN + /* mysterious */ 1;
+    _contentHeight = contentsRect().height() - 2 * DEFAULT_TOP_MARGIN +/* mysterious */ 1;
 
     if (!_isFixedSize)
     {

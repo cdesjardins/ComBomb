@@ -203,7 +203,7 @@ void TerminalModel::activityStateSet(int state)
     emit stateChanged(state);
 }
 
-void TerminalModel::onViewSizeChange(int /*height*/, int /*width*/)
+void TerminalModel::onViewSizeChange(int/*height*/, int/*width*/)
 {
     updateTerminalSize();
 }
