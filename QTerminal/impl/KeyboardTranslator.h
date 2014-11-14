@@ -34,7 +34,7 @@
 
 #include <boost/thread/mutex.hpp>
 
-typedef void (* CleanUpFunction)();
+typedef void (*CleanUpFunction)();
 
 /**
  * @internal
@@ -503,14 +503,14 @@ private:
 
     void findTranslators(); // locate the available translators
     boost::shared_ptr<KeyboardTranslator> loadTranslator(const QString& name); // loads the translator
-                                                             // with the given name
+    // with the given name
     boost::shared_ptr<KeyboardTranslator> loadTranslator(QIODevice* device, const QString& name);
 
     bool saveTranslator(const boost::shared_ptr<KeyboardTranslator> translator);
     QString findTranslatorPath(const QString& name);
 
     QHash<QString, boost::shared_ptr<KeyboardTranslator> > _translators; // maps translator-name -> KeyboardTranslator
-                                                      // instance
+    // instance
     bool _haveLoadedAll;
 };
 

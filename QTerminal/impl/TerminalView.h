@@ -142,6 +142,7 @@ public:
     {
         return _tripleClickMode;
     }
+
     void selectAll();
     void emitSelection(bool useXselection, bool appendReturn);
 

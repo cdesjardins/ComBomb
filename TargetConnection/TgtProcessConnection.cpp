@@ -20,7 +20,6 @@
 #include "TgtProcessConnection.h"
 #include <boost/bind.hpp>
 
-
 boost::shared_ptr<TgtProcessIntf> TgtProcessIntf::createProcessConnection(const boost::shared_ptr<const TgtConnectionConfig> &config)
 {
     boost::shared_ptr<TgtProcessIntf> ret(new TgtProcessIntf(config));
@@ -51,10 +50,9 @@ void TgtProcessIntf::tgtMakeConnection()
 
 TgtProcessIntf::TgtProcessIntf(const boost::shared_ptr<const TgtConnectionConfig> &config)
     : TgtIntf(config),
-      _proc(NULL),
-      _processMutex(QMutex::Recursive)
+    _proc(NULL),
+    _processMutex(QMutex::Recursive)
 {
-
 }
 
 TgtProcessIntf::~TgtProcessIntf()
@@ -62,7 +60,6 @@ TgtProcessIntf::~TgtProcessIntf()
     tgtDisconnect();
     deleteProcess();
 }
-
 
 int TgtProcessIntf::tgtBreakConnection()
 {
@@ -88,7 +85,6 @@ void TgtProcessIntf::tgtGetTitle(std::string* szTitle)
     boost::shared_ptr<const TgtConnectionConfig> connectionConfig = boost::dynamic_pointer_cast<const TgtConnectionConfig>(_connectionConfig);
     *szTitle = connectionConfig->_program;
 }
-
 
 void TgtProcessIntf::writerThread()
 {
@@ -169,7 +165,7 @@ void TgtProcessIntf::processDone(int, QProcess::ExitStatus)
     deleteProcess();
 }
 
-void TgtProcessIntf::closeEvent(QCloseEvent* )
+void TgtProcessIntf::closeEvent(QCloseEvent*)
 {
     deleteProcess();
 }
@@ -177,7 +173,7 @@ void TgtProcessIntf::closeEvent(QCloseEvent* )
 void TgtProcessIntf::deleteProcess()
 {
     _processMutex.lock();
-    QProcess *p = _proc;
+    QProcess* p = _proc;
     _proc = NULL;
     _processMutex.unlock();
     if (p != NULL)
@@ -185,3 +181,4 @@ void TgtProcessIntf::deleteProcess()
         delete p;
     }
 }
+

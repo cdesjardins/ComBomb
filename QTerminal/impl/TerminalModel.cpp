@@ -69,7 +69,7 @@ TerminalModel::TerminalModel(const boost::shared_ptr<TgtIntf> &targetInterface) 
 
     connectToRecvText(this);
 
-    connect(_emulation.get(), SIGNAL(sendData(const char*, int)) , this, SLOT(sendData(const char*, int)));
+    connect(_emulation.get(), SIGNAL(sendData(const char*, int)), this, SLOT(sendData(const char*, int)));
 
     //setup timer for monitoring session activity
     _monitorTimer.reset(new QTimer(this));
@@ -77,7 +77,7 @@ TerminalModel::TerminalModel(const boost::shared_ptr<TgtIntf> &targetInterface) 
     connect(_monitorTimer.get(), SIGNAL(timeout()), this, SLOT(monitorTimerDone()));
 }
 
-void TerminalModel::connectToRecvText(QObject *who)
+void TerminalModel::connectToRecvText(QObject* who)
 {
     connect(_selfListener.get(), SIGNAL(recvData(boost::intrusive_ptr<RefCntBuffer>)), who, SLOT(onReceiveBlock(boost::intrusive_ptr<RefCntBuffer>)));
 }
@@ -250,7 +250,7 @@ void TerminalModel::refresh()
 {
 }
 
-void TerminalModel::closeEvent(QCloseEvent * )
+void TerminalModel::closeEvent(QCloseEvent*)
 {
     _closed = true;
     _targetInterface->tgtDisconnect();
@@ -417,3 +417,4 @@ int TerminalModel::lineCount()
 {
     return _emulation->lineCount();
 }
+

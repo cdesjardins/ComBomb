@@ -55,7 +55,6 @@
 #define loc(X, Y) ((Y)*_columns + (X))
 #endif
 
-
 //#define REVERSE_WRAPPED_LINES  // for wrapped line debug
 
 Screen::Screen(const boost::shared_ptr<HistoryScroll> &hist, int l, int c)
@@ -258,7 +257,8 @@ void Screen::reverseIndex()
 void Screen::NextLine()
 //=NEL
 {
-    Return(); index();
+    Return();
+    index();
 }
 
 void Screen::eraseChars(int n)
@@ -296,8 +296,8 @@ void Screen::deleteChars(int n)
     Q_ASSERT((size_t)_cursorX + n < _screenLines[screenLineIndex(_cursorY)].size());
 
     _screenLines[screenLineIndex(_cursorY)].erase(
-            _screenLines[screenLineIndex(_cursorY)].begin() + _cursorX,
-            _screenLines[screenLineIndex(_cursorY)].begin() + _cursorX + n);
+        _screenLines[screenLineIndex(_cursorY)].begin() + _cursorX,
+        _screenLines[screenLineIndex(_cursorY)].begin() + _cursorX + n);
 }
 
 void Screen::insertChars(int n)
@@ -351,7 +351,10 @@ void Screen::setMode(int m)
     _currParm.mode[m] = true;
     switch (m)
     {
-        case MODE_Origin: _cursorX = 0; _cursorY = _topMargin; break; //FIXME: home
+        case MODE_Origin:
+            _cursorX = 0;
+            _cursorY = _topMargin;
+            break;                                                    //FIXME: home
     }
 }
 
@@ -362,7 +365,10 @@ void Screen::resetMode(int m)
     _currParm.mode[m] = false;
     switch (m)
     {
-        case MODE_Origin: _cursorX = 0; _cursorY = 0; break; //FIXME: home
+        case MODE_Origin:
+            _cursorX = 0;
+            _cursorY = 0;
+            break;                                           //FIXME: home
     }
 }
 
@@ -700,9 +706,12 @@ std::vector<LineProperty> Screen::getLineProperties(int startLine, int endLine) 
 
 void Screen::reset(bool clearScreen)
 {
-    setMode(MODE_Wrap); saveMode(MODE_Wrap);      // wrap at end of margin
-    resetMode(MODE_Origin); saveMode(MODE_Origin); // position refere to [1,1]
-    resetMode(MODE_Insert); saveMode(MODE_Insert); // overstroke
+    setMode(MODE_Wrap);
+    saveMode(MODE_Wrap);                          // wrap at end of margin
+    resetMode(MODE_Origin);
+    saveMode(MODE_Origin);                         // position refere to [1,1]
+    resetMode(MODE_Insert);
+    saveMode(MODE_Insert);                         // overstroke
     setMode(MODE_Cursor);                         // cursor visible
     resetMode(MODE_Screen);                       // screen not inverse
     resetMode(MODE_NewLine);
@@ -1031,7 +1040,8 @@ void Screen::scrollDown(int from, int n)
 
 void Screen::setCursorYX(int y, int x)
 {
-    setCursorY(y); setCursorX(x);
+    setCursorY(y);
+    setCursorX(x);
 }
 
 void Screen::setCursorX(int x)
@@ -1458,7 +1468,7 @@ long Screen::findLineStart(const long line)
     return ret;
 }
 
-long Screen::writeLineToString(long *line, QString &result)
+long Screen::writeLineToString(long* line, QString &result)
 {
     long ret = 0;
     QTextStream stream(&result, QIODevice::ReadWrite);
@@ -1534,7 +1544,7 @@ void Screen::copyLineToStream(int line,
                               int count,
                               TerminalCharacterDecoder* decoder,
                               bool appendNewLine,
-                              LineProperty *currentLineProperties)
+                              LineProperty* currentLineProperties)
 {
     //buffer to hold characters for decoding
     //the buffer is static to avoid initialising every
@@ -1608,14 +1618,14 @@ void Screen::copyLineToStream(int line,
     //do not decode trailing whitespace characters
     for (int i = count - 1; i >= 0; i--)
     {
-       if (((characterBuffer[i]._rendition & RENDITION_RENDER) == 0) && QChar(characterBuffer[i].getChar()).isSpace())
-       {
-           count--;
-       }
-       else
-       {
-           break;
-       }
+        if (((characterBuffer[i]._rendition & RENDITION_RENDER) == 0) && QChar(characterBuffer[i].getChar()).isSpace())
+        {
+            count--;
+        }
+        else
+        {
+            break;
+        }
     }
     // add new line character at end
     const bool omitLineBreak = ((*currentLineProperties) & LINE_WRAPPED);

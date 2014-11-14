@@ -25,7 +25,6 @@
 #include <QSettings>
 #include <boost/asio/serial_port.hpp>
 
-
 #define CB_OPEN_SETTINGS_ROOT   "OpenDialog/"
 #define CB_OPEN_CONN_TYPE       CB_OPEN_SETTINGS_ROOT "ConnectionType"
 #define CB_OPEN_CONN_CRLF       CB_OPEN_SETTINGS_ROOT "NewLines"
@@ -232,7 +231,8 @@ void OpenDialog::on_workingDirButton_clicked()
     dirName = QFileDialog::getExistingDirectory(this, tr("Working directory"), dirName);
     if (dirName.isNull() == false)
     {
-       settings.setValue(CB_OPEN_CONN_WDB, dirName);
-       ui->workingDirComboBox->addOrUpdateItem(dirName);
+        settings.setValue(CB_OPEN_CONN_WDB, dirName);
+        ui->workingDirComboBox->addOrUpdateItem(dirName);
     }
 }
+

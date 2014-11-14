@@ -44,7 +44,7 @@ public:
 protected:
     explicit MainWindow(QWidget* parent = 0);
     void enableMenuItems(bool enabled);
-    void closeEvent(QCloseEvent *event);
+    void closeEvent(QCloseEvent* event);
     void readSettings();
 private slots:
     void openWindowSlot();

@@ -200,26 +200,26 @@ void TerminalView::fontChange(const QFont&)
 #if 0
     std::stringstream s;
     s
-        << std::setw(20)<<  font().family().toLocal8Bit().constData()
-        << std::setw(3) <<  font().pointSizeF()
-        << std::setw(3) <<  font().pixelSize()
-        << std::setw(3) <<  font().styleHint()
-        << std::setw(3) <<  font().weight()
-        << std::setw(3) <<  font().style()
-        << std::setw(3) <<  font().underline()
-        << std::setw(3) <<  font().strikeOut()
-        << std::setw(3) <<  font().fixedPitch()
-        << std::setw(3) <<  font().rawMode()
-        << std::setw(3) <<  _fontMetrics.ascent()
-        << std::setw(3) <<  _fontMetrics.averageCharWidth()
-        << std::setw(3) <<  _fontMetrics.descent()
-        << std::setw(3) <<  _fontMetrics.height()
-        << std::setw(3) <<  _fontMetrics.leading()
-        << std::setw(3) <<  _fontMetrics.lineSpacing()
-        << std::setw(3) <<  _fontMetrics.lineWidth()
-        << std::setw(3) <<  _fontMetrics.maxWidth()
-        << std::setw(3) <<  _fontMetrics.overlinePos()
-        << std::setw(3) <<  _fontMetrics.xHeight();
+    << std::setw(20) <<  font().family().toLocal8Bit().constData()
+    << std::setw(3) <<  font().pointSizeF()
+    << std::setw(3) <<  font().pixelSize()
+    << std::setw(3) <<  font().styleHint()
+    << std::setw(3) <<  font().weight()
+    << std::setw(3) <<  font().style()
+    << std::setw(3) <<  font().underline()
+    << std::setw(3) <<  font().strikeOut()
+    << std::setw(3) <<  font().fixedPitch()
+    << std::setw(3) <<  font().rawMode()
+    << std::setw(3) <<  _fontMetrics.ascent()
+    << std::setw(3) <<  _fontMetrics.averageCharWidth()
+    << std::setw(3) <<  _fontMetrics.descent()
+    << std::setw(3) <<  _fontMetrics.height()
+    << std::setw(3) <<  _fontMetrics.leading()
+    << std::setw(3) <<  _fontMetrics.lineSpacing()
+    << std::setw(3) <<  _fontMetrics.lineWidth()
+    << std::setw(3) <<  _fontMetrics.maxWidth()
+    << std::setw(3) <<  _fontMetrics.overlinePos()
+    << std::setw(3) <<  _fontMetrics.xHeight();
 
     qDebug("%s", s.str().c_str());
 #endif
@@ -882,11 +882,11 @@ int TerminalView::resizePaint(const int columnsToUpdate, const std::vector<Chara
                 bool nextIsDoubleWidth = (x + len + 1 == columnsToUpdate) ? false : (newLine[x + len + 1].getChar() == 0);
 
                 if (ch._foregroundColor != cf ||
-                        ch._backgroundColor != _clipboard ||
-                        ch._rendition != cr ||
-                        !dirtyMask[x + len] ||
-                        isLineChar(c) != lineDraw ||
-                        nextIsDoubleWidth != doubleWidth)
+                    ch._backgroundColor != _clipboard ||
+                    ch._rendition != cr ||
+                    !dirtyMask[x + len] ||
+                    isLineChar(c) != lineDraw ||
+                    nextIsDoubleWidth != doubleWidth)
                 {
                     break;
                 }
@@ -965,7 +965,6 @@ void TerminalView::updateImage()
     int tLx = tL.x();
     int tLy = tL.y();
     _hasBlinker = false;
-
 
     const int linesToUpdate = qMin(this->_lines, qMax(0, lines));
     const int columnsToUpdate = qMin(this->_columns, qMax(0, columns));
@@ -1076,7 +1075,8 @@ void TerminalView::updateImage()
     }
     if (!_hasBlinker && _blinkTimer->isActive())
     {
-        _blinkTimer->stop(); _blinking = false;
+        _blinkTimer->stop();
+        _blinking = false;
     }
     delete[] dirtyMask;
     delete[] disstrU;
@@ -1871,7 +1871,6 @@ void TerminalView::extendSelection(const QPoint& position)
     int offset = 0;
     if (!_wordSelectionMode && !_lineSelectionMode)
     {
-
         int i = 0;
         int selClass = 0;
 
@@ -2555,9 +2554,9 @@ void TerminalView::clearImage()
     {
         _image[i].setChar(' ');
         _image[i]._foregroundColor = CharacterColor(COLOR_SPACE_DEFAULT,
-                                                   DEFAULT_FORE_COLOR);
+                                                    DEFAULT_FORE_COLOR);
         _image[i]._backgroundColor = CharacterColor(COLOR_SPACE_DEFAULT,
-                                                   DEFAULT_BACK_COLOR);
+                                                    DEFAULT_BACK_COLOR);
         _image[i]._rendition = DEFAULT_RENDITION;
     }
 }
@@ -2737,3 +2736,4 @@ void TerminalView::setTrackOutput(bool trackOutput)
 {
     _screenWindow->setTrackOutput(trackOutput);
 }
+

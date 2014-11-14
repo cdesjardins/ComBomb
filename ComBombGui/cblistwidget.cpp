@@ -18,7 +18,7 @@
 */
 #include "cblistwidget.h"
 
-CBListWidget::CBListWidget(QWidget * parent)
+CBListWidget::CBListWidget(QWidget* parent)
     : QListWidget(parent)
 {
     addBlankItem();
@@ -51,3 +51,4 @@ void CBListWidget::addBlankItem()
     newBlankItem->setFlags(newBlankItem->flags () | Qt::ItemIsEditable);
     addItem(newBlankItem);
 }
+

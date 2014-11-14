@@ -77,6 +77,4 @@ protected:
     char _throwAway[1024];
 };
 
-
-
 #endif

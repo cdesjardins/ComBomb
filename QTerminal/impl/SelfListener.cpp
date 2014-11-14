@@ -38,7 +38,6 @@ void SelfListener::join()
 
 void SelfListener::run()
 {
-
     while (_running)
     {
         boost::intrusive_ptr<RefCntBuffer> b;

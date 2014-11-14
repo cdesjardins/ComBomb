@@ -20,7 +20,7 @@
 #include <QSettings>
 #include <QDialog>
 
-CBComboBox::CBComboBox(QWidget *parent) :
+CBComboBox::CBComboBox(QWidget* parent) :
     QComboBox(parent),
     _saved(false),
     _restored(false)
@@ -34,10 +34,10 @@ CBComboBox::~CBComboBox()
 QString CBComboBox::getName()
 {
     QString ret;
-    QWidget *w = parentWidget();
+    QWidget* w = parentWidget();
     for (int i = 0; ((i < 15) && (w != NULL)); i++)
     {
-        QDialog *d = qobject_cast<QDialog*>(w);
+        QDialog* d = qobject_cast<QDialog*>(w);
         if (d != NULL)
         {
             ret = (d->objectName() + "/" + objectName());
@@ -176,3 +176,4 @@ void CBComboBox::setDefault(const QString &defaultVal)
 {
     _default = defaultVal;
 }
+

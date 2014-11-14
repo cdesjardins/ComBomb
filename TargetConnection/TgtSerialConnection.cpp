@@ -107,7 +107,6 @@ void TgtSerialIntf::tgtStopService()
 
 void TgtSerialIntf::tgtReadCallback(const boost::system::error_code& error, const size_t bytesTransferred)
 {
-
     if (!error)
     {
         boost::asio::mutable_buffer buffer;

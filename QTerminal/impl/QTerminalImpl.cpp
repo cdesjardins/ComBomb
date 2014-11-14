@@ -60,11 +60,11 @@ void QTerminalImpl::initialize(const QTerminalConfig &terminalConfig, const boos
     _terminalView->installEventFilter(this);
 }
 
-bool QTerminalImpl::eventFilter(QObject *, QEvent *event)
+bool QTerminalImpl::eventFilter(QObject*, QEvent* event)
 {
     if (event->type() == QEvent::KeyPress)
     {
-        QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+        QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
         if (keyEvent->key() == Qt::Key_Backtab)
         {
             // Absorb backtab and post a new backtab event.
@@ -86,7 +86,7 @@ QTerminalImpl::~QTerminalImpl()
     _terminalView.reset();
 }
 
-void QTerminalImpl::connectToRecvText(QObject *who)
+void QTerminalImpl::connectToRecvText(QObject* who)
 {
     _terminalModel->connectToRecvText(who);
 }
@@ -154,9 +154,15 @@ void QTerminalImpl::setCursorType(CursorType type, bool blinking)
 {
     switch (type)
     {
-        case UnderlineCursor: _terminalView->setKeyboardCursorShape(TerminalView::UnderlineCursor); break;
-        case BlockCursor: _terminalView->setKeyboardCursorShape(TerminalView::BlockCursor); break;
-        case IBeamCursor: _terminalView->setKeyboardCursorShape(TerminalView::IBeamCursor); break;
+        case UnderlineCursor:
+            _terminalView->setKeyboardCursorShape(TerminalView::UnderlineCursor);
+            break;
+        case BlockCursor:
+            _terminalView->setKeyboardCursorShape(TerminalView::BlockCursor);
+            break;
+        case IBeamCursor:
+            _terminalView->setKeyboardCursorShape(TerminalView::IBeamCursor);
+            break;
     }
     _terminalView->setBlinkingCursor(blinking);
 }
@@ -214,3 +220,4 @@ void QTerminalImpl::setTrackOutput(bool trackOutput)
 {
     _terminalView->setTrackOutput(trackOutput);
 }
+

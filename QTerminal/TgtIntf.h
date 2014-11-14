@@ -83,5 +83,4 @@ private:
     boost::mutex _disconnectMutex;
 };
 
-
 #endif // TGTINTF_H

@@ -162,7 +162,8 @@ public:
      */
     bool utf8()
     {
-        Q_ASSERT(_codec); return _codec->mibEnum() == 106;
+        Q_ASSERT(_codec);
+        return _codec->mibEnum() == 106;
     }
 
     /** TODO Document me */

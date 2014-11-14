@@ -51,7 +51,8 @@ class TerminalView;
  * or send input to the program in the terminal in the form of keypresses and mouse
  * activity.
  */
-class TerminalModel : public QObject {
+class TerminalModel : public QObject
+{
     Q_OBJECT
 
 public:
@@ -186,10 +187,10 @@ public:
      */
     void refresh();
     void newlineToggle();
-    void connectToRecvText(QObject *who);
+    void connectToRecvText(QObject* who);
     int lineCount();
 protected:
-    virtual void closeEvent(QCloseEvent * event);
+    virtual void closeEvent(QCloseEvent* event);
 public slots:
 
     /**

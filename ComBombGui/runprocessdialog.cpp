@@ -29,7 +29,7 @@
 #define CB_RUN_PROCESS_SETTINGS_STDERR  CB_RUN_PROCESS_SETTINGS_ROOT + "/StderrRedir"
 #define CB_RUN_PROCESS_SETTINGS_OUTPUT  CB_RUN_PROCESS_SETTINGS_ROOT + "/SupressOutput"
 
-RunProcessDialog::RunProcessDialog(QWidget *parent) :
+RunProcessDialog::RunProcessDialog(QWidget* parent) :
     CBDialog(parent),
     ui(new Ui::RunProcessDialog)
 {
@@ -74,8 +74,8 @@ void RunProcessDialog::on_workingDirBrowseButton_clicked()
     dirName = QFileDialog::getExistingDirectory(this, tr("Working directory"), dirName);
     if (dirName.isNull() == false)
     {
-       settings.setValue(CB_RUN_PROCESS_SETTINGS_WDB, dirName);
-       ui->workingDirComboBox->addOrUpdateItem(dirName);
+        settings.setValue(CB_RUN_PROCESS_SETTINGS_WDB, dirName);
+        ui->workingDirComboBox->addOrUpdateItem(dirName);
     }
 }
 
@@ -110,3 +110,4 @@ bool RunProcessDialog::isOutputSuppressed()
 {
     return ui->suppressOutputCheckBox->isChecked();
 }
+

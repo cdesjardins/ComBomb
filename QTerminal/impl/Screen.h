@@ -461,7 +461,7 @@ public:
      * be inserted into the returned text at the end of each terminal line.
      */
     void writeSelectionToStream(TerminalCharacterDecoder* decoder);
-    long writeLineToString(long *line, QString &result);
+    long writeLineToString(long* line, QString &result);
     /** TODO Document me */
     void checkSelection(int from, int to);
 
@@ -537,7 +537,7 @@ private:
     //count - the number of characters on the line to copy
     //decoder - a decoder which coverts terminal characters (an Character array) into text
     //appendNewLine - if true a new line character (\n) is appended to the end of the line
-    void copyLineToStream(int line, int start, int count, TerminalCharacterDecoder* decoder, bool appendNewLine, LineProperty *currentLineProperties);
+    void copyLineToStream(int line, int start, int count, TerminalCharacterDecoder* decoder, bool appendNewLine, LineProperty* currentLineProperties);
 
     //fills a section of the screen image with the character 'c'
     //the parameters are specified as offsets from the start of the screen image.
