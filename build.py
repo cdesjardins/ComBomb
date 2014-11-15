@@ -110,8 +110,7 @@ def buildLog():
     logFile.close()
 
 def main(argv):
-    u = uncrustify()
-    u.uncrustify()
+    uncrustify().uncrustify()
     delBuildTree("build")
     os.makedirs("build")
     os.chdir("build")
