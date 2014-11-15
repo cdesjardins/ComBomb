@@ -178,18 +178,22 @@ public:
             case COLOR_SPACE_DEFAULT:
                 _u = co & 1;
                 break;
+
             case COLOR_SPACE_SYSTEM:
                 _u = co & 7;
                 _v = (co >> 3) & 1;
                 break;
+
             case COLOR_SPACE_256:
                 _u = co & 255;
                 break;
+
             case COLOR_SPACE_RGB:
                 _u = co >> 16;
                 _v = co >> 8;
                 _w = co;
                 break;
+
             default:
                 _colorSpace = COLOR_SPACE_UNDEFINED;
         }
@@ -287,12 +291,16 @@ inline QColor CharacterColor::color(const ColorEntry* base) const
     {
         case COLOR_SPACE_DEFAULT:
             return base[_u + 0 + (_v ? BASE_COLORS : 0)].color;
+
         case COLOR_SPACE_SYSTEM:
             return base[_u + 2 + (_v ? BASE_COLORS : 0)].color;
+
         case COLOR_SPACE_256:
             return color256(_u, base);
+
         case COLOR_SPACE_RGB:
             return QColor(_u, _v, _w);
+
         case COLOR_SPACE_UNDEFINED:
             return QColor();
     }

@@ -191,18 +191,23 @@ void Emulation::receiveChar(int c)
         case '\b':
             _screen[_currentScreenIndex]->BackSpace();
             break;
+
         case '\t':
             _screen[_currentScreenIndex]->Tabulate();
             break;
+
         case '\n':
             _screen[_currentScreenIndex]->NewLine();
             break;
+
         case '\r':
             _screen[_currentScreenIndex]->Return();
             break;
+
         case 0x07:
             emit stateSet(NOTIFYBELL);
             break;
+
         default:
             _screen[_currentScreenIndex]->ShowCharacter(c);
             break;

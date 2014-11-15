@@ -1218,9 +1218,9 @@ void TerminalView::drawContents(QPainter &paint, const QRect &rect)
     int topLeftX = 0;
 
     int leftUpperX = qMin(_usedColumns - 1, qMax(0, qRound((rect.left()   - topLeftX - _leftMargin) / _fontWidth)));
-    int leftUpperY = qMin(_usedLines - 1,  qMax(0, qRound((rect.top()    - topLeftY - _topMargin) / _fontHeight)));
+    int leftUpperY = qMin(_usedLines - 1, qMax(0, qRound((rect.top()    - topLeftY - _topMargin) / _fontHeight)));
     int rightLowerX = qMin(_usedColumns - 1, qMax(0, qRound((rect.right()  - topLeftX - _leftMargin) / _fontWidth)));
-    int rightLowerY = qMin(_usedLines - 1,  qMax(0, qRound((rect.bottom() - topLeftY - _topMargin) / _fontHeight)));
+    int rightLowerY = qMin(_usedLines - 1, qMax(0, qRound((rect.bottom() - topLeftY - _topMargin) / _fontHeight)));
 
     const int bufferSize = _usedColumns;
     QChar* disstrU = new QChar[bufferSize];
@@ -2453,13 +2453,16 @@ QVariant TerminalView::inputMethodQuery(Qt::InputMethodQuery query) const
         case Qt::ImMicroFocus:
             return imageToWidget(QRect(cursorPos.x(), cursorPos.y(), 1, 1));
             break;
+
         case Qt::ImFont:
             return font();
             break;
+
         case Qt::ImCursorPosition:
             // return the cursor position within the current line
             return cursorPos.x();
             break;
+
         case Qt::ImSurroundingText:
         {
             // return the text from the current line
@@ -2472,9 +2475,11 @@ QVariant TerminalView::inputMethodQuery(Qt::InputMethodQuery query) const
             return lineText;
         }
         break;
+
         case Qt::ImCurrentSelection:
             return QString();
             break;
+
         default:
             break;
     }
@@ -2571,11 +2576,13 @@ void TerminalView::calcGeometry()
             _leftMargin = DEFAULT_LEFT_MARGIN;
             _contentWidth = contentsRect().width() - 2 * DEFAULT_LEFT_MARGIN;
             break;
+
         case ScrollBarLeft:
             _leftMargin = DEFAULT_LEFT_MARGIN + _scrollBar->width();
             _contentWidth = contentsRect().width() - 2 * DEFAULT_LEFT_MARGIN - _scrollBar->width();
             _scrollBar->move(contentsRect().topLeft());
             break;
+
         case ScrollBarRight:
             _leftMargin = DEFAULT_LEFT_MARGIN;
             _contentWidth = contentsRect().width()  - 2 * DEFAULT_LEFT_MARGIN - _scrollBar->width();

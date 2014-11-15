@@ -567,7 +567,7 @@ private:
     // draws the cursor character
     void drawCursor(QPainter& painter, const QRect& rect, const QColor& foregroundColor, const QColor& backgroundColor, bool& invertColors);
     // draws the characters or line graphics in a text fragment
-    void drawCharacters(QPainter& painter, const QRect& rect,  const QString& text, const Character* style, bool invertCharacterColor);
+    void drawCharacters(QPainter& painter, const QRect& rect, const QString& text, const Character* style, bool invertCharacterColor);
     // draws a string of line graphics
     void drawLineCharString(QPainter& painter, int x, int y, const QString& str, const Character* attributes);
 

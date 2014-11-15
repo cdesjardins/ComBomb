@@ -157,9 +157,11 @@ void QTerminalImpl::setCursorType(CursorType type, bool blinking)
         case UnderlineCursor:
             _terminalView->setKeyboardCursorShape(TerminalView::UnderlineCursor);
             break;
+
         case BlockCursor:
             _terminalView->setKeyboardCursorShape(TerminalView::BlockCursor);
             break;
+
         case IBeamCursor:
             _terminalView->setKeyboardCursorShape(TerminalView::IBeamCursor);
             break;
