@@ -34,7 +34,7 @@
 
 #include <boost/thread/mutex.hpp>
 
-typedef void (*CleanUpFunction)();
+typedef void (* CleanUpFunction)();
 
 /**
  * @internal
