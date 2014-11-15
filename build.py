@@ -13,8 +13,7 @@ class uncrustify:
         self.config  = self.home + "/bin/uncrustify.cfg"
 
     def callUncrustify(self, directory, ext):
-        nullFile = open(os.devnull, "w")
-        process = Popen([self.uncrust, directory, ext], stdout=nullFile)
+        process = Popen([self.uncrust, directory, ext])
         process.wait()
 
     def uncrustify(self):
