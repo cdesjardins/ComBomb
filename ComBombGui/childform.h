@@ -58,7 +58,7 @@ private:
     void readFromProc(bool isStdout);
     QMutex _processMutex;
     Ui::ChildForm* ui;
-    QProcess *_proc;
+    QProcess* _proc;
     bool _procError;
     QString _lastSearchString;
     bool _lastSearchCaseSensitivity;

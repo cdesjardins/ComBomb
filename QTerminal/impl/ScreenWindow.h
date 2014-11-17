@@ -249,10 +249,10 @@ private:
     bool _bufferNeedsUpdate;
 
     int _windowLines;
-    int _currentLine;  // see scrollTo() , currentLine()
+    int _currentLine; // see scrollTo() , currentLine()
     bool _trackOutput; // see setTrackOutput() , trackOutput()
-    int _scrollCount;  // count of lines which the window has been scrolled by since
-                       // the last call to resetScrollCount()
+    int _scrollCount; // count of lines which the window has been scrolled by since
+                     // the last call to resetScrollCount()
     int _searchLineForward;
     int _searchLineBackward;
     int _searchColForward;

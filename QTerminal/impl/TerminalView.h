@@ -142,6 +142,7 @@ public:
     {
         return _tripleClickMode;
     }
+
     void selectAll();
     void emitSelection(bool useXselection, bool appendReturn);
 
@@ -545,7 +546,7 @@ protected slots:
 private slots:
 
     void swapColorTable();
-    void tripleClickTimeout();  // resets possibleTripleClick
+    void tripleClickTimeout(); // resets possibleTripleClick
 
 private:
 
@@ -566,7 +567,7 @@ private:
     // draws the cursor character
     void drawCursor(QPainter& painter, const QRect& rect, const QColor& foregroundColor, const QColor& backgroundColor, bool& invertColors);
     // draws the characters or line graphics in a text fragment
-    void drawCharacters(QPainter& painter, const QRect& rect,  const QString& text, const Character* style, bool invertCharacterColor);
+    void drawCharacters(QPainter& painter, const QRect& rect, const QString& text, const Character* style, bool invertCharacterColor);
     // draws a string of line graphics
     void drawLineCharString(QPainter& painter, int x, int y, const QString& str, const Character* attributes);
 
@@ -616,25 +617,25 @@ private:
 
     bool _fixedFont; // has fixed pitch
 
-    double _fontHeight;      // height
-    double _fontWidth;      // width
+    double _fontHeight; // height
+    double _fontWidth; // width
     //type double to decrease rounding errors
 
-    int _fontAscent;      // ascend
+    int _fontAscent; // ascend
 
-    int _leftMargin;    // offset
-    int _topMargin;    // offset
+    int _leftMargin; // offset
+    int _topMargin; // offset
 
-    int _lines;      // the number of lines that can be displayed in the widget
-    int _columns;    // the number of columns that can be displayed in the widget
+    int _lines; // the number of lines that can be displayed in the widget
+    int _columns; // the number of columns that can be displayed in the widget
 
-    int _usedLines;  // the number of lines that are actually being used, this will be less
-                     // than 'lines' if the character image provided with setImage() is smaller
-                     // than the maximum image size which can be displayed
+    int _usedLines; // the number of lines that are actually being used, this will be less
+                   // than 'lines' if the character image provided with setImage() is smaller
+                   // than the maximum image size which can be displayed
 
     int _usedColumns; // the number of columns that are actually being used, this will be less
-                      // than 'columns' if the character image provided with setImage() is smaller
-                      // than the maximum image size which can be displayed
+                     // than 'columns' if the character image provided with setImage() is smaller
+                     // than the maximum image size which can be displayed
 
     int _contentHeight;
     int _contentWidth;
@@ -651,10 +652,10 @@ private:
     bool _terminalSizeStartup;
     bool _mouseMarks;
 
-    QPoint _iPntSel;  // initial selection point
-    QPoint _pntSel;  // current selection point
-    QPoint _tripleSelBegin;  // help avoid flicker
-    int _actSel;     // selection state
+    QPoint _iPntSel; // initial selection point
+    QPoint _pntSel; // current selection point
+    QPoint _tripleSelBegin; // help avoid flicker
+    int _actSel; // selection state
     bool _wordSelectionMode;
     bool _lineSelectionMode;
 
@@ -664,22 +665,22 @@ private:
     QString _wordCharacters;
     int _bellMode;
 
-    bool _blinking;   // hide text in paintEvent
+    bool _blinking; // hide text in paintEvent
     int _hasBlinker; // has characters to blink
-    bool _cursorBlinking;     // hide cursor in paintEvent
-    bool _hasBlinkingCursor;  // has blinking cursor enabled
-    bool _ctrlDrag;           // require Ctrl key for drag
+    bool _cursorBlinking; // hide cursor in paintEvent
+    bool _hasBlinkingCursor; // has blinking cursor enabled
+    bool _ctrlDrag; // require Ctrl key for drag
     TripleClickMode _tripleClickMode;
     bool _isFixedSize; //Columns / lines are locked.
-    boost::scoped_ptr<QTimer> _blinkTimer;  // active when hasBlinker
-    boost::scoped_ptr<QTimer> _blinkCursorTimer;  // active when hasBlinkingCursor
+    boost::scoped_ptr<QTimer> _blinkTimer; // active when hasBlinker
+    boost::scoped_ptr<QTimer> _blinkCursorTimer; // active when hasBlinkingCursor
 
 //    KMenu* _drop;
     QString _dropText;
     int _dndFileCount;
 
-    bool _possibleTripleClick;  // is set in mouseDoubleClickEvent and deleted
-                                // after QApplication::doubleClickInterval() delay
+    bool _possibleTripleClick; // is set in mouseDoubleClickEvent and deleted
+                              // after QApplication::doubleClickInterval() delay
 
     boost::scoped_ptr<QLabel> _resizeWidget;
     boost::scoped_ptr<QTimer> _resizeTimer;
@@ -709,7 +710,7 @@ private:
     };
     InputMethodData _inputMethodData;
 
-    static bool _antialiasText;   // do we antialias or not
+    static bool _antialiasText; // do we antialias or not
 
     //the delay in milliseconds between redrawing blinking text
     static const int BLINK_DELAY = 500;

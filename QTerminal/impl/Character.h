@@ -48,7 +48,6 @@ static const int LINE_DOUBLEHEIGHT  = (1 << 2);
 #define RENDITION_EXTENDED_CHAR   (1 << 5)
 #define RENDITION_RENDER          (1 << 6)
 
-
 /**
  * A single character in the terminal which consists of a unicode character
  * value, foreground and background colors and a set of rendition attributes
@@ -70,6 +69,7 @@ public:
         : _character(_c), _rendition(_r), _foregroundColor(_f), _backgroundColor(_b)
     {
     }
+
 private:
     union
     {
@@ -99,8 +99,6 @@ public:
     {
         _character = ch;
     }
-
-
 
     /** A combination of RENDITION flags which specify options for drawing the character. */
     quint8 _rendition;

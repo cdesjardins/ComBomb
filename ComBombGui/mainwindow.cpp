@@ -158,7 +158,7 @@ void MainWindow::on_actionOpen_triggered()
     }
 }
 
-void MainWindow::closeEvent(QCloseEvent *event)
+void MainWindow::closeEvent(QCloseEvent* event)
 {
     QSettings settings;
     settings.setValue("Geometry", saveGeometry());
@@ -278,7 +278,6 @@ void MainWindow::on_action_Clear_scrollback_triggered()
     }
 }
 
-
 void MainWindow::on_actionSelect_All_triggered()
 {
     ChildForm* activeWindow = getActiveChildWindow();
@@ -323,3 +322,4 @@ void MainWindow::on_actionFind_highlighted_text_triggered()
         activeWindow->findTextHighlighted();
     }
 }
+

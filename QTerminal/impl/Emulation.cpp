@@ -188,13 +188,29 @@ void Emulation::receiveChar(int c)
     c &= 0xff;
     switch (c)
     {
-        case '\b': _screen[_currentScreenIndex]->BackSpace();                 break;
-        case '\t': _screen[_currentScreenIndex]->Tabulate();                  break;
-        case '\n': _screen[_currentScreenIndex]->NewLine();                   break;
-        case '\r': _screen[_currentScreenIndex]->Return();                    break;
-        case 0x07: emit stateSet(NOTIFYBELL);
+        case '\b':
+            _screen[_currentScreenIndex]->BackSpace();
             break;
-        default: _screen[_currentScreenIndex]->ShowCharacter(c);            break;
+
+        case '\t':
+            _screen[_currentScreenIndex]->Tabulate();
+            break;
+
+        case '\n':
+            _screen[_currentScreenIndex]->NewLine();
+            break;
+
+        case '\r':
+            _screen[_currentScreenIndex]->Return();
+            break;
+
+        case 0x07:
+            emit stateSet(NOTIFYBELL);
+            break;
+
+        default:
+            _screen[_currentScreenIndex]->ShowCharacter(c);
+            break;
     }
     ;
 }
@@ -214,10 +230,10 @@ void Emulation::sendKeyEvent(QKeyEvent* ev)
 
     if (!ev->text().isEmpty())
     { // A block of text
-      // Note that the text is proper unicode.
-      // We should do a conversion here, but since this
-      // routine will never be used, we simply emit plain ascii.
-      //emit sendBlock(ev->text().toAscii(),ev->text().length());
+     // Note that the text is proper unicode.
+     // We should do a conversion here, but since this
+     // routine will never be used, we simply emit plain ascii.
+     //emit sendBlock(ev->text().toAscii(),ev->text().length());
         emit sendData(ev->text().toUtf8(), ev->text().length());
     }
 }
@@ -227,7 +243,7 @@ void Emulation::sendString(const char*, int)
     // default implementation does nothing
 }
 
-void Emulation::sendMouseEvent(int /*buttons*/, int /*column*/, int /*row*/, int /*eventType*/)
+void Emulation::sendMouseEvent(int/*buttons*/, int/*column*/, int/*row*/, int/*eventType*/)
 {
     // default implementation does nothing
 }

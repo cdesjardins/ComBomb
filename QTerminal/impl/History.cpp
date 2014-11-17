@@ -119,4 +119,3 @@ void HistoryScroll::getCells(size_t lineNumber, int startColumn, int count, std:
     }
 }
 
-

@@ -200,7 +200,7 @@ void TerminalView::fontChange(const QFont&)
 #if 0
     std::stringstream s;
     s
-        << std::setw(20)<<  font().family().toLocal8Bit().constData()
+        << std::setw(20) <<  font().family().toLocal8Bit().constData()
         << std::setw(3) <<  font().pointSizeF()
         << std::setw(3) <<  font().pixelSize()
         << std::setw(3) <<  font().styleHint()
@@ -598,7 +598,7 @@ void TerminalView::drawBackground(QPainter& painter, const QRect& rect, const QC
 void TerminalView::drawCursor(QPainter& painter,
                               const QRect& rect,
                               const QColor& foregroundColor,
-                              const QColor& /*backgroundColor*/,
+                              const QColor&/*backgroundColor*/,
                               bool& invertCharacterColor)
 {
     QRect cursorRect = rect;
@@ -844,8 +844,8 @@ int TerminalView::resizePaint(const int columnsToUpdate, const std::vector<Chara
     int len;
     int updateLine = 0;
     int cr  = -1; // undefined
-    CharacterColor cf;     // undefined
-    CharacterColor _clipboard;     // undefined
+    CharacterColor cf; // undefined
+    CharacterColor _clipboard; // undefined
     for (int x = 0; x < columnsToUpdate; x++)
     {
         _hasBlinker |= (newLine[x]._rendition & RENDITION_BLINK);
@@ -882,11 +882,11 @@ int TerminalView::resizePaint(const int columnsToUpdate, const std::vector<Chara
                 bool nextIsDoubleWidth = (x + len + 1 == columnsToUpdate) ? false : (newLine[x + len + 1].getChar() == 0);
 
                 if (ch._foregroundColor != cf ||
-                        ch._backgroundColor != _clipboard ||
-                        ch._rendition != cr ||
-                        !dirtyMask[x + len] ||
-                        isLineChar(c) != lineDraw ||
-                        nextIsDoubleWidth != doubleWidth)
+                    ch._backgroundColor != _clipboard ||
+                    ch._rendition != cr ||
+                    !dirtyMask[x + len] ||
+                    isLineChar(c) != lineDraw ||
+                    nextIsDoubleWidth != doubleWidth)
                 {
                     break;
                 }
@@ -965,7 +965,6 @@ void TerminalView::updateImage()
     int tLx = tL.x();
     int tLy = tL.y();
     _hasBlinker = false;
-
 
     const int linesToUpdate = qMin(this->_lines, qMax(0, lines));
     const int columnsToUpdate = qMin(this->_columns, qMax(0, columns));
@@ -1076,7 +1075,8 @@ void TerminalView::updateImage()
     }
     if (!_hasBlinker && _blinkTimer->isActive())
     {
-        _blinkTimer->stop(); _blinking = false;
+        _blinkTimer->stop();
+        _blinking = false;
     }
     delete[] dirtyMask;
     delete[] disstrU;
@@ -1145,7 +1145,7 @@ void TerminalView::paintEvent(QPaintEvent* pe)
     QPainter paint(this);
     //qDebug("%s %d paintEvent %d %d", __FILE__, __LINE__, paint.window().top(), paint.window().right());
 
-    foreach (QRect rect, (pe->region() & contentsRect()).rects())
+    foreach(QRect rect, (pe->region() & contentsRect()).rects())
     {
         drawBackground(paint, rect, palette().background().color());
         drawContents(paint, rect);
@@ -1218,9 +1218,9 @@ void TerminalView::drawContents(QPainter &paint, const QRect &rect)
     int topLeftX = 0;
 
     int leftUpperX = qMin(_usedColumns - 1, qMax(0, qRound((rect.left()   - topLeftX - _leftMargin) / _fontWidth)));
-    int leftUpperY = qMin(_usedLines - 1,  qMax(0, qRound((rect.top()    - topLeftY - _topMargin) / _fontHeight)));
+    int leftUpperY = qMin(_usedLines - 1, qMax(0, qRound((rect.top()    - topLeftY - _topMargin) / _fontHeight)));
     int rightLowerX = qMin(_usedColumns - 1, qMax(0, qRound((rect.right()  - topLeftX - _leftMargin) / _fontWidth)));
-    int rightLowerY = qMin(_usedLines - 1,  qMax(0, qRound((rect.bottom() - topLeftY - _topMargin) / _fontHeight)));
+    int rightLowerY = qMin(_usedLines - 1, qMax(0, qRound((rect.bottom() - topLeftY - _topMargin) / _fontHeight)));
 
     const int bufferSize = _usedColumns;
     QChar* disstrU = new QChar[bufferSize];
@@ -1621,7 +1621,7 @@ void TerminalView::mousePressEvent(QMouseEvent* ev)
         }
     }
 
-    QWidget::mousePressEvent (ev);
+    QWidget::mousePressEvent(ev);
 }
 
 void TerminalView::mouseMoveEvent(QMouseEvent* ev)
@@ -1871,7 +1871,6 @@ void TerminalView::extendSelection(const QPoint& position)
     int offset = 0;
     if (!_wordSelectionMode && !_lineSelectionMode)
     {
-
         int i = 0;
         int selClass = 0;
 
@@ -2454,13 +2453,16 @@ QVariant TerminalView::inputMethodQuery(Qt::InputMethodQuery query) const
         case Qt::ImMicroFocus:
             return imageToWidget(QRect(cursorPos.x(), cursorPos.y(), 1, 1));
             break;
+
         case Qt::ImFont:
             return font();
             break;
+
         case Qt::ImCursorPosition:
             // return the cursor position within the current line
             return cursorPos.x();
             break;
+
         case Qt::ImSurroundingText:
         {
             // return the text from the current line
@@ -2473,9 +2475,11 @@ QVariant TerminalView::inputMethodQuery(Qt::InputMethodQuery query) const
             return lineText;
         }
         break;
+
         case Qt::ImCurrentSelection:
             return QString();
             break;
+
         default:
             break;
     }
@@ -2555,9 +2559,9 @@ void TerminalView::clearImage()
     {
         _image[i].setChar(' ');
         _image[i]._foregroundColor = CharacterColor(COLOR_SPACE_DEFAULT,
-                                                   DEFAULT_FORE_COLOR);
+                                                    DEFAULT_FORE_COLOR);
         _image[i]._backgroundColor = CharacterColor(COLOR_SPACE_DEFAULT,
-                                                   DEFAULT_BACK_COLOR);
+                                                    DEFAULT_BACK_COLOR);
         _image[i]._rendition = DEFAULT_RENDITION;
     }
 }
@@ -2572,11 +2576,13 @@ void TerminalView::calcGeometry()
             _leftMargin = DEFAULT_LEFT_MARGIN;
             _contentWidth = contentsRect().width() - 2 * DEFAULT_LEFT_MARGIN;
             break;
+
         case ScrollBarLeft:
             _leftMargin = DEFAULT_LEFT_MARGIN + _scrollBar->width();
             _contentWidth = contentsRect().width() - 2 * DEFAULT_LEFT_MARGIN - _scrollBar->width();
             _scrollBar->move(contentsRect().topLeft());
             break;
+
         case ScrollBarRight:
             _leftMargin = DEFAULT_LEFT_MARGIN;
             _contentWidth = contentsRect().width()  - 2 * DEFAULT_LEFT_MARGIN - _scrollBar->width();
@@ -2585,7 +2591,7 @@ void TerminalView::calcGeometry()
     }
 
     _topMargin = DEFAULT_TOP_MARGIN;
-    _contentHeight = contentsRect().height() - 2 * DEFAULT_TOP_MARGIN + /* mysterious */ 1;
+    _contentHeight = contentsRect().height() - 2 * DEFAULT_TOP_MARGIN +/* mysterious */ 1;
 
     if (!_isFixedSize)
     {
@@ -2737,3 +2743,4 @@ void TerminalView::setTrackOutput(bool trackOutput)
 {
     _screenWindow->setTrackOutput(trackOutput);
 }
+

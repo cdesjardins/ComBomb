@@ -45,11 +45,11 @@ public:
     void recvText(const QByteArray& data);
     void findText(const QString& searchStr, const bool caseSensitive, const bool searchUp, const bool cont);
     QString findTextHighlighted(const bool caseSensitive);
-    void connectToRecvText(QObject *who);
+    void connectToRecvText(QObject* who);
 
     void setCursorType(CursorType type, bool blinking);
     void applyTerminalConfig(const QTerminalConfig &terminalConfig);
-    bool eventFilter(QObject *, QEvent *event);
+    bool eventFilter(QObject*, QEvent* event);
     void suppressOutput(bool suppress);
     void setTrackOutput(bool trackOutput);
 public slots:

@@ -30,8 +30,7 @@
 #define BASE_PORTNAME_2 "/dev/ttyUSB", 0, 256
 #endif
 
-
-ConfigDialog::ConfigDialog(QWidget *parent) :
+ConfigDialog::ConfigDialog(QWidget* parent) :
     CBDialog(parent),
     ui(new Ui::ConfigDialog)
 {
@@ -114,7 +113,7 @@ void ConfigDialog::populateComPortListWidget()
     for (QStringList::iterator it = comPorts.begin(); it != comPorts.end(); ++it)
     {
         item = new QListWidgetItem(*it);
-        item->setFlags(item->flags () | Qt::ItemIsEditable);
+        item->setFlags(item->flags() | Qt::ItemIsEditable);
         ui->comPortsList->insertItem(row++, item);
     }
 }
@@ -147,14 +146,14 @@ void ConfigDialog::on_buttonBox_accepted()
     settings.setValue(CB_CONFIG_SETTINGS_ROOT "Settings", qbytes);
     setPortListSettings();
 
-    QList<ChildForm*> list = MainWindow::getMainWindow()->findChildren<ChildForm *>();
-    foreach(ChildForm *w, list)
+    QList<ChildForm*> list = MainWindow::getMainWindow()->findChildren<ChildForm*>();
+    foreach(ChildForm * w, list)
     {
         w->applyTerminalConfig(terminalConfig);
     }
 }
 
-bool ConfigDialog::getTerminalConfig(QTerminalConfig *terminalConfig)
+bool ConfigDialog::getTerminalConfig(QTerminalConfig* terminalConfig)
 {
     bool ret = false;
     QSettings settings;
@@ -167,5 +166,4 @@ bool ConfigDialog::getTerminalConfig(QTerminalConfig *terminalConfig)
     }
     return ret;
 }
-
 

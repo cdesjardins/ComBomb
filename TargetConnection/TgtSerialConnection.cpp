@@ -107,7 +107,6 @@ void TgtSerialIntf::tgtStopService()
 
 void TgtSerialIntf::tgtReadCallback(const boost::system::error_code& error, const size_t bytesTransferred)
 {
-
     if (!error)
     {
         boost::asio::mutable_buffer buffer;
@@ -183,9 +182,11 @@ void TgtSerialIntf::tgtGetTitle(std::string* szTitle)
         case boost::asio::serial_port_base::parity::even:
             parity = "e";
             break;
+
         case boost::asio::serial_port_base::parity::none:
             parity = "n";
             break;
+
         case boost::asio::serial_port_base::parity::odd:
             parity = "o";
             break;
@@ -195,9 +196,11 @@ void TgtSerialIntf::tgtGetTitle(std::string* szTitle)
         case boost::asio::serial_port_base::stop_bits::one:
             stopbits = "1";
             break;
+
         case boost::asio::serial_port_base::stop_bits::onepointfive:
             stopbits = "1.5";
             break;
+
         case boost::asio::serial_port_base::stop_bits::two:
             stopbits = "2";
             break;

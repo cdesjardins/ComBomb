@@ -6,6 +6,26 @@ from subprocess import Popen, PIPE
 
 releaseNotes = "releasenotes.txt"
 
+class uncrustify:
+    def __init__(self):
+        self.home = os.path.expanduser("~")
+        self.uncrust = self.home + "/bin/call_Uncrustify.sh"
+        self.config  = self.home + "/bin/uncrustify.cfg"
+
+    def callUncrustify(self, directory, ext):
+        process = Popen([self.uncrust, directory, ext])
+        process.wait()
+
+    def uncrustify(self):
+        if (platform.system() == "Linux"):
+            if ((os.path.isfile(self.uncrust) == True) and (os.path.isfile(self.config))):
+                self.callUncrustify("ComBombGui", "cpp")
+                self.callUncrustify("ComBombGui", "h")
+                self.callUncrustify("QTerminal", "cpp")
+                self.callUncrustify("QTerminal", "h")
+                self.callUncrustify("TargetConnection", "cpp")
+                self.callUncrustify("TargetConnection", "h")
+
 def rmerror(function, path, excinfo):
     exc_type, exc_value, exc_traceback = excinfo
     print exc_value
@@ -89,6 +109,7 @@ def buildLog():
     logFile.close()
 
 def main(argv):
+    uncrustify().uncrustify()
     delBuildTree("build")
     os.makedirs("build")
     os.chdir("build")

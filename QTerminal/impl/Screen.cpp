@@ -55,7 +55,6 @@
 #define loc(X, Y) ((Y)*_columns + (X))
 #endif
 
-
 //#define REVERSE_WRAPPED_LINES  // for wrapped line debug
 
 Screen::Screen(const boost::shared_ptr<HistoryScroll> &hist, int l, int c)
@@ -130,7 +129,7 @@ void Screen::cursorUp(int n)
 {
     if (n == 0)
     {
-        n = 1;       // Default
+        n = 1; // Default
     }
     int stop = _cursorY < _topMargin ? 0 : _topMargin;
     _cursorX = qMin(_columns - 1, _cursorX); // nowrap!
@@ -148,7 +147,7 @@ void Screen::cursorDown(int n)
 {
     if (n == 0)
     {
-        n = 1;       // Default
+        n = 1; // Default
     }
     int stop = _cursorY > _bottomMargin ? _lines - 1 : _bottomMargin;
     _cursorX = qMin(_columns - 1, _cursorX); // nowrap!
@@ -166,7 +165,7 @@ void Screen::cursorLeft(int n)
 {
     if (n == 0)
     {
-        n = 1;       // Default
+        n = 1; // Default
     }
     _cursorX = qMin(_columns - 1, _cursorX); // nowrap!
     _cursorX = qMax(0, _cursorX - n);
@@ -183,7 +182,7 @@ void Screen::cursorRight(int n)
 {
     if (n == 0)
     {
-        n = 1;       // Default
+        n = 1; // Default
     }
     _cursorX = qMin(_columns - 1, _cursorX + n);
 }
@@ -193,18 +192,18 @@ void Screen::setMargins(int top, int bot)
 {
     if (top == 0)
     {
-        top = 1;              // Default
+        top = 1; // Default
     }
     if (bot == 0)
     {
-        bot = _lines;          // Default
+        bot = _lines; // Default
     }
-    top = top - 1;            // Adjust to internal lineno
-    bot = bot - 1;            // Adjust to internal lineno
+    top = top - 1; // Adjust to internal lineno
+    bot = bot - 1; // Adjust to internal lineno
     if (!(0 <= top && top < bot && bot < _lines))
     {
         //qDebug() << " setRegion(" << top << "," << bot << ") : bad range.";
-        return;               // Default error action: ignore
+        return; // Default error action: ignore
     }
     _topMargin = top;
     _bottomMargin = bot;
@@ -258,14 +257,15 @@ void Screen::reverseIndex()
 void Screen::NextLine()
 //=NEL
 {
-    Return(); index();
+    Return();
+    index();
 }
 
 void Screen::eraseChars(int n)
 {
     if (n == 0)
     {
-        n = 1;       // Default
+        n = 1; // Default
     }
     int p = qMax(0, qMin(_cursorX + n - 1, _columns - 1));
     clearImage(loc(_cursorX, _cursorY), loc(p, _cursorY), ' ');
@@ -296,15 +296,15 @@ void Screen::deleteChars(int n)
     Q_ASSERT((size_t)_cursorX + n < _screenLines[screenLineIndex(_cursorY)].size());
 
     _screenLines[screenLineIndex(_cursorY)].erase(
-            _screenLines[screenLineIndex(_cursorY)].begin() + _cursorX,
-            _screenLines[screenLineIndex(_cursorY)].begin() + _cursorX + n);
+        _screenLines[screenLineIndex(_cursorY)].begin() + _cursorX,
+        _screenLines[screenLineIndex(_cursorY)].begin() + _cursorX + n);
 }
 
 void Screen::insertChars(int n)
 {
     if (n == 0)
     {
-        n = 1;       // Default
+        n = 1; // Default
     }
     if (_screenLines[screenLineIndex(_cursorY)].size() < (size_t)_cursorX)
     {
@@ -323,7 +323,7 @@ void Screen::deleteLines(int n)
 {
     if (n == 0)
     {
-        n = 1;       // Default
+        n = 1; // Default
     }
     scrollUp(_cursorY, n);
 }
@@ -337,7 +337,7 @@ void Screen::insertLines(int n)
 {
     if (n == 0)
     {
-        n = 1;       // Default
+        n = 1; // Default
     }
     scrollDown(_cursorY, n);
 }
@@ -351,7 +351,10 @@ void Screen::setMode(int m)
     _currParm.mode[m] = true;
     switch (m)
     {
-        case MODE_Origin: _cursorX = 0; _cursorY = _topMargin; break; //FIXME: home
+        case MODE_Origin:
+            _cursorX = 0;
+            _cursorY = _topMargin;
+            break; //FIXME: home
     }
 }
 
@@ -362,7 +365,10 @@ void Screen::resetMode(int m)
     _currParm.mode[m] = false;
     switch (m)
     {
-        case MODE_Origin: _cursorX = 0; _cursorY = 0; break; //FIXME: home
+        case MODE_Origin:
+            _cursorX = 0;
+            _cursorY = 0;
+            break; //FIXME: home
     }
 }
 
@@ -700,11 +706,14 @@ std::vector<LineProperty> Screen::getLineProperties(int startLine, int endLine) 
 
 void Screen::reset(bool clearScreen)
 {
-    setMode(MODE_Wrap); saveMode(MODE_Wrap);      // wrap at end of margin
-    resetMode(MODE_Origin); saveMode(MODE_Origin); // position refere to [1,1]
-    resetMode(MODE_Insert); saveMode(MODE_Insert); // overstroke
-    setMode(MODE_Cursor);                         // cursor visible
-    resetMode(MODE_Screen);                       // screen not inverse
+    setMode(MODE_Wrap);
+    saveMode(MODE_Wrap); // wrap at end of margin
+    resetMode(MODE_Origin);
+    saveMode(MODE_Origin); // position refere to [1,1]
+    resetMode(MODE_Insert);
+    saveMode(MODE_Insert); // overstroke
+    setMode(MODE_Cursor); // cursor visible
+    resetMode(MODE_Screen); // screen not inverse
     resetMode(MODE_NewLine);
 
     _topMargin = 0;
@@ -926,9 +935,9 @@ void Screen::ShowCharacter(unsigned short c)
     _cursorX = newCursorX;
 }
 
-void Screen::compose(const QString& /*compose*/)
+void Screen::compose(const QString&/*compose*/)
 {
-    Q_ASSERT(0 /*Not implemented yet*/);
+    Q_ASSERT(0/*Not implemented yet*/);
 }
 
 int Screen::scrolledLines() const
@@ -959,11 +968,11 @@ void Screen::scrollUp(int n)
 {
     if (n == 0)
     {
-        n = 1;        // Default
+        n = 1; // Default
     }
     if (_topMargin == 0)
     {
-        addHistLine();              // hist.history
+        addHistLine(); // hist.history
     }
     scrollUp(_topMargin, n);
 }
@@ -996,7 +1005,7 @@ void Screen::scrollDown(int n)
 {
     if (n == 0)
     {
-        n = 1;        // Default
+        n = 1; // Default
     }
     scrollDown(_topMargin, n);
 }
@@ -1031,14 +1040,15 @@ void Screen::scrollDown(int from, int n)
 
 void Screen::setCursorYX(int y, int x)
 {
-    setCursorY(y); setCursorX(x);
+    setCursorY(y);
+    setCursorX(x);
 }
 
 void Screen::setCursorX(int x)
 {
     if (x == 0)
     {
-        x = 1;       // Default
+        x = 1; // Default
     }
     x -= 1; // Adjust
     _cursorX = qMax(0, qMin(_columns - 1, x));
@@ -1048,7 +1058,7 @@ void Screen::setCursorY(int y)
 {
     if (y == 0)
     {
-        y = 1;       // Default
+        y = 1; // Default
     }
     y -= 1; // Adjust
     _cursorY = qMax(0, qMin(_lines  - 1, y + (getMode(MODE_Origin) ? _topMargin : 0)));
@@ -1458,7 +1468,7 @@ long Screen::findLineStart(const long line)
     return ret;
 }
 
-long Screen::writeLineToString(long *line, QString &result)
+long Screen::writeLineToString(long* line, QString &result)
 {
     long ret = 0;
     QTextStream stream(&result, QIODevice::ReadWrite);
@@ -1534,7 +1544,7 @@ void Screen::copyLineToStream(int line,
                               int count,
                               TerminalCharacterDecoder* decoder,
                               bool appendNewLine,
-                              LineProperty *currentLineProperties)
+                              LineProperty* currentLineProperties)
 {
     //buffer to hold characters for decoding
     //the buffer is static to avoid initialising every
@@ -1608,14 +1618,14 @@ void Screen::copyLineToStream(int line,
     //do not decode trailing whitespace characters
     for (int i = count - 1; i >= 0; i--)
     {
-       if (((characterBuffer[i]._rendition & RENDITION_RENDER) == 0) && QChar(characterBuffer[i].getChar()).isSpace())
-       {
-           count--;
-       }
-       else
-       {
-           break;
-       }
+        if (((characterBuffer[i]._rendition & RENDITION_RENDER) == 0) && QChar(characterBuffer[i].getChar()).isSpace())
+        {
+            count--;
+        }
+        else
+        {
+            break;
+        }
     }
     // add new line character at end
     const bool omitLineBreak = ((*currentLineProperties) & LINE_WRAPPED);

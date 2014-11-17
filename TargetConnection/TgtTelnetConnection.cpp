@@ -17,7 +17,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 /******************************************************************************
 **
 **  Telnet
@@ -115,6 +114,7 @@ int TgtTelnetIntf::TgtTelnetData(unsigned char cTelnetRx, char* cReadData)
         case TELNET_CMD_IAC:
             m_nState = TELNET_STATE_COMMAND;
             break;
+
         default:
             if (m_bEcho)
             {
@@ -144,6 +144,7 @@ int TgtTelnetIntf::TgtTelnetCommand(eTelnetCommand cTelnetRx)
         case TELNET_CMD_GA:
         case TELNET_CMD_EC:
             break;
+
         case TELNET_CMD_SB:
         case TELNET_CMD_WILL:
         case TELNET_CMD_WONT:
@@ -171,12 +172,15 @@ int TgtTelnetIntf::TgtConfirm(eTelnetOption eOpt)
         case TELNET_CMD_WILL:
             TgtSendCommand(TELNET_CMD_DO, eOpt);
             break;
+
         case TELNET_CMD_WONT:
             TgtSendCommand(TELNET_CMD_DONT, eOpt);
             break;
+
         case TELNET_CMD_DO:
             TgtSendCommand(TELNET_CMD_WILL, eOpt);
             break;
+
         case TELNET_CMD_DONT:
             TgtSendCommand(TELNET_CMD_WONT, eOpt);
             break;
@@ -191,12 +195,15 @@ int TgtTelnetIntf::TgtDeny(eTelnetOption eOpt)
         case TELNET_CMD_WILL:
             TgtSendCommand(TELNET_CMD_DONT, eOpt);
             break;
+
         case TELNET_CMD_WONT:
             TgtSendCommand(TELNET_CMD_DO, eOpt);
             break;
+
         case TELNET_CMD_DO:
             TgtSendCommand(TELNET_CMD_WONT, eOpt);
             break;
+
         case TELNET_CMD_DONT:
             TgtSendCommand(TELNET_CMD_WILL, eOpt);
             break;
@@ -222,14 +229,18 @@ int TgtTelnetIntf::TgtProcessTerm()
         case TELNET_CMD_SB:
             send(m_nSocket, (char*)sBuffer, sizeof(sBuffer), 0);
             break;
+
         case TELNET_CMD_WILL:
             TgtDeny(TELNET_OPT_TERM);
             break;
+
         case TELNET_CMD_WONT:
             break;
+
         case TELNET_CMD_DO:
             TgtConfirm(TELNET_OPT_TERM);
             break;
+
         case TELNET_CMD_DONT:
             break;
     }
@@ -242,17 +253,21 @@ int TgtTelnetIntf::TgtProcessEcho()
     {
         case TELNET_CMD_SB:
             break;
+
         case TELNET_CMD_WILL:
             m_bEcho = true;
             TgtConfirm(TELNET_OPT_ECHO);
             break;
+
         case TELNET_CMD_WONT:
             m_bEcho = false;
             TgtConfirm(TELNET_OPT_ECHO);
             break;
+
         case TELNET_CMD_DO:
             TgtDeny(TELNET_OPT_ECHO);
             break;
+
         case TELNET_CMD_DONT:
             TgtConfirm(TELNET_OPT_ECHO);
             break;
@@ -281,9 +296,11 @@ int TgtTelnetIntf::TgtTelnetOption(eTelnetOption eOpt)
         case TELNET_OPT_ECHO:
             nReadIndex = TgtProcessEcho();
             break;
+
         case TELNET_OPT_TERM:
             nReadIndex = TgtProcessTerm();
             break;
+
         case TELNET_OPT_SUPP:
         case TELNET_OPT_BIN:
         case TELNET_OPT_RECN:
@@ -339,9 +356,11 @@ int TgtTelnetIntf::TgtTelnet(char* sTelnetRx, int nNumBytes, char* szReadData)
             case TELNET_STATE_DATA:
                 nReadIndex += TgtTelnetData(sTelnetRx[nRxIndex], &szReadData[nReadIndex]);
                 break;
+
             case TELNET_STATE_COMMAND:
                 TgtTelnetCommand((eTelnetCommand)(sTelnetRx[nRxIndex] & 0xFF));
                 break;
+
             case TELNET_STATE_OPTION:
                 TgtTelnetOption((eTelnetOption)(sTelnetRx[nRxIndex] & 0xFF));
                 if (m_nCommand == TELNET_CMD_SB)

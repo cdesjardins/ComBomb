@@ -54,7 +54,7 @@ ChildForm::~ChildForm()
     delete ui;
 }
 
-void ChildForm::closeEvent(QCloseEvent* )
+void ChildForm::closeEvent(QCloseEvent*)
 {
     deleteProcess();
     emit closeWindowSignal();
@@ -226,7 +226,7 @@ void ChildForm::processError(QProcess::ProcessError error)
     MainWindow::getMainWindow()->swapProcessIcon(false);
 }
 
-void ChildForm::processDone(int , QProcess::ExitStatus )
+void ChildForm::processDone(int, QProcess::ExitStatus)
 {
     deleteProcess();
 }
@@ -234,7 +234,7 @@ void ChildForm::processDone(int , QProcess::ExitStatus )
 void ChildForm::deleteProcess()
 {
     _processMutex.lock();
-    QProcess *p = _proc;
+    QProcess* p = _proc;
     _proc = NULL;
     _processMutex.unlock();
     if (p != NULL)
@@ -249,3 +249,4 @@ bool ChildForm::isProcessRunning()
 {
     return ((_procError == false) && (_proc != NULL));
 }
+

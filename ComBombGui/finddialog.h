@@ -30,7 +30,7 @@ class FindDialog : public CBDialog
     Q_OBJECT
 
 public:
-    explicit FindDialog(QWidget *parent = 0);
+    explicit FindDialog(QWidget* parent = 0);
     ~FindDialog();
     QString getString();
     void addString(const QString& newStr);
@@ -39,7 +39,7 @@ public:
     void setSearchUp(bool searchUp);
     virtual QString getSettingsRoot();
 private:
-    Ui::FindDialog *ui;
+    Ui::FindDialog* ui;
 };
 
 #endif // FINDDIALOG_H

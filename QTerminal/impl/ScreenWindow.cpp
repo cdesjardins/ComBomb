@@ -141,7 +141,6 @@ void ScreenWindow::getSelectionEnd(int& column, int& line)
     _screen->getSelectionEnd(column, line);
 }
 
-
 void ScreenWindow::setSelectionAll()
 {
     _screen->setSelectionStart(0, 0);
@@ -199,7 +198,6 @@ void ScreenWindow::setSearchPosition(const int searchCol, const int searchLine, 
     }
     _searchColForward = searchCol + 1;
     _searchColBackward = -(length - searchCol) - 1;
-
 }
 
 bool ScreenWindow::findText(const QString& searchStr, const bool caseSensitive, const bool searchUp, const bool cont)
@@ -235,7 +233,7 @@ bool ScreenWindow::findText(const QString& searchStr, const bool caseSensitive, 
             else
             {
                 index = str.indexOf(searchStr, _searchColForward,
-                                        (caseSensitive == true) ? Qt::CaseSensitive : Qt::CaseInsensitive);
+                                    (caseSensitive == true) ? Qt::CaseSensitive : Qt::CaseInsensitive);
             }
             if (index >= 0)
             {
@@ -254,7 +252,6 @@ bool ScreenWindow::findText(const QString& searchStr, const bool caseSensitive, 
             _searchColForward = 0;
         }
     }
-
 
     if (scrollToLine == -1)
     {

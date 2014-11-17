@@ -38,3 +38,4 @@ QDataStream &operator>>(QDataStream &in, QTerminalConfig &q)
     in >> q._font;
     return in;
 }
+

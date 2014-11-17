@@ -133,3 +133,4 @@ void FileClipboardDialog::on_sendButton_clicked()
 {
     sendItemTriggered(ui->fileClipboardTable->currentRow());
 }
+

@@ -23,7 +23,7 @@
 #define CB_FIND_CASE_SENSITIVE          getSettingsRoot() + "/CaseSensitive"
 #define CB_FIND_SEARCH_UP               getSettingsRoot() + "/SearchUp"
 
-FindDialog::FindDialog(QWidget *parent) :
+FindDialog::FindDialog(QWidget* parent) :
     CBDialog(parent),
     ui(new Ui::FindDialog)
 {
@@ -72,3 +72,4 @@ QString FindDialog::getSettingsRoot()
 {
     return objectName();
 }
+

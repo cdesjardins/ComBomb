@@ -34,10 +34,11 @@ public:
     {
         TgtConnectionConfig(std::string program, std::string workingDir, std::string args)
             : _program(program),
-              _workingDir(workingDir),
-              _args(args)
+            _workingDir(workingDir),
+            _args(args)
         {
         }
+
         std::string _program;
         std::string _workingDir;
         std::string _args;
@@ -62,7 +63,7 @@ protected:
     void processInput(const QByteArray &output);
     void writerThread();
 
-    QProcess *_proc;
+    QProcess* _proc;
     QMutex _processMutex;
     boost::scoped_ptr<boost::thread> _processWriterThread;
     volatile bool _processWriterThreadRun;

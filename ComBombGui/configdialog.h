@@ -31,10 +31,10 @@ class ConfigDialog : public CBDialog
     Q_OBJECT
 
 public:
-    explicit ConfigDialog(QWidget *parent = 0);
+    explicit ConfigDialog(QWidget* parent = 0);
     virtual ~ConfigDialog();
 
-    static bool getTerminalConfig(QTerminalConfig *terminalConfig);
+    static bool getTerminalConfig(QTerminalConfig* terminalConfig);
     static QStringList getPortListSettings();
 protected:
     static QStringList getPortListDefaults(QString basePortName, int start, int stop);
@@ -46,7 +46,7 @@ private slots:
     void on_buttonBox_accepted();
 
 private:
-    Ui::ConfigDialog *ui;
+    Ui::ConfigDialog* ui;
 };
 
 #endif // CONFIGDIALOG_H

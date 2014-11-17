@@ -25,7 +25,7 @@ const QEvent::Type SendBackTab = static_cast<QEvent::Type>(QEvent::User + 1);
 class SendBackTabEvent : public QEvent
 {
 public:
-    SendBackTabEvent():
+    SendBackTabEvent() :
         QEvent(SendBackTab)
     {
     }

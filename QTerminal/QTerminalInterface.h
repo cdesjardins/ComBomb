@@ -32,12 +32,12 @@ class QTerminalInterface : public QWidget
 public:
     QTerminalInterface(QWidget* parent = 0) : QWidget(parent)
     {
-        connect (this, SIGNAL(customContextMenuRequested(QPoint)),
-                 this, SLOT(handleCustomContextMenuRequested(QPoint)));
+        connect(this, SIGNAL(customContextMenuRequested(QPoint)),
+                this, SLOT(handleCustomContextMenuRequested(QPoint)));
 
-        setContextMenuPolicy (Qt::CustomContextMenu);
+        setContextMenuPolicy(Qt::CustomContextMenu);
 
-        _contextMenu = new QMenu (this);
+        _contextMenu = new QMenu(this);
         QAction* copyAction  = _contextMenu->addAction("Copy");
         QAction* pasteAction = _contextMenu->addAction("Paste");
         QAction* selectAllAction = _contextMenu->addAction("Select All");
@@ -52,15 +52,15 @@ public:
         runProcessAction->setIcon(QIcon(":/images/script_gear.png"));
 
         newlineAction->setCheckable(true);
-        connect(copyAction, SIGNAL (triggered()), this, SLOT (copyClipboard()));
-        connect(pasteAction, SIGNAL (triggered()), this, SLOT (pasteClipboard()));
-        connect(selectAllAction, SIGNAL (triggered()), this, SLOT (selectAll()));
-        connect(clearScrollbackAction, SIGNAL (triggered()), this, SLOT (clearScrollback()));
-        connect(newlineAction, SIGNAL (triggered()), this, SLOT (newlineToggle()));
-        connect(runProcessAction, SIGNAL (triggered()), this, SLOT (runProcess()));
+        connect(copyAction, SIGNAL(triggered()), this, SLOT(copyClipboard()));
+        connect(pasteAction, SIGNAL(triggered()), this, SLOT(pasteClipboard()));
+        connect(selectAllAction, SIGNAL(triggered()), this, SLOT(selectAll()));
+        connect(clearScrollbackAction, SIGNAL(triggered()), this, SLOT(clearScrollback()));
+        connect(newlineAction, SIGNAL(triggered()), this, SLOT(newlineToggle()));
+        connect(runProcessAction, SIGNAL(triggered()), this, SLOT(runProcess()));
 
-        connect(this, SIGNAL (triggerCopy()), this, SLOT (copyClipboard()));
-        connect(this, SIGNAL (triggerPaste()), this, SLOT (pasteClipboard()));
+        connect(this, SIGNAL(triggerCopy()), this, SLOT(copyClipboard()));
+        connect(this, SIGNAL(triggerPaste()), this, SLOT(pasteClipboard()));
     }
 
     virtual ~QTerminalInterface()

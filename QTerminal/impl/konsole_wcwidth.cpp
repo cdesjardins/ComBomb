@@ -136,14 +136,14 @@ int konsole_wcwidth(quint16 ucs)
 
     return 1 +
            (ucs >= 0x1100 &&
-            (ucs <= 0x115f ||             /* Hangul Jamo init. consonants */
+            (ucs <= 0x115f || /* Hangul Jamo init. consonants */
              (ucs >= 0x2e80 && ucs <= 0xa4cf && (ucs & ~0x0011) != 0x300a &&
-              ucs != 0x303f) ||           /* CJK ... Yi */
+              ucs != 0x303f) || /* CJK ... Yi */
              (ucs >= 0xac00 && ucs <= 0xd7a3) || /* Hangul Syllables */
              (ucs >= 0xf900 && ucs <= 0xfaff) || /* CJK Compatibility Ideographs */
              (ucs >= 0xfe30 && ucs <= 0xfe6f) || /* CJK Compatibility Forms */
              (ucs >= 0xff00 && ucs <= 0xff5f) || /* Fullwidth Forms */
-             (ucs >= 0xffe0 && ucs <= 0xffe6) /* do not compare UINT16 with 0x20000 ||
+             (ucs >= 0xffe0 && ucs <= 0xffe6)/* do not compare UINT16 with 0x20000 ||
       (ucs >= 0x20000 && ucs <= 0x2ffff) */));
 }
 

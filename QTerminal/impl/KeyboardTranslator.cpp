@@ -730,12 +730,30 @@ QByteArray KeyboardTranslator::Entry::escapedText(bool expandWildCards, Qt::Keyb
 
         switch (ch)
         {
-            case 27: replacement = 'E'; break;
-            case 8: replacement = 'b'; break;
-            case 12: replacement = 'f'; break;
-            case 9: replacement = 't'; break;
-            case 13: replacement = 'r'; break;
-            case 10: replacement = 'n'; break;
+            case 27:
+                replacement = 'E';
+                break;
+
+            case 8:
+                replacement = 'b';
+                break;
+
+            case 12:
+                replacement = 'f';
+                break;
+
+            case 9:
+                replacement = 't';
+                break;
+
+            case 13:
+                replacement = 'r';
+                break;
+
+            case 10:
+                replacement = 'n';
+                break;
+
             default:
                 // any character which is not printable is replaced by an equivalent
                 // \xhh escape sequence (where 'hh' are the corresponding hex digits)
@@ -775,12 +793,30 @@ QByteArray KeyboardTranslator::Entry::unescape(const QByteArray& input) const
 
             switch (result[i + 1])
             {
-                case 'E': replacement[0] = 27; break;
-                case 'b': replacement[0] = 8; break;
-                case 'f': replacement[0] = 12; break;
-                case 't': replacement[0] = 9; break;
-                case 'r': replacement[0] = 13; break;
-                case 'n': replacement[0] = 10; break;
+                case 'E':
+                    replacement[0] = 27;
+                    break;
+
+                case 'b':
+                    replacement[0] = 8;
+                    break;
+
+                case 'f':
+                    replacement[0] = 12;
+                    break;
+
+                case 't':
+                    replacement[0] = 9;
+                    break;
+
+                case 'r':
+                    replacement[0] = 13;
+                    break;
+
+                case 'n':
+                    replacement[0] = 10;
+                    break;
+
                 case 'x':
                 {
                     // format is \xh or \xhh where 'h' is a hexadecimal
@@ -807,6 +843,7 @@ QByteArray KeyboardTranslator::Entry::unescape(const QByteArray& input) const
                     charsToRemove = 2 + strlen(hexDigits);
                 }
                 break;
+
                 default:
                     escapedChar = false;
             }
