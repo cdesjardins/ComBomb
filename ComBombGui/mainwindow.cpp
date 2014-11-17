@@ -334,3 +334,4 @@ void MainWindow::on_actionNew_Version_Available_triggered()
 {
     QDesktopServices::openUrl(QUrl("http://blog.chrisd.info/combomb/#downloadComBomb"));
 }
+

@@ -27,7 +27,7 @@ boost::shared_ptr<UpdateChecker> UpdateChecker::_inst;
 
 UpdateChecker::UpdateChecker()
     : _reply(NULL),
-      _latestVersion(-1)
+    _latestVersion(-1)
 {
 }
 
@@ -42,7 +42,7 @@ boost::shared_ptr<UpdateChecker> UpdateChecker::instance()
 
 void UpdateChecker::checkForNewVersion()
 {
-    QNetworkAccessManager *manager = new QNetworkAccessManager(this);
+    QNetworkAccessManager* manager = new QNetworkAccessManager(this);
     connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
 
     _reply = manager->get(QNetworkRequest(QUrl("https://api.github.com/repos/cdesjardins/ComBomb/tags")));
@@ -56,7 +56,7 @@ void UpdateChecker::slotError(QNetworkReply::NetworkError err)
     qDebug("Error: " + err);
 }
 
-void UpdateChecker::replyFinished(QNetworkReply* )
+void UpdateChecker::replyFinished(QNetworkReply*)
 {
     QJsonDocument d(QJsonDocument::fromJson(_result.toUtf8()));
     QJsonArray tags = d.array();
@@ -88,3 +88,4 @@ QString UpdateChecker::getLatestVersionStr()
 {
     return _latestVersionStr;
 }
+

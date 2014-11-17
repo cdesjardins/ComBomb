@@ -45,7 +45,7 @@ private:
     UpdateChecker();
 
     static boost::shared_ptr<UpdateChecker> _inst;
-    QNetworkReply *_reply;
+    QNetworkReply* _reply;
     QString _result;
     int32_t _latestVersion;
     QString _latestVersionStr;
