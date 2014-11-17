@@ -20,6 +20,7 @@
 #include <QMessageBox>
 #include <QComboBox>
 #include "mainwindow.h"
+#include "updatechecker.h"
 #include "childform.h"
 #include "aboutdialog.h"
 #include "configdialog.h"
@@ -58,6 +59,7 @@ MainWindow::MainWindow(QWidget* parent) :
     readSettings();
     _runProcessIconText = _ui->action_Run_Process->text();
     connect(_mdiArea, SIGNAL(subWindowActivated(QMdiSubWindow*)), this, SLOT(subWindowActivatedSlot(QMdiSubWindow*)));
+    UpdateChecker::instance()->checkForNewVersion();
 }
 
 void MainWindow::enableMenuItems(bool enabled)

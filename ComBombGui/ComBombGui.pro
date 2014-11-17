@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui widgets
+QT       += core gui widgets network
 
 CONFIG += static
 TARGET = ComBombGui
@@ -29,7 +29,8 @@ SOURCES += main.cpp\
     cbcombobox.cpp \
     cblistwidget.cpp \
     cbdialog.cpp \
-    finddialog.cpp
+    finddialog.cpp \
+    updatechecker.cpp
 
 HEADERS  += mainwindow.h \
     childform.h \
@@ -44,7 +45,8 @@ HEADERS  += mainwindow.h \
     cbcombobox.h \
     cblistwidget.h \
     cbdialog.h \
-    finddialog.h
+    finddialog.h \
+    updatechecker.h
 
 FORMS    += mainwindow.ui \
     childform.ui \
