@@ -65,6 +65,8 @@ private slots:
     void on_actionFind_next_triggered();
     void on_actionFind_prev_triggered();
     void on_actionFind_highlighted_text_triggered();
+    void newVersionAvailableSlot();
+    void on_actionNew_Version_Available_triggered();
 
 signals:
     void findSignal();

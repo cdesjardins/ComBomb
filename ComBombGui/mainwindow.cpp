@@ -54,12 +54,14 @@ MainWindow::MainWindow(QWidget* parent) :
     _windowCnt(0)
 {
     _ui->setupUi(this);
+    _ui->actionNew_Version_Available->setVisible(false);
     setCentralWidget(_mdiArea);
     enableMenuItems(false);
     readSettings();
     _runProcessIconText = _ui->action_Run_Process->text();
     connect(_mdiArea, SIGNAL(subWindowActivated(QMdiSubWindow*)), this, SLOT(subWindowActivatedSlot(QMdiSubWindow*)));
     UpdateChecker::instance()->checkForNewVersion();
+    connect(UpdateChecker::instance().get(), SIGNAL(newVersionAvailable()), this, SLOT(newVersionAvailableSlot()));
 }
 
 void MainWindow::enableMenuItems(bool enabled)
@@ -323,3 +325,12 @@ void MainWindow::on_actionFind_highlighted_text_triggered()
     }
 }
 
+void MainWindow::newVersionAvailableSlot()
+{
+    _ui->actionNew_Version_Available->setVisible(true);
+}
+
+void MainWindow::on_actionNew_Version_Available_triggered()
+{
+    QDesktopServices::openUrl(QUrl("http://blog.chrisd.info/combomb/#downloadComBomb"));
+}

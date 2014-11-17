@@ -22,5 +22,6 @@
         <file>images/find_under.png</file>
         <file>images/script_delete.png</file>
         <file>images/script_error.png</file>
+        <file>images/alarm_bell.png</file>
     </qresource>
 </RCC>

@@ -39,7 +39,7 @@ private slots:
     void replyFinished(QNetworkReply* reply);
 
 signals:
-    void newVersionAvailable(QString);
+    void newVersionAvailable();
 
 private:
     UpdateChecker();

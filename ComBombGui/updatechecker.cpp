@@ -17,6 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "updatechecker.h"
+#include "versioning.h"
 #include <QNetworkAccessManager>
 #include <QJsonDocument>
 #include <QJsonArray>
@@ -60,22 +61,12 @@ void UpdateChecker::replyFinished(QNetworkReply* )
     QJsonDocument d(QJsonDocument::fromJson(_result.toUtf8()));
     QJsonArray tags = d.array();
     QString verStr = tags[0].toObject()["name"].toString();
-    if (verStr[0] == 'v')
+    int32_t currentVersion = parseVersionStr(getVersion());
+    _latestVersion = parseVersionStr(verStr.toLocal8Bit().constData());
+    if ((_latestVersion != -1) && (currentVersion != -1) && (_latestVersion > currentVersion))
     {
-        QString text = verStr.right(verStr.length() - 1);
-        QStringList versions = text.split('.');
-        if (versions.length() == 2)
-        {
-            bool majok;
-            bool minok;
-            int32_t major = versions[0].toInt(&majok);
-            int32_t minor = versions[1].toInt(&minok);
-            if ((majok == true) && (minok == true))
-            {
-                _latestVersion = ((major << 16) | minor);
-                _latestVersionStr = verStr;
-            }
-        }
+        _latestVersionStr = verStr;
+        emit newVersionAvailable();
     }
 }
 

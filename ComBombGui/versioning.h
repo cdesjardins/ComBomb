@@ -16,4 +16,13 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifndef VERSIONING_Hxx
+#define VERSIONING_Hxx
+
+#include <string>
+#include <stdint.h>
+
 const char* getVersion();
+int32_t parseVersionStr(std::string verStr);
+
+#endif
