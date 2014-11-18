@@ -53,6 +53,7 @@ def zipItWindows(filename, qtDir):
     msvs10Dir = os.environ['VS100COMNTOOLS'] + "../../VC/redist/x86/Microsoft.VC100.CRT/"
     files = {
         "ComBombGui/release/ComBombGui.exe": "ComBombGui.exe",
+        "../ComBombGui/images/ComBomb128.png": "ComBomb128.png",
         qtDir + "/Qt5Widgets.dll": "Qt5Widgets.dll",
         qtDir + "/Qt5Gui.dll": "Qt5Gui.dll",
         qtDir + "/Qt5Network.dll": "Qt5Network.dll",
@@ -75,6 +76,7 @@ def zipItWindows(filename, qtDir):
 def zipItPosix(filename, qtDir):
     files = {
         "ComBombGui/ComBombGui": "ComBomb/ComBombGui",
+        "../ComBombGui/images/ComBomb128.png": "ComBomb/ComBomb128.png",
         qtDir + "/../lib/libQt5Widgets.so.5": "ComBomb/libQt5Widgets.so.5",
         qtDir + "/../lib/libQt5Core.so.5": "ComBomb/libQt5Core.so.5",
         qtDir + "/../lib/libQt5Gui.so.5": "ComBomb/libQt5Gui.so.5",
