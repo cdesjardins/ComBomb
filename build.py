@@ -81,6 +81,7 @@ def zipItPosix(filename, qtDir):
         qtDir + "/../lib/libicui18n.so.52": "ComBomb/libicui18n.so.52",
         qtDir + "/../lib/libicuuc.so.52": "ComBomb/libicuuc.so.52",
         qtDir + "/../lib/libicudata.so.52": "ComBomb/libicudata.so.52",
+        qtDir + "/../lib/libQt5Network.so.5": "ComBomb/libQt5Network.so.5",
         qtDir + "/../plugins/platforms/libqxcb.so": "ComBomb/platforms/libqxcb.so",
         releaseNotes : "ComBomb/" + releaseNotes,
         "../addons/savetofile.py" : "ComBomb/addons/savetofile.py",
