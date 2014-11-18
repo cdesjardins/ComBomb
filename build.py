@@ -55,6 +55,7 @@ def zipItWindows(filename, qtDir):
         "ComBombGui/release/ComBombGui.exe": "ComBombGui.exe",
         qtDir + "/Qt5Widgets.dll": "Qt5Widgets.dll",
         qtDir + "/Qt5Gui.dll": "Qt5Gui.dll",
+        qtDir + "/Qt5Network.dll": "Qt5Network.dll",
         qtDir + "/Qt5Core.dll": "Qt5Core.dll",
         qtDir + "/icuin52.dll": "icuin52.dll",
         qtDir + "/icudt52.dll": "icudt52.dll",
