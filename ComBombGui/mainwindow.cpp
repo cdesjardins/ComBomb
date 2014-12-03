@@ -46,6 +46,11 @@ void MainWindow::destroyMainWindow()
     }
 }
 
+const boost::posix_time::time_duration MainWindow::getStartTimeDelta()
+{
+    return boost::posix_time::microsec_clock::universal_time() - _startTime;
+}
+
 MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
     _ui(new Ui::MainWindow),
@@ -53,6 +58,7 @@ MainWindow::MainWindow(QWidget* parent) :
     _fileClipboardDialog(new FileClipboardDialog(this)),
     _windowCnt(0)
 {
+    _startTime = boost::posix_time::microsec_clock::universal_time();
     _ui->setupUi(this);
     _ui->actionNew_Version_Available->setVisible(false);
     setCentralWidget(_mdiArea);

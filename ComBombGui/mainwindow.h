@@ -41,6 +41,7 @@ public:
     static void errorBox(QString errMsg);
     ChildForm* getActiveChildWindow();
     void swapProcessIcon(bool processRunning);
+    const boost::posix_time::time_duration getStartTimeDelta();
 protected:
     explicit MainWindow(QWidget* parent = 0);
     void enableMenuItems(bool enabled);
@@ -78,6 +79,7 @@ private:
     static MainWindow* _instance;
     boost::atomic<int> _windowCnt;
     QString _runProcessIconText;
+    boost::posix_time::ptime _startTime;
 };
 
 #endif // MAINWINDOW_H

@@ -20,6 +20,8 @@
 #include "ui_aboutdialog.h"
 #include "versioning.h"
 #include "cblabel.h"
+#include "mainwindow.h"
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 CBLabel::CBLabel(QWidget* parent)
     : QLabel(parent),
@@ -54,6 +56,13 @@ AboutDialog::AboutDialog(QWidget* parent) :
     QString ver("ComBomb version: ");
     ver.append(getVersion());
     ui->versionLabel->setText(ver);
+
+    QString uptime("Uptime: ");
+    std::stringstream buf;
+    const boost::posix_time::time_duration elapsed = MainWindow::getMainWindow()->getStartTimeDelta();
+    buf << elapsed;
+    uptime.append(buf.str().c_str());
+    ui->uptimeLabel->setText(uptime);
 }
 
 AboutDialog::~AboutDialog()

@@ -26,7 +26,7 @@
 #include "QTerminal/QTerminalInterface.h"
 #include "QTerminal/QTerminalConfig.h"
 #ifndef Q_MOC_RUN
-#include "boost/smart_ptr.hpp"
+#include <boost/smart_ptr.hpp>
 #endif
 
 class TgtIntf;
