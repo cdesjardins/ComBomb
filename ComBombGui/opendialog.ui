@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>470</width>
-    <height>263</height>
+    <height>333</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -381,13 +381,22 @@
   <tabstop>hostNameComboBox</tabstop>
   <tabstop>userNameComboBox</tabstop>
   <tabstop>passwordLineEdit</tabstop>
-  <tabstop>tabWidget</tabstop>
+  <tabstop>privKeyFileComboBox</tabstop>
+  <tabstop>privKeyBrowseButton</tabstop>
+  <tabstop>newLineCheckBox</tabstop>
   <tabstop>comPortComboBox</tabstop>
   <tabstop>baudRateComboBox</tabstop>
   <tabstop>parityComboBox</tabstop>
   <tabstop>stopBitsComboBox</tabstop>
   <tabstop>byteSizeComboBox</tabstop>
   <tabstop>flowControlComboBox</tabstop>
+  <tabstop>programComboBox</tabstop>
+  <tabstop>programBrowseButton</tabstop>
+  <tabstop>argumentsComboBox</tabstop>
+  <tabstop>workingDirComboBox</tabstop>
+  <tabstop>workingDirButton</tabstop>
+  <tabstop>portNumLineEdit</tabstop>
+  <tabstop>tabWidget</tabstop>
  </tabstops>
  <resources>
   <include location="ComBomb.qrc"/>

@@ -20,9 +20,11 @@
 #include "ui_configdialog.h"
 #include "mainwindow.h"
 
-#define CB_CONFIG_SETTINGS_ROOT "ConfigDialog/"
-#define CB_CONFIG_SETTINGS_COM "ConfigDialog/ComPorts"
-#define CB_CONFIG_SETTINGS_PORT "Port"
+#define CB_CONFIG_SETTINGS_ROOT         "ConfigDialog/"
+#define CB_CONFIG_SETTINGS_PORT         "Port"
+#define CB_CONFIG_SETTINGS_COM          CB_CONFIG_SETTINGS_ROOT "ComPorts"
+#define CB_CONFIG_SETTINGS_TERM         CB_CONFIG_SETTINGS_ROOT "Settings"
+#define CB_CONFIG_SETTINGS_TABBEDVIEW   CB_CONFIG_SETTINGS_ROOT "TabbedView"
 #ifdef WIN32
 #define BASE_PORTNAME_1 "COM", 1, 257
 #else
@@ -34,6 +36,7 @@ ConfigDialog::ConfigDialog(QWidget* parent) :
     CBDialog(parent),
     ui(new Ui::ConfigDialog)
 {
+    QSettings settings;
     QTerminalConfig terminalConfig;
     ui->setupUi(this);
 
@@ -50,6 +53,8 @@ ConfigDialog::ConfigDialog(QWidget* parent) :
     }
     ui->fontSizeComboBox->setDefault("12");
     populateComPortListWidget();
+    ui->mdiRdioButton->setChecked(!getTabbedViewSettings());
+    ui->tabsRadioButton->setChecked(getTabbedViewSettings());
 }
 
 void ConfigDialog::setPortListSettings()
@@ -92,6 +97,12 @@ QStringList ConfigDialog::getPortListSettings()
 #endif
     }
     return comPorts;
+}
+
+bool ConfigDialog::getTabbedViewSettings()
+{
+    QSettings settings;
+    return settings.value(CB_CONFIG_SETTINGS_TABBEDVIEW, false).toBool();
 }
 
 QStringList ConfigDialog::getPortListDefaults(QString basePortName, int start, int stop)
@@ -143,10 +154,13 @@ void ConfigDialog::on_buttonBox_accepted()
     terminalConfig._font.setPointSize(ui->fontSizeComboBox->currentData().toInt());
     q << terminalConfig;
 
-    settings.setValue(CB_CONFIG_SETTINGS_ROOT "Settings", qbytes);
+    settings.setValue(CB_CONFIG_SETTINGS_TERM, qbytes);
+    settings.setValue(CB_CONFIG_SETTINGS_TABBEDVIEW, ui->tabsRadioButton->isChecked());
+    MainWindow::getMainWindow()->setInterfaceType();
     setPortListSettings();
 
     QList<ChildForm*> list = MainWindow::getMainWindow()->findChildren<ChildForm*>();
+
     foreach(ChildForm * w, list)
     {
         w->applyTerminalConfig(terminalConfig);
@@ -157,7 +171,7 @@ bool ConfigDialog::getTerminalConfig(QTerminalConfig* terminalConfig)
 {
     bool ret = false;
     QSettings settings;
-    QByteArray qbytes(settings.value(CB_CONFIG_SETTINGS_ROOT "Settings").toByteArray());
+    QByteArray qbytes(settings.value(CB_CONFIG_SETTINGS_TERM).toByteArray());
     if (qbytes.length() > 0)
     {
         QDataStream q(qbytes);

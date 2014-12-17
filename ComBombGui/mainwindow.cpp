@@ -61,6 +61,11 @@ MainWindow::MainWindow(QWidget* parent) :
     _startTime = boost::posix_time::microsec_clock::universal_time();
     _ui->setupUi(this);
     _ui->actionNew_Version_Available->setVisible(false);
+
+    //_mdiArea->setTabsMovable(true);
+    _mdiArea->setTabShape(QTabWidget::Triangular);
+    _mdiArea->setTabsClosable(true);
+    setInterfaceType();
     setCentralWidget(_mdiArea);
     enableMenuItems(false);
     readSettings();
@@ -118,7 +123,6 @@ void MainWindow::errorBox(QString errMsg)
 void MainWindow::on_actionOpen_triggered()
 {
     OpenDialog openDialog(this);
-
     if (openDialog.exec() == OpenDialog::Accepted)
     {
         try
@@ -339,5 +343,18 @@ void MainWindow::newVersionAvailableSlot()
 void MainWindow::on_actionNew_Version_Available_triggered()
 {
     QDesktopServices::openUrl(QUrl("http://blog.chrisd.info/combomb/#downloadComBomb"));
+}
+
+void MainWindow::setInterfaceType()
+{
+    if (ConfigDialog::getTabbedViewSettings() == true)
+    {
+        _mdiArea->setViewMode(QMdiArea::TabbedView);
+    }
+    else
+    {
+        _mdiArea->setViewMode(QMdiArea::SubWindowView);
+    }
+
 }
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>174</width>
-    <height>469</height>
+    <width>260</width>
+    <height>485</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,18 +18,6 @@
     <normaloff>:/images/ComBomb16.png</normaloff>:/images/ComBomb16.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="0">
-    <widget class="QGroupBox" name="ConfigComPorts">
-     <property name="title">
-      <string>Com Ports</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
-      <item>
-       <widget class="CBListWidget" name="comPortsList"/>
-      </item>
-     </layout>
-    </widget>
-   </item>
    <item row="0" column="0">
     <widget class="QGroupBox" name="ConfigDelimiters">
      <property name="title">
@@ -42,7 +30,7 @@
      </layout>
     </widget>
    </item>
-   <item row="3" column="0">
+   <item row="4" column="0">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -52,7 +40,19 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
+   <item row="1" column="0">
+    <widget class="QGroupBox" name="ConfigComPorts">
+     <property name="title">
+      <string>Com Ports</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="CBListWidget" name="comPortsList"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="3" column="0">
     <widget class="QGroupBox" name="ConfigFont">
      <property name="title">
       <string>Font</string>
@@ -65,7 +65,7 @@
         </property>
         <property name="currentFont">
          <font>
-          <family>Courier</family>
+          <family>Nimbus Mono L</family>
          </font>
         </property>
        </widget>
@@ -81,6 +81,29 @@
        <widget class="CBComboBox" name="fontSizeComboBox">
         <property name="currentText">
          <string/>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QGroupBox" name="Interface">
+     <property name="title">
+      <string>Interface</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_4">
+      <item>
+       <widget class="QRadioButton" name="tabsRadioButton">
+        <property name="text">
+         <string>Tabbed view</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="mdiRdioButton">
+        <property name="text">
+         <string>Sub window view</string>
         </property>
        </widget>
       </item>

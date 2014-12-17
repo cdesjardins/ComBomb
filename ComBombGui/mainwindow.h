@@ -42,6 +42,7 @@ public:
     ChildForm* getActiveChildWindow();
     void swapProcessIcon(bool processRunning);
     const boost::posix_time::time_duration getStartTimeDelta();
+    void setInterfaceType();
 protected:
     explicit MainWindow(QWidget* parent = 0);
     void enableMenuItems(bool enabled);
