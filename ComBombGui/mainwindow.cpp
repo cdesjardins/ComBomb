@@ -137,6 +137,13 @@ void MainWindow::on_actionOpen_triggered()
                 }
                 break;
 
+                case OpenDialog::CB_CONN_TELNET:
+                {
+                    boost::shared_ptr<const TgtTelnetIntf::TgtConnectionConfig> p = openDialog.getTelnetConfig();
+                    intf = TgtTelnetIntf::createTelnetConnection(p);
+                }
+                break;
+
                 case OpenDialog::CB_CONN_SERIAL:
                 {
                     boost::shared_ptr<const TgtSerialIntf::TgtConnectionConfig> p = openDialog.getSerialConfig();

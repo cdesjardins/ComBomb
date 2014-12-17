@@ -17,15 +17,21 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/******************************************************************************
-**
-**  Telnet
-**
-******************************************************************************/
-#if 0
-TgtTelnetIntf::TgtTelnetIntf()
+#include "TgtTelnetConnection.h"
+#include "CBException.h"
+#include <boost/array.hpp>
+
+boost::shared_ptr<TgtTelnetIntf> TgtTelnetIntf::createTelnetConnection(const boost::shared_ptr<const TgtConnectionConfig> &config)
 {
-    m_nSocket = -1;
+    boost::shared_ptr<TgtTelnetIntf> ret(new TgtTelnetIntf(config));
+    ret->tgtMakeConnection();
+    return ret;
+}
+
+TgtTelnetIntf::TgtTelnetIntf(const boost::shared_ptr<const TgtConnectionConfig> &config)
+    : TgtIntf(config),
+      _socket(_socketService)
+{
     m_nState = TELNET_STATE_DATA;
     m_nCommand = TELNET_CMD_SB;
     m_bEcho = true;
@@ -37,76 +43,54 @@ TgtTelnetIntf::~TgtTelnetIntf()
     m_bConnected = false;
 }
 
-char* TgtTelnetIntf::TgtMakeConnection()
+void TgtTelnetIntf::tgtMakeConnection()
 {
-    char* pRet;
-    struct hostent* pHostEnt;
-    struct protoent* pProtEnt;
-    struct sockaddr_in sin;
-    unsigned long nNonBlocking = 1;
+    std::vector<boost::asio::ip::address> addresses;
+    boost::asio::ip::tcp::resolver resolver(_socketService);
+    boost::asio::ip::tcp::resolver::query query(m_sTgtConnection._hostName, "");
+    boost::asio::ip::tcp::resolver::iterator endpointIterator = resolver.resolve(query);
+    boost::asio::ip::tcp::resolver::iterator end;
+    boost::asio::ip::tcp::endpoint endpoint;
+    boost::system::error_code error = boost::asio::error::host_not_found;
 
-    pRet = NULL;
-    memset((char*)&sin, 0, sizeof(sin));
-    sin.sin_family = AF_INET;
-    sin.sin_port = htons((u_short)m_sTgtConnection.m_nPort);
-    pHostEnt = gethostbyname(m_sTgtConnection.m_szServerName);
-    if (pHostEnt != 0)
+    while (endpointIterator != end)
     {
-        memcpy((char*)&sin.sin_addr, pHostEnt->h_addr, pHostEnt->h_length);
+        endpoint = *endpointIterator;
+        addresses.push_back(endpoint.address());
+        endpointIterator++;
     }
-    else
+
+    //addresses.push_back(m_sTgtConnection._hostName);
+
+    for (std::vector<boost::asio::ip::address>::iterator it = addresses.begin(); it != addresses.end(); it++)
     {
-        sin.sin_addr.s_addr = inet_addr(m_sTgtConnection.m_szServerName);
-        if (sin.sin_addr.s_addr == INADDR_NONE)
+        endpoint = boost::asio::ip::tcp::endpoint(*it, m_sTgtConnection._portNum);
+        _socket.close();
+        _socket.open(boost::asio::ip::tcp::v4());
+        _socket.connect(endpoint, error);
+        if (! error)
         {
-            pRet = "Unable to find server";
+            break;
         }
     }
-    pProtEnt = getprotobyname("tcp");
-    if (pProtEnt == 0)
+    if (error)
     {
-        pRet = "TCP failure";
+        std::string errmsg;
+        boost::format f("Unable to connect to '%s' (%d)");
+        str(f % m_sTgtConnection._hostName % error);
+        throw CB_EXCEPTION_STR(CBException::CbExcp, errmsg.c_str());
     }
-    else
-    {
-        m_nSocket = (int)socket(PF_INET, SOCK_STREAM, pProtEnt->p_proto);
-        if (m_nSocket < 0)
-        {
-            pRet = "Unable to open socket";
-        }
-        else
-        {
-            if (connect(m_nSocket, (struct sockaddr*)&sin, sizeof(sin)) == SOCKET_ERROR)
-            {
-                pRet = "Unable to connect to server";
-            }
-            else
-            {
-                if (ioctlsocket(m_nSocket, FIONBIO, &nNonBlocking) == SOCKET_ERROR)
-                {
-                    pRet = "Socket failure";
-                }
-                else
-                {
-                    m_bConnected = true;
-                }
-            }
-        }
-    }
-    return pRet;
+    _socket.non_blocking(true);
 }
 
 int TgtTelnetIntf::tgtBreakConnection()
 {
     m_bConnected = false;
-    if (m_nSocket > 0)
-    {
-        closesocket(m_nSocket);
-    }
+    _socket.close();
     return 0;
 }
 
-int TgtTelnetIntf::TgtTelnetData(unsigned char cTelnetRx, char* cReadData)
+int TgtTelnetIntf::tgtTelnetData(unsigned char cTelnetRx, char* cReadData)
 {
     int nRet = 0;
     switch (cTelnetRx)
@@ -126,7 +110,7 @@ int TgtTelnetIntf::TgtTelnetData(unsigned char cTelnetRx, char* cReadData)
     return nRet;
 }
 
-int TgtTelnetIntf::TgtTelnetCommand(eTelnetCommand cTelnetRx)
+int TgtTelnetIntf::tgtTelnetCommand(eTelnetCommand cTelnetRx)
 {
     m_nState = TELNET_STATE_DATA;
     m_nCommand = cTelnetRx;
@@ -156,62 +140,83 @@ int TgtTelnetIntf::TgtTelnetCommand(eTelnetCommand cTelnetRx)
     return 0;
 }
 
-int TgtTelnetIntf::TgtSendCommand(eTelnetCommand eCmd, eTelnetOption eOpt)
+void TgtTelnetIntf::tgtSendData(const boost::asio::mutable_buffer &buf)
+{
+    size_t sent;
+    size_t totalSent = 0;
+    size_t bufferSize = boost::asio::buffer_size(buf);
+    boost::asio::mutable_buffer buffer;
+    do
+    {
+        buffer = boost::asio::buffer(buf + totalSent);
+        sent = _socket.send(boost::asio::buffer(buffer));
+        totalSent += sent;
+        // FIXME: Add timeout
+    } while (totalSent < bufferSize);
+}
+
+void TgtTelnetIntf::tgtSendCommand(eTelnetCommand eCmd, eTelnetOption eOpt)
 {
     unsigned char sBuffer[3];
     sBuffer[0] = TELNET_CMD_IAC;
     sBuffer[1] = eCmd;
     sBuffer[2] = eOpt;
-    return send(m_nSocket, (char*)sBuffer, sizeof(sBuffer), 0);
+    tgtSendData(boost::asio::buffer(sBuffer, sizeof(sBuffer)));
 }
 
-int TgtTelnetIntf::TgtConfirm(eTelnetOption eOpt)
+int TgtTelnetIntf::tgtConfirm(eTelnetOption eOpt)
 {
     switch (m_nCommand)
     {
         case TELNET_CMD_WILL:
-            TgtSendCommand(TELNET_CMD_DO, eOpt);
+            tgtSendCommand(TELNET_CMD_DO, eOpt);
             break;
 
         case TELNET_CMD_WONT:
-            TgtSendCommand(TELNET_CMD_DONT, eOpt);
+            tgtSendCommand(TELNET_CMD_DONT, eOpt);
             break;
 
         case TELNET_CMD_DO:
-            TgtSendCommand(TELNET_CMD_WILL, eOpt);
+            tgtSendCommand(TELNET_CMD_WILL, eOpt);
             break;
 
         case TELNET_CMD_DONT:
-            TgtSendCommand(TELNET_CMD_WONT, eOpt);
+            tgtSendCommand(TELNET_CMD_WONT, eOpt);
+            break;
+
+        default:
             break;
     }
     return 0;
 }
 
-int TgtTelnetIntf::TgtDeny(eTelnetOption eOpt)
+int TgtTelnetIntf::tgtDeny(eTelnetOption eOpt)
 {
     switch (m_nCommand)
     {
         case TELNET_CMD_WILL:
-            TgtSendCommand(TELNET_CMD_DONT, eOpt);
+            tgtSendCommand(TELNET_CMD_DONT, eOpt);
             break;
 
         case TELNET_CMD_WONT:
-            TgtSendCommand(TELNET_CMD_DO, eOpt);
+            tgtSendCommand(TELNET_CMD_DO, eOpt);
             break;
 
         case TELNET_CMD_DO:
-            TgtSendCommand(TELNET_CMD_WONT, eOpt);
+            tgtSendCommand(TELNET_CMD_WONT, eOpt);
             break;
 
         case TELNET_CMD_DONT:
-            TgtSendCommand(TELNET_CMD_WILL, eOpt);
+            tgtSendCommand(TELNET_CMD_WILL, eOpt);
+            break;
+
+        default:
             break;
     }
     return 0;
 }
 
-int TgtTelnetIntf::TgtProcessTerm()
+int TgtTelnetIntf::tgtProcessTerm()
 {
     int nReadIndex = 0;
     char sBuffer[] =
@@ -227,27 +232,30 @@ int TgtTelnetIntf::TgtProcessTerm()
     switch (m_nCommand)
     {
         case TELNET_CMD_SB:
-            send(m_nSocket, (char*)sBuffer, sizeof(sBuffer), 0);
+            tgtSendData(boost::asio::buffer(sBuffer, sizeof(sBuffer)));
             break;
 
         case TELNET_CMD_WILL:
-            TgtDeny(TELNET_OPT_TERM);
+            tgtDeny(TELNET_OPT_TERM);
             break;
 
         case TELNET_CMD_WONT:
             break;
 
         case TELNET_CMD_DO:
-            TgtConfirm(TELNET_OPT_TERM);
+            tgtConfirm(TELNET_OPT_TERM);
             break;
 
         case TELNET_CMD_DONT:
+            break;
+
+        default:
             break;
     }
     return nReadIndex;
 }
 
-int TgtTelnetIntf::TgtProcessEcho()
+int TgtTelnetIntf::tgtProcessEcho()
 {
     switch (m_nCommand)
     {
@@ -256,49 +264,54 @@ int TgtTelnetIntf::TgtProcessEcho()
 
         case TELNET_CMD_WILL:
             m_bEcho = true;
-            TgtConfirm(TELNET_OPT_ECHO);
+            tgtConfirm(TELNET_OPT_ECHO);
             break;
 
         case TELNET_CMD_WONT:
             m_bEcho = false;
-            TgtConfirm(TELNET_OPT_ECHO);
+            tgtConfirm(TELNET_OPT_ECHO);
             break;
 
         case TELNET_CMD_DO:
-            TgtDeny(TELNET_OPT_ECHO);
+            tgtDeny(TELNET_OPT_ECHO);
             break;
 
         case TELNET_CMD_DONT:
-            TgtConfirm(TELNET_OPT_ECHO);
+            tgtConfirm(TELNET_OPT_ECHO);
+            break;
+        default:
             break;
     }
     return 0;
 }
 
-int TgtTelnetIntf::TgtProcessUnknownOption(eTelnetOption eOpt)
+int TgtTelnetIntf::tgtProcessUnknownOption(eTelnetOption eOpt)
 {
     switch (m_nCommand)
     {
         case TELNET_CMD_WILL:
         case TELNET_CMD_DO:
-            TgtDeny(eOpt);
+            tgtDeny(eOpt);
+            break;
+
+        default:
             break;
     }
     return 0;
 }
 
-int TgtTelnetIntf::TgtTelnetOption(eTelnetOption eOpt)
+int TgtTelnetIntf::tgtTelnetOption(eTelnetOption eOpt)
 {
     int nReadIndex = 0;
     m_nState = TELNET_STATE_DATA;
     switch (eOpt)
     {
         case TELNET_OPT_ECHO:
-            nReadIndex = TgtProcessEcho();
+            nReadIndex = tgtProcessEcho();
             break;
 
         case TELNET_OPT_TERM:
-            nReadIndex = TgtProcessTerm();
+            nReadIndex = tgtProcessTerm();
             break;
 
         case TELNET_OPT_SUPP:
@@ -339,13 +352,13 @@ int TgtTelnetIntf::TgtTelnetOption(eTelnetOption eOpt)
         case TELNET_OPT_AUTH:
         case TELNET_OPT_NENVIR:
         case TELNET_OPT_EXTOP:
-            TgtProcessUnknownOption(eOpt);
+            tgtProcessUnknownOption(eOpt);
             break;
     }
     return nReadIndex;
 }
 
-int TgtTelnetIntf::TgtTelnet(char* sTelnetRx, int nNumBytes, char* szReadData)
+int TgtTelnetIntf::tgtTelnet(char* sTelnetRx, int nNumBytes, char* szReadData)
 {
     int nRxIndex;
     int nReadIndex = 0;
@@ -354,15 +367,15 @@ int TgtTelnetIntf::TgtTelnet(char* sTelnetRx, int nNumBytes, char* szReadData)
         switch (m_nState)
         {
             case TELNET_STATE_DATA:
-                nReadIndex += TgtTelnetData(sTelnetRx[nRxIndex], &szReadData[nReadIndex]);
+                nReadIndex += tgtTelnetData(sTelnetRx[nRxIndex], &szReadData[nReadIndex]);
                 break;
 
             case TELNET_STATE_COMMAND:
-                TgtTelnetCommand((eTelnetCommand)(sTelnetRx[nRxIndex] & 0xFF));
+                tgtTelnetCommand((eTelnetCommand)(sTelnetRx[nRxIndex] & 0xFF));
                 break;
 
             case TELNET_STATE_OPTION:
-                TgtTelnetOption((eTelnetOption)(sTelnetRx[nRxIndex] & 0xFF));
+                tgtTelnetOption((eTelnetOption)(sTelnetRx[nRxIndex] & 0xFF));
                 if (m_nCommand == TELNET_CMD_SB)
                 {
                     while (((sTelnetRx[nRxIndex + 1] & 0xFF) != TELNET_CMD_IAC) && (nRxIndex < nNumBytes))
@@ -375,12 +388,12 @@ int TgtTelnetIntf::TgtTelnet(char* sTelnetRx, int nNumBytes, char* szReadData)
     }
     return nReadIndex;
 }
-
-int TgtTelnetIntf::TgtRead(char* szReadData, int nMaxBytes)
+/*
+int TgtTelnetIntf::tgtRead(char* szReadData, int nMaxBytes)
 {
     int nNumBytes;
 
-    nNumBytes = recv(m_nSocket, m_sTelnetRx, sizeof(m_sTelnetRx), 0);
+    nNumBytes = _socket->receive(m_sTelnetRx, sizeof(m_sTelnetRx), 0);
     if (nNumBytes > 0)
     {
         //m_nTotalRx += nNumBytes;
@@ -412,27 +425,16 @@ int TgtTelnetIntf::TgtWrite(char* szWriteData, int nBytes)
     }
     return nNumBytes;
 }
-
-bool TgtTelnetIntf::TgtConnected()
+*/
+bool TgtTelnetIntf::tgtConnected()
 {
     return m_bConnected;
 }
 
-void TgtTelnetIntf::TgtGetTitle(char* szTitle)
+void TgtTelnetIntf::tgtGetTitle(std::string* szTitle)
 {
-    if (_stricmp(m_sTgtConnection.m_szServerName, m_sTgtConnection.m_szDescription) == 0)
-    {
-        sprintf(szTitle, "Telnet %s %i",
-                m_sTgtConnection.m_szDescription,
-                m_sTgtConnection.m_nPort);
-    }
-    else
-    {
-        sprintf(szTitle, "Telnet %s - %s %i",
-                m_sTgtConnection.m_szDescription,
-                m_sTgtConnection.m_szServerName,
-                m_sTgtConnection.m_nPort);
-    }
+    boost::shared_ptr<const TgtConnectionConfig> connectionConfig = boost::dynamic_pointer_cast<const TgtConnectionConfig>(_connectionConfig);
+    std::stringstream t;
+    t << connectionConfig->_hostName << ":" << connectionConfig->_portNum;
+    *szTitle = t.str();
 }
-
-#endif

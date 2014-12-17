@@ -20,6 +20,7 @@
 #define CB_TGT_TELNET_CONNECTION_H
 
 #include "QTerminal/TgtIntf.h"
+#include <boost/asio.hpp>
 
 enum eTelnetState
 {
@@ -95,27 +96,30 @@ enum eTelnetOption
 class TgtTelnetIntf : public TgtIntf
 {
 public:
-    TgtTelnetIntf();
-    virtual ~TgtTelnetIntf();
-    virtual int tgtBreakConnection();
-    virtual int tgtRead(char* szReadData, int nMaxBytes);
-    virtual int tgtWrite(char* szWriteData, int nBytes);
-    virtual bool tgtConnected();
-    virtual void tgtGetTitle(char* szTitle);
-    virtual void tgtSetConfig(const std::string &szServerName, const int nPort, const std::string &szDescription)
+    struct TgtConnectionConfig : public TgtIntf::TgtConnectionConfigBase
     {
-        m_sTgtConnection.m_szServerName = szServerName;
-        m_sTgtConnection.m_szDescription = szDescription;
-        m_sTgtConnection.m_nPort = nPort;
-    };
-    struct TgtConnection
-    {
-        std::string m_szServerName;
-        int m_nPort;
-        std::string m_szDescription;
+        TgtConnectionConfig(const std::string &hostName, const int portNum)
+            : _hostName(hostName),
+            _portNum(portNum)
+        {
+        }
+
+        TgtConnectionConfig()
+        {
+        }
+
+        std::string _hostName;
+        unsigned short _portNum;
     };
 
+    static boost::shared_ptr<TgtTelnetIntf> createTelnetConnection(const boost::shared_ptr<const TgtConnectionConfig> &config);
+    virtual ~TgtTelnetIntf();
+    virtual int tgtBreakConnection();
+    virtual bool tgtConnected();
+    virtual void tgtGetTitle(std::string* szTitle);
+
 protected:
+    TgtTelnetIntf(const boost::shared_ptr<const TgtConnectionConfig> &config);
     int tgtTelnet(char* sTelnetRx, int nNumBytes, char* szReadData);
     int tgtTelnetData(unsigned char cTelnetRx, char* cReadData);
     int tgtTelnetCommand(eTelnetCommand cTelnetRx);
@@ -125,15 +129,19 @@ protected:
     int tgtProcessUnknownOption(eTelnetOption eOpt);
     int tgtDeny(eTelnetOption eOpt);
     int tgtConfirm(eTelnetOption eOpt);
-    int tgtSendCommand(eTelnetCommand eCmd, eTelnetOption eOpt);
+    void tgtSendCommand(eTelnetCommand eCmd, eTelnetOption eOpt);
+    virtual void tgtMakeConnection();
+    void tgtSendData(const boost::asio::mutable_buffer &buf);
 
-    int m_nSocket;
-    char m_sTelnetRx[512];
+    boost::asio::ip::tcp::socket _socket;
+    boost::asio::io_service _socketService;
+
     bool m_bEcho;
     eTelnetCommand m_nCommand;
     eTelnetState m_nState;
-    TgtConnection m_sTgtConnection;
+    TgtConnectionConfig m_sTgtConnection;
     bool m_bConnected;
+
 };
 
 #endif

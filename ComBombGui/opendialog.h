@@ -34,6 +34,7 @@ public:
     enum ConnectionType
     {
         CB_CONN_SSH,
+        CB_CONN_TELNET,
         CB_CONN_SERIAL,
         CB_CONN_PROCESS,
     };
@@ -42,6 +43,7 @@ public:
     virtual ~OpenDialog();
 
     boost::shared_ptr<const TgtSshIntf::TgtConnectionConfig> getSshConfig() const;
+    boost::shared_ptr<const TgtTelnetIntf::TgtConnectionConfig> getTelnetConfig() const;
     boost::shared_ptr<const TgtSerialIntf::TgtConnectionConfig> getSerialConfig() const;
     boost::shared_ptr<const TgtProcessIntf::TgtConnectionConfig> getProcessConfig() const;
     void addSshConfig(const TgtSshIntf::TgtConnectionConfig &config);

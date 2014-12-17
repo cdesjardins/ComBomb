@@ -73,6 +73,14 @@ boost::shared_ptr<const TgtSshIntf::TgtConnectionConfig> OpenDialog::getSshConfi
     return ret;
 }
 
+boost::shared_ptr<const TgtTelnetIntf::TgtConnectionConfig> OpenDialog::getTelnetConfig() const
+{
+    boost::shared_ptr<TgtTelnetIntf::TgtConnectionConfig> ret(new TgtTelnetIntf::TgtConnectionConfig(
+                                                               ui->hostNameComboBox->currentText().toLocal8Bit().constData(),
+                                                               ui->portNumLineEdit->text().toInt()));
+    return ret;
+}
+
 void OpenDialog::hostNameSelectionChanged(int x)
 {
     if (x < ui->userNameComboBox->count())

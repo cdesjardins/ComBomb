@@ -62,7 +62,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="Ssh">
       <property name="layoutDirection">
@@ -173,6 +173,60 @@
         </widget>
        </item>
       </layout>
+     </widget>
+     <widget class="QWidget" name="Telnet">
+      <attribute name="title">
+       <string>Telnet</string>
+      </attribute>
+      <widget class="QWidget" name="OpenTelnet" native="true">
+       <property name="geometry">
+        <rect>
+         <x>9</x>
+         <y>9</y>
+         <width>431</width>
+         <height>140</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QLabel" name="label_7">
+          <property name="text">
+           <string>Hostname</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="CBComboBox" name="telnetHostNameComboBox">
+          <property name="editable">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_12">
+          <property name="text">
+           <string>Port</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="telnetPortNumLineEdit">
+          <property name="maximumSize">
+           <size>
+            <width>197</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="inputMethodHints">
+           <set>Qt::ImhDigitsOnly</set>
+          </property>
+          <property name="text">
+           <string>23</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
      <widget class="QWidget" name="Serial">
       <attribute name="title">
