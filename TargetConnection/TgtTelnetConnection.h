@@ -108,7 +108,7 @@ public:
         {
         }
 
-        std::string _hostName;
+        std::string    _hostName;
         unsigned short _portNum;
     };
 
@@ -141,7 +141,6 @@ protected:
     eTelnetState m_nState;
     TgtConnectionConfig m_sTgtConnection;
     bool m_bConnected;
-
 };
 
 #endif

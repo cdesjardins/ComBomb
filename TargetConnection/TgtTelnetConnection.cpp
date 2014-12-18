@@ -30,7 +30,7 @@ boost::shared_ptr<TgtTelnetIntf> TgtTelnetIntf::createTelnetConnection(const boo
 
 TgtTelnetIntf::TgtTelnetIntf(const boost::shared_ptr<const TgtConnectionConfig> &config)
     : TgtIntf(config),
-      _socket(_socketService)
+    _socket(_socketService)
 {
     m_nState = TELNET_STATE_DATA;
     m_nCommand = TELNET_CMD_SB;
@@ -68,7 +68,7 @@ void TgtTelnetIntf::tgtMakeConnection()
         _socket.close();
         _socket.open(boost::asio::ip::tcp::v4());
         _socket.connect(endpoint, error);
-        if (! error)
+        if (!error)
         {
             break;
         }
@@ -279,6 +279,7 @@ int TgtTelnetIntf::tgtProcessEcho()
         case TELNET_CMD_DONT:
             tgtConfirm(TELNET_OPT_ECHO);
             break;
+
         default:
             break;
     }
@@ -388,6 +389,7 @@ int TgtTelnetIntf::tgtTelnet(char* sTelnetRx, int nNumBytes, char* szReadData)
     }
     return nReadIndex;
 }
+
 /*
 int TgtTelnetIntf::tgtRead(char* szReadData, int nMaxBytes)
 {
@@ -438,3 +440,4 @@ void TgtTelnetIntf::tgtGetTitle(std::string* szTitle)
     t << connectionConfig->_hostName << ":" << connectionConfig->_portNum;
     *szTitle = t.str();
 }
+

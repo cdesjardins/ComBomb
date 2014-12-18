@@ -362,6 +362,5 @@ void MainWindow::setInterfaceType()
     {
         _mdiArea->setViewMode(QMdiArea::SubWindowView);
     }
-
 }
 
