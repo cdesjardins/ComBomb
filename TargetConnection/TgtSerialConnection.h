@@ -20,11 +20,9 @@
 #define CB_TGT_SERIAL_CONNECTION_H
 
 #include "QTerminal/TgtIntf.h"
-#ifndef Q_MOC_RUN
 #include <boost/asio.hpp>
 #include <boost/smart_ptr.hpp>
 #include <boost/thread.hpp>
-#endif
 
 class TgtSerialIntf : public TgtIntf
 {

@@ -76,8 +76,8 @@ boost::shared_ptr<const TgtSshIntf::TgtConnectionConfig> OpenDialog::getSshConfi
 boost::shared_ptr<const TgtTelnetIntf::TgtConnectionConfig> OpenDialog::getTelnetConfig() const
 {
     boost::shared_ptr<TgtTelnetIntf::TgtConnectionConfig> ret(new TgtTelnetIntf::TgtConnectionConfig(
-                                                                  ui->hostNameComboBox->currentText().toLocal8Bit().constData(),
-                                                                  ui->portNumLineEdit->text().toInt()));
+                                                                  ui->telnetHostNameComboBox->currentText().toLocal8Bit().constData(),
+                                                                  ui->telnetPortNumLineEdit->text().toInt()));
     return ret;
 }
 
