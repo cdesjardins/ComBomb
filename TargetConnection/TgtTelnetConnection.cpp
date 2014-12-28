@@ -30,7 +30,7 @@ boost::shared_ptr<TgtTelnetIntf> TgtTelnetIntf::createTelnetConnection(const boo
 
 TgtTelnetIntf::TgtTelnetIntf(const boost::shared_ptr<const TgtConnectionConfig> &config)
     : TgtIntf(config),
-      _abortConnection(false)
+    _abortConnection(false)
 {
     m_nState = TELNET_STATE_DATA;
     m_nCommand = TELNET_CMD_SB;
@@ -48,7 +48,6 @@ void TgtTelnetIntf::clearConnectionQueue()
     std::vector<boost::system::error_code> trash;
     while (_connectionQueue.dequeue(trash))
     {
-
     }
 }
 
@@ -86,7 +85,7 @@ void TgtTelnetIntf::tgtMakeConnection()
         _socket->open(boost::asio::ip::tcp::v4());
         clearConnectionQueue();
         _socket->async_connect(endpoint, boost::bind(
-                &TgtTelnetIntf::connectionHandler, this, boost::asio::placeholders::error));
+                                   &TgtTelnetIntf::connectionHandler, this, boost::asio::placeholders::error));
         bool done;
         do
         {
