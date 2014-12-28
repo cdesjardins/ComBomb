@@ -131,7 +131,6 @@ void TgtTelnetIntf::tgtBreakConnection()
     {
         if (_socket->is_open())
         {
-            _socket->cancel();
             _socket->close();
         }
         _socket.reset();

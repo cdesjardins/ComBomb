@@ -133,7 +133,6 @@ void TgtSerialIntf::tgtBreakConnection()
     {
         if (_port->is_open())
         {
-            _port->cancel();
             _port->close();
         }
         _port.reset();
