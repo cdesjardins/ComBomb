@@ -49,7 +49,6 @@ public:
     TgtProcessIntf(const boost::shared_ptr<const TgtConnectionConfig> &config);
     virtual ~TgtProcessIntf();
 
-    virtual bool tgtConnected();
     virtual void tgtGetTitle(std::string* szTitle);
 private slots:
     void readFromStdout();

@@ -86,7 +86,7 @@ struct TgtSshImpl
 boost::shared_ptr<TgtSshIntf> TgtSshIntf::createSshConnection(const boost::shared_ptr<const TgtConnectionConfig> &config)
 {
     boost::shared_ptr<TgtSshIntf> ret(new TgtSshIntf(config));
-    ret->tgtMakeConnection();
+    ret->tgtAttemptReconnect();
     return ret;
 }
 
@@ -271,11 +271,6 @@ void TgtSshIntf::tgtBreakConnection()
 {
     cryptDestroySession(_sshData->_cryptSession);
     _sshData->_sshThread.reset();
-}
-
-bool TgtSshIntf::tgtConnected()
-{
-    return false;
 }
 
 void TgtSshIntf::tgtGetTitle(std::string* szTitle)

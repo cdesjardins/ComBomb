@@ -53,7 +53,6 @@ public:
     };
     static boost::shared_ptr<TgtSshIntf> createSshConnection(const boost::shared_ptr<const TgtConnectionConfig> &config);
     virtual ~TgtSshIntf ();
-    virtual bool tgtConnected();
     virtual void tgtGetTitle(std::string* szTitle);
 
 protected:

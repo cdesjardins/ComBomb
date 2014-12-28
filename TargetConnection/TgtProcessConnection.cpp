@@ -23,7 +23,7 @@
 boost::shared_ptr<TgtProcessIntf> TgtProcessIntf::createProcessConnection(const boost::shared_ptr<const TgtConnectionConfig> &config)
 {
     boost::shared_ptr<TgtProcessIntf> ret(new TgtProcessIntf(config));
-    ret->tgtMakeConnection();
+    ret->tgtAttemptReconnect();
     return ret;
 }
 
@@ -63,11 +63,6 @@ TgtProcessIntf::~TgtProcessIntf()
 void TgtProcessIntf::tgtBreakConnection()
 {
     _processWriterThread.reset();
-}
-
-bool TgtProcessIntf::tgtConnected()
-{
-    return true;
 }
 
 void TgtProcessIntf::tgtGetTitle(std::string* szTitle)

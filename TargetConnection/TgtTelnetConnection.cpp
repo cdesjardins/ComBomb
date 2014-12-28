@@ -24,22 +24,32 @@
 boost::shared_ptr<TgtTelnetIntf> TgtTelnetIntf::createTelnetConnection(const boost::shared_ptr<const TgtConnectionConfig> &config)
 {
     boost::shared_ptr<TgtTelnetIntf> ret(new TgtTelnetIntf(config));
-    ret->tgtMakeConnection();
+    ret->tgtAttemptReconnect();
     return ret;
 }
 
 TgtTelnetIntf::TgtTelnetIntf(const boost::shared_ptr<const TgtConnectionConfig> &config)
-    : TgtIntf(config)
+    : TgtIntf(config),
+      _abortConnection(false)
 {
     m_nState = TELNET_STATE_DATA;
     m_nCommand = TELNET_CMD_SB;
     m_bEcho = true;
-    m_bConnected = false;
 }
 
 TgtTelnetIntf::~TgtTelnetIntf()
 {
+    _abortConnection = true;
     tgtDisconnect();
+}
+
+void TgtTelnetIntf::clearConnectionQueue()
+{
+    std::vector<boost::system::error_code> trash;
+    while (_connectionQueue.dequeue(trash))
+    {
+
+    }
 }
 
 void TgtTelnetIntf::tgtMakeConnection()
@@ -51,7 +61,7 @@ void TgtTelnetIntf::tgtMakeConnection()
     boost::asio::ip::tcp::resolver::iterator endpointIterator = resolver.resolve(query);
     boost::asio::ip::tcp::resolver::iterator end;
     boost::asio::ip::tcp::endpoint endpoint;
-    boost::system::error_code error = boost::asio::error::host_not_found;
+    boost::system::error_code error;
 
     while (endpointIterator != end)
     {
@@ -63,7 +73,9 @@ void TgtTelnetIntf::tgtMakeConnection()
         endpointIterator++;
     }
 
-    for (std::vector<boost::asio::ip::address>::iterator it = addresses.begin(); it != addresses.end(); it++)
+    _telnetServiceThread = TgtThread::create(boost::protect(boost::bind(&TgtTelnetIntf::serviceThread, this)));
+
+    for (std::vector<boost::asio::ip::address>::iterator it = addresses.begin(); ((it != addresses.end()) && (_abortConnection == false)); it++)
     {
         endpoint = boost::asio::ip::tcp::endpoint(*it, connectionConfig->_portNum);
         if (_socket != NULL)
@@ -72,7 +84,19 @@ void TgtTelnetIntf::tgtMakeConnection()
         }
         _socket.reset(new boost::asio::ip::tcp::socket(_socketService));
         _socket->open(boost::asio::ip::tcp::v4());
-        _socket->connect(endpoint, error);
+        clearConnectionQueue();
+        _socket->async_connect(endpoint, boost::bind(
+                &TgtTelnetIntf::connectionHandler, this, boost::asio::placeholders::error));
+        bool done;
+        do
+        {
+            done = _connectionQueue.dequeue(error, 1);
+            if (_abortConnection == true)
+            {
+                break;
+            }
+        } while (done == false);
+
         if (!error)
         {
             break;
@@ -88,16 +112,19 @@ void TgtTelnetIntf::tgtMakeConnection()
     _socket->non_blocking(true);
 
     _telnetWriterThread = TgtThread::create(boost::protect(boost::bind(&TgtTelnetIntf::writerThread, this)));
-    _telnetServiceThread = TgtThread::create(boost::protect(boost::bind(&TgtTelnetIntf::serviceThread, this)));
 
     boost::system::error_code err;
     _bufferPool->dequeue(_currentIncomingBuffer);
     tgtReadCallback(err, 0);
 }
 
+void TgtTelnetIntf::connectionHandler(const boost::system::error_code& ec)
+{
+    _connectionQueue.enqueue(ec);
+}
+
 void TgtTelnetIntf::tgtBreakConnection()
 {
-    m_bConnected = false;
     _telnetServiceThread.reset();
     _telnetWriterThread.reset();
 
@@ -244,13 +271,13 @@ void TgtTelnetIntf::tgtSendData(const boost::asio::mutable_buffer &buf)
     size_t totalSent = 0;
     size_t bufferSize = boost::asio::buffer_size(buf);
     boost::asio::mutable_buffer buffer;
+    boost::chrono::system_clock::time_point startTime = boost::chrono::system_clock::now();
     do
     {
         buffer = boost::asio::buffer(buf + totalSent);
         sent = _socket->send(boost::asio::buffer(buffer));
         totalSent += sent;
-        // FIXME: Add timeout
-    } while (totalSent < bufferSize);
+    } while ((totalSent < bufferSize) && (boost::chrono::system_clock::now() < (startTime + boost::chrono::seconds(1))));
 }
 
 void TgtTelnetIntf::tgtSendCommand(eTelnetCommand eCmd, eTelnetOption eOpt)
@@ -489,11 +516,6 @@ int TgtTelnetIntf::tgtTelnetProcessData(const boost::intrusive_ptr<RefCntBuffer>
         }
     }
     return nReadIndex;
-}
-
-bool TgtTelnetIntf::tgtConnected()
-{
-    return m_bConnected;
 }
 
 void TgtTelnetIntf::tgtGetTitle(std::string* szTitle)

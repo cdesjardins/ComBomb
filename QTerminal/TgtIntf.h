@@ -49,7 +49,6 @@ public:
 
     virtual int tgtRead(boost::intrusive_ptr<RefCntBuffer> &b);
     virtual int tgtWrite(const char* szWriteData, int nBytes);
-    virtual bool tgtConnected() = 0;
     virtual void tgtGetTitle(std::string* szTitle) = 0;
     virtual int tgtGetBytesRx()
     {

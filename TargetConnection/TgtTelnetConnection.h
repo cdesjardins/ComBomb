@@ -115,7 +115,6 @@ public:
 
     static boost::shared_ptr<TgtTelnetIntf> createTelnetConnection(const boost::shared_ptr<const TgtConnectionConfig> &config);
     virtual ~TgtTelnetIntf();
-    virtual bool tgtConnected();
     virtual void tgtGetTitle(std::string* szTitle);
 
 protected:
@@ -136,6 +135,8 @@ protected:
     bool writerThread();
     void tgtReadCallback(const boost::system::error_code& error, const size_t bytesTransferred);
     virtual void tgtBreakConnection();
+    void connectionHandler(const boost::system::error_code& ec);
+    void clearConnectionQueue();
 
     boost::scoped_ptr<boost::asio::ip::tcp::socket> _socket;
     boost::asio::io_service _socketService;
@@ -143,11 +144,12 @@ protected:
     bool m_bEcho;
     eTelnetCommand m_nCommand;
     eTelnetState m_nState;
-    bool m_bConnected;
     boost::shared_ptr<TgtThread> _telnetWriterThread;
     boost::shared_ptr<TgtThread> _telnetServiceThread;
     boost::intrusive_ptr<RefCntBuffer> _currentIncomingBuffer;
     char _throwAway[1024];
+    ThreadSafeQueue<boost::system::error_code> _connectionQueue;
+    volatile bool _abortConnection;
 };
 
 #endif

@@ -127,9 +127,9 @@ void TgtIntf::connectionManagerThread()
             tgtGetTitle(&title);
             newTitle = title;
             newTitle.append(" Disconnected");
-            emit updateTitleSignal(newTitle.c_str());
             while ((reconnected == false) && (_connectionManagerThreadRun == true))
             {
+                emit updateTitleSignal(newTitle.c_str());
                 try
                 {
                     tgtBreakConnection();

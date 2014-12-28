@@ -26,7 +26,7 @@
 boost::shared_ptr<TgtSerialIntf> TgtSerialIntf::createSerialConnection(const boost::shared_ptr<const TgtConnectionConfig> &config)
 {
     boost::shared_ptr<TgtSerialIntf> ret(new TgtSerialIntf(config));
-    ret->tgtMakeConnection();
+    ret->tgtAttemptReconnect();
     return ret;
 }
 
@@ -138,11 +138,6 @@ void TgtSerialIntf::tgtBreakConnection()
         }
         _port.reset();
     }
-}
-
-bool TgtSerialIntf::tgtConnected()
-{
-    return true;
 }
 
 void TgtSerialIntf::tgtGetTitle(std::string* szTitle)
