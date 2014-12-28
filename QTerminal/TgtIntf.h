@@ -63,11 +63,7 @@ public:
     {
         return _connectionConfig;
     }
-    void tgtDisconnect()
-    {
-        _suppressReconnect = true;
-        tgtBreakConnection();
-    }
+    void tgtDisconnect();
 
 signals:
     void updateStatusSignal(QString);
@@ -76,6 +72,7 @@ protected:
     void tgtAttemptReconnect();
     void connectionManagerThread();
     bool connectionManagerWait();
+    void connectionManagerStop();
     virtual void tgtMakeConnection() = 0;
     virtual void tgtBreakConnection() = 0;
 
@@ -90,8 +87,6 @@ protected:
     boost::mutex _connectionManagerMutex;
     boost::condition_variable _connectionManagerCondition;
     volatile bool _connectionManagerSignal;
-    bool _suppressReconnect;
-
 };
 
 #endif // TGTINTF_H

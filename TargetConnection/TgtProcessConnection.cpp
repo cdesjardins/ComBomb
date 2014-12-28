@@ -44,8 +44,7 @@ void TgtProcessIntf::tgtMakeConnection()
     _proc->setProcessEnvironment(env);
 
     _proc->start(connectionConfig->_program.c_str(), args);
-    _processWriterThreadRun = true;
-    _processWriterThread.reset(new  boost::thread(boost::bind(&TgtProcessIntf::writerThread, this)));
+    _processWriterThread = TgtThread::create(boost::protect(boost::bind(&TgtProcessIntf::writerThread, this)));
 }
 
 TgtProcessIntf::TgtProcessIntf(const boost::shared_ptr<const TgtConnectionConfig> &config)
@@ -63,14 +62,7 @@ TgtProcessIntf::~TgtProcessIntf()
 
 void TgtProcessIntf::tgtBreakConnection()
 {
-    if (_processWriterThreadRun == true)
-    {
-        _processWriterThreadRun = false;
-        if ((_processWriterThread != NULL) && (_processWriterThread->joinable()))
-        {
-            _processWriterThread->join();
-        }
-    }
+    _processWriterThread.reset();
 }
 
 bool TgtProcessIntf::tgtConnected()
@@ -84,30 +76,28 @@ void TgtProcessIntf::tgtGetTitle(std::string* szTitle)
     *szTitle = connectionConfig->_program;
 }
 
-void TgtProcessIntf::writerThread()
+bool TgtProcessIntf::writerThread()
 {
     boost::intrusive_ptr<RefCntBuffer> b;
 
-    while (_processWriterThreadRun == true)
+    if (_outgoingData.dequeue(b, 100) == true)
     {
-        if (_outgoingData.dequeue(b, 100) == true)
+        _processMutex.lock();
+        if (_proc != NULL)
         {
-            _processMutex.lock();
-            if (_proc != NULL)
+            qint64 sentBytes;
+            do
             {
-                qint64 sentBytes;
-                do
-                {
-                    char* data = boost::asio::buffer_cast<char*>(b->_buffer);
-                    data[boost::asio::buffer_size(b->_buffer)] = 0;
-                    sentBytes = _proc->write(data, boost::asio::buffer_size(b->_buffer));
-                    b->_buffer = boost::asio::buffer(b->_buffer + sentBytes);
-                } while ((sentBytes > 0) && (boost::asio::buffer_size(b->_buffer) > 0));
-            }
-            _processMutex.unlock();
-            b.reset();
+                char* data = boost::asio::buffer_cast<char*>(b->_buffer);
+                data[boost::asio::buffer_size(b->_buffer)] = 0;
+                sentBytes = _proc->write(data, boost::asio::buffer_size(b->_buffer));
+                b->_buffer = boost::asio::buffer(b->_buffer + sentBytes);
+            } while ((sentBytes > 0) && (boost::asio::buffer_size(b->_buffer) > 0));
         }
+        _processMutex.unlock();
+        b.reset();
     }
+    return true;
 }
 
 void TgtProcessIntf::readFromStdout()

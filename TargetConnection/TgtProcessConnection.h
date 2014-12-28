@@ -20,6 +20,7 @@
 #define CB_TGT_PROCESS_CONNECTION_H
 
 #include "QTerminal/TgtIntf.h"
+#include "TgtThread.h"
 #ifndef Q_MOC_RUN
 #include <boost/thread.hpp>
 #endif
@@ -61,12 +62,11 @@ protected:
     virtual void deleteProcess();
     virtual void closeEvent(QCloseEvent* event);
     void processInput(const QByteArray &output);
-    void writerThread();
+    bool writerThread();
 
     QProcess* _proc;
     QMutex _processMutex;
-    boost::scoped_ptr<boost::thread> _processWriterThread;
-    volatile bool _processWriterThreadRun;
+    boost::shared_ptr<TgtThread> _processWriterThread;
 };
 
 #endif

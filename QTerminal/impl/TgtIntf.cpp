@@ -30,8 +30,7 @@ TgtIntf::TgtIntf(const boost::shared_ptr<const TgtConnectionConfigBase> &config)
     : _bufferPool(new RefCntBufferPool(CB_TGT_INTF_NUM_BUFFS, CB_TGT_INTF_BUFF_SIZE)),
     _connectionConfig(config),
     _connectionManagerThreadRun(true),
-    _connectionManagerSignal(false),
-    _suppressReconnect(false)
+    _connectionManagerSignal(false)
 {
     m_nTotalTx = 0;
     m_nTotalRx = 0;
@@ -39,11 +38,7 @@ TgtIntf::TgtIntf(const boost::shared_ptr<const TgtConnectionConfigBase> &config)
 
 TgtIntf::~TgtIntf(void)
 {
-    _connectionManagerThreadRun = false;
-    if (_connectionManagerThread != NULL)
-    {
-        _connectionManagerThread->join();
-    }
+    connectionManagerStop();
 }
 
 int TgtIntf::tgtRead(boost::intrusive_ptr<RefCntBuffer> &b)
@@ -96,16 +91,27 @@ void TgtIntf::tgtAttemptReconnect()
     _connectionManagerCondition.notify_all();
 }
 
+void TgtIntf::tgtDisconnect()
+{
+    connectionManagerStop();
+    tgtBreakConnection();
+}
+
+void TgtIntf::connectionManagerStop()
+{
+    _connectionManagerThreadRun = false;
+    if (_connectionManagerThread != NULL)
+    {
+        _connectionManagerThread->join();
+    }
+}
+
 bool TgtIntf::connectionManagerWait()
 {
     boost::unique_lock<boost::mutex> lock(_connectionManagerMutex);
     _connectionManagerCondition.timed_wait(lock, boost::posix_time::milliseconds(10));
     bool ret = _connectionManagerSignal;
     _connectionManagerSignal = false;
-    if (_suppressReconnect == true)
-    {
-        ret = false;
-    }
     return ret;
 }
 
