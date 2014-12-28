@@ -19,10 +19,11 @@
 
 #include "TgtThread.h"
 #include <QDebug>
-TgtThread::TgtThread()
-    : _threadRun(true)
+TgtThread::TgtThread(const std::string &name)
+    : _threadRun(true),
+      _name(name)
 {
-    qDebug("Thread start");
+    qDebug(toString("start").c_str());
 }
 
 TgtThread::~TgtThread()
@@ -32,24 +33,28 @@ TgtThread::~TgtThread()
 
 void TgtThread::join()
 {
-    qDebug("Thread join");
+    qDebug(toString("join").c_str());
     _threadRun = false;
     if ((_thread != NULL) && (_thread->joinable() == true) && (boost::this_thread::get_id() != _thread->get_id()))
     {
-        qDebug("Thread join for reals");
+        qDebug(toString("join for reals").c_str());
         _thread->join();
     }
 }
 
 void TgtThread::finalize()
 {
-    qDebug("Thread finalize");
+    qDebug(toString("finalize").c_str());
 }
 
 void TgtThread::debug()
 {
-    std::stringstream oss;
-    oss << "Thread debug: " << boost::this_thread::get_id() << " " << _threadRun;
-    qDebug(oss.str().c_str());
 
+}
+
+std::string TgtThread::toString(const std::string &tag)
+{
+    std::stringstream oss;
+    oss << "(" << _name << ")" << tag << ": " << boost::this_thread::get_id() << " " << _threadRun;
+    return oss.str();
 }

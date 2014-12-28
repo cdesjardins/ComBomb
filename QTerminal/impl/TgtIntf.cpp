@@ -29,7 +29,8 @@
 TgtIntf::TgtIntf(const boost::shared_ptr<const TgtConnectionConfigBase> &config)
     : _bufferPool(new RefCntBufferPool(CB_TGT_INTF_NUM_BUFFS, CB_TGT_INTF_BUFF_SIZE)),
     _connectionConfig(config),
-    _running(true)
+    _connectionManagerThreadRun(true),
+    _connectionManagerSignal(false)
 {
     m_nTotalTx = 0;
     m_nTotalRx = 0;
@@ -37,7 +38,11 @@ TgtIntf::TgtIntf(const boost::shared_ptr<const TgtConnectionConfigBase> &config)
 
 TgtIntf::~TgtIntf(void)
 {
-    _running = false;
+    _connectionManagerThreadRun = false;
+    if (_connectionManagerThread != NULL)
+    {
+        _connectionManagerThread->join();
+    }
 }
 
 int TgtIntf::tgtRead(boost::intrusive_ptr<RefCntBuffer> &b)
@@ -81,37 +86,58 @@ int TgtIntf::tgtWrite(const char* szWriteData, int nBytes)
 
 void TgtIntf::tgtAttemptReconnect()
 {
-    bool reconnected = false;
-    std::string title;
-    std::string newTitle;
-    tgtGetTitle(&title);
-    newTitle = title;
-    newTitle.append(" Disconnected");
-    emit updateTitleSignal(newTitle.c_str());
-    while ((reconnected == false) && (_running == true))
+    if (_connectionManagerThread == NULL)
     {
-        try
-        {
-            tgtMakeConnection();
-            reconnected = true;
-        }
-        catch (const std::exception &e)
-        {
-            // update status bar
-            emit updateStatusSignal(e.what());
-        }
-        if ((reconnected == false) && (_running == true))
-        {
-            boost::this_thread::sleep(boost::posix_time::seconds(1));
-        }
+        _connectionManagerThread.reset(new boost::thread(boost::bind(&TgtIntf::connectionManagerThread, this)));
     }
-    emit updateTitleSignal(title.c_str());
+    boost::unique_lock<boost::mutex> lock(_connectionManagerMutex);
+    _connectionManagerSignal = true;
+    _connectionManagerCondition.notify_all();
+    qDebug("Notify");
 }
 
-int TgtIntf::tgtDisconnect(bool running)
+bool TgtIntf::connectionManagerWait()
 {
-    _running = running;
-    boost::mutex::scoped_lock guard(_disconnectMutex);
-    return tgtBreakConnection();
+    boost::unique_lock<boost::mutex> lock(_connectionManagerMutex);
+    _connectionManagerCondition.timed_wait(lock, boost::posix_time::milliseconds(10));
+    bool ret = _connectionManagerSignal;
+    _connectionManagerSignal = false;
+    return ret;
+}
+
+void TgtIntf::connectionManagerThread()
+{
+    while (_connectionManagerThreadRun)
+    {
+        if (connectionManagerWait() == true)
+        {
+            bool reconnected = false;
+            std::string title;
+            std::string newTitle;
+            tgtGetTitle(&title);
+            newTitle = title;
+            newTitle.append(" Disconnected");
+            emit updateTitleSignal(newTitle.c_str());
+            while (reconnected == false)
+            {
+                try
+                {
+                    tgtBreakConnection();
+                    tgtMakeConnection();
+                    reconnected = true;
+                }
+                catch (const std::exception &e)
+                {
+                    // update status bar
+                    emit updateStatusSignal(e.what());
+                }
+                if (reconnected == false)
+                {
+                    boost::this_thread::sleep(boost::posix_time::seconds(1));
+                }
+            }
+            emit updateTitleSignal(title.c_str());
+        }
+    }
 }
 

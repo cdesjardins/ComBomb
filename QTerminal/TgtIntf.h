@@ -25,6 +25,7 @@
 #ifndef Q_MOC_RUN
 #include <boost/asio/buffer.hpp>
 #include <boost/smart_ptr.hpp>
+#include <boost/thread.hpp>
 #endif
 #include "ThreadSafeQueue.h"
 #include "RefCntBufferPool.h"
@@ -46,7 +47,6 @@ public:
     TgtIntf(const boost::shared_ptr<const TgtConnectionConfigBase> &config);
     virtual ~TgtIntf(void);
 
-    int tgtDisconnect(bool running = false);
     virtual int tgtRead(boost::intrusive_ptr<RefCntBuffer> &b);
     virtual int tgtWrite(const char* szWriteData, int nBytes);
     virtual bool tgtConnected() = 0;
@@ -63,12 +63,18 @@ public:
     {
         return _connectionConfig;
     }
+    void tgtDisconn()
+    {
+        tgtBreakConnection();
+    }
 
 signals:
     void updateStatusSignal(QString);
     void updateTitleSignal(QString);
 protected:
     void tgtAttemptReconnect();
+    void connectionManagerThread();
+    bool connectionManagerWait();
     virtual void tgtMakeConnection() = 0;
     virtual int tgtBreakConnection() = 0;
 
@@ -78,9 +84,12 @@ protected:
     ThreadSafeQueue<boost::intrusive_ptr<RefCntBuffer> > _outgoingData;
     boost::shared_ptr<RefCntBufferPool> _bufferPool;
     boost::shared_ptr<const TgtConnectionConfigBase> _connectionConfig;
-private:
-    bool _running;
-    boost::mutex _disconnectMutex;
+    boost::scoped_ptr<boost::thread> _connectionManagerThread;
+    volatile bool _connectionManagerThreadRun;
+    boost::mutex _connectionManagerMutex;
+    boost::condition_variable _connectionManagerCondition;
+    volatile bool _connectionManagerSignal;
+
 };
 
 #endif // TGTINTF_H

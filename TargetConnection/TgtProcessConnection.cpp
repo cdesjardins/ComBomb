@@ -57,7 +57,7 @@ TgtProcessIntf::TgtProcessIntf(const boost::shared_ptr<const TgtConnectionConfig
 
 TgtProcessIntf::~TgtProcessIntf()
 {
-    tgtDisconnect();
+    tgtBreakConnection();
     deleteProcess();
 }
 

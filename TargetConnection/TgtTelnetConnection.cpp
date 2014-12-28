@@ -39,7 +39,7 @@ TgtTelnetIntf::TgtTelnetIntf(const boost::shared_ptr<const TgtConnectionConfig> 
 
 TgtTelnetIntf::~TgtTelnetIntf()
 {
-    tgtDisconnect();
+    //tgtBreakConnection();
 }
 
 void TgtTelnetIntf::tgtMakeConnection()
@@ -87,8 +87,8 @@ void TgtTelnetIntf::tgtMakeConnection()
     }
     _socket->non_blocking(true);
 
-    _telnetWriterThread = TgtThread::create(boost::protect(boost::bind(&TgtTelnetIntf::writerThread, this)));
-    _telnetServiceThread = TgtThread::create(boost::protect(boost::bind(&TgtTelnetIntf::serviceThread, this)));
+    _telnetWriterThread = TgtThread::create(boost::protect(boost::bind(&TgtTelnetIntf::writerThread, this)), "telnet writer");
+    _telnetServiceThread = TgtThread::create(boost::protect(boost::bind(&TgtTelnetIntf::serviceThread, this)), "telnet serivce");
 
     boost::system::error_code err;
     _bufferPool->dequeue(_currentIncomingBuffer);
@@ -124,7 +124,7 @@ bool TgtTelnetIntf::writerThread()
         boost::asio::write(*_socket.get(), boost::asio::buffer(b->_buffer), ec);
         if (ec)
         {
-            tgtDisconnect();
+            tgtDisconn();
             attemptReconnect = true;
         }
     }
@@ -177,8 +177,6 @@ void TgtTelnetIntf::tgtReadCallback(const boost::system::error_code& error, cons
     }
     else
     {
-        tgtDisconnect(true);
-        qDebug("read callback attempt reconnect");
         tgtAttemptReconnect();
     }
 }

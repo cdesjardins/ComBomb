@@ -94,7 +94,7 @@ TgtSerialIntf::TgtSerialIntf(const boost::shared_ptr<const TgtConnectionConfig> 
 
 TgtSerialIntf::~TgtSerialIntf ()
 {
-    tgtDisconnect();
+    tgtBreakConnection();
 }
 
 void TgtSerialIntf::tgtStopService()
@@ -139,7 +139,6 @@ void TgtSerialIntf::tgtReadCallback(const boost::system::error_code& error, cons
     }
     else
     {
-        tgtDisconnect(true);
         tgtAttemptReconnect();
     }
 }

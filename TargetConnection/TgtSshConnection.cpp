@@ -99,7 +99,7 @@ TgtSshIntf::TgtSshIntf(const boost::shared_ptr<const TgtConnectionConfig> &confi
 
 TgtSshIntf::~TgtSshIntf()
 {
-    tgtDisconnect();
+    tgtBreakConnection();
     _sshData.reset();
 }
 

@@ -63,6 +63,15 @@ RESOURCES += \
 INCLUDEPATH += $$PWD/.. $$PWD/../QueuePtr/include
 DEPENDPATH += $$PWD/..  $$PWD/../QueuePtr/include
 
+# Targetconnection
+
+win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../TargetConnection/release/ -lTargetConnection
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../TargetConnection/debug/ -lTargetConnection
+else:unix: LIBS += $$OUT_PWD/../TargetConnection/libTargetConnection.a
+
+win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../TargetConnection/release/TargetConnection.lib
+else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../TargetConnection/debug/TargetConnection.lib
+else:unix: PRE_TARGETDEPS += $$OUT_PWD/../TargetConnection/libTargetConnection.a
 
 # QTerminal
 win32:RC_FILE = ComBomb.rc
@@ -74,18 +83,6 @@ else:unix: LIBS += $$OUT_PWD/../QTerminal/libQTerminal.a
 win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../QTerminal/release/QTerminal.lib
 else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../QTerminal/debug/QTerminal.lib
 else:unix: PRE_TARGETDEPS += $$OUT_PWD/../QTerminal/libQTerminal.a
-
-
-# Targetconnection
-
-win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../TargetConnection/release/ -lTargetConnection
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../TargetConnection/debug/ -lTargetConnection
-else:unix: LIBS += $$OUT_PWD/../TargetConnection/libTargetConnection.a
-
-win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../TargetConnection/release/TargetConnection.lib
-else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../TargetConnection/debug/TargetConnection.lib
-else:unix: PRE_TARGETDEPS += $$OUT_PWD/../TargetConnection/libTargetConnection.a
-
 
 # To build cryptLib for windows:
 # I have used version: 3.4.2
