@@ -349,7 +349,7 @@ void MainWindow::newVersionAvailableSlot()
 
 void MainWindow::on_actionNew_Version_Available_triggered()
 {
-    QDesktopServices::openUrl(QUrl("http://blog.chrisd.info/combomb/#downloadComBomb"));
+    QDesktopServices::openUrl(QUrl("http://blog.chrisd.info/combomb/?ref=ComBomb#downloadComBomb"));
 }
 
 void MainWindow::setInterfaceType()
