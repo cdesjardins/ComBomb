@@ -63,6 +63,7 @@ public:
     {
         return _connectionConfig;
     }
+
     void tgtDisconnect();
 
 signals:

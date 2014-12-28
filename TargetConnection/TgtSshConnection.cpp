@@ -360,7 +360,7 @@ bool TgtSshIntf::sshRecv()
             if (cryptStatusError(status))
             {
 #ifdef QT_DEBUG
-            qDebug("Unable to pop data");
+                qDebug("Unable to pop data");
 #endif
                 ret = false;
             }

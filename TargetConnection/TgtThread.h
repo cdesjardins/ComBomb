@@ -42,7 +42,8 @@ public:
     {
         return _threadRun;
     }
-    std::string toString(const std::string &tag, boost::thread *thr = NULL);
+
+    std::string toString(const std::string &tag, boost::thread* thr = NULL);
     void start();
     void finalize();
 protected:

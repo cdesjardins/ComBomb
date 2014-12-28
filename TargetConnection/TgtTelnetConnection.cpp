@@ -112,7 +112,6 @@ void TgtTelnetIntf::tgtBreakConnection()
     }
 }
 
-
 bool TgtTelnetIntf::writerThread()
 {
     boost::intrusive_ptr<RefCntBuffer> b;
