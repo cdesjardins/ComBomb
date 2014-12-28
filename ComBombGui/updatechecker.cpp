@@ -27,12 +27,15 @@ boost::shared_ptr<UpdateChecker> UpdateChecker::_inst;
 
 UpdateChecker::UpdateChecker()
     : _reply(NULL),
-    _latestVersion(-1)
+    _latestVersion(-1),
+    _manager(new QNetworkAccessManager(this))
 {
 }
 
 UpdateChecker::~UpdateChecker()
 {
+    _manager->disconnect();
+    _reply->disconnect();
 }
 
 boost::shared_ptr<UpdateChecker> UpdateChecker::instance()
@@ -46,7 +49,6 @@ boost::shared_ptr<UpdateChecker> UpdateChecker::instance()
 
 void UpdateChecker::checkForNewVersion()
 {
-    _manager.reset(new QNetworkAccessManager(this));
     connect(_manager.get(), SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
 
     _reply = _manager->get(QNetworkRequest(QUrl("https://api.github.com/repos/cdesjardins/ComBomb/tags")));
