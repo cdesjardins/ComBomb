@@ -18,6 +18,7 @@
 */
 #include "updatechecker.h"
 #include "versioning.h"
+#include "../unparam.h"
 #include <QNetworkAccessManager>
 #include <QJsonDocument>
 #include <QJsonArray>
@@ -61,6 +62,8 @@ void UpdateChecker::slotError(QNetworkReply::NetworkError err)
 {
 #ifdef QT_DEBUG
     qDebug("Error: " + err);
+#else
+    UNREF_PARAM(err);
 #endif
 }
 

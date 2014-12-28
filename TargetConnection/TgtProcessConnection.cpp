@@ -18,6 +18,7 @@
 */
 
 #include "TgtProcessConnection.h"
+#include "../unparam.h"
 #include <boost/bind.hpp>
 
 boost::shared_ptr<TgtProcessIntf> TgtProcessIntf::createProcessConnection(const boost::shared_ptr<const TgtConnectionConfig> &config)
@@ -142,6 +143,8 @@ void TgtProcessIntf::processError(QProcess::ProcessError error)
 {
 #ifdef QT_DEBUG
     qDebug("Error %i", error);
+#else
+    UNREF_PARAM(error);
 #endif
 }
 
