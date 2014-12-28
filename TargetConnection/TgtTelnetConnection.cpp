@@ -86,45 +86,21 @@ void TgtTelnetIntf::tgtMakeConnection()
         throw CB_EXCEPTION_STR(CBException::CbExcp, errmsg.c_str());
     }
     _socket->non_blocking(true);
-    _telnetWriterThreadRun = true;
-    _telnetWriterThread.reset(new  boost::thread(boost::bind(&TgtTelnetIntf::writerThread, this)));
-    _telnetServiceThreadRun = true;
-    _telnetServiceThread.reset(new boost::thread(boost::bind(&TgtTelnetIntf::serviceThread, this)));
+
+    _telnetWriterThread = TgtThread::create(boost::protect(boost::bind(&TgtTelnetIntf::writerThread, this)));
+    _telnetServiceThread = TgtThread::create(boost::protect(boost::bind(&TgtTelnetIntf::serviceThread, this)));
+
     boost::system::error_code err;
     _bufferPool->dequeue(_currentIncomingBuffer);
     tgtReadCallback(err, 0);
 }
 
-void TgtTelnetIntf::tgtStopService()
-{
-    _telnetServiceThreadRun = false;
-    //_service.stop();
-    std::ostringstream oss;
-    oss << boost::this_thread::get_id() << " " << _telnetServiceThread->get_id();
-    qDebug("stop service: %s", oss.str().c_str());
-    if ((_telnetServiceThread != NULL) && (_telnetServiceThread->joinable() == true) && (boost::this_thread::get_id() != _telnetServiceThread->get_id()))
-    {
-        qDebug("Join telnet service");
-        _telnetServiceThread->join();
-        qDebug("Joined telnet service");
-    }
-}
-
 int TgtTelnetIntf::tgtBreakConnection()
 {
     m_bConnected = false;
-    tgtStopService();
+    _telnetServiceThread.reset();
+    _telnetWriterThread.reset();
 
-    if (_telnetWriterThreadRun == true)
-    {
-        _telnetWriterThreadRun = false;
-        if ((_telnetWriterThread != NULL) && (_telnetWriterThread->joinable()) && (boost::this_thread::get_id() != _telnetServiceThread->get_id()))
-        {
-            qDebug("Join telnet writer");
-            _telnetWriterThread->join();
-            qDebug("Joined telnet writer");
-        }
-    }
     if (_socket != NULL)
     {
         if (_socket->is_open())
@@ -135,6 +111,86 @@ int TgtTelnetIntf::tgtBreakConnection()
         _socket.reset();
     }
     return 0;
+}
+
+
+bool TgtTelnetIntf::writerThread()
+{
+    boost::intrusive_ptr<RefCntBuffer> b;
+    boost::system::error_code ec;
+    bool attemptReconnect = false;
+    if (_outgoingData.dequeue(b, 100) == true)
+    {
+        boost::asio::write(*_socket.get(), boost::asio::buffer(b->_buffer), ec);
+        if (ec)
+        {
+            tgtDisconnect();
+            attemptReconnect = true;
+        }
+    }
+    if (attemptReconnect == true)
+    {
+        tgtAttemptReconnect();
+    }
+    return true;
+}
+
+void TgtTelnetIntf::tgtReadCallback(const boost::system::error_code& error, const size_t bytesTransferred)
+{
+    if (!error)
+    {
+        boost::asio::mutable_buffer buffer;
+
+        if (bytesTransferred > 0)
+        {
+            if (_currentIncomingBuffer != NULL)
+            {
+                _currentIncomingBuffer->_buffer = boost::asio::buffer(_currentIncomingBuffer->_buffer, bytesTransferred);
+                boost::intrusive_ptr<RefCntBuffer> readData;
+                _bufferPool->dequeue(readData, 100);
+                if (readData != NULL)
+                {
+                    int numBytes = tgtTelnetProcessData(readData);
+                    if (numBytes > 0)
+                    {
+                        readData->_buffer = boost::asio::buffer(readData->_buffer, numBytes);
+                        _incomingData.enqueue(readData);
+                    }
+                }
+            }
+            _bufferPool->dequeue(_currentIncomingBuffer, 100);
+        }
+        if (_currentIncomingBuffer == NULL)
+        {
+            // If there are no buffers available then just throw away the next
+            // bit if incoming data...
+            buffer = boost::asio::buffer(_throwAway, sizeof(_throwAway) - 1);
+        }
+        else
+        {
+            buffer = _currentIncomingBuffer->_buffer;
+        }
+        _socket->async_read_some(boost::asio::buffer(buffer, boost::asio::buffer_size(buffer) - 1),
+                                 boost::bind(&TgtTelnetIntf::tgtReadCallback, this,
+                                             boost::asio::placeholders::error,
+                                             boost::asio::placeholders::bytes_transferred));
+    }
+    else
+    {
+        tgtDisconnect(true);
+        qDebug("read callback attempt reconnect");
+        tgtAttemptReconnect();
+    }
+}
+
+bool TgtTelnetIntf::serviceThread()
+{
+    _socketService.reset();
+    if (_socketService.poll() == 0)
+    {
+        boost::this_thread::sleep_for(boost::chrono::milliseconds(1));
+    }
+    return true;
 }
 
 int TgtTelnetIntf::tgtTelnetData(unsigned char cTelnetRx, char* cReadData)
@@ -438,93 +494,6 @@ int TgtTelnetIntf::tgtTelnetProcessData(const boost::intrusive_ptr<RefCntBuffer>
         }
     }
     return nReadIndex;
-}
-
-void TgtTelnetIntf::writerThread()
-{
-    boost::intrusive_ptr<RefCntBuffer> b;
-    boost::system::error_code ec;
-    bool attemptReconnect = false;
-    while (_telnetWriterThreadRun == true)
-    {
-        if (_outgoingData.dequeue(b, 100) == true)
-        {
-            boost::asio::write(*_socket.get(), boost::asio::buffer(b->_buffer), ec);
-            if (ec)
-            {
-                tgtBreakConnection();
-                attemptReconnect = true;
-                break;
-            }
-        }
-    }
-    if (attemptReconnect == true)
-    {
-        qDebug("writer thread attempt reconnect");
-        tgtAttemptReconnect();
-    }
-    qDebug("telnet writer done");
-}
-
-void TgtTelnetIntf::tgtReadCallback(const boost::system::error_code& error, const size_t bytesTransferred)
-{
-    if (!error)
-    {
-        boost::asio::mutable_buffer buffer;
-
-        if (bytesTransferred > 0)
-        {
-            if (_currentIncomingBuffer != NULL)
-            {
-                _currentIncomingBuffer->_buffer = boost::asio::buffer(_currentIncomingBuffer->_buffer, bytesTransferred);
-                boost::intrusive_ptr<RefCntBuffer> readData;
-                _bufferPool->dequeue(readData, 100);
-                if (readData != NULL)
-                {
-                    int numBytes = tgtTelnetProcessData(readData);
-                    if (numBytes > 0)
-                    {
-                        readData->_buffer = boost::asio::buffer(readData->_buffer, numBytes);
-                        _incomingData.enqueue(readData);
-                    }
-                }
-            }
-            _bufferPool->dequeue(_currentIncomingBuffer, 100);
-        }
-        if (_currentIncomingBuffer == NULL)
-        {
-            // If there are no buffers available then just throw away the next
-            // bit if incoming data...
-            buffer = boost::asio::buffer(_throwAway, sizeof(_throwAway) - 1);
-        }
-        else
-        {
-            buffer = _currentIncomingBuffer->_buffer;
-        }
-        _socket->async_read_some(boost::asio::buffer(buffer, boost::asio::buffer_size(buffer) - 1),
-                               boost::bind(&TgtTelnetIntf::tgtReadCallback, this,
-                                           boost::asio::placeholders::error,
-                                           boost::asio::placeholders::bytes_transferred));
-    }
-    else
-    {
-        tgtDisconnect(true);
-        qDebug("read callback attempt reconnect");
-        tgtAttemptReconnect();
-    }
-}
-
-void TgtTelnetIntf::serviceThread()
-{
-    do
-    {
-        _socketService.reset();
-        if (_socketService.poll() == 0)
-        {
-            boost::this_thread::sleep_for(boost::chrono::milliseconds(1));
-        }
-    } while (_telnetServiceThreadRun == true);
-    qDebug("telnet service done");
 }
 
 bool TgtTelnetIntf::tgtConnected()

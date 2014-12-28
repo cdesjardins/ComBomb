@@ -20,8 +20,8 @@
 #define CB_TGT_TELNET_CONNECTION_H
 
 #include "QTerminal/TgtIntf.h"
+#include "TgtThread.h"
 #include <boost/asio.hpp>
-#include <boost/thread.hpp>
 
 enum eTelnetState
 {
@@ -120,7 +120,6 @@ public:
     virtual void tgtGetTitle(std::string* szTitle);
 
 protected:
-    void tgtStopService();
     TgtTelnetIntf(const boost::shared_ptr<const TgtConnectionConfig> &config);
     int tgtTelnetProcessData(const boost::intrusive_ptr<RefCntBuffer> &readData);
     int tgtTelnetData(unsigned char cTelnetRx, char* cReadData);
@@ -134,8 +133,8 @@ protected:
     void tgtSendCommand(eTelnetCommand eCmd, eTelnetOption eOpt);
     virtual void tgtMakeConnection();
     void tgtSendData(const boost::asio::mutable_buffer &buf);
-    void serviceThread();
-    void writerThread();
+    bool serviceThread();
+    bool writerThread();
     void tgtReadCallback(const boost::system::error_code& error, const size_t bytesTransferred);
 
     boost::scoped_ptr<boost::asio::ip::tcp::socket> _socket;
@@ -145,10 +144,8 @@ protected:
     eTelnetCommand m_nCommand;
     eTelnetState m_nState;
     bool m_bConnected;
-    volatile bool _telnetWriterThreadRun;
-    boost::scoped_ptr<boost::thread> _telnetWriterThread;
-    volatile bool _telnetServiceThreadRun;
-    boost::scoped_ptr<boost::thread> _telnetServiceThread;
+    boost::shared_ptr<TgtThread> _telnetWriterThread;
+    boost::shared_ptr<TgtThread> _telnetServiceThread;
     boost::intrusive_ptr<RefCntBuffer> _currentIncomingBuffer;
     char _throwAway[1024];
 };

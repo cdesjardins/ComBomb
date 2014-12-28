@@ -36,7 +36,6 @@ ConfigDialog::ConfigDialog(QWidget* parent) :
     CBDialog(parent),
     ui(new Ui::ConfigDialog)
 {
-    QSettings settings;
     QTerminalConfig terminalConfig;
     ui->setupUi(this);
 
