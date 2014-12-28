@@ -28,38 +28,41 @@ class TgtThread
 {
 public:
     template <typename T>
-    static boost::shared_ptr<TgtThread> create(T function, const std::string &name)
+    static boost::shared_ptr<TgtThread> create(T function)
     {
-        boost::shared_ptr<TgtThread> ret(new TgtThread(name));
+        boost::shared_ptr<TgtThread> ret(new TgtThread());
         ret->_thread.reset(new boost::thread(boost::bind(&TgtThread::theThread<T>, ret.get(), function)));
         return ret;
     }
 
     ~TgtThread();
     void join();
-    std::string toString(const std::string &tag);
-protected:
-    TgtThread(const std::string &name);
+
+    bool threadRun()
+    {
+        return _threadRun;
+    }
+    std::string toString(const std::string &tag, boost::thread *thr = NULL);
+    void start();
     void finalize();
-    void debug();
+protected:
+    TgtThread();
     template <typename T>
     void theThread(T function)
     {
         bool cont;
+        start();
         do
         {
             cont = function();
-            debug();
         } while ((_threadRun == true) && (cont == true));
         finalize();
     }
 
     boost::scoped_ptr<boost::thread> _thread;
     volatile bool _threadRun;
-    std::string _name;
 
 private:
-    TgtThread();
     TgtThread &operator=(TgtThread const &);
     TgtThread(TgtThread const &);
 };

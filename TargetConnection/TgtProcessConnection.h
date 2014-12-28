@@ -57,7 +57,7 @@ private slots:
     void processDone(int returnCode, QProcess::ExitStatus status);
 protected:
     virtual void tgtMakeConnection();
-    virtual int tgtBreakConnection();
+    virtual void tgtBreakConnection();
     virtual void deleteProcess();
     virtual void closeEvent(QCloseEvent* event);
     void processInput(const QByteArray &output);

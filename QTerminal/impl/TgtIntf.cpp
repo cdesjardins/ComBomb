@@ -30,7 +30,8 @@ TgtIntf::TgtIntf(const boost::shared_ptr<const TgtConnectionConfigBase> &config)
     : _bufferPool(new RefCntBufferPool(CB_TGT_INTF_NUM_BUFFS, CB_TGT_INTF_BUFF_SIZE)),
     _connectionConfig(config),
     _connectionManagerThreadRun(true),
-    _connectionManagerSignal(false)
+    _connectionManagerSignal(false),
+    _suppressReconnect(false)
 {
     m_nTotalTx = 0;
     m_nTotalRx = 0;
@@ -93,7 +94,6 @@ void TgtIntf::tgtAttemptReconnect()
     boost::unique_lock<boost::mutex> lock(_connectionManagerMutex);
     _connectionManagerSignal = true;
     _connectionManagerCondition.notify_all();
-    qDebug("Notify");
 }
 
 bool TgtIntf::connectionManagerWait()
@@ -102,6 +102,10 @@ bool TgtIntf::connectionManagerWait()
     _connectionManagerCondition.timed_wait(lock, boost::posix_time::milliseconds(10));
     bool ret = _connectionManagerSignal;
     _connectionManagerSignal = false;
+    if (_suppressReconnect == true)
+    {
+        ret = false;
+    }
     return ret;
 }
 
@@ -118,7 +122,7 @@ void TgtIntf::connectionManagerThread()
             newTitle = title;
             newTitle.append(" Disconnected");
             emit updateTitleSignal(newTitle.c_str());
-            while (reconnected == false)
+            while ((reconnected == false) && (_connectionManagerThreadRun == true))
             {
                 try
                 {
@@ -133,7 +137,11 @@ void TgtIntf::connectionManagerThread()
                 }
                 if (reconnected == false)
                 {
-                    boost::this_thread::sleep(boost::posix_time::seconds(1));
+                    boost::chrono::system_clock::time_point startTime = boost::chrono::system_clock::now();
+                    do
+                    {
+                        boost::this_thread::sleep(boost::posix_time::milliseconds(1));
+                    } while (boost::chrono::system_clock::now() < (startTime + boost::chrono::seconds(1)) && (_connectionManagerThreadRun == true));
                 }
             }
             emit updateTitleSignal(title.c_str());

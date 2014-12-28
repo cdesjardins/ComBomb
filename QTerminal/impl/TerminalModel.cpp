@@ -253,7 +253,7 @@ void TerminalModel::refresh()
 void TerminalModel::closeEvent(QCloseEvent*)
 {
     _closed = true;
-    _targetInterface->tgtDisconn();
+    _targetInterface->tgtDisconnect();
 }
 
 void TerminalModel::sendText(const QString &text) const

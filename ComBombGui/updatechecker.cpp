@@ -31,6 +31,10 @@ UpdateChecker::UpdateChecker()
 {
 }
 
+UpdateChecker::~UpdateChecker()
+{
+}
+
 boost::shared_ptr<UpdateChecker> UpdateChecker::instance()
 {
     if (_inst == NULL)
@@ -42,10 +46,10 @@ boost::shared_ptr<UpdateChecker> UpdateChecker::instance()
 
 void UpdateChecker::checkForNewVersion()
 {
-    QNetworkAccessManager* manager = new QNetworkAccessManager(this);
-    connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
+    _manager.reset(new QNetworkAccessManager(this));
+    connect(_manager.get(), SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
 
-    _reply = manager->get(QNetworkRequest(QUrl("https://api.github.com/repos/cdesjardins/ComBomb/tags")));
+    _reply = _manager->get(QNetworkRequest(QUrl("https://api.github.com/repos/cdesjardins/ComBomb/tags")));
 
     connect(_reply, SIGNAL(readyRead()), this, SLOT(slotReadyRead()));
     connect(_reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(slotError(QNetworkReply::NetworkError)));
@@ -53,7 +57,9 @@ void UpdateChecker::checkForNewVersion()
 
 void UpdateChecker::slotError(QNetworkReply::NetworkError err)
 {
+#ifdef QT_DEBUG
     qDebug("Error: " + err);
+#endif
 }
 
 void UpdateChecker::replyFinished(QNetworkReply*)

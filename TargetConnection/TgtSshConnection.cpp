@@ -18,6 +18,7 @@
 */
 #include "cl/cryptlib.h"
 #include "TgtSshConnection.h"
+#include "TgtThread.h"
 #include "CBException.h"
 #include <boost/format.hpp>
 #include <boost/thread.hpp>
@@ -67,8 +68,7 @@ boost::mutex TgtSshInit::_instantiationMutex;
 struct TgtSshImpl
 {
     TgtSshImpl()
-        : _sshThreadRun(true),
-        _sshInit(TgtSshInit::instance())
+        : _sshInit(TgtSshInit::instance())
     {
     }
 
@@ -78,8 +78,7 @@ struct TgtSshImpl
     }
 
     CRYPT_SESSION _cryptSession;
-    volatile bool _sshThreadRun;
-    boost::scoped_ptr<boost::thread> _sshThread;
+    boost::shared_ptr<TgtThread> _sshThread;
     boost::shared_ptr<TgtSshInit> _sshInit;
     boost::intrusive_ptr<RefCntBuffer> _currentIncomingBuffer;
 };
@@ -99,7 +98,7 @@ TgtSshIntf::TgtSshIntf(const boost::shared_ptr<const TgtConnectionConfig> &confi
 
 TgtSshIntf::~TgtSshIntf()
 {
-    tgtBreakConnection();
+    tgtDisconnect();
     _sshData.reset();
 }
 
@@ -234,7 +233,7 @@ void TgtSshIntf::tgtMakeConnection()
     }
     else
     {
-        _sshData->_sshThread.reset(new boost::thread(boost::bind(&TgtSshIntf::sshThread, this)));
+        _sshData->_sshThread = TgtThread::create(boost::protect(boost::bind(&TgtSshIntf::sshThread, this)));
     }
 }
 
@@ -268,18 +267,10 @@ bool TgtSshIntf::tryPrivateKey(boost::shared_ptr<const TgtConnectionConfig> conn
     return ret;
 }
 
-int TgtSshIntf::tgtBreakConnection()
+void TgtSshIntf::tgtBreakConnection()
 {
-    if (_sshData->_sshThreadRun == true)
-    {
-        _sshData->_sshThreadRun = false;
-        if ((_sshData->_sshThread != NULL) && (_sshData->_sshThread->joinable()))
-        {
-            _sshData->_sshThread->join();
-            _sshData->_sshThread.reset();
-        }
-    }
-    return 0;
+    cryptDestroySession(_sshData->_cryptSession);
+    _sshData->_sshThread.reset();
 }
 
 bool TgtSshIntf::tgtConnected()
@@ -295,23 +286,19 @@ void TgtSshIntf::tgtGetTitle(std::string* szTitle)
     *szTitle = t.str();
 }
 
-void TgtSshIntf::sshThread()
+bool TgtSshIntf::sshThread()
 {
     bool attemptReconnect = false;
-    while (_sshData->_sshThreadRun == true)
+    if ((sshSend() == false) || (sshRecv() == false))
     {
-        if ((sshSend() == false) || (sshRecv() == false))
-        {
-            attemptReconnect = true;
-            break;
-        }
+        attemptReconnect = true;
     }
 
-    cryptDestroySession(_sshData->_cryptSession);
     if (attemptReconnect == true)
     {
         tgtAttemptReconnect();
     }
+    return !attemptReconnect;
 }
 
 bool TgtSshIntf::sshSend()
@@ -327,6 +314,9 @@ bool TgtSshIntf::sshSend()
         status = cryptPushData(_sshData->_cryptSession, data, boost::asio::buffer_size(b->_buffer), &bytesCopied);
         if (cryptStatusError(status))
         {
+#ifdef QT_DEBUG
+            qDebug("Unable to push data");
+#endif
             ret = false;
         }
         else if (bytesCopied < (int)boost::asio::buffer_size(b->_buffer))
@@ -369,6 +359,9 @@ bool TgtSshIntf::sshRecv()
             status = cryptPopData(_sshData->_cryptSession, data, boost::asio::buffer_size(_sshData->_currentIncomingBuffer->_buffer) - 1, &outDataLength);
             if (cryptStatusError(status))
             {
+#ifdef QT_DEBUG
+            qDebug("Unable to pop data");
+#endif
                 ret = false;
             }
             else if (outDataLength > 0)
@@ -378,7 +371,7 @@ bool TgtSshIntf::sshRecv()
                 _sshData->_currentIncomingBuffer.reset();
             }
         }
-    } while ((outDataLength > 0) && (cryptStatusOK(status)) && (_sshData->_sshThreadRun == true));
+    } while ((outDataLength > 0) && (cryptStatusOK(status)) && (_sshData->_sshThread->threadRun() == true));
     return ret;
 }
 

@@ -115,7 +115,6 @@ public:
 
     static boost::shared_ptr<TgtTelnetIntf> createTelnetConnection(const boost::shared_ptr<const TgtConnectionConfig> &config);
     virtual ~TgtTelnetIntf();
-    virtual int tgtBreakConnection();
     virtual bool tgtConnected();
     virtual void tgtGetTitle(std::string* szTitle);
 
@@ -136,6 +135,7 @@ protected:
     bool serviceThread();
     bool writerThread();
     void tgtReadCallback(const boost::system::error_code& error, const size_t bytesTransferred);
+    virtual void tgtBreakConnection();
 
     boost::scoped_ptr<boost::asio::ip::tcp::socket> _socket;
     boost::asio::io_service _socketService;

@@ -63,8 +63,9 @@ public:
     {
         return _connectionConfig;
     }
-    void tgtDisconn()
+    void tgtDisconnect()
     {
+        _suppressReconnect = true;
         tgtBreakConnection();
     }
 
@@ -76,7 +77,7 @@ protected:
     void connectionManagerThread();
     bool connectionManagerWait();
     virtual void tgtMakeConnection() = 0;
-    virtual int tgtBreakConnection() = 0;
+    virtual void tgtBreakConnection() = 0;
 
     int m_nTotalTx;
     int m_nTotalRx;
@@ -89,6 +90,7 @@ protected:
     boost::mutex _connectionManagerMutex;
     boost::condition_variable _connectionManagerCondition;
     volatile bool _connectionManagerSignal;
+    bool _suppressReconnect;
 
 };
 

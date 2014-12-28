@@ -39,7 +39,7 @@ TgtTelnetIntf::TgtTelnetIntf(const boost::shared_ptr<const TgtConnectionConfig> 
 
 TgtTelnetIntf::~TgtTelnetIntf()
 {
-    //tgtBreakConnection();
+    tgtDisconnect();
 }
 
 void TgtTelnetIntf::tgtMakeConnection()
@@ -81,21 +81,21 @@ void TgtTelnetIntf::tgtMakeConnection()
     if (error)
     {
         std::string errmsg;
-        boost::format f("Unable to connect to '%s' (%d)");
-        str(f % connectionConfig->_hostName % error);
+        boost::format f("Unable to connect to '%s:%i' (%d)");
+        errmsg = str(f % connectionConfig->_hostName % connectionConfig->_portNum % error);
         throw CB_EXCEPTION_STR(CBException::CbExcp, errmsg.c_str());
     }
     _socket->non_blocking(true);
 
-    _telnetWriterThread = TgtThread::create(boost::protect(boost::bind(&TgtTelnetIntf::writerThread, this)), "telnet writer");
-    _telnetServiceThread = TgtThread::create(boost::protect(boost::bind(&TgtTelnetIntf::serviceThread, this)), "telnet serivce");
+    _telnetWriterThread = TgtThread::create(boost::protect(boost::bind(&TgtTelnetIntf::writerThread, this)));
+    _telnetServiceThread = TgtThread::create(boost::protect(boost::bind(&TgtTelnetIntf::serviceThread, this)));
 
     boost::system::error_code err;
     _bufferPool->dequeue(_currentIncomingBuffer);
     tgtReadCallback(err, 0);
 }
 
-int TgtTelnetIntf::tgtBreakConnection()
+void TgtTelnetIntf::tgtBreakConnection()
 {
     m_bConnected = false;
     _telnetServiceThread.reset();
@@ -110,7 +110,6 @@ int TgtTelnetIntf::tgtBreakConnection()
         }
         _socket.reset();
     }
-    return 0;
 }
 
 
@@ -124,7 +123,6 @@ bool TgtTelnetIntf::writerThread()
         boost::asio::write(*_socket.get(), boost::asio::buffer(b->_buffer), ec);
         if (ec)
         {
-            tgtDisconn();
             attemptReconnect = true;
         }
     }

@@ -41,49 +41,41 @@ void TgtSerialIntf::tgtMakeConnection()
     _port->set_option(connectionConfig->_stopBits);
     _port->set_option(connectionConfig->_flowControl);
 
-    _serialWriterThreadRun = true;
-    _serialWriterThread.reset(new  boost::thread(boost::bind(&TgtSerialIntf::writerThread, this)));
-    _serialServiceThreadRun = true;
-    _serialServiceThread.reset(new boost::thread(boost::bind(&TgtSerialIntf::serviceThread, this)));
+    _serialWriterThread = TgtThread::create(boost::protect(boost::bind(&TgtSerialIntf::writerThread, this)));
+    _serialServiceThread = TgtThread::create(boost::protect(boost::bind(&TgtSerialIntf::serviceThread, this)));
     boost::system::error_code err;
     _bufferPool->dequeue(_currentIncomingBuffer);
     tgtReadCallback(err, 0);
 }
 
-void TgtSerialIntf::serviceThread()
+bool TgtSerialIntf::serviceThread()
 {
-    do
+    _service.reset();
+    if (_service.poll() == 0)
     {
-        _service.reset();
-        if (_service.poll() == 0)
-        {
-            boost::this_thread::sleep_for(boost::chrono::milliseconds(1));
-        }
-    } while (_serialServiceThreadRun == true);
+        boost::this_thread::sleep_for(boost::chrono::milliseconds(1));
+    }
+    return true;
 }
 
-void TgtSerialIntf::writerThread()
+bool TgtSerialIntf::writerThread()
 {
     boost::intrusive_ptr<RefCntBuffer> b;
     boost::system::error_code ec;
     bool attemptReconnect = false;
-    while (_serialWriterThreadRun == true)
+    if (_outgoingData.dequeue(b, 100) == true)
     {
-        if (_outgoingData.dequeue(b, 100) == true)
+        boost::asio::write(*_port.get(), boost::asio::buffer(b->_buffer), ec);
+        if (ec)
         {
-            boost::asio::write(*_port.get(), boost::asio::buffer(b->_buffer), ec);
-            if (ec)
-            {
-                tgtBreakConnection(false);
-                attemptReconnect = true;
-                break;
-            }
+            attemptReconnect = true;
         }
     }
     if (attemptReconnect == true)
     {
         tgtAttemptReconnect();
     }
+    return !attemptReconnect;
 }
 
 TgtSerialIntf::TgtSerialIntf(const boost::shared_ptr<const TgtConnectionConfig> &config)
@@ -94,17 +86,7 @@ TgtSerialIntf::TgtSerialIntf(const boost::shared_ptr<const TgtConnectionConfig> 
 
 TgtSerialIntf::~TgtSerialIntf ()
 {
-    tgtBreakConnection();
-}
-
-void TgtSerialIntf::tgtStopService()
-{
-    _serialServiceThreadRun = false;
-    //_service.stop();
-    if ((_serialServiceThread != NULL) && (_serialServiceThread->joinable() == true) && (boost::this_thread::get_id() != _serialServiceThread->get_id()))
-    {
-        _serialServiceThread->join();
-    }
+    tgtDisconnect();
 }
 
 void TgtSerialIntf::tgtReadCallback(const boost::system::error_code& error, const size_t bytesTransferred)
@@ -143,18 +125,10 @@ void TgtSerialIntf::tgtReadCallback(const boost::system::error_code& error, cons
     }
 }
 
-int TgtSerialIntf::tgtBreakConnection(bool joinWriter)
+void TgtSerialIntf::tgtBreakConnection()
 {
-    tgtStopService();
-
-    if (_serialWriterThreadRun == true)
-    {
-        _serialWriterThreadRun = false;
-        if ((_serialWriterThread != NULL) && (_serialWriterThread->joinable()) && (joinWriter == true))
-        {
-            _serialWriterThread->join();
-        }
-    }
+    _serialWriterThread.reset();
+    _serialServiceThread.reset();
     if (_port != NULL)
     {
         if (_port->is_open())
@@ -164,7 +138,6 @@ int TgtSerialIntf::tgtBreakConnection(bool joinWriter)
         }
         _port.reset();
     }
-    return 0;
 }
 
 bool TgtSerialIntf::tgtConnected()

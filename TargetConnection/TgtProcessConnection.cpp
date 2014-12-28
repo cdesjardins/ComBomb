@@ -57,11 +57,11 @@ TgtProcessIntf::TgtProcessIntf(const boost::shared_ptr<const TgtConnectionConfig
 
 TgtProcessIntf::~TgtProcessIntf()
 {
-    tgtBreakConnection();
+    tgtDisconnect();
     deleteProcess();
 }
 
-int TgtProcessIntf::tgtBreakConnection()
+void TgtProcessIntf::tgtBreakConnection()
 {
     if (_processWriterThreadRun == true)
     {
@@ -71,8 +71,6 @@ int TgtProcessIntf::tgtBreakConnection()
             _processWriterThread->join();
         }
     }
-
-    return 0;
 }
 
 bool TgtProcessIntf::tgtConnected()
@@ -157,7 +155,9 @@ void TgtProcessIntf::processInput(const QByteArray &output)
 
 void TgtProcessIntf::processError(QProcess::ProcessError error)
 {
+#ifdef QT_DEBUG
     qDebug("Error %i", error);
+#endif
 }
 
 void TgtProcessIntf::processDone(int, QProcess::ExitStatus)

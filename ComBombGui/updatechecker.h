@@ -32,6 +32,7 @@ public:
     void checkForNewVersion();
     int32_t getLatestVersion();
     QString getLatestVersionStr();
+    ~UpdateChecker();
 
 private slots:
     void slotError(QNetworkReply::NetworkError);
@@ -49,6 +50,7 @@ private:
     QString _result;
     int32_t _latestVersion;
     QString _latestVersionStr;
+    boost::scoped_ptr<QNetworkAccessManager> _manager;
 };
 
 #endif // UPDATECHECKER_H
