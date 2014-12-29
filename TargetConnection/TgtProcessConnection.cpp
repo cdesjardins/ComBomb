@@ -24,7 +24,9 @@
 boost::shared_ptr<TgtProcessIntf> TgtProcessIntf::createProcessConnection(const boost::shared_ptr<const TgtConnectionConfig> &config)
 {
     boost::shared_ptr<TgtProcessIntf> ret(new TgtProcessIntf(config));
-    ret->tgtAttemptReconnect();
+    // This guy uses tgtMakeConnection otherwise QProcess will result in:
+    // QObject: Cannot create children for a parent that is in a different thread
+    ret->tgtMakeConnection();
     return ret;
 }
 
