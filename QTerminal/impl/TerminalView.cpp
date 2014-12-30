@@ -354,7 +354,6 @@ TerminalView::~TerminalView()
     qApp->removeEventFilter(this);
 
     _gridLayout.reset();
-    _outputSuspendedLabel.reset();
 }
 
 /* ------------------------------------------------------------------------- */
@@ -771,14 +770,6 @@ void TerminalDisplay::setCursorPos(const int curx, const int cury)
 // a cell width of _fontWidth and a cell height of _fontHeight).
 void TerminalView::scrollImage(int lines, const QRect& screenWindowRegion)
 {
-    // if the flow control warning is enabled this will interfere with the
-    // scrolling optimisations and cause artifacts.  the simple solution here
-    // is to just disable the optimisation whilst it is visible
-    if (_outputSuspendedLabel && _outputSuspendedLabel->isVisible())
-    {
-        return;
-    }
-
     // constrain the region to the display
     // the bottom of the region is capped to the number of lines in the display's
     // internal image - 2, so that the height of 'region' is strictly less

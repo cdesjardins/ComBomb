@@ -677,10 +677,6 @@ private:
 
     bool _flowControlWarningEnabled;
 
-    //widgets related to the warning message that appears when the user presses Ctrl+S to suspend
-    //terminal output - informing them what has happened and how to resume output
-    boost::scoped_ptr<QLabel> _outputSuspendedLabel;
-
     bool _colorsInverted; // true during visual bell
 
     QSize _size;
