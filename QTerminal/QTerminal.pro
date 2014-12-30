@@ -25,7 +25,8 @@ SOURCES += \
     impl/KeyboardTranslator.cpp \
     impl/TgtIntf.cpp \
     impl/QTerminalConfig.cpp \
-    ../QueuePtr/src/RefCntBufferPool.cpp
+    ../QueuePtr/src/RefCntBufferPool.cpp \
+    impl/CharacterColor.cpp
 
 HEADERS += QTerminalInterface.h \
     qterminal.h \

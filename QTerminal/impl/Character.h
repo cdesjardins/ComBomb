@@ -60,13 +60,19 @@ public:
     /**
      * Constructs a new character.
      *
-     * @param _c The unicode character value of this character.
-     * @param _f The foreground color used to draw the character.
-     * @param _b The color used to draw the character's background.
-     * @param _r A set of rendition flags which specify how this character is to be drawn.
+     * @param c The unicode character value of this character.
+     * @param f The foreground color used to draw the character.
+     * @param b The color used to draw the character's background.
+     * @param r A set of rendition flags which specify how this character is to be drawn.
      */
-    inline Character(quint16 _c = ' ', CharacterColor _f = CharacterColor(COLOR_SPACE_DEFAULT, DEFAULT_FORE_COLOR), CharacterColor _b = CharacterColor(COLOR_SPACE_DEFAULT, DEFAULT_BACK_COLOR), quint8 _r = DEFAULT_RENDITION)
-        : _character(_c), _rendition(_r), _foregroundColor(_f), _backgroundColor(_b)
+    inline Character(quint16 c = ' ',
+                     CharacterColor f = CharacterColor(COLOR_SPACE_DEFAULT, CharacterColor::getDefaultForeColor()),
+                     CharacterColor b = CharacterColor(COLOR_SPACE_DEFAULT, CharacterColor::getDefaultBackColor()),
+                     quint8 r = DEFAULT_RENDITION)
+        : _character(c),
+          _rendition(r),
+          _foregroundColor(f),
+          _backgroundColor(b)
     {
     }
 

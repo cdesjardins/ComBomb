@@ -96,8 +96,8 @@ public:
 #define INTENSITIES   2
 #define TABLE_COLORS  (INTENSITIES * BASE_COLORS)
 
-#define DEFAULT_FORE_COLOR 1
-#define DEFAULT_BACK_COLOR 0
+#define DEFAULT_FORE_COLOR CharacterColor::getDefaultForeColor()
+#define DEFAULT_BACK_COLOR CharacterColor::getDefaultBackColor()
 
 //a standard set of colors using black text on a white background.
 //defined in TerminalDisplay.cpp
@@ -199,6 +199,22 @@ public:
         }
     }
 
+    static void setDefaultColors(int foreColor, int backColor)
+    {
+        _defaultForeColor = foreColor;
+        _defaultBackColor = backColor;
+    }
+
+    static int getDefaultForeColor()
+    {
+        return _defaultForeColor;
+    }
+
+    static int getDefaultBackColor()
+    {
+        return _defaultBackColor;
+    }
+
     /**
      * Returns true if this character color entry is valid.
      */
@@ -242,6 +258,9 @@ private:
     quint8 _u;
     quint8 _v;
     quint8 _w;
+
+    static int _defaultForeColor;
+    static int _defaultBackColor;
 };
 
 inline bool operator ==(const CharacterColor& a, const CharacterColor& b)
