@@ -413,6 +413,11 @@ void TerminalModel::newlineToggle()
     _emulation->newlineToggle();
 }
 
+bool TerminalModel::newlines()
+{
+    return _emulation->newlines();
+}
+
 int TerminalModel::lineCount()
 {
     return _emulation->lineCount();

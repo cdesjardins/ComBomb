@@ -207,6 +207,11 @@ void QTerminalImpl::newlineToggle()
     _terminalModel->newlineToggle();
 }
 
+bool QTerminalImpl::newlines()
+{
+    return _terminalModel->newlines();
+}
+
 void QTerminalImpl::selectAll()
 {
     _terminalView->selectAll();

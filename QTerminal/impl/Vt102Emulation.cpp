@@ -2052,6 +2052,11 @@ void Vt102Emulation::newlineToggle()
     }
 }
 
+bool Vt102Emulation::newlines()
+{
+    return getMode(MODE_NewLine);
+}
+
 void Vt102Emulation::setMode(int m)
 {
     _currParm.mode[m] = true;

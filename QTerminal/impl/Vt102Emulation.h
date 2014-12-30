@@ -91,6 +91,7 @@ public:
     virtual char getErase() const;
 
     virtual void newlineToggle();
+    virtual bool newlines();
 public slots:
 
     // reimplemented

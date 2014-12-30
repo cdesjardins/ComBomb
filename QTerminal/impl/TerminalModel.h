@@ -187,6 +187,7 @@ public:
      */
     void refresh();
     void newlineToggle();
+    bool newlines();
     void connectToRecvText(QObject* who);
     int lineCount();
 protected:

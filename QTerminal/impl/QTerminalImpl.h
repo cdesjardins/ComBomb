@@ -56,6 +56,7 @@ public slots:
     void copyClipboard();
     void pasteClipboard();
     void newlineToggle();
+    bool newlines();
     void selectAll();
     void clearScrollback();
 

@@ -42,7 +42,7 @@ public:
         QAction* pasteAction = _contextMenu->addAction("Paste");
         QAction* selectAllAction = _contextMenu->addAction("Select All");
         QAction* clearScrollbackAction = _contextMenu->addAction("Clear scrollback");
-        QAction* newlineAction = _contextMenu->addAction("Toggle CR/LF");
+        _newlineAction = _contextMenu->addAction("Toggle CR/LF");
         QAction* runProcessAction = _contextMenu->addAction("Run Process");
 
         copyAction->setIcon(QIcon(":/images/page_copy.png"));
@@ -51,12 +51,12 @@ public:
         clearScrollbackAction->setIcon(QIcon(":/images/page_refresh.png"));
         runProcessAction->setIcon(QIcon(":/images/script_gear.png"));
 
-        newlineAction->setCheckable(true);
+        _newlineAction->setCheckable(true);
         connect(copyAction, SIGNAL(triggered()), this, SLOT(copyClipboard()));
         connect(pasteAction, SIGNAL(triggered()), this, SLOT(pasteClipboard()));
         connect(selectAllAction, SIGNAL(triggered()), this, SLOT(selectAll()));
         connect(clearScrollbackAction, SIGNAL(triggered()), this, SLOT(clearScrollback()));
-        connect(newlineAction, SIGNAL(triggered()), this, SLOT(newlineToggle()));
+        connect(_newlineAction, SIGNAL(triggered()), this, SLOT(newlineToggle()));
         connect(runProcessAction, SIGNAL(triggered()), this, SLOT(runProcess()));
 
         connect(this, SIGNAL(triggerCopy()), this, SLOT(copyClipboard()));
@@ -90,11 +90,13 @@ public slots:
     virtual void copyClipboard() = 0;
     virtual void pasteClipboard() = 0;
     virtual void newlineToggle() = 0;
+    virtual bool newlines() = 0;
     virtual void runProcess() = 0;
     virtual void selectAll() = 0;
     virtual void clearScrollback() = 0;
     virtual void handleCustomContextMenuRequested(QPoint at)
     {
+        _newlineAction->setChecked(newlines());
         _contextMenu->move(mapToGlobal(at));
         _contextMenu->show();
     }
@@ -105,6 +107,7 @@ signals:
 
 private:
     QMenu* _contextMenu;
+    QAction* _newlineAction;
 };
 
 #endif // QTERMINALINTERFACE_H
