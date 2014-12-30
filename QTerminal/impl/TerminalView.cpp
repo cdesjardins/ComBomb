@@ -2678,49 +2678,6 @@ void TerminalView::doDrag()
     // Don't delete the QTextDrag object.  Qt will delete it when it's done with it.
 }
 
-void TerminalView::outputSuspended(bool suspended)
-{
-    //create the label when this function is first called
-    if (!_outputSuspendedLabel)
-    {
-        //This label includes a link to an English language website
-        //describing the 'flow control' (Xon/Xoff) feature found in almost
-        //all terminal emulators.
-        //If there isn't a suitable article available in the target language the link
-        //can simply be removed.
-        _outputSuspendedLabel.reset(new QLabel(("<qt>Output has been "
-                                                "<a href=\"http://en.wikipedia.org/wiki/XON\">suspended</a>"
-                                                " by pressing Ctrl+S."
-                                                "  Press <b>Ctrl+Q</b> to resume.</qt>"),
-                                               this));
-
-        QPalette palette(_outputSuspendedLabel->palette());
-
-        palette.setColor(QPalette::Normal, QPalette::WindowText, QColor(Qt::white));
-        palette.setColor(QPalette::Normal, QPalette::Window, QColor(Qt::black));
-        //            KColorScheme::adjustForeground(palette,KColorScheme::NeutralText);
-        //		KColorScheme::adjustBackground(palette,KColorScheme::NeutralBackground);
-        _outputSuspendedLabel->setPalette(palette);
-        _outputSuspendedLabel->setAutoFillBackground(true);
-        _outputSuspendedLabel->setBackgroundRole(QPalette::Base);
-        _outputSuspendedLabel->setFont(QApplication::font());
-        _outputSuspendedLabel->setMargin(5);
-
-        //enable activation of "Xon/Xoff" link in label
-        _outputSuspendedLabel->setTextInteractionFlags(Qt::LinksAccessibleByMouse |
-                                                       Qt::LinksAccessibleByKeyboard);
-        _outputSuspendedLabel->setOpenExternalLinks(true);
-        _outputSuspendedLabel->setVisible(false);
-
-        _gridLayout->addWidget(_outputSuspendedLabel.get());
-        _gridLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding,
-                                             QSizePolicy::Expanding),
-                             1, 0);
-    }
-
-    _outputSuspendedLabel->setVisible(suspended);
-}
-
 void TerminalView::findText(const QString& searchStr, const bool caseSensitive, const bool searchUp, const bool cont)
 {
     if (_screenWindow->findText(searchStr, caseSensitive, searchUp, cont))

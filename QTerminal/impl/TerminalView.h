@@ -430,16 +430,6 @@ public slots:
     void pasteSelection();
 
     /**
-    * Causes the widget to display or hide a message informing the user that terminal
-    * output has been suspended (by using the flow control key combination Ctrl+S)
-    *
-    * @param suspended True if terminal output has been suspended and the warning message should
-    *				    be shown or false to indicate that terminal output has been resumed and that
-    *				    the warning message should disappear.
-    */
-    void outputSuspended(bool suspended);
-
-    /**
      * Sets whether the program whoose output is being displayed in the view
      * is interested in mouse events.
      *
