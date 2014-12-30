@@ -212,7 +212,6 @@ void Emulation::receiveChar(int c)
             _screen[_currentScreenIndex]->ShowCharacter(c);
             break;
     }
-    ;
 }
 
 /* ------------------------------------------------------------------------- */

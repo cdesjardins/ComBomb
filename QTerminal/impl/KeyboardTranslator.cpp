@@ -130,7 +130,9 @@ bool KeyboardTranslatorManager::saveTranslator(const boost::shared_ptr<KeyboardT
 
         QListIterator<KeyboardTranslator::Entry> iter(translator->entries());
         while (iter.hasNext())
+        {
             writer.writeEntry(iter.next());
+        }
     }
 
     destination.close();

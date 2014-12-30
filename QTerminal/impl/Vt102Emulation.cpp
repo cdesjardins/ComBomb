@@ -1633,7 +1633,6 @@ void Vt102Emulation::tau(int token, int p, int q)
         default: /*ReportErrorToken(); tokenDebug(token, p);*/
             break;
     }
-    ;
 }
 
 void Vt102Emulation::clearScreenAndSetColumns(int columnCount)

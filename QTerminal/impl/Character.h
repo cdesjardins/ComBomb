@@ -70,9 +70,9 @@ public:
                      CharacterColor b = CharacterColor(COLOR_SPACE_DEFAULT, CharacterColor::getDefaultBackColor()),
                      quint8 r = DEFAULT_RENDITION)
         : _character(c),
-          _rendition(r),
-          _foregroundColor(f),
-          _backgroundColor(b)
+        _rendition(r),
+        _foregroundColor(f),
+        _backgroundColor(b)
     {
     }
 
