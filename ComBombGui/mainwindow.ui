@@ -141,6 +141,9 @@
    <property name="toolTip">
     <string>Copy</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+C</string>
+   </property>
   </action>
   <action name="actionPaste">
    <property name="icon">
@@ -152,6 +155,9 @@
    </property>
    <property name="toolTip">
     <string>Paste</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+V</string>
    </property>
   </action>
   <action name="actionSelect_All">

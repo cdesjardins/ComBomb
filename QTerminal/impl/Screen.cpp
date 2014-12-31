@@ -512,11 +512,8 @@ void Screen::setDefaultMargins()
 
 void Screen::reverseRendition(Character& p) const
 {
-    CharacterColor f = p._foregroundColor;
-    CharacterColor b = p._backgroundColor;
-
-    p._foregroundColor = b;
-    p._backgroundColor = f;
+    p.setForegroundColor(p.getBackgroundColor());
+    p.setBackgroundColor(p.getForegroundColor());
 }
 
 void Screen::effectiveRendition()
@@ -663,7 +660,7 @@ void Screen::getImage(std::vector<Character> &dest, int size, int startLine, int
     int cursorIndex = loc(_cursorX, _cursorY + linesInHistoryBuffer);
     if (getMode(MODE_Cursor) && cursorIndex < _columns * mergedLines)
     {
-        dest[cursorIndex]._rendition |= RENDITION_CURSOR;
+        dest[cursorIndex].updateRendition(RENDITION_CURSOR);
     }
 }
 
@@ -906,12 +903,7 @@ void Screen::ShowCharacter(unsigned short c)
     // check if selection is still valid.
     checkSelection(_cursorX, _cursorY);
 
-    Character& currentChar = _screenLines[screenLineIndex(_cursorY)][_cursorX];
-
-    currentChar.setChar(c);
-    currentChar._foregroundColor = _effectiveCursorFg;
-    currentChar._backgroundColor = _effectiveCursorBg;
-    currentChar._rendition = _effectiveCursorRe | RENDITION_RENDER;
+    _screenLines[screenLineIndex(_cursorY)][_cursorX].setProperties(c, _effectiveCursorFg, _effectiveCursorBg, _effectiveCursorRe | RENDITION_RENDER);
 
     int i = 0;
     int newCursorX = _cursorX + w--;
@@ -924,12 +916,7 @@ void Screen::ShowCharacter(unsigned short c)
             _screenLines[screenLineIndex(_cursorY)].resize(_cursorX + i + 1);
         }
 
-        Character& ch = _screenLines[screenLineIndex(_cursorY)][_cursorX + i];
-        ch.setChar(0);
-        ch._foregroundColor = _effectiveCursorFg;
-        ch._backgroundColor = _effectiveCursorBg;
-        ch._rendition = _effectiveCursorRe;
-
+        _screenLines[screenLineIndex(_cursorY)][_cursorX + i].setProperties(0, _effectiveCursorFg, _effectiveCursorBg, _effectiveCursorRe);
         w--;
     }
     _cursorX = newCursorX;
@@ -1618,7 +1605,7 @@ void Screen::copyLineToStream(int line,
     //do not decode trailing whitespace characters
     for (int i = count - 1; i >= 0; i--)
     {
-        if (((characterBuffer[i]._rendition & RENDITION_RENDER) == 0) && QChar(characterBuffer[i].getChar()).isSpace())
+        if (((characterBuffer[i].getRendition() & RENDITION_RENDER) == 0) && QChar(characterBuffer[i].getChar()).isSpace())
         {
             count--;
         }

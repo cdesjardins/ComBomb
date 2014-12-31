@@ -523,7 +523,7 @@ void TerminalView::drawLineCharString(QPainter& painter, int x, int y, const QSt
 {
     const QPen& currentPen = painter.pen();
 
-    if (attributes->_rendition & RENDITION_BOLD)
+    if (attributes->getRendition() & RENDITION_BOLD)
     {
         QPen boldPen(currentPen);
         boldPen.setWidth(3);
@@ -660,14 +660,14 @@ void TerminalView::drawCharacters(QPainter& painter,
                                   bool invertCharacterColor)
 {
     // don't draw text which is currently blinking
-    if (_blinking && (style->_rendition & RENDITION_BLINK))
+    if (_blinking && (style->getRendition() & RENDITION_BLINK))
     {
         return;
     }
 
     // setup bold and underline
-    bool useBold = style->_rendition & RENDITION_BOLD || style->isBold(_colorTable) || font().bold();
-    bool useUnderline = style->_rendition & RENDITION_UNDERLINE || font().underline();
+    bool useBold = style->getRendition() & RENDITION_BOLD || style->isBold(_colorTable) || font().bold();
+    bool useUnderline = style->getRendition() & RENDITION_UNDERLINE || font().underline();
 
     QFont font = painter.font();
     if (font.bold() != useBold
@@ -678,7 +678,7 @@ void TerminalView::drawCharacters(QPainter& painter,
         painter.setFont(font);
     }
 
-    const CharacterColor& textColor = (invertCharacterColor ? style->_backgroundColor : style->_foregroundColor);
+    const CharacterColor& textColor = (invertCharacterColor ? style->getBackgroundColor() : style->getForegroundColor());
     const QColor color = textColor.color(_colorTable);
 
     QPen pen = painter.pen();
@@ -711,8 +711,8 @@ void TerminalView::drawTextFragment(QPainter& painter,
     painter.save();
 
     // setup painter
-    const QColor foregroundColor = style->_foregroundColor.color(_colorTable);
-    const QColor backgroundColor = style->_backgroundColor.color(_colorTable);
+    const QColor foregroundColor = style->getForegroundColor().color(_colorTable);
+    const QColor backgroundColor = style->getBackgroundColor().color(_colorTable);
 
     // draw background if different from the display's background color
     if (backgroundColor != palette().background().color())
@@ -724,7 +724,7 @@ void TerminalView::drawTextFragment(QPainter& painter,
     // this may alter the foreground and background colors
     bool invertCharacterColor = false;
 
-    if (style->_rendition & RENDITION_CURSOR)
+    if (style->getRendition() & RENDITION_CURSOR)
     {
         drawCursor(painter, rect, foregroundColor, backgroundColor, invertCharacterColor);
     }
@@ -834,12 +834,12 @@ int TerminalView::resizePaint(const int columnsToUpdate, const std::vector<Chara
 {
     int len;
     int updateLine = 0;
-    int cr  = -1; // undefined
-    CharacterColor cf; // undefined
-    CharacterColor _clipboard; // undefined
+    int cr  = -1;
+    CharacterColor cf;
+    CharacterColor cb;
     for (int x = 0; x < columnsToUpdate; x++)
     {
-        _hasBlinker |= (newLine[x]._rendition & RENDITION_BLINK);
+        _hasBlinker |= (newLine[x].getRendition() & RENDITION_BLINK);
 
         // Start drawing if this character or the next one differs.
         // We also take the next one into account to handle the situation
@@ -855,11 +855,11 @@ int TerminalView::resizePaint(const int columnsToUpdate, const std::vector<Chara
             disstrU[p++] = c; //fontMap(c);
             bool lineDraw = isLineChar(c);
             bool doubleWidth = (x + 1 == columnsToUpdate) ? false : (newLine[x + 1].getChar() == 0);
-            cr = newLine[x]._rendition;
-            _clipboard = newLine[x]._backgroundColor;
-            if (newLine[x]._foregroundColor != cf)
+            cr = newLine[x].getRendition();
+            cb = newLine[x].getBackgroundColor();
+            if (newLine[x].getForegroundColor() != cf)
             {
-                cf = newLine[x]._foregroundColor;
+                cf = newLine[x].getForegroundColor();
             }
             int lln = columnsToUpdate - x;
             for (len = 1; len < lln; len++)
@@ -872,9 +872,9 @@ int TerminalView::resizePaint(const int columnsToUpdate, const std::vector<Chara
                 }
                 bool nextIsDoubleWidth = (x + len + 1 == columnsToUpdate) ? false : (newLine[x + len + 1].getChar() == 0);
 
-                if (ch._foregroundColor != cf ||
-                    ch._backgroundColor != _clipboard ||
-                    ch._rendition != cr ||
+                if (ch.getForegroundColor() != cf ||
+                    ch.getBackgroundColor() != cb ||
+                    ch.getRendition() != cr ||
                     !dirtyMask[x + len] ||
                     isLineChar(c) != lineDraw ||
                     nextIsDoubleWidth != doubleWidth)
@@ -884,8 +884,6 @@ int TerminalView::resizePaint(const int columnsToUpdate, const std::vector<Chara
 
                 disstrU[p++] = c; //fontMap(c);
             }
-
-            QString unistr(disstrU, p);
 
             bool saveFixedFont = _fixedFont;
             if (lineDraw)
@@ -1229,7 +1227,7 @@ void TerminalView::drawContents(QPainter &paint, const QRect &rect)
             int p = 0;
 
             // is this a single character or a sequence of characters ?
-            if (_image[loc(x, y)]._rendition & RENDITION_EXTENDED_CHAR)
+            if (_image[loc(x, y)].getRendition() & RENDITION_EXTENDED_CHAR)
             {
                 // sequence of characters
                 ushort extendedCharLength = 0;
@@ -1254,14 +1252,14 @@ void TerminalView::drawContents(QPainter &paint, const QRect &rect)
 
             bool lineDraw = isLineChar(c);
             bool doubleWidth = (_image[qMin(loc(x, y) + 1, _imageSize)].getChar() == 0);
-            CharacterColor currentForeground = _image[loc(x, y)]._foregroundColor;
-            CharacterColor currentBackground = _image[loc(x, y)]._backgroundColor;
-            quint8 currentRendition = _image[loc(x, y)]._rendition;
+            CharacterColor currentForeground = _image[loc(x, y)].getForegroundColor();
+            CharacterColor currentBackground = _image[loc(x, y)].getBackgroundColor();
+            quint8 currentRendition = _image[loc(x, y)].getRendition();
 
             while (x + len <= rightLowerX &&
-                   _image[loc(x + len, y)]._foregroundColor == currentForeground &&
-                   _image[loc(x + len, y)]._backgroundColor == currentBackground &&
-                   _image[loc(x + len, y)]._rendition == currentRendition &&
+                   _image[loc(x + len, y)].getForegroundColor() == currentForeground &&
+                   _image[loc(x + len, y)].getBackgroundColor() == currentBackground &&
+                   _image[loc(x + len, y)].getRendition() == currentRendition &&
                    (_image[qMin(loc(x + len, y) + 1, _imageSize)].getChar() == 0) == doubleWidth &&
                    (isLineChar(c = _image[loc(x + len, y)].getChar()) == lineDraw)) // Assignment!
             {
@@ -1883,7 +1881,7 @@ void TerminalView::extendSelection(const QPoint& position)
             if (i >= 0 && i <= _imageSize)
             {
                 selClass = charClass(_image[i - 1].getChar());
-                if ((selClass == ' ') && ((_image[i]._rendition & RENDITION_RENDER) == 0))
+                if ((selClass == ' ') && ((_image[i].getRendition() & RENDITION_RENDER) == 0))
                 {
                     while ((right.x() < _usedColumns - 1) &&
                            (charClass(_image[i + 1].getChar()) == selClass) &&
@@ -2548,12 +2546,10 @@ void TerminalView::clearImage()
     // We initialize _image[_imageSize] too. See makeImage()
     for (int i = 0; i <= _imageSize; i++)
     {
-        _image[i].setChar(' ');
-        _image[i]._foregroundColor = CharacterColor(COLOR_SPACE_DEFAULT,
-                                                    DEFAULT_FORE_COLOR);
-        _image[i]._backgroundColor = CharacterColor(COLOR_SPACE_DEFAULT,
-                                                    DEFAULT_BACK_COLOR);
-        _image[i]._rendition = DEFAULT_RENDITION;
+        _image[i].setProperties(' ',
+                                CharacterColor(COLOR_SPACE_DEFAULT, DEFAULT_FORE_COLOR),
+                                CharacterColor(COLOR_SPACE_DEFAULT, DEFAULT_BACK_COLOR),
+                                DEFAULT_RENDITION);
     }
 }
 

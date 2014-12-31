@@ -42,8 +42,7 @@ static const int LINE_DOUBLEHEIGHT  = (1 << 2);
 #define RENDITION_BOLD            (1 << 0)
 #define RENDITION_BLINK           (1 << 1)
 #define RENDITION_UNDERLINE       (1 << 2)
-#define RENDITION_REVERSE         (1 << 3) // Screen only
-#define RENDITION_INTENSIVE       (1 << 3) // Widget only
+#define RENDITION_REVERSE         (1 << 3)
 #define RENDITION_CURSOR          (1 << 4)
 #define RENDITION_EXTENDED_CHAR   (1 << 5)
 #define RENDITION_RENDER          (1 << 6)
@@ -76,21 +75,14 @@ public:
     {
     }
 
-private:
-    union
+    void setProperties(quint16 c, CharacterColor f, CharacterColor b, quint8 r)
     {
-        /** The unicode character value for this character. */
-        quint16 _character;
-        /**
-         * Experimental addition which allows a single Character instance to contain more than
-         * one unicode character.
-         *
-         * charSequence is a hash code which can be used to look up the unicode
-         * character sequence in the ExtendedCharTable used to create the sequence.
-         */
-        quint16 _charSequence;
-    };
-public:
+        _character = c;
+        _rendition = r;
+        _foregroundColor = f;
+        _backgroundColor = b;
+    }
+
     quint16 getChar() const
     {
         return _character;
@@ -106,13 +98,40 @@ public:
         _character = ch;
     }
 
-    /** A combination of RENDITION flags which specify options for drawing the character. */
-    quint8 _rendition;
+    quint8 getRendition() const
+    {
+        return _rendition;
+    }
 
-    /** The foreground color used to draw this character. */
-    CharacterColor _foregroundColor;
-    /** The color used to draw this character's background. */
-    CharacterColor _backgroundColor;
+    void setRendition(quint8 rendition)
+    {
+        _rendition = rendition;
+    }
+
+    void updateRendition(quint8 rendition)
+    {
+        _rendition |= rendition;
+    }
+
+    CharacterColor getForegroundColor() const
+    {
+        return _foregroundColor;
+    }
+
+    void setForegroundColor(const CharacterColor &foregroundColor)
+    {
+        _foregroundColor = foregroundColor;
+    }
+
+    CharacterColor getBackgroundColor() const
+    {
+        return _backgroundColor;
+    }
+
+    void setBackgroundColor(const CharacterColor &backgroundColor)
+    {
+        _backgroundColor = backgroundColor;
+    }
 
     /**
      * Returns true if this character has a transparent background when
@@ -136,6 +155,29 @@ public:
      * renditions or colors.
      */
     friend bool operator !=(const Character& a, const Character& b);
+private:
+    union
+    {
+        /** The unicode character value for this character. */
+        quint16 _character;
+        /**
+         * Experimental addition which allows a single Character instance to contain more than
+         * one unicode character.
+         *
+         * charSequence is a hash code which can be used to look up the unicode
+         * character sequence in the ExtendedCharTable used to create the sequence.
+         */
+        quint16 _charSequence;
+    };
+
+    /** A combination of RENDITION flags which specify options for drawing the character. */
+    quint8 _rendition;
+
+    /** The foreground color used to draw this character. */
+    CharacterColor _foregroundColor;
+
+    /** The color used to draw this character's background. */
+    CharacterColor _backgroundColor;
 };
 
 inline bool operator ==(const Character& a, const Character& b)

@@ -139,18 +139,18 @@ void HTMLDecoder::decodeLine(const std::vector<Character>::const_iterator& chara
         QChar ch(characters[i].getChar());
 
         //check if appearance of character is different from previous char
-        if (characters[i]._rendition != _lastRendition  ||
-            characters[i]._foregroundColor != _lastForeColor  ||
-            characters[i]._backgroundColor != _lastBackColor)
+        if (characters[i].getRendition() != _lastRendition  ||
+            characters[i].getForegroundColor() != _lastForeColor  ||
+            characters[i].getBackgroundColor() != _lastBackColor)
         {
             if (_innerSpanOpen)
             {
                 closeSpan(text);
             }
 
-            _lastRendition = characters[i]._rendition;
-            _lastForeColor = characters[i]._foregroundColor;
-            _lastBackColor = characters[i]._backgroundColor;
+            _lastRendition = characters[i].getRendition();
+            _lastForeColor = characters[i].getForegroundColor();
+            _lastBackColor = characters[i].getBackgroundColor();
 
             //build up style string
             QString style;
