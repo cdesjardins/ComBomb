@@ -2187,7 +2187,9 @@ void TerminalView::mouseTripleClickEvent(QMouseEvent* ev)
     emit isBusySelecting(true); // Keep it steady...
 
     while (_iPntSel.y() > 0 && (_lineProperties[_iPntSel.y() - 1] & LINE_WRAPPED))
+    {
         _iPntSel.ry()--;
+    }
 
     if (_tripleClickMode == SelectForwardsFromCursor)
     {
@@ -2223,7 +2225,9 @@ void TerminalView::mouseTripleClickEvent(QMouseEvent* ev)
     }
 
     while (_iPntSel.y() < _lines - 1 && (_lineProperties[_iPntSel.y()] & LINE_WRAPPED))
+    {
         _iPntSel.ry()++;
+    }
 
     _screenWindow->setSelectionEnd(_columns - 1, _iPntSel.y());
 

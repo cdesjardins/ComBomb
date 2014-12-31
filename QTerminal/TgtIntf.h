@@ -53,11 +53,13 @@ public:
     virtual int tgtGetBytesRx()
     {
         return m_nTotalRx;
-    };
+    }
+
     virtual int tgtGetBytesTx()
     {
         return m_nTotalTx;
-    };
+    }
+
     boost::shared_ptr<const TgtConnectionConfigBase> getConfig()
     {
         return _connectionConfig;
