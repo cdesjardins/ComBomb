@@ -123,7 +123,6 @@ void MainWindow::errorBox(QString errMsg)
 void MainWindow::on_actionOpen_triggered()
 {
     OpenDialog openDialog(this);
-    CharacterColor::setDefaultColors(!CharacterColor::getDefaultForeColor(), !CharacterColor::getDefaultBackColor());
     if (openDialog.exec() == OpenDialog::Accepted)
     {
         try
