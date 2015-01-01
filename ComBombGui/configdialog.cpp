@@ -25,6 +25,7 @@
 #define CB_CONFIG_SETTINGS_COM          CB_CONFIG_SETTINGS_ROOT "ComPorts"
 #define CB_CONFIG_SETTINGS_TERM         CB_CONFIG_SETTINGS_ROOT "Settings"
 #define CB_CONFIG_SETTINGS_TABBEDVIEW   CB_CONFIG_SETTINGS_ROOT "TabbedView"
+#define CB_CONFIG_SETTINGS_BLACKBACK    CB_CONFIG_SETTINGS_ROOT "BlackBack"
 #ifdef WIN32
 #define BASE_PORTNAME_1 "COM", 1, 257
 #else
@@ -54,6 +55,8 @@ ConfigDialog::ConfigDialog(QWidget* parent) :
     populateComPortListWidget();
     ui->mdiRdioButton->setChecked(!getTabbedViewSettings());
     ui->tabsRadioButton->setChecked(getTabbedViewSettings());
+    ui->blackRadioButton->setChecked(getBlackBackSettings());
+    ui->whiteRadioButton->setChecked(!getBlackBackSettings());
 }
 
 void ConfigDialog::setPortListSettings()
@@ -102,6 +105,12 @@ bool ConfigDialog::getTabbedViewSettings()
 {
     QSettings settings;
     return settings.value(CB_CONFIG_SETTINGS_TABBEDVIEW, false).toBool();
+}
+
+bool ConfigDialog::getBlackBackSettings()
+{
+    QSettings settings;
+    return settings.value(CB_CONFIG_SETTINGS_BLACKBACK, false).toBool();
 }
 
 QStringList ConfigDialog::getPortListDefaults(QString basePortName, int start, int stop)
@@ -155,6 +164,7 @@ void ConfigDialog::on_buttonBox_accepted()
 
     settings.setValue(CB_CONFIG_SETTINGS_TERM, qbytes);
     settings.setValue(CB_CONFIG_SETTINGS_TABBEDVIEW, ui->tabsRadioButton->isChecked());
+    settings.setValue(CB_CONFIG_SETTINGS_BLACKBACK, ui->blackRadioButton->isChecked());
     MainWindow::getMainWindow()->setInterfaceType();
     setPortListSettings();
 

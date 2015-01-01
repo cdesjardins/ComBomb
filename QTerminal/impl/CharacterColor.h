@@ -199,10 +199,14 @@ public:
         }
     }
 
-    static void setDefaultColors(int foreColor, int backColor)
+    static void setBlackBackground()
     {
-        _defaultForeColor = foreColor;
-        _defaultBackColor = backColor;
+        setDefaultColors(1, 0);
+    }
+
+    static void setWhiteBackground()
+    {
+        setDefaultColors(0, 1);
     }
 
     static int getDefaultForeColor()
@@ -252,6 +256,12 @@ public:
     friend bool operator !=(const CharacterColor& a, const CharacterColor& b);
 
 private:
+    static void setDefaultColors(int foreColor, int backColor)
+    {
+        _defaultForeColor = foreColor;
+        _defaultBackColor = backColor;
+    }
+
     quint8 _colorSpace;
 
     // bytes storing the character color

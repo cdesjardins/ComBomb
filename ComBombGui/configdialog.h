@@ -37,6 +37,7 @@ public:
     static bool getTerminalConfig(QTerminalConfig* terminalConfig);
     static QStringList getPortListSettings();
     static bool getTabbedViewSettings();
+    static bool getBlackBackSettings();
 protected:
     static QStringList getPortListDefaults(QString basePortName, int start, int stop);
     void setPortListSettings();
