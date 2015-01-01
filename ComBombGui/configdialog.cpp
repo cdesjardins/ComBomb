@@ -110,7 +110,7 @@ bool ConfigDialog::getTabbedViewSettings()
 bool ConfigDialog::getBlackBackSettings()
 {
     QSettings settings;
-    return settings.value(CB_CONFIG_SETTINGS_BLACKBACK, false).toBool();
+    return settings.value(CB_CONFIG_SETTINGS_BLACKBACK, true).toBool();
 }
 
 QStringList ConfigDialog::getPortListDefaults(QString basePortName, int start, int stop)
