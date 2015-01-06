@@ -512,8 +512,12 @@ void Screen::setDefaultMargins()
 
 void Screen::reverseRendition(Character& p) const
 {
-    p.setForegroundColor(p.getBackgroundColor());
-    p.setBackgroundColor(p.getForegroundColor());
+
+    CharacterColor f = p.getForegroundColor();
+    CharacterColor b = p.getBackgroundColor();
+
+    p.setForegroundColor(b);
+    p.setBackgroundColor(f);
 }
 
 void Screen::effectiveRendition()
