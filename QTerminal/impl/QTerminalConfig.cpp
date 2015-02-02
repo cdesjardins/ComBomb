@@ -21,7 +21,7 @@
 QTerminalConfig::QTerminalConfig()
     : _wordSelectionDelimiters("@-./_~")
 {
-    _font.setStyleHint(QFont::Courier);
+    _font.setFamily("courier");
 }
 
 QDataStream &operator<<(QDataStream &out, const QTerminalConfig &q)
