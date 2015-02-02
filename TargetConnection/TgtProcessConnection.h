@@ -44,9 +44,9 @@ public:
         std::string _workingDir;
         std::string _args;
     };
-    static boost::shared_ptr<TgtProcessIntf> createProcessConnection(const boost::shared_ptr<const TgtConnectionConfig> &config);
+    static boost::shared_ptr<TgtProcessIntf> createProcessConnection(const boost::shared_ptr<const TgtConnectionConfig>& config);
 
-    TgtProcessIntf(const boost::shared_ptr<const TgtConnectionConfig> &config);
+    TgtProcessIntf(const boost::shared_ptr<const TgtConnectionConfig>& config);
     virtual ~TgtProcessIntf();
 
     virtual void tgtGetTitle(std::string* szTitle);
@@ -60,7 +60,7 @@ protected:
     virtual void tgtBreakConnection();
     virtual void deleteProcess();
     virtual void closeEvent(QCloseEvent* event);
-    void processInput(const QByteArray &output);
+    void processInput(const QByteArray& output);
     bool writerThread();
 
     QProcess* _proc;

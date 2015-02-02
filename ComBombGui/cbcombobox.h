@@ -27,8 +27,8 @@ class CBComboBox : public QComboBox
 public:
     explicit CBComboBox(QWidget* parent = 0);
     virtual ~CBComboBox();
-    void addOrUpdateItem(const QString &item);
-    void setDefault(const QString &defaultVal);
+    void addOrUpdateItem(const QString& item);
+    void setDefault(const QString& defaultVal);
     void restoreComboBox();
     void saveComboBox();
 signals:

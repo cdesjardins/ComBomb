@@ -23,7 +23,7 @@
 **
 ******************************************************************************/
 
-boost::shared_ptr<TgtSerialIntf> TgtSerialIntf::createSerialConnection(const boost::shared_ptr<const TgtConnectionConfig> &config)
+boost::shared_ptr<TgtSerialIntf> TgtSerialIntf::createSerialConnection(const boost::shared_ptr<const TgtConnectionConfig>& config)
 {
     boost::shared_ptr<TgtSerialIntf> ret(new TgtSerialIntf(config));
     ret->tgtAttemptReconnect();
@@ -78,7 +78,7 @@ bool TgtSerialIntf::writerThread()
     return !attemptReconnect;
 }
 
-TgtSerialIntf::TgtSerialIntf(const boost::shared_ptr<const TgtConnectionConfig> &config)
+TgtSerialIntf::TgtSerialIntf(const boost::shared_ptr<const TgtConnectionConfig>& config)
     : TgtIntf(config)
 
 {

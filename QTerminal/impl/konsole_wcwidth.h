@@ -13,6 +13,6 @@
 #include <QtCore/QString>
 
 int konsole_wcwidth(quint16 ucs);
-int string_width(const QString &txt);
+int string_width(const QString& txt);
 
 #endif

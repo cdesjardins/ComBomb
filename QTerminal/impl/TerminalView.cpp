@@ -254,7 +254,7 @@ void TerminalView::setVTFont(const QFont& f)
     }
 }
 
-void TerminalView::setFont(const QFont &)
+void TerminalView::setFont(const QFont&)
 {
     // ignore font change request if not coming from konsole itself
 }
@@ -597,7 +597,7 @@ void TerminalView::drawBackground(QPainter& painter, const QRect& rect, const QC
 void TerminalView::drawCursor(QPainter& painter,
                               const QRect& rect,
                               const QColor& foregroundColor,
-                              const QColor&/*backgroundColor*/,
+                              const QColor& /*backgroundColor*/,
                               bool& invertCharacterColor)
 {
     QRect cursorRect = rect;
@@ -830,7 +830,7 @@ void TerminalView::scrollImage(int lines, const QRect& screenWindowRegion)
     scroll(0, _fontHeight * (-lines), scrollRect);
 }
 
-int TerminalView::resizePaint(const int columnsToUpdate, const std::vector<Character>::const_iterator &newLine, char* dirtyMask, QChar* disstrU)
+int TerminalView::resizePaint(const int columnsToUpdate, const std::vector<Character>::const_iterator& newLine, char* dirtyMask, QChar* disstrU)
 {
     int len;
     int updateLine = 0;
@@ -1192,7 +1192,7 @@ void TerminalView::drawInputMethodPreeditString(QPainter& painter, const QRect& 
     _inputMethodData.previousPreeditRect = rect;
 }
 
-void TerminalView::drawContents(QPainter &paint, const QRect &rect)
+void TerminalView::drawContents(QPainter& paint, const QRect& rect)
 {
     //qDebug("%s %d drawContents and rect x=%d y=%d w=%d h=%d", __FILE__, __LINE__, rect.x(), rect.y(),rect.width(),rect.height());
 
@@ -2582,7 +2582,7 @@ void TerminalView::calcGeometry()
     }
 
     _topMargin = DEFAULT_TOP_MARGIN;
-    _contentHeight = contentsRect().height() - 2 * DEFAULT_TOP_MARGIN +/* mysterious */ 1;
+    _contentHeight = contentsRect().height() - 2 * DEFAULT_TOP_MARGIN + /* mysterious */ 1;
 
     if (!_isFixedSize)
     {

@@ -321,9 +321,9 @@ void Vt102Emulation::receiveChar(int cc)
     }
     if (ces(CTL))
     { // DEC HACK ALERT! Control Characters are allowed *within* esc sequences in VT100
-     // This means, they do neither a resetToken nor a pushToToken. Some of them, do
-     // of course. Guess this originates from a weakly layered handling of the X-on
-     // X-off protocol, which comes really below this level.
+      // This means, they do neither a resetToken nor a pushToToken. Some of them, do
+      // of course. Guess this originates from a weakly layered handling of the X-on
+      // X-off protocol, which comes really below this level.
         if (cc == CNTL('X') || cc == CNTL('Z') || cc == ESC)
         {
             resetToken(); //VT100: CAN or SUB
@@ -868,7 +868,7 @@ void Vt102Emulation::tau(int token, int p, int q)
 
 // resize = \e[8;<row>;<col>t
         case TY_CSI_PS('t', 8):
-            setImageSize(q/* colums */, p/* lines */);
+            setImageSize(q /* colums */, p /* lines */);
             break;
 
 // change tab text color : \e[28;<color>t  color: 0-16,777,215

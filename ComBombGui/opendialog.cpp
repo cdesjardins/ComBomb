@@ -55,7 +55,7 @@ OpenDialog::ConnectionType OpenDialog::getConnectionType()
     return ret;
 }
 
-void OpenDialog::addSshConfig(const TgtSshIntf::TgtConnectionConfig &config)
+void OpenDialog::addSshConfig(const TgtSshIntf::TgtConnectionConfig& config)
 {
     ui->hostNameComboBox->addItem(config._hostName.c_str());
     ui->portNumLineEdit->setText(QString("%1").arg(config._portNum));

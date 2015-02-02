@@ -44,7 +44,7 @@
 
 Q_DECLARE_METATYPE(boost::intrusive_ptr<RefCntBuffer>)
 
-TerminalModel::TerminalModel(const boost::shared_ptr<TgtIntf> &targetInterface) :
+TerminalModel::TerminalModel(const boost::shared_ptr<TgtIntf>& targetInterface) :
     _emulation(0)
     , _monitorActivity(false)
     , _monitorSilence(false)
@@ -97,7 +97,7 @@ void TerminalModel::setCodec(QTextCodec* codec)
     _emulation->setCodec(codec);
 }
 
-void TerminalModel::addView(const boost::shared_ptr<TerminalView> &widget)
+void TerminalModel::addView(const boost::shared_ptr<TerminalView>& widget)
 {
     Q_ASSERT(!_views.contains(widget));
 
@@ -203,7 +203,7 @@ void TerminalModel::activityStateSet(int state)
     emit stateChanged(state);
 }
 
-void TerminalModel::onViewSizeChange(int/*height*/, int/*width*/)
+void TerminalModel::onViewSizeChange(int /*height*/, int /*width*/)
 {
     updateTerminalSize();
 }
@@ -256,7 +256,7 @@ void TerminalModel::closeEvent(QCloseEvent*)
     _targetInterface->tgtDisconnect();
 }
 
-void TerminalModel::sendText(const QString &text) const
+void TerminalModel::sendText(const QString& text) const
 {
     if (_closed == false)
     {
@@ -264,7 +264,7 @@ void TerminalModel::sendText(const QString &text) const
     }
 }
 
-void TerminalModel::sendText(const QByteArray &text) const
+void TerminalModel::sendText(const QByteArray& text) const
 {
     if (_closed == false)
     {
@@ -322,7 +322,7 @@ QString TerminalModel::keyBindings() const
     return _emulation->keyBindings();
 }
 
-void TerminalModel::setKeyBindings(const QString &id)
+void TerminalModel::setKeyBindings(const QString& id)
 {
     _emulation->setKeyBindings(id);
 }

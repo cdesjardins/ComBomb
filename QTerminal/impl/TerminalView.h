@@ -310,13 +310,13 @@ public:
         NoBell = 3
     };
 
-    void setSelection(const QString &t);
+    void setSelection(const QString& t);
 
     /**
      * Reimplemented.  Has no effect.  Use setVTFont() to change the font
      * used to draw characters in the display.
      */
-    virtual void setFont(const QFont &);
+    virtual void setFont(const QFont&);
 
     /** Returns the font used to draw characters in the display */
     QFont getVTFont()
@@ -488,7 +488,7 @@ protected:
     virtual void hideEvent(QHideEvent*);
     virtual void resizeEvent(QResizeEvent*);
 
-    virtual void fontChange(const QFont &font);
+    virtual void fontChange(const QFont& font);
 
     virtual void keyPressEvent(QKeyEvent* event);
     virtual void mouseDoubleClickEvent(QMouseEvent* ev);
@@ -545,7 +545,7 @@ private:
     // divides the part of the display specified by 'rect' into
     // fragments according to their colors and styles and calls
     // drawTextFragment() to draw the fragments
-    void drawContents(QPainter &paint, const QRect &rect);
+    void drawContents(QPainter& paint, const QRect& rect);
     // draws a section of text, all the text in this section
     // has a common color and style
     void drawTextFragment(QPainter& painter, const QRect& rect, const QString& text, const Character* style);
@@ -620,12 +620,12 @@ private:
     int _columns; // the number of columns that can be displayed in the widget
 
     int _usedLines; // the number of lines that are actually being used, this will be less
-                   // than 'lines' if the character image provided with setImage() is smaller
-                   // than the maximum image size which can be displayed
+                    // than 'lines' if the character image provided with setImage() is smaller
+                    // than the maximum image size which can be displayed
 
     int _usedColumns; // the number of columns that are actually being used, this will be less
-                     // than 'columns' if the character image provided with setImage() is smaller
-                     // than the maximum image size which can be displayed
+                      // than 'columns' if the character image provided with setImage() is smaller
+                      // than the maximum image size which can be displayed
 
     int _contentHeight;
     int _contentWidth;
@@ -670,7 +670,7 @@ private:
     int _dndFileCount;
 
     bool _possibleTripleClick; // is set in mouseDoubleClickEvent and deleted
-                              // after QApplication::doubleClickInterval() delay
+                               // after QApplication::doubleClickInterval() delay
 
     boost::scoped_ptr<QLabel> _resizeWidget;
     boost::scoped_ptr<QTimer> _resizeTimer;

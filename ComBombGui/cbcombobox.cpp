@@ -154,7 +154,7 @@ void CBComboBox::restoreEditableComboBox()
     settings.endArray();
 }
 
-void CBComboBox::addOrUpdateItem(const QString &item)
+void CBComboBox::addOrUpdateItem(const QString& item)
 {
     int index = findText(item);
     QString tmpItem;
@@ -172,7 +172,7 @@ void CBComboBox::addOrUpdateItem(const QString &item)
     setCurrentIndex(0);
 }
 
-void CBComboBox::setDefault(const QString &defaultVal)
+void CBComboBox::setDefault(const QString& defaultVal)
 {
     _default = defaultVal;
 }

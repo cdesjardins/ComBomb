@@ -70,7 +70,7 @@ public:
      * falls back to using the program specified in the SHELL environment
      * variable.
      */
-    TerminalModel(const boost::shared_ptr<TgtIntf> &targetInterface);
+    TerminalModel(const boost::shared_ptr<TgtIntf>& targetInterface);
     ~TerminalModel();
 
     /**
@@ -97,7 +97,7 @@ public:
      * Views can be removed using removeView().  The session is automatically
      * closed when the last view is removed.
      */
-    void addView(const boost::shared_ptr<TerminalView> &widget);
+    void addView(const boost::shared_ptr<TerminalView>& widget);
     /**
      * Clears the history store used by this session.
      */

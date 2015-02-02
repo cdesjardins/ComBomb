@@ -24,14 +24,14 @@
 #include "BackTabEvent.h"
 #include "KeyboardTranslator.h"
 
-QTerminalImpl::QTerminalImpl(const QTerminalConfig &terminalConfig, const boost::shared_ptr<TgtIntf> &targetInterface, int width, int height, QWidget* parent)
+QTerminalImpl::QTerminalImpl(const QTerminalConfig& terminalConfig, const boost::shared_ptr<TgtIntf>& targetInterface, int width, int height, QWidget* parent)
     : QTerminalInterface(parent)
 {
     setMinimumSize(600, 400);
     initialize(terminalConfig, targetInterface, width, height);
 }
 
-void QTerminalImpl::initialize(const QTerminalConfig &terminalConfig, const boost::shared_ptr<TgtIntf> &targetInterface, int width, int height)
+void QTerminalImpl::initialize(const QTerminalConfig& terminalConfig, const boost::shared_ptr<TgtIntf>& targetInterface, int width, int height)
 {
     _terminalView.reset(new TerminalView(this));
     _terminalView->setKeyboardCursorShape(TerminalView::IBeamCursor);
@@ -91,13 +91,13 @@ void QTerminalImpl::connectToRecvText(QObject* who)
     _terminalModel->connectToRecvText(who);
 }
 
-void QTerminalImpl::applyTerminalConfig(const QTerminalConfig &terminalConfig)
+void QTerminalImpl::applyTerminalConfig(const QTerminalConfig& terminalConfig)
 {
     _terminalView->setWordCharacters(terminalConfig._wordSelectionDelimiters);
     setTerminalFont(terminalConfig._font);
 }
 
-void QTerminalImpl::setTerminalFont(const QFont &font)
+void QTerminalImpl::setTerminalFont(const QFont& font)
 {
     if (!_terminalView)
     {

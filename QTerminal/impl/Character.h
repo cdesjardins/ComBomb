@@ -118,7 +118,7 @@ public:
         return _foregroundColor;
     }
 
-    void setForegroundColor(const CharacterColor &foregroundColor)
+    void setForegroundColor(const CharacterColor& foregroundColor)
     {
         _foregroundColor = foregroundColor;
     }
@@ -128,7 +128,7 @@ public:
         return _backgroundColor;
     }
 
-    void setBackgroundColor(const CharacterColor &backgroundColor)
+    void setBackgroundColor(const CharacterColor& backgroundColor)
     {
         _backgroundColor = backgroundColor;
     }

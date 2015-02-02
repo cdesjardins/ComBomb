@@ -43,7 +43,7 @@ public:
         return _threadRun;
     }
 
-    std::string toString(const std::string &tag, boost::thread* thr = NULL);
+    std::string toString(const std::string& tag, boost::thread* thr = NULL);
     void start();
     void finalize();
 protected:
@@ -64,7 +64,7 @@ protected:
     volatile bool _threadRun;
 
 private:
-    TgtThread &operator=(TgtThread const &);
-    TgtThread(TgtThread const &);
+    TgtThread& operator=(TgtThread const&);
+    TgtThread(TgtThread const&);
 };
 #endif // TGTTHREAD_H

@@ -44,10 +44,10 @@ public:
         }
     };
 
-    TgtIntf(const boost::shared_ptr<const TgtConnectionConfigBase> &config);
+    TgtIntf(const boost::shared_ptr<const TgtConnectionConfigBase>& config);
     virtual ~TgtIntf(void);
 
-    virtual int tgtRead(boost::intrusive_ptr<RefCntBuffer> &b);
+    virtual int tgtRead(boost::intrusive_ptr<RefCntBuffer>& b);
     virtual int tgtWrite(const char* szWriteData, int nBytes);
     virtual void tgtGetTitle(std::string* szTitle) = 0;
     virtual int tgtGetBytesRx()

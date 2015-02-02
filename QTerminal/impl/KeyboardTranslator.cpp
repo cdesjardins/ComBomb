@@ -706,13 +706,13 @@ bool KeyboardTranslator::Entry::matches(int keyCode,
     if (_stateMask & KeyboardTranslator::AnyModifierState)
     {
         // test fails if any modifier is required but none are set
-        if ((_state & KeyboardTranslator::AnyModifierState) && !anyModifiersSet)
+        if ((_state& KeyboardTranslator::AnyModifierState) && !anyModifiersSet)
         {
             return false;
         }
 
         // test fails if no modifier is allowed but one or more are set
-        if (!(_state & KeyboardTranslator::AnyModifierState) && anyModifiersSet)
+        if (!(_state& KeyboardTranslator::AnyModifierState) && anyModifiersSet)
         {
             return false;
         }

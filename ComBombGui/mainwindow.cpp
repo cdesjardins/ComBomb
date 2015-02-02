@@ -178,7 +178,7 @@ void MainWindow::on_actionOpen_triggered()
             subWindow->show();
             _ui->statusBar->showMessage("Opened connection", 5000);
         }
-        catch (const std::exception &e)
+        catch (const std::exception& e)
         {
             MainWindow::errorBox(e.what());
         }

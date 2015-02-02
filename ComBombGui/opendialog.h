@@ -46,7 +46,7 @@ public:
     boost::shared_ptr<const TgtTelnetIntf::TgtConnectionConfig> getTelnetConfig() const;
     boost::shared_ptr<const TgtSerialIntf::TgtConnectionConfig> getSerialConfig() const;
     boost::shared_ptr<const TgtProcessIntf::TgtConnectionConfig> getProcessConfig() const;
-    void addSshConfig(const TgtSshIntf::TgtConnectionConfig &config);
+    void addSshConfig(const TgtSshIntf::TgtConnectionConfig& config);
 
     ConnectionType getConnectionType();
 

@@ -32,7 +32,7 @@ class TgtSshIntf : public TgtIntf
 public:
     struct TgtConnectionConfig : public TgtIntf::TgtConnectionConfigBase
     {
-        TgtConnectionConfig(const std::string &hostName, const int portNum, const std::string &userName, const std::string &password, const std::string &privKeyFile)
+        TgtConnectionConfig(const std::string& hostName, const int portNum, const std::string& userName, const std::string& password, const std::string& privKeyFile)
             : _hostName(hostName),
             _portNum(portNum),
             _userName(userName),
@@ -51,14 +51,14 @@ public:
         std::string _password;
         std::string _privKeyFile;
     };
-    static boost::shared_ptr<TgtSshIntf> createSshConnection(const boost::shared_ptr<const TgtConnectionConfig> &config);
+    static boost::shared_ptr<TgtSshIntf> createSshConnection(const boost::shared_ptr<const TgtConnectionConfig>& config);
     virtual ~TgtSshIntf ();
     virtual void tgtGetTitle(std::string* szTitle);
 
 protected:
     bool tryPrivateKey(boost::shared_ptr<const TgtConnectionConfig> connectionConfig);
-    void tgtGetErrorMsg(std::string* errmsg, int status, const std::string &defaultErrMsg);
-    TgtSshIntf (const boost::shared_ptr<const TgtConnectionConfig> &config);
+    void tgtGetErrorMsg(std::string* errmsg, int status, const std::string& defaultErrMsg);
+    TgtSshIntf (const boost::shared_ptr<const TgtConnectionConfig>& config);
     bool sshThread();
     bool sshRecv();
     bool sshSend();

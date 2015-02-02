@@ -21,7 +21,7 @@
 #include "../unparam.h"
 #include <boost/bind.hpp>
 
-boost::shared_ptr<TgtProcessIntf> TgtProcessIntf::createProcessConnection(const boost::shared_ptr<const TgtConnectionConfig> &config)
+boost::shared_ptr<TgtProcessIntf> TgtProcessIntf::createProcessConnection(const boost::shared_ptr<const TgtConnectionConfig>& config)
 {
     boost::shared_ptr<TgtProcessIntf> ret(new TgtProcessIntf(config));
     // This guy uses tgtMakeConnection otherwise QProcess will result in:
@@ -50,7 +50,7 @@ void TgtProcessIntf::tgtMakeConnection()
     _processWriterThread = TgtThread::create(boost::protect(boost::bind(&TgtProcessIntf::writerThread, this)));
 }
 
-TgtProcessIntf::TgtProcessIntf(const boost::shared_ptr<const TgtConnectionConfig> &config)
+TgtProcessIntf::TgtProcessIntf(const boost::shared_ptr<const TgtConnectionConfig>& config)
     : TgtIntf(config),
     _proc(NULL),
     _processMutex(QMutex::Recursive)
@@ -116,7 +116,7 @@ void TgtProcessIntf::readFromStderr()
     processInput(output);
 }
 
-void TgtProcessIntf::processInput(const QByteArray &output)
+void TgtProcessIntf::processInput(const QByteArray& output)
 {
     if (output.length() > 0)
     {

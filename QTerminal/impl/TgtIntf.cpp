@@ -26,7 +26,7 @@
 
 #define CB_TGT_INTF_NUM_BUFFS  1024
 #define CB_TGT_INTF_BUFF_SIZE  4096
-TgtIntf::TgtIntf(const boost::shared_ptr<const TgtConnectionConfigBase> &config)
+TgtIntf::TgtIntf(const boost::shared_ptr<const TgtConnectionConfigBase>& config)
     : _bufferPool(new RefCntBufferPool(CB_TGT_INTF_NUM_BUFFS, CB_TGT_INTF_BUFF_SIZE)),
     _connectionConfig(config),
     _connectionManagerThreadRun(true),
@@ -41,7 +41,7 @@ TgtIntf::~TgtIntf(void)
     connectionManagerStop();
 }
 
-int TgtIntf::tgtRead(boost::intrusive_ptr<RefCntBuffer> &b)
+int TgtIntf::tgtRead(boost::intrusive_ptr<RefCntBuffer>& b)
 {
     int ret = 0;
     if (_incomingData.dequeue(b, 1) == true)
@@ -136,7 +136,7 @@ void TgtIntf::connectionManagerThread()
                     tgtMakeConnection();
                     reconnected = true;
                 }
-                catch (const std::exception &e)
+                catch (const std::exception& e)
                 {
                     // update status bar
                     emit updateStatusSignal(e.what());

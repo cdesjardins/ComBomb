@@ -99,7 +99,7 @@ class TgtTelnetIntf : public TgtIntf
 public:
     struct TgtConnectionConfig : public TgtIntf::TgtConnectionConfigBase
     {
-        TgtConnectionConfig(const std::string &hostName, const int portNum)
+        TgtConnectionConfig(const std::string& hostName, const int portNum)
             : _hostName(hostName),
             _portNum(portNum)
         {
@@ -113,13 +113,13 @@ public:
         unsigned short _portNum;
     };
 
-    static boost::shared_ptr<TgtTelnetIntf> createTelnetConnection(const boost::shared_ptr<const TgtConnectionConfig> &config);
+    static boost::shared_ptr<TgtTelnetIntf> createTelnetConnection(const boost::shared_ptr<const TgtConnectionConfig>& config);
     virtual ~TgtTelnetIntf();
     virtual void tgtGetTitle(std::string* szTitle);
 
 protected:
-    TgtTelnetIntf(const boost::shared_ptr<const TgtConnectionConfig> &config);
-    int tgtTelnetProcessData(const boost::intrusive_ptr<RefCntBuffer> &readData);
+    TgtTelnetIntf(const boost::shared_ptr<const TgtConnectionConfig>& config);
+    int tgtTelnetProcessData(const boost::intrusive_ptr<RefCntBuffer>& readData);
     int tgtTelnetData(unsigned char cTelnetRx, char* cReadData);
     int tgtTelnetCommand(eTelnetCommand cTelnetRx);
     int tgtTelnetOption(eTelnetOption eOpt);
@@ -130,7 +130,7 @@ protected:
     int tgtConfirm(eTelnetOption eOpt);
     void tgtSendCommand(eTelnetCommand eCmd, eTelnetOption eOpt);
     virtual void tgtMakeConnection();
-    void tgtSendData(const boost::asio::mutable_buffer &buf);
+    void tgtSendData(const boost::asio::mutable_buffer& buf);
     bool serviceThread();
     bool writerThread();
     void tgtReadCallback(const boost::system::error_code& error, const size_t bytesTransferred);

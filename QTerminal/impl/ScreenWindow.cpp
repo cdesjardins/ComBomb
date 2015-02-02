@@ -59,7 +59,7 @@ Screen* ScreenWindow::screen() const
     return _screen;
 }
 
-std::vector<Character> &ScreenWindow::getImage()
+std::vector<Character>& ScreenWindow::getImage()
 {
     // reallocate internal buffer if the window size has changed
     int size = windowLines() * windowColumns();

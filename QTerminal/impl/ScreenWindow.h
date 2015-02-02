@@ -78,7 +78,7 @@ public:
      * The buffer is managed by the ScreenWindow instance and does not need to be
      * deleted by the caller.
      */
-    std::vector<Character> &getImage();
+    std::vector<Character>& getImage();
 
     /**
      * Returns the line attributes associated with the lines of characters which
@@ -252,7 +252,7 @@ private:
     int _currentLine; // see scrollTo() , currentLine()
     bool _trackOutput; // see setTrackOutput() , trackOutput()
     int _scrollCount; // count of lines which the window has been scrolled by since
-                     // the last call to resetScrollCount()
+                      // the last call to resetScrollCount()
     int _searchLineForward;
     int _searchLineBackward;
     int _searchColForward;

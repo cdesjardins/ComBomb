@@ -46,7 +46,7 @@ int32_t parseVersionStr(std::string verStr)
                 int32_t minor = boost::lexical_cast<int32_t>(text.substr(dotIndex + 1));
                 ret = ((major << 16) | minor);
             }
-            catch (const boost::bad_lexical_cast &)
+            catch (const boost::bad_lexical_cast&)
             {
             }
         }

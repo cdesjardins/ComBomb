@@ -35,10 +35,10 @@ class QTerminalImpl : public QTerminalInterface
 {
     Q_OBJECT
 public:
-    QTerminalImpl(const QTerminalConfig &terminalConfig, const boost::shared_ptr<TgtIntf> &targetInterface, int width, int height, QWidget* parent = 0);
+    QTerminalImpl(const QTerminalConfig& terminalConfig, const boost::shared_ptr<TgtIntf>& targetInterface, int width, int height, QWidget* parent = 0);
     virtual ~QTerminalImpl();
 
-    void setTerminalFont(const QFont &font);
+    void setTerminalFont(const QFont& font);
     void setSize(int h, int v);
     void sendText(const QString& text);
     void sendText(const QByteArray& text);
@@ -48,7 +48,7 @@ public:
     void connectToRecvText(QObject* who);
 
     void setCursorType(CursorType type, bool blinking);
-    void applyTerminalConfig(const QTerminalConfig &terminalConfig);
+    void applyTerminalConfig(const QTerminalConfig& terminalConfig);
     bool eventFilter(QObject*, QEvent* event);
     void suppressOutput(bool suppress);
     void setTrackOutput(bool trackOutput);
@@ -66,7 +66,7 @@ protected:
     virtual void resizeEvent(QResizeEvent*);
     QSize sizeHint() const;
 private:
-    void initialize(const QTerminalConfig &terminalConfig, const boost::shared_ptr<TgtIntf> &targetInterface, int width, int height);
+    void initialize(const QTerminalConfig& terminalConfig, const boost::shared_ptr<TgtIntf>& targetInterface, int width, int height);
 
     boost::shared_ptr<TerminalView> _terminalView;
     boost::scoped_ptr<TerminalModel> _terminalModel;

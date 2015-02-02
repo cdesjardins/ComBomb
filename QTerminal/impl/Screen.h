@@ -77,7 +77,7 @@ class Screen
 {
 public:
     /** Construct a new screen image of size @p lines by @p columns. */
-    Screen(const boost::shared_ptr<HistoryScroll> &hist, int lines = 40, int columns = 80);
+    Screen(const boost::shared_ptr<HistoryScroll>& hist, int lines = 40, int columns = 80);
     ~Screen();
 
     // VT100/2 Operations
@@ -363,7 +363,7 @@ public:
      * @param startLine Index of first line to copy
      * @param endLine Index of last line to copy
      */
-    void getImage(std::vector<Character> &dest, int size, int startLine, int endLine) const;
+    void getImage(std::vector<Character>& dest, int size, int startLine, int endLine) const;
 
     /**
      * Returns the additional attributes associated with lines in the image.
@@ -461,7 +461,7 @@ public:
      * be inserted into the returned text at the end of each terminal line.
      */
     void writeSelectionToStream(TerminalCharacterDecoder* decoder);
-    long writeLineToString(long* line, QString &result);
+    long writeLineToString(long* line, QString& result);
     /** TODO Document me */
     void checkSelection(int from, int to);
 

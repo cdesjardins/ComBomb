@@ -32,7 +32,7 @@ public:
     QFont _font;
 };
 
-QDataStream &operator<<(QDataStream &out, const QTerminalConfig &q);
-QDataStream &operator>>(QDataStream &in, QTerminalConfig &q);
+QDataStream& operator<<(QDataStream& out, const QTerminalConfig& q);
+QDataStream& operator>>(QDataStream& in, QTerminalConfig& q);
 
 #endif // QTERMINALCONFIG_H

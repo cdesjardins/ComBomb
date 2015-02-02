@@ -400,7 +400,7 @@ protected:
     QList<boost::shared_ptr<ScreenWindow> > _windows;
 
     int _currentScreenIndex; // pointer to the screen which is currently active,
-                            // this is one of the elements in the screen[] array
+                             // this is one of the elements in the screen[] array
 
     QList<boost::shared_ptr<Screen> > _screen; // 0 = primary screen ( used by most programs, including the shell
     //                      scrollbars are enabled in this mode )

@@ -24,14 +24,14 @@ QTerminalConfig::QTerminalConfig()
     _font.setFamily("courier");
 }
 
-QDataStream &operator<<(QDataStream &out, const QTerminalConfig &q)
+QDataStream& operator<<(QDataStream& out, const QTerminalConfig& q)
 {
     out << q._wordSelectionDelimiters;
     out << q._font;
     return out;
 }
 
-QDataStream &operator>>(QDataStream &in, QTerminalConfig &q)
+QDataStream& operator>>(QDataStream& in, QTerminalConfig& q)
 {
     q = QTerminalConfig();
     in >> q._wordSelectionDelimiters;

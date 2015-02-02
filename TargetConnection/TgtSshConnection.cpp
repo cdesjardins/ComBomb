@@ -83,14 +83,14 @@ struct TgtSshImpl
     boost::intrusive_ptr<RefCntBuffer> _currentIncomingBuffer;
 };
 
-boost::shared_ptr<TgtSshIntf> TgtSshIntf::createSshConnection(const boost::shared_ptr<const TgtConnectionConfig> &config)
+boost::shared_ptr<TgtSshIntf> TgtSshIntf::createSshConnection(const boost::shared_ptr<const TgtConnectionConfig>& config)
 {
     boost::shared_ptr<TgtSshIntf> ret(new TgtSshIntf(config));
     ret->tgtAttemptReconnect();
     return ret;
 }
 
-TgtSshIntf::TgtSshIntf(const boost::shared_ptr<const TgtConnectionConfig> &config)
+TgtSshIntf::TgtSshIntf(const boost::shared_ptr<const TgtConnectionConfig>& config)
     : TgtIntf(config),
     _sshData(new TgtSshImpl())
 {
@@ -102,7 +102,7 @@ TgtSshIntf::~TgtSshIntf()
     _sshData.reset();
 }
 
-void TgtSshIntf::tgtGetErrorMsg(std::string* errmsg, int sts, const std::string &defaultErrMsg)
+void TgtSshIntf::tgtGetErrorMsg(std::string* errmsg, int sts, const std::string& defaultErrMsg)
 {
     int status;
     char errorMessage[512];

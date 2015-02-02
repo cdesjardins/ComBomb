@@ -21,14 +21,14 @@
 #include "CBException.h"
 #include <boost/array.hpp>
 
-boost::shared_ptr<TgtTelnetIntf> TgtTelnetIntf::createTelnetConnection(const boost::shared_ptr<const TgtConnectionConfig> &config)
+boost::shared_ptr<TgtTelnetIntf> TgtTelnetIntf::createTelnetConnection(const boost::shared_ptr<const TgtConnectionConfig>& config)
 {
     boost::shared_ptr<TgtTelnetIntf> ret(new TgtTelnetIntf(config));
     ret->tgtAttemptReconnect();
     return ret;
 }
 
-TgtTelnetIntf::TgtTelnetIntf(const boost::shared_ptr<const TgtConnectionConfig> &config)
+TgtTelnetIntf::TgtTelnetIntf(const boost::shared_ptr<const TgtConnectionConfig>& config)
     : TgtIntf(config),
     _abortConnection(false)
 {
@@ -263,7 +263,7 @@ int TgtTelnetIntf::tgtTelnetCommand(eTelnetCommand cTelnetRx)
     return 0;
 }
 
-void TgtTelnetIntf::tgtSendData(const boost::asio::mutable_buffer &buf)
+void TgtTelnetIntf::tgtSendData(const boost::asio::mutable_buffer& buf)
 {
     size_t sent;
     size_t totalSent = 0;
@@ -482,7 +482,7 @@ int TgtTelnetIntf::tgtTelnetOption(eTelnetOption eOpt)
     return nReadIndex;
 }
 
-int TgtTelnetIntf::tgtTelnetProcessData(const boost::intrusive_ptr<RefCntBuffer> &readData)
+int TgtTelnetIntf::tgtTelnetProcessData(const boost::intrusive_ptr<RefCntBuffer>& readData)
 {
     size_t nNumBytes = boost::asio::buffer_size(_currentIncomingBuffer->_buffer);
     size_t nRxIndex;

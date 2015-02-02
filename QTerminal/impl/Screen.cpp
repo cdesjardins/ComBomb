@@ -57,7 +57,7 @@
 
 //#define REVERSE_WRAPPED_LINES  // for wrapped line debug
 
-Screen::Screen(const boost::shared_ptr<HistoryScroll> &hist, int l, int c)
+Screen::Screen(const boost::shared_ptr<HistoryScroll>& hist, int l, int c)
     : _lines(l),
     _columns(c),
     _scrolledLines(0),
@@ -623,7 +623,7 @@ void Screen::copyFromScreen(std::vector<Character>::iterator dest, int startLine
     }
 }
 
-void Screen::getImage(std::vector<Character> &dest, int size, int startLine, int endLine) const
+void Screen::getImage(std::vector<Character>& dest, int size, int startLine, int endLine) const
 {
     Q_ASSERT(startLine >= 0);
     Q_ASSERT(endLine >= startLine && endLine < _hist->getLines() + _lines);
@@ -925,9 +925,9 @@ void Screen::ShowCharacter(unsigned short c)
     _cursorX = newCursorX;
 }
 
-void Screen::compose(const QString&/*compose*/)
+void Screen::compose(const QString& /*compose*/)
 {
-    Q_ASSERT(0/*Not implemented yet*/);
+    Q_ASSERT(0 /*Not implemented yet*/);
 }
 
 int Screen::scrolledLines() const
@@ -1458,7 +1458,7 @@ long Screen::findLineStart(const long line)
     return ret;
 }
 
-long Screen::writeLineToString(long* line, QString &result)
+long Screen::writeLineToString(long* line, QString& result)
 {
     long ret = 0;
     QTextStream stream(&result, QIODevice::ReadWrite);

@@ -50,7 +50,7 @@ void TgtThread::finalize()
     //qDebug(toString("finalize").c_str());
 }
 
-std::string TgtThread::toString(const std::string &tag, boost::thread* thr)
+std::string TgtThread::toString(const std::string& tag, boost::thread* thr)
 {
     std::stringstream oss;
     oss << tag << ": ";
