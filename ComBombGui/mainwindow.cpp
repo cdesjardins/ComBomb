@@ -63,7 +63,7 @@ MainWindow::MainWindow(QWidget* parent) :
     _ui->actionNew_Version_Available->setVisible(false);
     _ui->menuBar->show();
 
-    //_mdiArea->setTabsMovable(true);
+    _mdiArea->setTabsMovable(true);
     _mdiArea->setTabShape(QTabWidget::Triangular);
     _mdiArea->setTabsClosable(true);
     setInterfaceType();

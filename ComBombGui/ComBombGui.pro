@@ -89,8 +89,8 @@ else:unix: PRE_TARGETDEPS += $$OUT_PWD/../QTerminal/libQTerminal.a
 # I changed the build type to static lib
 # I also had to add the -DSTATIC_LIB to the cryptlib project settings
 # Then build both debug and release.
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../cl/release/ -lcl32 -ladvapi32
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../cl/debug/ -lcl32 -ladvapi32
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../cl/release/ -ladvapi32 -lcl32 -luser32
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../cl/debug/ -ladvapi32 -lcl32 -luser32
 else:unix: LIBS += $$PWD/../cl/libcl.a
 
 win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../cl/release/cl32.lib
