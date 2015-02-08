@@ -18,6 +18,9 @@
 */
 #include "QTerminal/QTerminalConfig.h"
 
+#define CP_TERM_CFG_VER_1       1
+#define CP_TERM_CFG_LATEST      CP_TERM_CFG_VER_1
+
 QTerminalConfig::QTerminalConfig()
     : _wordSelectionDelimiters("@-./_~")
 {
@@ -26,16 +29,30 @@ QTerminalConfig::QTerminalConfig()
 
 QDataStream& operator<<(QDataStream& out, const QTerminalConfig& q)
 {
+    out << CP_TERM_CFG_LATEST;
     out << q._wordSelectionDelimiters;
-    out << q._font;
+    out << q._font.family();
+    out << q._font.pointSize();
     return out;
 }
 
 QDataStream& operator>>(QDataStream& in, QTerminalConfig& q)
 {
+    int version;
     q = QTerminalConfig();
-    in >> q._wordSelectionDelimiters;
-    in >> q._font;
+    QString family;
+    int pointSize;
+    in >> version;
+    switch (version)
+    {
+        case CP_TERM_CFG_VER_1:
+            in >> q._wordSelectionDelimiters;
+            in >> family;
+            q._font.setFamily(family);
+            in >> pointSize;
+            q._font.setPointSize(pointSize);
+            break;
+    }
     return in;
 }
 
