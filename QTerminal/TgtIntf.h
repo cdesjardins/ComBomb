@@ -32,6 +32,8 @@
 #include <QWidget>
 #include <fstream>
 #include <thread>
+#include <mutex>
+#include <condition_variable>
 
 class TgtIntf : public QWidget
 {

@@ -115,7 +115,9 @@ OTHER_FILES += \
     ComBomb.rc
 
 
-
+unix: {
+QMAKE_CXXFLAGS += -std=c++11
+}
 win32: {
 #QMAKE_CXXFLAGS_RELEASE -= -MD
 #QMAKE_CXXFLAGS_RELEASE += -MT
