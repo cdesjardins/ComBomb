@@ -50,7 +50,7 @@ def which(file):
     return None
 
 def zipItWindows(filename, qtDir):
-    msvs10Dir = os.environ['VS100COMNTOOLS'] + "../../VC/redist/x86/Microsoft.VC100.CRT/"
+    msvs10Dir = os.environ['VS120COMNTOOLS'] + "../../VC/redist/x86/Microsoft.VC120.CRT/"
     files = {
         "ComBombGui/release/ComBombGui.exe": "ComBombGui.exe",
         "../ComBombGui/images/ComBomb128.png": "ComBomb128.png",
@@ -58,13 +58,13 @@ def zipItWindows(filename, qtDir):
         qtDir + "/Qt5Gui.dll": "Qt5Gui.dll",
         qtDir + "/Qt5Network.dll": "Qt5Network.dll",
         qtDir + "/Qt5Core.dll": "Qt5Core.dll",
-        qtDir + "/icuin52.dll": "icuin52.dll",
-        qtDir + "/icudt52.dll": "icudt52.dll",
-        qtDir + "/icuuc52.dll": "icuuc52.dll",
+        qtDir + "/icuin53.dll": "icuin53.dll",
+        qtDir + "/icudt53.dll": "icudt53.dll",
+        qtDir + "/icuuc53.dll": "icuuc53.dll",
         qtDir + "/../plugins/platforms/qminimal.dll": "platforms/qminimal.dll",
         qtDir + "/../plugins/platforms/qwindows.dll": "platforms/qwindows.dll",
-        msvs10Dir + "msvcr100.dll": "msvcr100.dll",
-        msvs10Dir + "msvcp100.dll": "msvcp100.dll",
+        msvs10Dir + "msvcr120.dll": "msvcr120.dll",
+        msvs10Dir + "msvcp120.dll": "msvcp120.dll",
         releaseNotes : releaseNotes,
         "../addons/savetofile.py" : "addons/savetofile.py",
     }
