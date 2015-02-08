@@ -940,8 +940,8 @@ void Vt102Emulation::tau(int token, int p, int q)
             break;
 
         case TY_CSI_PS('m', 1):
-        // FIXME: Bold is disabled!
-        // when setting bold with some fonts the kerning is different than when the non-bold counterpart
+            // FIXME: Bold is disabled!
+            // when setting bold with some fonts the kerning is different than when the non-bold counterpart
             //_screen[_currentScreenIndex]->setRendition(RENDITION_BOLD);
             break; //VT100
 

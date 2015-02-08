@@ -65,19 +65,19 @@ void OpenDialog::addSshConfig(const TgtSshIntf::TgtConnectionConfig& config)
 std::shared_ptr<const TgtSshIntf::TgtConnectionConfig> OpenDialog::getSshConfig() const
 {
     std::shared_ptr<TgtSshIntf::TgtConnectionConfig> ret(new TgtSshIntf::TgtConnectionConfig(
-                                                               ui->hostNameComboBox->currentText().toLocal8Bit().constData(),
-                                                               ui->portNumLineEdit->text().toInt(),
-                                                               ui->userNameComboBox->currentText().toLocal8Bit().constData(),
-                                                               ui->passwordLineEdit->text().toLocal8Bit().constData(),
-                                                               ui->privKeyFileComboBox->currentText().toLocal8Bit().constData()));
+                                                             ui->hostNameComboBox->currentText().toLocal8Bit().constData(),
+                                                             ui->portNumLineEdit->text().toInt(),
+                                                             ui->userNameComboBox->currentText().toLocal8Bit().constData(),
+                                                             ui->passwordLineEdit->text().toLocal8Bit().constData(),
+                                                             ui->privKeyFileComboBox->currentText().toLocal8Bit().constData()));
     return ret;
 }
 
 std::shared_ptr<const TgtTelnetIntf::TgtConnectionConfig> OpenDialog::getTelnetConfig() const
 {
     std::shared_ptr<TgtTelnetIntf::TgtConnectionConfig> ret(new TgtTelnetIntf::TgtConnectionConfig(
-                                                                  ui->telnetHostNameComboBox->currentText().toLocal8Bit().constData(),
-                                                                  ui->telnetPortNumLineEdit->text().toInt()));
+                                                                ui->telnetHostNameComboBox->currentText().toLocal8Bit().constData(),
+                                                                ui->telnetPortNumLineEdit->text().toInt()));
     return ret;
 }
 
@@ -98,21 +98,21 @@ std::shared_ptr<const TgtSerialIntf::TgtConnectionConfig> OpenDialog::getSerialC
     QVariant vFlowControl = ui->flowControlComboBox->itemData(ui->flowControlComboBox->currentIndex());
 
     std::shared_ptr<TgtSerialIntf::TgtConnectionConfig> ret(new TgtSerialIntf::TgtConnectionConfig(
-                                                                  ui->comPortComboBox->currentText().toUtf8().constData(),
-                                                                  boost::asio::serial_port_base::baud_rate(vBaudRate.toInt()),
-                                                                  boost::asio::serial_port_base::parity((boost::asio::serial_port_base::parity::type)vParity.toInt()),
-                                                                  boost::asio::serial_port_base::stop_bits((boost::asio::serial_port_base::stop_bits::type)vStopBits.toInt()),
-                                                                  boost::asio::serial_port_base::character_size(vByteSize.toInt()),
-                                                                  boost::asio::serial_port_base::flow_control((boost::asio::serial_port_base::flow_control::type)vFlowControl.toInt())));
+                                                                ui->comPortComboBox->currentText().toUtf8().constData(),
+                                                                boost::asio::serial_port_base::baud_rate(vBaudRate.toInt()),
+                                                                boost::asio::serial_port_base::parity((boost::asio::serial_port_base::parity::type)vParity.toInt()),
+                                                                boost::asio::serial_port_base::stop_bits((boost::asio::serial_port_base::stop_bits::type)vStopBits.toInt()),
+                                                                boost::asio::serial_port_base::character_size(vByteSize.toInt()),
+                                                                boost::asio::serial_port_base::flow_control((boost::asio::serial_port_base::flow_control::type)vFlowControl.toInt())));
     return ret;
 }
 
 std::shared_ptr<const TgtProcessIntf::TgtConnectionConfig> OpenDialog::getProcessConfig() const
 {
     std::shared_ptr<TgtProcessIntf::TgtConnectionConfig> ret(new TgtProcessIntf::TgtConnectionConfig(
-                                                                   ui->programComboBox->currentText().toLocal8Bit().constData(),
-                                                                   ui->workingDirComboBox->currentText().toLocal8Bit().constData(),
-                                                                   ui->argumentsComboBox->currentText().toLocal8Bit().constData()));
+                                                                 ui->programComboBox->currentText().toLocal8Bit().constData(),
+                                                                 ui->workingDirComboBox->currentText().toLocal8Bit().constData(),
+                                                                 ui->argumentsComboBox->currentText().toLocal8Bit().constData()));
     return ret;
 }
 

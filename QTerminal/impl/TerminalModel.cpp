@@ -45,7 +45,7 @@
 Q_DECLARE_METATYPE(boost::intrusive_ptr<RefCntBuffer>)
 
 TerminalModel::TerminalModel(const std::shared_ptr<TgtIntf>& targetInterface) :
-     _monitorActivity(false)
+    _monitorActivity(false)
     , _monitorSilence(false)
     , _notifiedActivity(false)
     , _silenceSeconds(10)
