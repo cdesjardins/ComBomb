@@ -61,6 +61,7 @@ MainWindow::MainWindow(QWidget* parent) :
     _startTime = boost::posix_time::microsec_clock::universal_time();
     _ui->setupUi(this);
     _ui->actionNew_Version_Available->setVisible(false);
+    _ui->menuBar->show();
 
     //_mdiArea->setTabsMovable(true);
     _mdiArea->setTabShape(QTabWidget::Triangular);
