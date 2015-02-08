@@ -253,7 +253,7 @@ void TerminalView::setVTFont(const QFont& f)
         // experimental optimization.  Konsole assumes that the terminal is using a
         // mono-spaced font, in which case kerning information should have an effect.
         // Disabling kerning saves some computation when rendering text.
-         //font.setKerning(false);
+        //font.setKerning(false);
 
         if (isFontFixed(font) == true)
         {
