@@ -20,18 +20,18 @@
 #ifndef TGTTHREAD_H
 #define TGTTHREAD_H
 
-#include <boost/bind/protect.hpp>
-#include <boost/smart_ptr.hpp>
-#include <boost/thread.hpp>
+#include <memory>
+#include <string>
+#include <thread>
 
 class TgtThread
 {
 public:
     template <typename T>
-    static boost::shared_ptr<TgtThread> create(T function)
+    static std::shared_ptr<TgtThread> create(T function)
     {
-        boost::shared_ptr<TgtThread> ret(new TgtThread());
-        ret->_thread.reset(new boost::thread(boost::bind(&TgtThread::theThread<T>, ret.get(), function)));
+        std::shared_ptr<TgtThread> ret(new TgtThread());
+        ret->_thread.reset(new std::thread(std::bind(&TgtThread::theThread<T>, ret.get(), function)));
         return ret;
     }
 
@@ -43,7 +43,7 @@ public:
         return _threadRun;
     }
 
-    std::string toString(const std::string& tag, boost::thread* thr = NULL);
+    std::string toString(const std::string& tag, std::thread* thr = NULL);
     void start();
     void finalize();
 protected:
@@ -60,7 +60,7 @@ protected:
         finalize();
     }
 
-    boost::scoped_ptr<boost::thread> _thread;
+    std::unique_ptr<std::thread> _thread;
     volatile bool _threadRun;
 
 private:

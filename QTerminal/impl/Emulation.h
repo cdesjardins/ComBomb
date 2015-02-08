@@ -397,12 +397,12 @@ protected:
     };
     void setCodec(EmulationCodec codec); // codec number, 0 = locale, 1=utf8
 
-    QList<boost::shared_ptr<ScreenWindow> > _windows;
+    QList<std::shared_ptr<ScreenWindow> > _windows;
 
     int _currentScreenIndex; // pointer to the screen which is currently active,
                              // this is one of the elements in the screen[] array
 
-    QList<boost::shared_ptr<Screen> > _screen; // 0 = primary screen ( used by most programs, including the shell
+    QList<std::shared_ptr<Screen> > _screen; // 0 = primary screen ( used by most programs, including the shell
     //                      scrollbars are enabled in this mode )
     // 1 = alternate      ( used by vi , emacs etc.
     //                      scrollbars are not enabled in this mode )
@@ -411,7 +411,7 @@ protected:
     //the current text codec.  (this allows for rendering of non-ASCII characters in text files etc.)
     const QTextCodec* _codec;
     QTextDecoder* _decoder;
-    boost::shared_ptr<KeyboardTranslator> _keyTranslator; // the keyboard layout
+    std::shared_ptr<KeyboardTranslator> _keyTranslator; // the keyboard layout
 protected slots:
     /**
      * Schedules an update of attached views.

@@ -25,9 +25,6 @@
 #include "TerminalView.h"
 #include "QTerminal/QTerminalInterface.h"
 #include "QTerminal/QTerminalConfig.h"
-#ifndef Q_MOC_RUN
-#include <boost/smart_ptr.hpp>
-#endif
 
 class TgtIntf;
 
@@ -35,7 +32,7 @@ class QTerminalImpl : public QTerminalInterface
 {
     Q_OBJECT
 public:
-    QTerminalImpl(const QTerminalConfig& terminalConfig, const boost::shared_ptr<TgtIntf>& targetInterface, int width, int height, QWidget* parent = 0);
+    QTerminalImpl(const QTerminalConfig& terminalConfig, const std::shared_ptr<TgtIntf>& targetInterface, int width, int height, QWidget* parent = 0);
     virtual ~QTerminalImpl();
 
     void setTerminalFont(const QFont& font);
@@ -66,10 +63,10 @@ protected:
     virtual void resizeEvent(QResizeEvent*);
     QSize sizeHint() const;
 private:
-    void initialize(const QTerminalConfig& terminalConfig, const boost::shared_ptr<TgtIntf>& targetInterface, int width, int height);
+    void initialize(const QTerminalConfig& terminalConfig, const std::shared_ptr<TgtIntf>& targetInterface, int width, int height);
 
-    boost::shared_ptr<TerminalView> _terminalView;
-    boost::scoped_ptr<TerminalModel> _terminalModel;
+    std::shared_ptr<TerminalView> _terminalView;
+    std::unique_ptr<TerminalModel> _terminalModel;
 };
 
 #endif // Q_UNIXTERMINALIMPL

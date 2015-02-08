@@ -36,7 +36,7 @@
 // Standard
 #include <stdio.h>
 #include <assert.h>
-
+#include <sstream>
 // Qt
 #include <QtCore/QEvent>
 #include <QtGui/QKeyEvent>
@@ -940,7 +940,9 @@ void Vt102Emulation::tau(int token, int p, int q)
             break;
 
         case TY_CSI_PS('m', 1):
-            _screen[_currentScreenIndex]->setRendition(RENDITION_BOLD);
+        // FIXME: Bold is disabled!
+        // when setting bold with some fonts the kerning is different than when the non-bold counterpart
+            //_screen[_currentScreenIndex]->setRendition(RENDITION_BOLD);
             break; //VT100
 
         case TY_CSI_PS('m', 4):

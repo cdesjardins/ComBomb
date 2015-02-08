@@ -30,7 +30,7 @@ class QTerminal : public QTerminalImpl
 {
     Q_OBJECT
 public:
-    QTerminal(const QTerminalConfig& terminalConfig, const boost::shared_ptr<TgtIntf>& targetInterface, int width, int height, QWidget* parent = 0)
+    QTerminal(const QTerminalConfig& terminalConfig, const std::shared_ptr<TgtIntf>& targetInterface, int width, int height, QWidget* parent = 0)
         : QTerminalImpl(terminalConfig, targetInterface, width, height, parent)
     {
     }

@@ -51,21 +51,21 @@ public:
         std::string _password;
         std::string _privKeyFile;
     };
-    static boost::shared_ptr<TgtSshIntf> createSshConnection(const boost::shared_ptr<const TgtConnectionConfig>& config);
+    static std::shared_ptr<TgtSshIntf> createSshConnection(const std::shared_ptr<const TgtConnectionConfig>& config);
     virtual ~TgtSshIntf ();
     virtual void tgtGetTitle(std::string* szTitle);
 
 protected:
-    bool tryPrivateKey(boost::shared_ptr<const TgtConnectionConfig> connectionConfig);
+    bool tryPrivateKey(std::shared_ptr<const TgtConnectionConfig> connectionConfig);
     void tgtGetErrorMsg(std::string* errmsg, int status, const std::string& defaultErrMsg);
-    TgtSshIntf (const boost::shared_ptr<const TgtConnectionConfig>& config);
+    TgtSshIntf (const std::shared_ptr<const TgtConnectionConfig>& config);
     bool sshThread();
     bool sshRecv();
     bool sshSend();
     virtual void tgtBreakConnection();
     virtual void tgtMakeConnection();
 
-    boost::scoped_ptr<TgtSshImpl> _sshData;
+    std::unique_ptr<TgtSshImpl> _sshData;
 };
 
 #endif

@@ -44,9 +44,8 @@
 
 Q_DECLARE_METATYPE(boost::intrusive_ptr<RefCntBuffer>)
 
-TerminalModel::TerminalModel(const boost::shared_ptr<TgtIntf>& targetInterface) :
-    _emulation(0)
-    , _monitorActivity(false)
+TerminalModel::TerminalModel(const std::shared_ptr<TgtIntf>& targetInterface) :
+     _monitorActivity(false)
     , _monitorSilence(false)
     , _notifiedActivity(false)
     , _silenceSeconds(10)
@@ -97,7 +96,7 @@ void TerminalModel::setCodec(QTextCodec* codec)
     _emulation->setCodec(codec);
 }
 
-void TerminalModel::addView(const boost::shared_ptr<TerminalView>& widget)
+void TerminalModel::addView(const std::shared_ptr<TerminalView>& widget)
 {
     Q_ASSERT(!_views.contains(widget));
 
@@ -215,7 +214,7 @@ void TerminalModel::onEmulationSizeChange(int lines, int columns)
 
 void TerminalModel::updateTerminalSize()
 {
-    QListIterator<boost::shared_ptr<TerminalView> > viewIter(_views);
+    QListIterator<std::shared_ptr<TerminalView> > viewIter(_views);
 
     int minLines = -1;
     int minColumns = -1;
@@ -229,7 +228,7 @@ void TerminalModel::updateTerminalSize()
     //select largest number of lines and columns that will fit in all visible views
     while (viewIter.hasNext())
     {
-        boost::shared_ptr<TerminalView> view = viewIter.next();
+        std::shared_ptr<TerminalView> view = viewIter.next();
         if (view->isHidden() == false &&
             view->lines() >= VIEW_LINES_THRESHOLD &&
             view->columns() >= VIEW_COLUMNS_THRESHOLD)

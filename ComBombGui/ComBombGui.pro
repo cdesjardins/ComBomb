@@ -104,9 +104,9 @@ QMAKE_CXXFLAGS += -DBOOST_ALL_NO_LIB
 
 win32:QMAKE_CXXFLAGS += -D_WIN32_WINNT=0x0501
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../boost_$${BOOSTVER}/stage/release/ -llibboost_system -llibboost_thread -llibboost_chrono
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../boost_$${BOOSTVER}/stage/debug/ -llibboost_system -llibboost_thread -llibboost_chrono
-else:unix: LIBS += $$PWD/../boost_$${BOOSTVER}/stage/lib/libboost_system.a $$PWD/../boost_$${BOOSTVER}/stage/lib/libboost_thread.a $$PWD/../boost_$${BOOSTVER}/stage/lib/libboost_chrono.a
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../boost_$${BOOSTVER}/stage/release/ -llibboost_system
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../boost_$${BOOSTVER}/stage/debug/ -llibboost_system
+else:unix: LIBS += $$PWD/../boost_$${BOOSTVER}/stage/lib/libboost_system.a
 
 INCLUDEPATH += $$PWD/../boost_$${BOOSTVER}
 DEPENDPATH += $$PWD/../boost_$${BOOSTVER}

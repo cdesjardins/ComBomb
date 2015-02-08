@@ -161,11 +161,26 @@ unsigned short vt100_graphics[32] =
     0xF800, 0xF801, 0x2500, 0xF803, 0xF804, 0x251c, 0x2524, 0x2534,
     0x252c, 0x2502, 0x2264, 0x2265, 0x03C0, 0x2260, 0x00A3, 0x00b7
 };
-#include <sstream>
-#include <iomanip>
-void TerminalView::fontChange(const QFont&)
+
+bool TerminalView::isFontFixed(const QFont& f)
 {
-    _fontMetrics = QFontMetrics(font());
+    bool ret = true;
+    QFontMetrics fm(f);
+    int fw = fm.width(REPCHAR[0]);
+    for (unsigned int i = 1; i < strlen(REPCHAR); i++)
+    {
+        if (fw != fm.width(REPCHAR[i]))
+        {
+            ret = false;
+            break;
+        }
+    }
+    return ret;
+}
+
+void TerminalView::fontChange(const QFont& font)
+{
+    _fontMetrics = QFontMetrics(font);
     int leading = _fontMetrics.leading();
     _fontHeight = _fontMetrics.height();
     if (leading > 0)
@@ -177,24 +192,15 @@ void TerminalView::fontChange(const QFont&)
     // "Base character width on widest ASCII character. This prevents too wide
     //  characters in the presence of double wide (e.g. Japanese) characters."
     // Get the width from representative normal width characters
+
     _fontWidth = (double)_fontMetrics.width(REPCHAR) / (double)strlen(REPCHAR);
-
-    _fixedFont = true;
-
-    int fw = _fontMetrics.width(REPCHAR[0]);
-    for (unsigned int i = 1; i < strlen(REPCHAR); i++)
-    {
-        if (fw != _fontMetrics.width(REPCHAR[i]))
-        {
-            _fixedFont = false;
-            break;
-        }
-    }
 
     if (_fontWidth < 1)
     {
         _fontWidth = 1;
     }
+
+    _fixedFont = isFontFixed(font);
 
     _fontAscent = _fontMetrics.ascent();
 #if 0
@@ -247,10 +253,17 @@ void TerminalView::setVTFont(const QFont& f)
         // experimental optimization.  Konsole assumes that the terminal is using a
         // mono-spaced font, in which case kerning information should have an effect.
         // Disabling kerning saves some computation when rendering text.
-        // font.setKerning(false);
+         //font.setKerning(false);
 
-        QWidget::setFont(font);
-        fontChange(font);
+        if (isFontFixed(font) == true)
+        {
+            QWidget::setFont(font);
+            fontChange(font);
+        }
+        else
+        {
+            emit updateStatusSignal("Unable to change font, becuase selected font is not fixed width.");
+        }
     }
 }
 
@@ -884,7 +897,6 @@ int TerminalView::resizePaint(const int columnsToUpdate, const std::vector<Chara
 
                 disstrU[p++] = c; //fontMap(c);
             }
-
             bool saveFixedFont = _fixedFont;
             if (lineDraw)
             {
@@ -898,6 +910,7 @@ int TerminalView::resizePaint(const int columnsToUpdate, const std::vector<Chara
             updateLine = true;
 
             _fixedFont = saveFixedFont;
+
             x += len - 1;
         }
     }
@@ -1286,6 +1299,7 @@ void TerminalView::drawContents(QPainter& paint, const QRect& rect)
             {
                 _fixedFont = false;
             }
+
             QString unistr(disstrU, p);
 
             if ((size_t)y < _lineProperties.size())
@@ -1321,9 +1335,7 @@ void TerminalView::drawContents(QPainter& paint, const QRect& rect)
                              textArea,
                              unistr,
                              &_image[loc(x, y)]);
-
             _fixedFont = savefixedFont;
-
             //reset back to single-width, single-height _lines
             paint.resetMatrix();
 

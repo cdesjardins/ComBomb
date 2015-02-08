@@ -32,7 +32,9 @@
 #include <QtCore/QVarLengthArray>
 #include <QtCore>
 
-#include <boost/thread/mutex.hpp>
+#include <mutex>
+
+#include <boost/shared_ptr.hpp>
 
 typedef void (* CleanUpFunction)();
 
@@ -464,7 +466,7 @@ public:
      *
      * TODO: More documentation.
      */
-    void addTranslator(boost::shared_ptr<KeyboardTranslator> translator);
+    void addTranslator(std::shared_ptr<KeyboardTranslator> translator);
 
     /**
      * Deletes a translator.  Returns true on successful deletion or false otherwise.
@@ -474,7 +476,7 @@ public:
     bool deleteTranslator(const QString& name);
 
     /** Returns the default translator for Konsole. */
-    const boost::shared_ptr<KeyboardTranslator> defaultTranslator();
+    const std::shared_ptr<KeyboardTranslator> defaultTranslator();
 
     /**
      * Returns the keyboard translator with the given name or 0 if no translator
@@ -483,7 +485,7 @@ public:
      * The first time that a translator with a particular name is requested,
      * the on-disk .keyboard file is loaded and parsed.
      */
-    const boost::shared_ptr<KeyboardTranslator> findTranslator(const QString& name);
+    const std::shared_ptr<KeyboardTranslator> findTranslator(const QString& name);
     /**
      * Returns a list of the names of available keyboard translators.
      *
@@ -493,23 +495,23 @@ public:
     QList<QString> allTranslators();
 
     /** Returns the global KeyboardTranslatorManager instance. */
-    static boost::shared_ptr<KeyboardTranslatorManager> instance();
+    static std::shared_ptr<KeyboardTranslatorManager> instance();
     static void destroy();
 
 private:
     static const char* defaultTranslatorText;
-    static boost::shared_ptr<KeyboardTranslatorManager> _theKeyboardTranslatorManager;
-    static boost::mutex _theKeyboardTranslatorManagerMutex;
+    static std::shared_ptr<KeyboardTranslatorManager> _theKeyboardTranslatorManager;
+    static std::mutex _theKeyboardTranslatorManagerMutex;
 
     void findTranslators(); // locate the available translators
-    boost::shared_ptr<KeyboardTranslator> loadTranslator(const QString& name); // loads the translator
+    std::shared_ptr<KeyboardTranslator> loadTranslator(const QString& name); // loads the translator
     // with the given name
-    boost::shared_ptr<KeyboardTranslator> loadTranslator(QIODevice* device, const QString& name);
+    std::shared_ptr<KeyboardTranslator> loadTranslator(QIODevice* device, const QString& name);
 
-    bool saveTranslator(const boost::shared_ptr<KeyboardTranslator> translator);
+    bool saveTranslator(const std::shared_ptr<KeyboardTranslator> translator);
     QString findTranslatorPath(const QString& name);
 
-    QHash<QString, boost::shared_ptr<KeyboardTranslator> > _translators; // maps translator-name -> KeyboardTranslator
+    QHash<QString, std::shared_ptr<KeyboardTranslator> > _translators; // maps translator-name -> KeyboardTranslator
     // instance
     bool _haveLoadedAll;
 };

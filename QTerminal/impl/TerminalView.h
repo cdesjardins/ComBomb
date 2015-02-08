@@ -447,7 +447,7 @@ public slots:
 
     /** See setUsesMouse() */
     bool usesMouse() const;
-
+    static bool isFontFixed(const QFont& f);
 signals:
 
     /**
@@ -478,7 +478,7 @@ signals:
     void sendStringToEmu(const char*);
 
     void tripleClicked(const QString& text);
-
+    void updateStatusSignal(QString);
 protected:
     virtual bool event(QEvent*);
 
@@ -603,9 +603,9 @@ private:
 
     bool _allowBell;
 
-    boost::scoped_ptr<QGridLayout> _gridLayout;
+    std::unique_ptr<QGridLayout> _gridLayout;
 
-    bool _fixedFont; // has fixed pitch
+    bool _fixedFont;
 
     double _fontHeight; // height
     double _fontWidth; // width
@@ -650,7 +650,7 @@ private:
     bool _lineSelectionMode;
 
     QClipboard* _clipboard;
-    boost::scoped_ptr<QScrollBar> _scrollBar;
+    std::unique_ptr<QScrollBar> _scrollBar;
     ScrollBarPosition _scrollbarLocation;
     QString _wordCharacters;
     int _bellMode;
@@ -662,8 +662,8 @@ private:
     bool _ctrlDrag; // require Ctrl key for drag
     TripleClickMode _tripleClickMode;
     bool _isFixedSize; //Columns / lines are locked.
-    boost::scoped_ptr<QTimer> _blinkTimer; // active when hasBlinker
-    boost::scoped_ptr<QTimer> _blinkCursorTimer; // active when hasBlinkingCursor
+    std::unique_ptr<QTimer> _blinkTimer; // active when hasBlinker
+    std::unique_ptr<QTimer> _blinkCursorTimer; // active when hasBlinkingCursor
 
 //    KMenu* _drop;
     QString _dropText;
@@ -672,8 +672,8 @@ private:
     bool _possibleTripleClick; // is set in mouseDoubleClickEvent and deleted
                                // after QApplication::doubleClickInterval() delay
 
-    boost::scoped_ptr<QLabel> _resizeWidget;
-    boost::scoped_ptr<QTimer> _resizeTimer;
+    std::unique_ptr<QLabel> _resizeWidget;
+    std::unique_ptr<QTimer> _resizeTimer;
 
     bool _flowControlWarningEnabled;
 

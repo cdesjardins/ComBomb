@@ -21,9 +21,6 @@
 
 #include "QTerminal/TgtIntf.h"
 #include "TgtThread.h"
-#ifndef Q_MOC_RUN
-#include <boost/thread.hpp>
-#endif
 #include <QProcess>
 #include <QMutex>
 
@@ -44,9 +41,9 @@ public:
         std::string _workingDir;
         std::string _args;
     };
-    static boost::shared_ptr<TgtProcessIntf> createProcessConnection(const boost::shared_ptr<const TgtConnectionConfig>& config);
+    static std::shared_ptr<TgtProcessIntf> createProcessConnection(const std::shared_ptr<const TgtConnectionConfig>& config);
 
-    TgtProcessIntf(const boost::shared_ptr<const TgtConnectionConfig>& config);
+    TgtProcessIntf(const std::shared_ptr<const TgtConnectionConfig>& config);
     virtual ~TgtProcessIntf();
 
     virtual void tgtGetTitle(std::string* szTitle);
@@ -65,7 +62,7 @@ protected:
 
     QProcess* _proc;
     QMutex _processMutex;
-    boost::shared_ptr<TgtThread> _processWriterThread;
+    std::shared_ptr<TgtThread> _processWriterThread;
 };
 
 #endif

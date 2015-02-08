@@ -27,6 +27,7 @@
 // System
 #include <ctype.h>
 #include <stdio.h>
+#include <sstream>
 
 // Qt
 #include <QtCore/QBuffer>
@@ -72,13 +73,13 @@ void KeyboardTranslatorManager::findTranslators()
 
         if (!_translators.contains(name))
         {
-            _translators.insert(name, boost::shared_ptr<KeyboardTranslator>());
+            _translators.insert(name, std::shared_ptr<KeyboardTranslator>());
         }
     }
     _haveLoadedAll = true;
 }
 
-const boost::shared_ptr<KeyboardTranslator> KeyboardTranslatorManager::findTranslator(const QString& name)
+const std::shared_ptr<KeyboardTranslator> KeyboardTranslatorManager::findTranslator(const QString& name)
 {
     if (name.isEmpty())
     {
@@ -93,7 +94,7 @@ const boost::shared_ptr<KeyboardTranslator> KeyboardTranslatorManager::findTrans
         return _translators[name];
     }
 
-    boost::shared_ptr<KeyboardTranslator> translator = loadTranslator(name);
+    std::shared_ptr<KeyboardTranslator> translator = loadTranslator(name);
 
     if (translator != 0)
     {
@@ -107,7 +108,7 @@ const boost::shared_ptr<KeyboardTranslator> KeyboardTranslatorManager::findTrans
     return translator;
 }
 
-bool KeyboardTranslatorManager::saveTranslator(const boost::shared_ptr<KeyboardTranslator> translator)
+bool KeyboardTranslatorManager::saveTranslator(const std::shared_ptr<KeyboardTranslator> translator)
 {
     const QString path = ".keytab"; // = KGlobal::dirs()->saveLocation("data","konsole/")+translator->name()
     //           +".keytab";
@@ -140,7 +141,7 @@ bool KeyboardTranslatorManager::saveTranslator(const boost::shared_ptr<KeyboardT
     return true;
 }
 
-boost::shared_ptr<KeyboardTranslator> KeyboardTranslatorManager::loadTranslator(const QString& name)
+std::shared_ptr<KeyboardTranslator> KeyboardTranslatorManager::loadTranslator(const QString& name)
 {
     const QString& path = findTranslatorPath(name);
 
@@ -148,28 +149,28 @@ boost::shared_ptr<KeyboardTranslator> KeyboardTranslatorManager::loadTranslator(
 
     if (name.isEmpty() || !source.open(QIODevice::ReadOnly | QIODevice::Text))
     {
-        return boost::shared_ptr<KeyboardTranslator>();
+        return std::shared_ptr<KeyboardTranslator>();
     }
 
     return loadTranslator(&source, name);
 }
 
-const boost::shared_ptr<KeyboardTranslator> KeyboardTranslatorManager::defaultTranslator()
+const std::shared_ptr<KeyboardTranslator> KeyboardTranslatorManager::defaultTranslator()
 {
     QBuffer textBuffer;
     textBuffer.setData(defaultTranslatorText, strlen(defaultTranslatorText));
 
     if (!textBuffer.open(QIODevice::ReadOnly))
     {
-        return boost::shared_ptr<KeyboardTranslator>();
+        return std::shared_ptr<KeyboardTranslator>();
     }
 
     return loadTranslator(&textBuffer, "fallback");
 }
 
-boost::shared_ptr<KeyboardTranslator> KeyboardTranslatorManager::loadTranslator(QIODevice* source, const QString& name)
+std::shared_ptr<KeyboardTranslator> KeyboardTranslatorManager::loadTranslator(QIODevice* source, const QString& name)
 {
-    boost::shared_ptr<KeyboardTranslator> translator(new KeyboardTranslator(name));
+    std::shared_ptr<KeyboardTranslator> translator(new KeyboardTranslator(name));
     KeyboardTranslatorReader reader(source);
     translator->setDescription(reader.description());
 
@@ -187,7 +188,7 @@ boost::shared_ptr<KeyboardTranslator> KeyboardTranslatorManager::loadTranslator(
     else
     {
         translator.reset();
-        return boost::shared_ptr<KeyboardTranslator>();
+        return std::shared_ptr<KeyboardTranslator>();
     }
 }
 
@@ -1069,7 +1070,7 @@ KeyboardTranslator::Entry KeyboardTranslator::findEntry(int keyCode, Qt::Keyboar
     }
 }
 
-void KeyboardTranslatorManager::addTranslator(boost::shared_ptr<KeyboardTranslator> translator)
+void KeyboardTranslatorManager::addTranslator(std::shared_ptr<KeyboardTranslator> translator)
 {
     _translators.insert(translator->name(), translator);
 
@@ -1098,17 +1099,17 @@ bool KeyboardTranslatorManager::deleteTranslator(const QString& name)
     }
 }
 
-boost::shared_ptr<KeyboardTranslatorManager> KeyboardTranslatorManager::_theKeyboardTranslatorManager;
-boost::mutex KeyboardTranslatorManager::_theKeyboardTranslatorManagerMutex;
+std::shared_ptr<KeyboardTranslatorManager> KeyboardTranslatorManager::_theKeyboardTranslatorManager;
+std::mutex KeyboardTranslatorManager::_theKeyboardTranslatorManagerMutex;
 
-boost::shared_ptr<KeyboardTranslatorManager> KeyboardTranslatorManager::instance()
+std::shared_ptr<KeyboardTranslatorManager> KeyboardTranslatorManager::instance()
 {
     // Note: Double check lock for performance considerations, once the
     // keyboardTranslator is created then we don't really need the lock
     // anymore...
     if (KeyboardTranslatorManager::_theKeyboardTranslatorManager == NULL)
     {
-        boost::mutex::scoped_lock lock(_theKeyboardTranslatorManagerMutex);
+        std::unique_lock<std::mutex> lock(_theKeyboardTranslatorManagerMutex);
         if (KeyboardTranslatorManager::_theKeyboardTranslatorManager == NULL)
         {
             KeyboardTranslatorManager::_theKeyboardTranslatorManager.reset(new KeyboardTranslatorManager());

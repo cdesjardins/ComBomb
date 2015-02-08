@@ -25,13 +25,13 @@
 #ifndef Q_MOC_RUN
 #include <boost/asio/buffer.hpp>
 #include <boost/smart_ptr.hpp>
-#include <boost/thread.hpp>
 #endif
 #include "ThreadSafeQueue.h"
 #include "RefCntBufferPool.h"
 #include "../unparam.h"
 #include <QWidget>
 #include <fstream>
+#include <thread>
 
 class TgtIntf : public QWidget
 {
@@ -44,7 +44,7 @@ public:
         }
     };
 
-    TgtIntf(const boost::shared_ptr<const TgtConnectionConfigBase>& config);
+    TgtIntf(const std::shared_ptr<const TgtConnectionConfigBase>& config);
     virtual ~TgtIntf(void);
 
     virtual int tgtRead(boost::intrusive_ptr<RefCntBuffer>& b);
@@ -60,7 +60,7 @@ public:
         return m_nTotalTx;
     }
 
-    boost::shared_ptr<const TgtConnectionConfigBase> getConfig()
+    std::shared_ptr<const TgtConnectionConfigBase> getConfig()
     {
         return _connectionConfig;
     }
@@ -82,12 +82,12 @@ protected:
     int m_nTotalRx;
     ThreadSafeQueue<boost::intrusive_ptr<RefCntBuffer> > _incomingData;
     ThreadSafeQueue<boost::intrusive_ptr<RefCntBuffer> > _outgoingData;
-    boost::shared_ptr<RefCntBufferPool> _bufferPool;
-    boost::shared_ptr<const TgtConnectionConfigBase> _connectionConfig;
-    boost::scoped_ptr<boost::thread> _connectionManagerThread;
+    std::shared_ptr<RefCntBufferPool> _bufferPool;
+    std::shared_ptr<const TgtConnectionConfigBase> _connectionConfig;
+    std::unique_ptr<std::thread> _connectionManagerThread;
     volatile bool _connectionManagerThreadRun;
-    boost::mutex _connectionManagerMutex;
-    boost::condition_variable _connectionManagerCondition;
+    std::mutex _connectionManagerMutex;
+    std::condition_variable _connectionManagerCondition;
     volatile bool _connectionManagerSignal;
 };
 

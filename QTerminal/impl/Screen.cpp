@@ -57,7 +57,7 @@
 
 //#define REVERSE_WRAPPED_LINES  // for wrapped line debug
 
-Screen::Screen(const boost::shared_ptr<HistoryScroll>& hist, int l, int c)
+Screen::Screen(const std::shared_ptr<HistoryScroll>& hist, int l, int c)
     : _lines(l),
     _columns(c),
     _scrolledLines(0),

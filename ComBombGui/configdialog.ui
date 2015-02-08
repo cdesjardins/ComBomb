@@ -87,6 +87,9 @@
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
        <widget class="QFontComboBox" name="fontComboBox">
+        <property name="writingSystem">
+         <enum>QFontDatabase::Any</enum>
+        </property>
         <property name="fontFilters">
          <set>QFontComboBox::MonospacedFonts</set>
         </property>

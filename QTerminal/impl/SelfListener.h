@@ -25,7 +25,7 @@ class SelfListener : public QThread
 {
     Q_OBJECT
 public:
-    explicit SelfListener(const boost::shared_ptr<TgtIntf>& targetInterface, QObject* parent = 0);
+    explicit SelfListener(const std::shared_ptr<TgtIntf>& targetInterface, QObject* parent = 0);
     void join();
     virtual ~SelfListener();
 signals:
@@ -35,7 +35,7 @@ public slots:
 
 protected:
     void run();
-    boost::shared_ptr<TgtIntf> _targetInterface;
+    std::shared_ptr<TgtIntf> _targetInterface;
     bool _running;
 };
 

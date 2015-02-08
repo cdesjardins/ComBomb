@@ -21,18 +21,18 @@
 #include "TgtThread.h"
 #include "CBException.h"
 #include <boost/format.hpp>
-#include <boost/thread.hpp>
-#include <boost/thread/mutex.hpp>
+#include <boost/bind.hpp>
+#include <sstream>
 
 class TgtSshInit
 {
 public:
-    static boost::shared_ptr<TgtSshInit> instance()
+    static std::shared_ptr<TgtSshInit> instance()
     {
-        boost::shared_ptr<TgtSshInit> tmp = _instance;
+        std::shared_ptr<TgtSshInit> tmp = _instance;
         if (!tmp)
         {
-            boost::mutex::scoped_lock guard(_instantiationMutex);
+            std::unique_lock<std::mutex> guard(_instantiationMutex);
             tmp = _instance;
             if (!tmp)
             {
@@ -58,12 +58,12 @@ public:
     }
 
 private:
-    static boost::shared_ptr<TgtSshInit> _instance;
-    static boost::mutex _instantiationMutex;
+    static std::shared_ptr<TgtSshInit> _instance;
+    static std::mutex _instantiationMutex;
 };
 
-boost::shared_ptr<TgtSshInit> TgtSshInit::_instance;
-boost::mutex TgtSshInit::_instantiationMutex;
+std::shared_ptr<TgtSshInit> TgtSshInit::_instance;
+std::mutex TgtSshInit::_instantiationMutex;
 
 struct TgtSshImpl
 {
@@ -78,19 +78,19 @@ struct TgtSshImpl
     }
 
     CRYPT_SESSION _cryptSession;
-    boost::shared_ptr<TgtThread> _sshThread;
-    boost::shared_ptr<TgtSshInit> _sshInit;
+    std::shared_ptr<TgtThread> _sshThread;
+    std::shared_ptr<TgtSshInit> _sshInit;
     boost::intrusive_ptr<RefCntBuffer> _currentIncomingBuffer;
 };
 
-boost::shared_ptr<TgtSshIntf> TgtSshIntf::createSshConnection(const boost::shared_ptr<const TgtConnectionConfig>& config)
+std::shared_ptr<TgtSshIntf> TgtSshIntf::createSshConnection(const std::shared_ptr<const TgtConnectionConfig>& config)
 {
-    boost::shared_ptr<TgtSshIntf> ret(new TgtSshIntf(config));
+    std::shared_ptr<TgtSshIntf> ret(new TgtSshIntf(config));
     ret->tgtAttemptReconnect();
     return ret;
 }
 
-TgtSshIntf::TgtSshIntf(const boost::shared_ptr<const TgtConnectionConfig>& config)
+TgtSshIntf::TgtSshIntf(const std::shared_ptr<const TgtConnectionConfig>& config)
     : TgtIntf(config),
     _sshData(new TgtSshImpl())
 {
@@ -124,7 +124,7 @@ void TgtSshIntf::tgtMakeConnection()
 {
     int status;
     std::string errmsg;
-    boost::shared_ptr<const TgtConnectionConfig> connectionConfig = boost::dynamic_pointer_cast<const TgtConnectionConfig>(_connectionConfig);
+    std::shared_ptr<const TgtConnectionConfig> connectionConfig = std::dynamic_pointer_cast<const TgtConnectionConfig>(_connectionConfig);
 
     status = cryptCreateSession(&_sshData->_cryptSession, CRYPT_UNUSED, CRYPT_SESSION_SSH);
     if (cryptStatusError(status))
@@ -233,11 +233,11 @@ void TgtSshIntf::tgtMakeConnection()
     }
     else
     {
-        _sshData->_sshThread = TgtThread::create(boost::protect(boost::bind(&TgtSshIntf::sshThread, this)));
+        _sshData->_sshThread = TgtThread::create(boost::bind(std::bind(&TgtSshIntf::sshThread, this)));
     }
 }
 
-bool TgtSshIntf::tryPrivateKey(boost::shared_ptr<const TgtConnectionConfig> connectionConfig)
+bool TgtSshIntf::tryPrivateKey(std::shared_ptr<const TgtConnectionConfig> connectionConfig)
 {
     bool ret = false;
     CRYPT_KEYSET cryptKeyset;
@@ -275,7 +275,7 @@ void TgtSshIntf::tgtBreakConnection()
 
 void TgtSshIntf::tgtGetTitle(std::string* szTitle)
 {
-    boost::shared_ptr<const TgtConnectionConfig> connectionConfig = boost::dynamic_pointer_cast<const TgtConnectionConfig>(_connectionConfig);
+    std::shared_ptr<const TgtConnectionConfig> connectionConfig = std::dynamic_pointer_cast<const TgtConnectionConfig>(_connectionConfig);
     std::stringstream t;
     t << connectionConfig->_hostName << ":" << connectionConfig->_portNum;
     *szTitle = t.str();

@@ -26,6 +26,7 @@
 #ifndef TERMINALMODEL_H
 #define TERMINALMODEL_H
 
+#include <memory>
 // Qt
 #include <QtCore/QStringList>
 #include <QtCore>
@@ -70,7 +71,7 @@ public:
      * falls back to using the program specified in the SHELL environment
      * variable.
      */
-    TerminalModel(const boost::shared_ptr<TgtIntf>& targetInterface);
+    TerminalModel(const std::shared_ptr<TgtIntf>& targetInterface);
     ~TerminalModel();
 
     /**
@@ -97,7 +98,7 @@ public:
      * Views can be removed using removeView().  The session is automatically
      * closed when the last view is removed.
      */
-    void addView(const boost::shared_ptr<TerminalView>& widget);
+    void addView(const std::shared_ptr<TerminalView>& widget);
     /**
      * Clears the history store used by this session.
      */
@@ -281,15 +282,15 @@ private:
 
     int _uniqueIdentifier;
 
-    boost::scoped_ptr<Emulation> _emulation;
+    std::unique_ptr<Emulation> _emulation;
 
-    QList<boost::shared_ptr<TerminalView> > _views;
+    QList<std::shared_ptr<TerminalView> > _views;
 
     bool _monitorActivity;
     bool _monitorSilence;
     bool _notifiedActivity;
     bool _masterMode;
-    boost::scoped_ptr<QTimer> _monitorTimer;
+    std::unique_ptr<QTimer> _monitorTimer;
 
     int _silenceSeconds;
 
@@ -299,14 +300,14 @@ private:
     int _masterFd;
     int _slaveFd;
 
-    boost::scoped_ptr<SelfListener> _selfListener;
+    std::unique_ptr<SelfListener> _selfListener;
 
     QColor _modifiedBackground; // as set by: echo -en '\033]11;Color\007
 
     QString _profileKey;
 
     bool _hasDarkBackground;
-    boost::shared_ptr<TgtIntf> _targetInterface;
+    std::shared_ptr<TgtIntf> _targetInterface;
     bool _closed;
     bool _suppressOutput;
 };

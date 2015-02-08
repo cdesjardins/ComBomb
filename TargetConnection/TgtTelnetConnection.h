@@ -113,12 +113,12 @@ public:
         unsigned short _portNum;
     };
 
-    static boost::shared_ptr<TgtTelnetIntf> createTelnetConnection(const boost::shared_ptr<const TgtConnectionConfig>& config);
+    static std::shared_ptr<TgtTelnetIntf> createTelnetConnection(const std::shared_ptr<const TgtConnectionConfig>& config);
     virtual ~TgtTelnetIntf();
     virtual void tgtGetTitle(std::string* szTitle);
 
 protected:
-    TgtTelnetIntf(const boost::shared_ptr<const TgtConnectionConfig>& config);
+    TgtTelnetIntf(const std::shared_ptr<const TgtConnectionConfig>& config);
     int tgtTelnetProcessData(const boost::intrusive_ptr<RefCntBuffer>& readData);
     int tgtTelnetData(unsigned char cTelnetRx, char* cReadData);
     int tgtTelnetCommand(eTelnetCommand cTelnetRx);
@@ -138,14 +138,14 @@ protected:
     void connectionHandler(const boost::system::error_code& ec);
     void clearConnectionQueue();
 
-    boost::scoped_ptr<boost::asio::ip::tcp::socket> _socket;
+    std::unique_ptr<boost::asio::ip::tcp::socket> _socket;
     boost::asio::io_service _socketService;
 
     bool m_bEcho;
     eTelnetCommand m_nCommand;
     eTelnetState m_nState;
-    boost::shared_ptr<TgtThread> _telnetWriterThread;
-    boost::shared_ptr<TgtThread> _telnetServiceThread;
+    std::shared_ptr<TgtThread> _telnetWriterThread;
+    std::shared_ptr<TgtThread> _telnetServiceThread;
     boost::intrusive_ptr<RefCntBuffer> _currentIncomingBuffer;
     char _throwAway[1024];
     ThreadSafeQueue<boost::system::error_code> _connectionQueue;

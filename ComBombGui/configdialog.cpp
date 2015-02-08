@@ -57,6 +57,7 @@ ConfigDialog::ConfigDialog(QWidget* parent) :
     ui->tabsRadioButton->setChecked(getTabbedViewSettings());
     ui->blackRadioButton->setChecked(getBlackBackSettings());
     ui->whiteRadioButton->setChecked(!getBlackBackSettings());
+    ui->fontComboBox->setFontFilters(QFontComboBox::MonospacedFonts);
 }
 
 void ConfigDialog::setPortListSettings()

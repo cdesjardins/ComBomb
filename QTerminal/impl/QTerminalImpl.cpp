@@ -24,14 +24,14 @@
 #include "BackTabEvent.h"
 #include "KeyboardTranslator.h"
 
-QTerminalImpl::QTerminalImpl(const QTerminalConfig& terminalConfig, const boost::shared_ptr<TgtIntf>& targetInterface, int width, int height, QWidget* parent)
+QTerminalImpl::QTerminalImpl(const QTerminalConfig& terminalConfig, const std::shared_ptr<TgtIntf>& targetInterface, int width, int height, QWidget* parent)
     : QTerminalInterface(parent)
 {
     setMinimumSize(600, 400);
     initialize(terminalConfig, targetInterface, width, height);
 }
 
-void QTerminalImpl::initialize(const QTerminalConfig& terminalConfig, const boost::shared_ptr<TgtIntf>& targetInterface, int width, int height)
+void QTerminalImpl::initialize(const QTerminalConfig& terminalConfig, const std::shared_ptr<TgtIntf>& targetInterface, int width, int height)
 {
     _terminalView.reset(new TerminalView(this));
     _terminalView->setKeyboardCursorShape(TerminalView::IBeamCursor);

@@ -17,7 +17,7 @@
 
 #include "SelfListener.h"
 
-SelfListener::SelfListener(const boost::shared_ptr<TgtIntf>& targetInterface, QObject* parent) :
+SelfListener::SelfListener(const std::shared_ptr<TgtIntf>& targetInterface, QObject* parent) :
     QThread(parent),
     _targetInterface(targetInterface),
     _running(true)

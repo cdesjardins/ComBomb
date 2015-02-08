@@ -42,10 +42,10 @@ public:
     explicit OpenDialog(QWidget* parent = 0);
     virtual ~OpenDialog();
 
-    boost::shared_ptr<const TgtSshIntf::TgtConnectionConfig> getSshConfig() const;
-    boost::shared_ptr<const TgtTelnetIntf::TgtConnectionConfig> getTelnetConfig() const;
-    boost::shared_ptr<const TgtSerialIntf::TgtConnectionConfig> getSerialConfig() const;
-    boost::shared_ptr<const TgtProcessIntf::TgtConnectionConfig> getProcessConfig() const;
+    std::shared_ptr<const TgtSshIntf::TgtConnectionConfig> getSshConfig() const;
+    std::shared_ptr<const TgtTelnetIntf::TgtConnectionConfig> getTelnetConfig() const;
+    std::shared_ptr<const TgtSerialIntf::TgtConnectionConfig> getSerialConfig() const;
+    std::shared_ptr<const TgtProcessIntf::TgtConnectionConfig> getProcessConfig() const;
     void addSshConfig(const TgtSshIntf::TgtConnectionConfig& config);
 
     ConnectionType getConnectionType();

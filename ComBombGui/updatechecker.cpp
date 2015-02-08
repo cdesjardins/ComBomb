@@ -24,7 +24,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 
-boost::shared_ptr<UpdateChecker> UpdateChecker::_inst;
+std::shared_ptr<UpdateChecker> UpdateChecker::_inst;
 
 UpdateChecker::UpdateChecker()
     : _reply(NULL),
@@ -39,7 +39,7 @@ UpdateChecker::~UpdateChecker()
     _reply->disconnect();
 }
 
-boost::shared_ptr<UpdateChecker> UpdateChecker::instance()
+std::shared_ptr<UpdateChecker> UpdateChecker::instance()
 {
     if (_inst == NULL)
     {

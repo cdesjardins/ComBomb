@@ -57,9 +57,9 @@ Emulation::Emulation() :
     QObject::connect(&_bulkTimer1, SIGNAL(timeout()), this, SLOT(showBulk()));
     QObject::connect(&_bulkTimer2, SIGNAL(timeout()), this, SLOT(showBulk()));
 
-    boost::shared_ptr<HistoryScroll> hist(new HistoryScroll());
-    _screen.append(boost::shared_ptr<Screen>(new Screen(hist)));
-    _screen.append(boost::shared_ptr<Screen>(new Screen(hist)));
+    std::shared_ptr<HistoryScroll> hist(new HistoryScroll());
+    _screen.append(std::shared_ptr<Screen>(new Screen(hist)));
+    _screen.append(std::shared_ptr<Screen>(new Screen(hist)));
 
     // listen for mouse status changes
     connect(this, SIGNAL(programUsesMouseChanged(bool)),
@@ -78,7 +78,7 @@ void Emulation::usesMouseChanged(bool usesMouse)
 
 ScreenWindow* Emulation::createWindow()
 {
-    boost::shared_ptr<ScreenWindow> window(new ScreenWindow());
+    std::shared_ptr<ScreenWindow> window(new ScreenWindow());
     window->setScreen(_screen[_currentScreenIndex].get());
     _windows << window;
 
@@ -114,7 +114,7 @@ void Emulation::setScreen(int n)
     if (_currentScreenIndex != old)
     {
         // tell all windows onto this emulation to switch to the newly active _screen
-        QListIterator<boost::shared_ptr<ScreenWindow> > windowIter(_windows);
+        QListIterator<std::shared_ptr<ScreenWindow> > windowIter(_windows);
         while (windowIter.hasNext())
         {
             windowIter.next()->setScreen(_screen[_currentScreenIndex].get());

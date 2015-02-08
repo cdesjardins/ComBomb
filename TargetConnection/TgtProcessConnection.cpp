@@ -20,10 +20,11 @@
 #include "TgtProcessConnection.h"
 #include "../unparam.h"
 #include <boost/bind.hpp>
+#include <boost/bind/protect.hpp>
 
-boost::shared_ptr<TgtProcessIntf> TgtProcessIntf::createProcessConnection(const boost::shared_ptr<const TgtConnectionConfig>& config)
+std::shared_ptr<TgtProcessIntf> TgtProcessIntf::createProcessConnection(const std::shared_ptr<const TgtConnectionConfig>& config)
 {
-    boost::shared_ptr<TgtProcessIntf> ret(new TgtProcessIntf(config));
+    std::shared_ptr<TgtProcessIntf> ret(new TgtProcessIntf(config));
     // This guy uses tgtMakeConnection otherwise QProcess will result in:
     // QObject: Cannot create children for a parent that is in a different thread
     ret->tgtMakeConnection();
@@ -32,7 +33,7 @@ boost::shared_ptr<TgtProcessIntf> TgtProcessIntf::createProcessConnection(const 
 
 void TgtProcessIntf::tgtMakeConnection()
 {
-    boost::shared_ptr<const TgtConnectionConfig> connectionConfig = boost::dynamic_pointer_cast<const TgtConnectionConfig>(_connectionConfig);
+    std::shared_ptr<const TgtConnectionConfig> connectionConfig = std::dynamic_pointer_cast<const TgtConnectionConfig>(_connectionConfig);
     _proc = new QProcess(this);
     connect(_proc, SIGNAL(readyReadStandardOutput()), this, SLOT(readFromStdout()));
     connect(_proc, SIGNAL(readyReadStandardError()), this, SLOT(readFromStderr()));
@@ -47,10 +48,10 @@ void TgtProcessIntf::tgtMakeConnection()
     _proc->setProcessEnvironment(env);
 
     _proc->start(connectionConfig->_program.c_str(), args);
-    _processWriterThread = TgtThread::create(boost::protect(boost::bind(&TgtProcessIntf::writerThread, this)));
+    _processWriterThread = TgtThread::create(boost::protect(std::bind(&TgtProcessIntf::writerThread, this)));
 }
 
-TgtProcessIntf::TgtProcessIntf(const boost::shared_ptr<const TgtConnectionConfig>& config)
+TgtProcessIntf::TgtProcessIntf(const std::shared_ptr<const TgtConnectionConfig>& config)
     : TgtIntf(config),
     _proc(NULL),
     _processMutex(QMutex::Recursive)
@@ -70,7 +71,7 @@ void TgtProcessIntf::tgtBreakConnection()
 
 void TgtProcessIntf::tgtGetTitle(std::string* szTitle)
 {
-    boost::shared_ptr<const TgtConnectionConfig> connectionConfig = boost::dynamic_pointer_cast<const TgtConnectionConfig>(_connectionConfig);
+    std::shared_ptr<const TgtConnectionConfig> connectionConfig = std::dynamic_pointer_cast<const TgtConnectionConfig>(_connectionConfig);
     *szTitle = connectionConfig->_program;
 }
 

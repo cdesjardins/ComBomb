@@ -17,22 +17,24 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "TgtSerialConnection.h"
+#include <boost/bind.hpp>
+#include <boost/bind/protect.hpp>
 /******************************************************************************
 **
 **  Serial
 **
 ******************************************************************************/
 
-boost::shared_ptr<TgtSerialIntf> TgtSerialIntf::createSerialConnection(const boost::shared_ptr<const TgtConnectionConfig>& config)
+std::shared_ptr<TgtSerialIntf> TgtSerialIntf::createSerialConnection(const std::shared_ptr<const TgtConnectionConfig>& config)
 {
-    boost::shared_ptr<TgtSerialIntf> ret(new TgtSerialIntf(config));
+    std::shared_ptr<TgtSerialIntf> ret(new TgtSerialIntf(config));
     ret->tgtAttemptReconnect();
     return ret;
 }
 
 void TgtSerialIntf::tgtMakeConnection()
 {
-    boost::shared_ptr<const TgtConnectionConfig> connectionConfig = boost::dynamic_pointer_cast<const TgtConnectionConfig>(_connectionConfig);
+    std::shared_ptr<const TgtConnectionConfig> connectionConfig = std::dynamic_pointer_cast<const TgtConnectionConfig>(_connectionConfig);
     //_service.reset(new boost::asio::io_service());
     _port.reset(new boost::asio::serial_port(_service, connectionConfig->_portName));
     _port->set_option(connectionConfig->_baudRate);
@@ -41,8 +43,8 @@ void TgtSerialIntf::tgtMakeConnection()
     _port->set_option(connectionConfig->_stopBits);
     _port->set_option(connectionConfig->_flowControl);
 
-    _serialWriterThread = TgtThread::create(boost::protect(boost::bind(&TgtSerialIntf::writerThread, this)));
-    _serialServiceThread = TgtThread::create(boost::protect(boost::bind(&TgtSerialIntf::serviceThread, this)));
+    _serialWriterThread = TgtThread::create(boost::protect(std::bind(&TgtSerialIntf::writerThread, this)));
+    _serialServiceThread = TgtThread::create(boost::protect(std::bind(&TgtSerialIntf::serviceThread, this)));
     boost::system::error_code err;
     _bufferPool->dequeue(_currentIncomingBuffer);
     tgtReadCallback(err, 0);
@@ -53,7 +55,7 @@ bool TgtSerialIntf::serviceThread()
     _service.reset();
     if (_service.poll() == 0)
     {
-        boost::this_thread::sleep_for(boost::chrono::milliseconds(1));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
     return true;
 }
@@ -78,9 +80,8 @@ bool TgtSerialIntf::writerThread()
     return !attemptReconnect;
 }
 
-TgtSerialIntf::TgtSerialIntf(const boost::shared_ptr<const TgtConnectionConfig>& config)
+TgtSerialIntf::TgtSerialIntf(const std::shared_ptr<const TgtConnectionConfig>& config)
     : TgtIntf(config)
-
 {
 }
 
@@ -143,7 +144,7 @@ void TgtSerialIntf::tgtGetTitle(std::string* szTitle)
 {
     std::string parity;
     std::string stopbits;
-    boost::shared_ptr<const TgtConnectionConfig> connectionConfig = boost::dynamic_pointer_cast<const TgtConnectionConfig>(_connectionConfig);
+    std::shared_ptr<const TgtConnectionConfig> connectionConfig = std::dynamic_pointer_cast<const TgtConnectionConfig>(_connectionConfig);
 
     switch (connectionConfig->_parity.value())
     {

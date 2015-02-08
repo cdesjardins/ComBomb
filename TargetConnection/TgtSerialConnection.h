@@ -22,8 +22,6 @@
 #include "QTerminal/TgtIntf.h"
 #include "TgtThread.h"
 #include <boost/asio.hpp>
-#include <boost/smart_ptr.hpp>
-#include <boost/thread.hpp>
 
 class TgtSerialIntf : public TgtIntf
 {
@@ -47,12 +45,12 @@ public:
         boost::asio::serial_port_base::character_size _byteSize;
         boost::asio::serial_port_base::flow_control   _flowControl;
     };
-    static boost::shared_ptr<TgtSerialIntf> createSerialConnection(const boost::shared_ptr<const TgtConnectionConfig>& config);
+    static std::shared_ptr<TgtSerialIntf> createSerialConnection(const std::shared_ptr<const TgtConnectionConfig>& config);
     virtual ~TgtSerialIntf ();
     virtual void tgtGetTitle(std::string* szTitle);
 
 protected:
-    TgtSerialIntf (const boost::shared_ptr<const TgtConnectionConfig>& config);
+    TgtSerialIntf (const std::shared_ptr<const TgtConnectionConfig>& config);
     void tgtReadCallback(const boost::system::error_code& error, const size_t bytesTransferred);
     bool serviceThread();
     bool writerThread();
@@ -60,9 +58,9 @@ protected:
     virtual void tgtMakeConnection();
 
     boost::asio::io_service _service;
-    boost::scoped_ptr<boost::asio::serial_port> _port;
-    boost::shared_ptr<TgtThread> _serialServiceThread;
-    boost::shared_ptr<TgtThread> _serialWriterThread;
+    std::unique_ptr<boost::asio::serial_port> _port;
+    std::shared_ptr<TgtThread> _serialServiceThread;
+    std::shared_ptr<TgtThread> _serialWriterThread;
     boost::intrusive_ptr<RefCntBuffer> _currentIncomingBuffer;
     char _throwAway[1024];
 };

@@ -62,9 +62,9 @@ void OpenDialog::addSshConfig(const TgtSshIntf::TgtConnectionConfig& config)
     ui->userNameComboBox->addItem(config._userName.c_str());
 }
 
-boost::shared_ptr<const TgtSshIntf::TgtConnectionConfig> OpenDialog::getSshConfig() const
+std::shared_ptr<const TgtSshIntf::TgtConnectionConfig> OpenDialog::getSshConfig() const
 {
-    boost::shared_ptr<TgtSshIntf::TgtConnectionConfig> ret(new TgtSshIntf::TgtConnectionConfig(
+    std::shared_ptr<TgtSshIntf::TgtConnectionConfig> ret(new TgtSshIntf::TgtConnectionConfig(
                                                                ui->hostNameComboBox->currentText().toLocal8Bit().constData(),
                                                                ui->portNumLineEdit->text().toInt(),
                                                                ui->userNameComboBox->currentText().toLocal8Bit().constData(),
@@ -73,9 +73,9 @@ boost::shared_ptr<const TgtSshIntf::TgtConnectionConfig> OpenDialog::getSshConfi
     return ret;
 }
 
-boost::shared_ptr<const TgtTelnetIntf::TgtConnectionConfig> OpenDialog::getTelnetConfig() const
+std::shared_ptr<const TgtTelnetIntf::TgtConnectionConfig> OpenDialog::getTelnetConfig() const
 {
-    boost::shared_ptr<TgtTelnetIntf::TgtConnectionConfig> ret(new TgtTelnetIntf::TgtConnectionConfig(
+    std::shared_ptr<TgtTelnetIntf::TgtConnectionConfig> ret(new TgtTelnetIntf::TgtConnectionConfig(
                                                                   ui->telnetHostNameComboBox->currentText().toLocal8Bit().constData(),
                                                                   ui->telnetPortNumLineEdit->text().toInt()));
     return ret;
@@ -89,7 +89,7 @@ void OpenDialog::hostNameSelectionChanged(int x)
     }
 }
 
-boost::shared_ptr<const TgtSerialIntf::TgtConnectionConfig> OpenDialog::getSerialConfig() const
+std::shared_ptr<const TgtSerialIntf::TgtConnectionConfig> OpenDialog::getSerialConfig() const
 {
     QVariant vBaudRate    = ui->baudRateComboBox->itemData(ui->baudRateComboBox->currentIndex());
     QVariant vParity      = ui->parityComboBox->itemData(ui->parityComboBox->currentIndex());
@@ -97,7 +97,7 @@ boost::shared_ptr<const TgtSerialIntf::TgtConnectionConfig> OpenDialog::getSeria
     QVariant vByteSize    = ui->byteSizeComboBox->itemData(ui->byteSizeComboBox->currentIndex());
     QVariant vFlowControl = ui->flowControlComboBox->itemData(ui->flowControlComboBox->currentIndex());
 
-    boost::shared_ptr<TgtSerialIntf::TgtConnectionConfig> ret(new TgtSerialIntf::TgtConnectionConfig(
+    std::shared_ptr<TgtSerialIntf::TgtConnectionConfig> ret(new TgtSerialIntf::TgtConnectionConfig(
                                                                   ui->comPortComboBox->currentText().toUtf8().constData(),
                                                                   boost::asio::serial_port_base::baud_rate(vBaudRate.toInt()),
                                                                   boost::asio::serial_port_base::parity((boost::asio::serial_port_base::parity::type)vParity.toInt()),
@@ -107,9 +107,9 @@ boost::shared_ptr<const TgtSerialIntf::TgtConnectionConfig> OpenDialog::getSeria
     return ret;
 }
 
-boost::shared_ptr<const TgtProcessIntf::TgtConnectionConfig> OpenDialog::getProcessConfig() const
+std::shared_ptr<const TgtProcessIntf::TgtConnectionConfig> OpenDialog::getProcessConfig() const
 {
-    boost::shared_ptr<TgtProcessIntf::TgtConnectionConfig> ret(new TgtProcessIntf::TgtConnectionConfig(
+    std::shared_ptr<TgtProcessIntf::TgtConnectionConfig> ret(new TgtProcessIntf::TgtConnectionConfig(
                                                                    ui->programComboBox->currentText().toLocal8Bit().constData(),
                                                                    ui->workingDirComboBox->currentText().toLocal8Bit().constData(),
                                                                    ui->argumentsComboBox->currentText().toLocal8Bit().constData()));

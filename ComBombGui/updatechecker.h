@@ -28,7 +28,7 @@ class UpdateChecker : public QObject
 {
     Q_OBJECT
 public:
-    static boost::shared_ptr<UpdateChecker> instance();
+    static std::shared_ptr<UpdateChecker> instance();
     void checkForNewVersion();
     int32_t getLatestVersion();
     QString getLatestVersionStr();
@@ -45,12 +45,12 @@ signals:
 private:
     UpdateChecker();
 
-    static boost::shared_ptr<UpdateChecker> _inst;
+    static std::shared_ptr<UpdateChecker> _inst;
     QNetworkReply* _reply;
     QString _result;
     int32_t _latestVersion;
     QString _latestVersionStr;
-    boost::scoped_ptr<QNetworkAccessManager> _manager;
+    std::unique_ptr<QNetworkAccessManager> _manager;
 };
 
 #endif // UPDATECHECKER_H

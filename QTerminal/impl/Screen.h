@@ -77,7 +77,7 @@ class Screen
 {
 public:
     /** Construct a new screen image of size @p lines by @p columns. */
-    Screen(const boost::shared_ptr<HistoryScroll>& hist, int lines = 40, int columns = 80);
+    Screen(const std::shared_ptr<HistoryScroll>& hist, int lines = 40, int columns = 80);
     ~Screen();
 
     // VT100/2 Operations
@@ -585,7 +585,7 @@ private:
     QVarLengthArray<LineProperty, 64> _lineProperties;
 
     // history buffer ---------------
-    boost::shared_ptr<HistoryScroll> _hist;
+    std::shared_ptr<HistoryScroll> _hist;
 
     // cursor location
     int _cursorX;
