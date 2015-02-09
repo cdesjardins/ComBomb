@@ -29,7 +29,7 @@ QTerminalConfig::QTerminalConfig()
 {
     QFontDatabase database;
 
-    foreach (const QString &family, database.families())
+    foreach(const QString &family, database.families())
     {
         if (database.isFixedPitch(family) == true)
         {

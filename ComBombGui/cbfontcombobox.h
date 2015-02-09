@@ -29,7 +29,7 @@ public:
     explicit CBFontComboBox(QWidget* parent = 0);
     virtual ~CBFontComboBox();
     QFont currentFont() const;
-    void setCurrentFont(const QFont & font);
+    void setCurrentFont(const QFont& font);
     void getAcceptableFontSizes(QList<int>* sizes);
 private:
 };

@@ -134,6 +134,7 @@ public:
         }
         return ret;
     }
+
     static double fontWidth(const QFontMetrics& fontMetrics)
     {
         return (double)fontMetrics.width(REPCHAR) / (double)strlen(REPCHAR);
@@ -162,7 +163,5 @@ private:
     QMenu* _contextMenu;
     QAction* _newlineAction;
 };
-
-
 
 #endif // QTERMINALINTERFACE_H

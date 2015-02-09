@@ -26,7 +26,7 @@ CBFontComboBox::CBFontComboBox(QWidget* parent)
 {
     QFontDatabase database;
 
-    foreach (const QString &family, database.families())
+    foreach(const QString &family, database.families())
     {
         if (database.isFixedPitch(family) == true)
         {
@@ -43,7 +43,6 @@ CBFontComboBox::CBFontComboBox(QWidget* parent)
 
 CBFontComboBox::~CBFontComboBox()
 {
-
 }
 
 QFont CBFontComboBox::currentFont() const
@@ -65,3 +64,4 @@ void CBFontComboBox::getAcceptableFontSizes(QList<int>* sizes)
 {
     *sizes = itemData(currentIndex()).value< QList<int> >();
 }
+

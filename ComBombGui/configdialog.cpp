@@ -185,7 +185,7 @@ bool ConfigDialog::getTerminalConfig(QTerminalConfig* terminalConfig)
     return ret;
 }
 
-void ConfigDialog::on_fontComboBox_currentIndexChanged(int )
+void ConfigDialog::on_fontComboBox_currentIndexChanged(int)
 {
     QList<int> sizes;
     ui->fontComboBox->getAcceptableFontSizes(&sizes);
@@ -198,3 +198,4 @@ void ConfigDialog::on_fontComboBox_currentIndexChanged(int )
         ui->fontSizeComboBox->addItem(fontSizeStr.str().c_str(), *it);
     }
 }
+
