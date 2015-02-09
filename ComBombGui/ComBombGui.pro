@@ -30,7 +30,8 @@ SOURCES += main.cpp\
     cblistwidget.cpp \
     cbdialog.cpp \
     finddialog.cpp \
-    updatechecker.cpp
+    updatechecker.cpp \
+    cbfontcombobox.cpp
 
 HEADERS  += mainwindow.h \
     childform.h \
@@ -46,7 +47,8 @@ HEADERS  += mainwindow.h \
     cblistwidget.h \
     cbdialog.h \
     finddialog.h \
-    updatechecker.h
+    updatechecker.h \
+    cbfontcombobox.h
 
 FORMS    += mainwindow.ui \
     childform.ui \

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>342</width>
-    <height>413</height>
+    <width>388</width>
+    <height>469</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -86,19 +86,7 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
-       <widget class="QFontComboBox" name="fontComboBox">
-        <property name="writingSystem">
-         <enum>QFontDatabase::Any</enum>
-        </property>
-        <property name="fontFilters">
-         <set>QFontComboBox::MonospacedFonts</set>
-        </property>
-        <property name="currentFont">
-         <font>
-          <family>BatangChe</family>
-         </font>
-        </property>
-       </widget>
+       <widget class="CBFontComboBox" name="fontComboBox"/>
       </item>
       <item>
        <widget class="QLabel" name="label">
@@ -151,6 +139,11 @@
    <class>CBListWidget</class>
    <extends>QListWidget</extends>
    <header>cblistwidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>CBFontComboBox</class>
+   <extends>QComboBox</extends>
+   <header location="global">cbfontcombobox.h</header>
   </customwidget>
  </customwidgets>
  <resources>

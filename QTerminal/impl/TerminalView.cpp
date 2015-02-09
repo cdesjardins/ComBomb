@@ -48,16 +48,13 @@
 #include "ScreenWindow.h"
 #include "TerminalCharacterDecoder.h"
 #include "BackTabEvent.h"
+#include "QTerminalInterface.h"
 
 #ifndef loc
 #define loc(X, Y) ((Y)*_columns + (X))
 #endif
 
 #define yMouseScroll 1
-
-#define REPCHAR   "ABCDEFGHIJKLMNOPQRSTUVWXYZ" \
-    "abcdefgjijklmnopqrstuvwxyz" \
-    "0123456789./+@"
 
 // scroll increment used when dragging selection at top/bottom of window.
 
@@ -162,22 +159,6 @@ unsigned short vt100_graphics[32] =
     0x252c, 0x2502, 0x2264, 0x2265, 0x03C0, 0x2260, 0x00A3, 0x00b7
 };
 
-bool TerminalView::isFontFixed(const QFont& f)
-{
-    bool ret = true;
-    QFontMetrics fm(f);
-    int fw = fm.width(REPCHAR[0]);
-    for (unsigned int i = 1; i < strlen(REPCHAR); i++)
-    {
-        if (fw != fm.width(REPCHAR[i]))
-        {
-            ret = false;
-            break;
-        }
-    }
-    return ret;
-}
-
 void TerminalView::fontChange(const QFont& font)
 {
     _fontMetrics = QFontMetrics(font);
@@ -193,14 +174,14 @@ void TerminalView::fontChange(const QFont& font)
     //  characters in the presence of double wide (e.g. Japanese) characters."
     // Get the width from representative normal width characters
 
-    _fontWidth = (double)_fontMetrics.width(REPCHAR) / (double)strlen(REPCHAR);
+    _fontWidth = QTerminalInterface::fontWidth(_fontMetrics);
 
     if (_fontWidth < 1)
     {
         _fontWidth = 1;
     }
 
-    _fixedFont = isFontFixed(font);
+    _fixedFont = QTerminalInterface::isFontFixed(font);
 
     _fontAscent = _fontMetrics.ascent();
 #if 0
@@ -253,9 +234,9 @@ void TerminalView::setVTFont(const QFont& f)
         // experimental optimization.  Konsole assumes that the terminal is using a
         // mono-spaced font, in which case kerning information should have an effect.
         // Disabling kerning saves some computation when rendering text.
-        //font.setKerning(false);
+        font.setKerning(false);
 
-        if (isFontFixed(font) == true)
+        if (QTerminalInterface::isFontFixed(font) == true)
         {
             QWidget::setFont(font);
             fontChange(font);

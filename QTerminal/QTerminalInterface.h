@@ -26,6 +26,8 @@ along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 #include <QWidget>
 #include <QMenu>
 
+#define REPCHAR   "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefgjijklmnopqrstuvwxyz0123456789./+@"
+
 class QTerminalInterface : public QWidget
 {
     Q_OBJECT
@@ -86,6 +88,57 @@ public:
         Q_UNUSED(blinking);
     }
 
+    static bool isFontFixed(const QFont& font)
+    {
+        bool ret = true;
+        QFontMetrics fm(font);
+        int fw = fm.width(REPCHAR[0]);
+        for (unsigned int i = 1; i < strlen(REPCHAR); i++)
+        {
+            if (fw != fm.width(REPCHAR[i]))
+            {
+                ret = false;
+                break;
+            }
+        }
+        return ret;
+    }
+
+    static bool findAcceptableFontSizes(const QFont& font, QList<int>* sizes)
+    {
+        bool ret = false;
+        if (isFontFixed(font) == true)
+        {
+            QFont f(font);
+            for (int size = 6; size < 20; size++)
+            {
+                f.setPointSize(size);
+                QFontMetrics fm = QFontMetrics(f);
+                double dwidth = fontWidth(fm);
+                int iwidth = fm.width(REPCHAR) / strlen(REPCHAR);
+                if (dwidth == iwidth)
+                {
+                    // If sizes is null, then the caller doesn't care about the actual sizes
+                    // just wants to know if it is an acceptable font.
+                    if (sizes != NULL)
+                    {
+                        sizes->push_back(f.pointSize());
+                    }
+                    else
+                    {
+                        break;
+                    }
+                    ret = true;
+                }
+            }
+        }
+        return ret;
+    }
+    static double fontWidth(const QFontMetrics& fontMetrics)
+    {
+        return (double)fontMetrics.width(REPCHAR) / (double)strlen(REPCHAR);
+    }
+
 public slots:
     virtual void copyClipboard() = 0;
     virtual void pasteClipboard() = 0;
@@ -109,5 +162,7 @@ private:
     QMenu* _contextMenu;
     QAction* _newlineAction;
 };
+
+
 
 #endif // QTERMINALINTERFACE_H

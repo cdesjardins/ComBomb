@@ -39,6 +39,7 @@ public:
     static bool getTabbedViewSettings();
     static bool getBlackBackSettings();
 protected:
+    void setupAcceptableFontSizes();
     static QStringList getPortListDefaults(QString basePortName, int start, int stop);
     void setPortListSettings();
     void populateComPortListWidget();
@@ -46,6 +47,8 @@ protected:
 
 private slots:
     void on_buttonBox_accepted();
+
+    void on_fontComboBox_currentIndexChanged(int index);
 
 private:
     Ui::ConfigDialog* ui;

@@ -44,20 +44,14 @@ ConfigDialog::ConfigDialog(QWidget* parent) :
     {
         ui->fontComboBox->setCurrentFont(terminalConfig._font);
     }
+    on_fontComboBox_currentIndexChanged(0);
     ui->wordSelectionDelimitersLineEdit->setText(terminalConfig._wordSelectionDelimiters);
-    for (int fontSize = 6; fontSize < 20; fontSize++)
-    {
-        std::stringstream fontSizeStr;
-        fontSizeStr << fontSize;
-        ui->fontSizeComboBox->addItem(fontSizeStr.str().c_str(), fontSize);
-    }
-    ui->fontSizeComboBox->setDefault("12");
+
     populateComPortListWidget();
     ui->mdiRdioButton->setChecked(!getTabbedViewSettings());
     ui->tabsRadioButton->setChecked(getTabbedViewSettings());
     ui->blackRadioButton->setChecked(getBlackBackSettings());
     ui->whiteRadioButton->setChecked(!getBlackBackSettings());
-    ui->fontComboBox->setFontFilters(QFontComboBox::MonospacedFonts);
 }
 
 void ConfigDialog::setPortListSettings()
@@ -191,3 +185,16 @@ bool ConfigDialog::getTerminalConfig(QTerminalConfig* terminalConfig)
     return ret;
 }
 
+void ConfigDialog::on_fontComboBox_currentIndexChanged(int )
+{
+    QList<int> sizes;
+    ui->fontComboBox->getAcceptableFontSizes(&sizes);
+
+    ui->fontSizeComboBox->clear();
+    for (QList<int>::iterator it = sizes.begin(); it != sizes.end(); it++)
+    {
+        std::stringstream fontSizeStr;
+        fontSizeStr << *it;
+        ui->fontSizeComboBox->addItem(fontSizeStr.str().c_str(), *it);
+    }
+}

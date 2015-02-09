@@ -447,7 +447,7 @@ public slots:
 
     /** See setUsesMouse() */
     bool usesMouse() const;
-    static bool isFontFixed(const QFont& f);
+
 signals:
 
     /**
@@ -609,6 +609,7 @@ private:
 
     double _fontHeight; // height
     double _fontWidth; // width
+
     //type double to decrease rounding errors
 
     int _fontAscent; // ascend

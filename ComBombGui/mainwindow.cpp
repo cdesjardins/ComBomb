@@ -34,6 +34,7 @@ MainWindow* MainWindow::getMainWindow(QWidget* parent)
     {
         _instance = new MainWindow(parent);
     }
+
     return _instance;
 }
 
