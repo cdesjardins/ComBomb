@@ -667,7 +667,7 @@ void TerminalView::drawCharacters(QPainter& painter,
     if (font.bold() != useBold
         || font.underline() != useUnderline)
     {
-        font.setBold(useBold);
+        //font.setBold(useBold);
         font.setUnderline(useUnderline);
         painter.setFont(font);
     }

@@ -65,8 +65,8 @@ unix:!symbian {
 }
 
 
-INCLUDEPATH += $$PWD/.. $$PWD/../QueuePtr/include
-DEPENDPATH  += $$PWD/.. $$PWD/../QueuePtr/include
+INCLUDEPATH += $$PWD/.. $$PWD/../QTerminal $$PWD/../QueuePtr/include
+DEPENDPATH  += $$PWD/.. $$PWD/../QTerminal $$PWD/../QueuePtr/include
 
 # Boost
 
