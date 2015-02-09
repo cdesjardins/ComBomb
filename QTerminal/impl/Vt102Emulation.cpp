@@ -2167,7 +2167,7 @@ static void hexdump(int* s, int len)
             stream << std::hex << s[i] << std::dec;
         }
     }
-    qDebug(stream.str().c_str());
+    qDebug("%s", stream.str().c_str());
 }
 
 void Vt102Emulation::scan_buffer_report()
