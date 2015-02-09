@@ -17,6 +17,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "QTerminal/QTerminalConfig.h"
+#include "QTerminalInterface.h"
+#include <QFontDatabase>
+#include <QStringList>
 
 #define CP_TERM_CFG_VER_1       1
 #define CP_TERM_CFG_LATEST      CP_TERM_CFG_VER_1
@@ -24,11 +27,21 @@
 QTerminalConfig::QTerminalConfig()
     : _wordSelectionDelimiters("@-./_~")
 {
-#ifdef WIN32
-    _font.setStyleHint(QFont::Courier);
-#else
-    _font.setFamily("courier");
-#endif
+    QFontDatabase database;
+
+    foreach (const QString &family, database.families())
+    {
+        if (database.isFixedPitch(family) == true)
+        {
+            QFont f(family);
+            QList<int> sizes;
+            if (QTerminalInterface::findAcceptableFontSizes(f, &sizes) == true)
+            {
+                _font = QFont(f.family(), sizes[sizes.size() / 2]);
+                break;
+            }
+        }
+    }
 }
 
 QDataStream& operator<<(QDataStream& out, const QTerminalConfig& q)

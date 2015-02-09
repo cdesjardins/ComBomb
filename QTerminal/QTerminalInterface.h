@@ -118,6 +118,7 @@ public:
                 int iwidth = fm.width(REPCHAR) / strlen(REPCHAR);
                 if (dwidth == iwidth)
                 {
+                    ret = true;
                     // If sizes is null, then the caller doesn't care about the actual sizes
                     // just wants to know if it is an acceptable font.
                     if (sizes != NULL)
@@ -128,7 +129,6 @@ public:
                     {
                         break;
                     }
-                    ret = true;
                 }
             }
         }
