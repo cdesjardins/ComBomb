@@ -187,6 +187,9 @@ bool ConfigDialog::getTerminalConfig(QTerminalConfig* terminalConfig)
 
 void ConfigDialog::on_fontComboBox_currentIndexChanged(int)
 {
+    int delta = -1;
+    int closestIndex = 0;
+    int currentSize = ui->fontSizeComboBox->itemData(ui->fontSizeComboBox->currentIndex()).toInt();
     QList<int> sizes;
     ui->fontComboBox->getAcceptableFontSizes(&sizes);
 
@@ -196,6 +199,13 @@ void ConfigDialog::on_fontComboBox_currentIndexChanged(int)
         std::stringstream fontSizeStr;
         fontSizeStr << *it;
         ui->fontSizeComboBox->addItem(fontSizeStr.str().c_str(), *it);
+        int currentDelta = abs(*it - currentSize);
+        if ((delta == -1) || (currentDelta < delta))
+        {
+            delta = currentDelta;
+            closestIndex = ui->fontSizeComboBox->count() - 1;
+        }
     }
+    ui->fontSizeComboBox->setCurrentIndex(closestIndex);
 }
 

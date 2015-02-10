@@ -182,12 +182,10 @@ void TerminalView::fontChange(const QFont& font)
     if (_fontWidth == boldWidth)
     {
         _fontBold = true;
-        qDebug("can bold");
     }
     else
     {
         _fontBold = false;
-        qDebug("can NOT bold");
     }
     if (_fontWidth < 1)
     {

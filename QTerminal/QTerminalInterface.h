@@ -107,6 +107,7 @@ public:
     static bool findAcceptableFontSizes(const QFont& font, QList<int>* sizes)
     {
         bool ret = false;
+
         if (isFontFixed(font) == true)
         {
             QFont f(font);
