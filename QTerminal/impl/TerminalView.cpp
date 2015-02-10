@@ -175,7 +175,20 @@ void TerminalView::fontChange(const QFont& font)
     // Get the width from representative normal width characters
 
     _fontWidth = QTerminalInterface::fontWidth(_fontMetrics);
-
+    QFont bold(font);
+    bold.setBold(true);
+    QFontMetrics boldMetrics(bold);
+    double boldWidth = QTerminalInterface::fontWidth(boldMetrics);
+    if (_fontWidth == boldWidth)
+    {
+        _fontBold = true;
+        qDebug("can bold");
+    }
+    else
+    {
+        _fontBold = false;
+        qDebug("can NOT bold");
+    }
     if (_fontWidth < 1)
     {
         _fontWidth = 1;
@@ -265,6 +278,7 @@ TerminalView::TerminalView(QWidget* parent)
     , _allowBell(true)
     , _fontHeight(1)
     , _fontWidth(1)
+    , _fontBold(false)
     , _fontAscent(1)
     , _lines(1)
     , _columns(1)
@@ -667,7 +681,10 @@ void TerminalView::drawCharacters(QPainter& painter,
     if (font.bold() != useBold
         || font.underline() != useUnderline)
     {
-        //font.setBold(useBold);
+        if (_fontBold == true)
+        {
+            font.setBold(useBold);
+        }
         font.setUnderline(useUnderline);
         painter.setFont(font);
     }

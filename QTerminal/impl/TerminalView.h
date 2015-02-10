@@ -609,6 +609,7 @@ private:
 
     double _fontHeight; // height
     double _fontWidth; // width
+    bool _fontBold;
 
     //type double to decrease rounding errors
 
