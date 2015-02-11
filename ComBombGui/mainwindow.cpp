@@ -47,9 +47,9 @@ void MainWindow::destroyMainWindow()
     }
 }
 
-const boost::posix_time::time_duration MainWindow::getStartTimeDelta()
+const std::chrono::duration<double> MainWindow::getStartTimeDelta()
 {
-    return boost::posix_time::microsec_clock::universal_time() - _startTime;
+    return std::chrono::system_clock::now() - _startTime;
 }
 
 MainWindow::MainWindow(QWidget* parent) :
@@ -59,7 +59,7 @@ MainWindow::MainWindow(QWidget* parent) :
     _fileClipboardDialog(new FileClipboardDialog(this)),
     _windowCnt(0)
 {
-    _startTime = boost::posix_time::microsec_clock::universal_time();
+    _startTime = std::chrono::system_clock::now();
     _ui->setupUi(this);
     _ui->actionNew_Version_Available->setVisible(false);
     _ui->menuBar->show();

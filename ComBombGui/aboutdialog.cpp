@@ -21,7 +21,6 @@
 #include "versioning.h"
 #include "cblabel.h"
 #include "mainwindow.h"
-#include <boost/date_time/posix_time/posix_time.hpp>
 
 CBLabel::CBLabel(QWidget* parent)
     : QLabel(parent),
@@ -59,8 +58,13 @@ AboutDialog::AboutDialog(QWidget* parent) :
 
     QString uptime("Uptime: ");
     std::stringstream buf;
-    const boost::posix_time::time_duration elapsed = MainWindow::getMainWindow()->getStartTimeDelta();
-    buf << elapsed;
+    const std::chrono::duration<double> elapsed = MainWindow::getMainWindow()->getStartTimeDelta();
+    long days = std::chrono::duration_cast<std::chrono::hours>(elapsed).count() / 24;
+    std::chrono::hours::rep hours = std::chrono::duration_cast<std::chrono::hours>(elapsed).count() % 24;
+    std::chrono::minutes::rep minutes = std::chrono::duration_cast<std::chrono::minutes>(elapsed).count() % 60;
+    std::chrono::seconds::rep seconds = std::chrono::duration_cast<std::chrono::seconds>(elapsed).count() % 60;
+    buf << days << ":" << hours << ":" << minutes << ":" << seconds;
+
     uptime.append(buf.str().c_str());
     ui->uptimeLabel->setText(uptime);
 }
