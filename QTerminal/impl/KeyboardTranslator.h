@@ -33,8 +33,7 @@
 #include <QtCore>
 
 #include <mutex>
-
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 typedef void (* CleanUpFunction)();
 

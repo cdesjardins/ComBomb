@@ -19,10 +19,8 @@
 #ifndef UPDATECHECKER_H
 #define UPDATECHECKER_H
 
-#ifndef Q_MOC_RUN
-#include <boost/smart_ptr.hpp>
-#endif
 #include <QNetworkReply>
+#include <memory>
 
 class UpdateChecker : public QObject
 {

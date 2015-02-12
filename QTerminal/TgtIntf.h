@@ -24,7 +24,6 @@
 
 #ifndef Q_MOC_RUN
 #include <boost/asio/buffer.hpp>
-#include <boost/smart_ptr.hpp>
 #endif
 #include "ThreadSafeQueue.h"
 #include "RefCntBufferPool.h"

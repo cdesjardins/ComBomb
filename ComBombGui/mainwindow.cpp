@@ -56,9 +56,9 @@ MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
     _ui(new Ui::MainWindow),
     _mdiArea(new QMdiArea()),
-    _fileClipboardDialog(new FileClipboardDialog(this)),
-    _windowCnt(0)
+    _fileClipboardDialog(new FileClipboardDialog(this))
 {
+    _windowCnt.store(0);
     _startTime = std::chrono::system_clock::now();
     _ui->setupUi(this);
     _ui->actionNew_Version_Available->setVisible(false);

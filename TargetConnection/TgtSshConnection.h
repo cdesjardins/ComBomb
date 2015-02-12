@@ -21,10 +21,6 @@
 
 #include "QTerminal/TgtIntf.h"
 
-#ifndef Q_MOC_RUN
-#include <boost/smart_ptr.hpp>
-#endif
-
 struct TgtSshImpl;
 
 class TgtSshIntf : public TgtIntf

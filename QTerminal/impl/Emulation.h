@@ -27,6 +27,7 @@
 
 // System
 #include <stdio.h>
+#include <memory>
 
 // Qt
 #include <QtGui/QKeyEvent>
@@ -34,9 +35,6 @@
 #include <QtCore/QTextCodec>
 #include <QtCore/QTextStream>
 #include <QtCore/QTimer>
-#ifndef Q_MOC_RUN
-#include <boost/smart_ptr.hpp>
-#endif
 
 class KeyboardTranslator;
 class HistoryType;

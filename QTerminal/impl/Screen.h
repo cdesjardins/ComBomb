@@ -25,13 +25,13 @@
 #ifndef SCREEN_H
 #define SCREEN_H
 
+#include <memory>
+
 // Qt
 #include <QtCore/QRect>
 #include <QtCore/QTextStream>
 #include <QtCore/QVarLengthArray>
-#ifndef Q_MOC_RUN
-#include <boost/smart_ptr.hpp>
-#endif
+
 // Konsole
 #include "Character.h"
 #include "History.h"

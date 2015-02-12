@@ -19,7 +19,6 @@
 
 #include "TgtTelnetConnection.h"
 #include "CBException.h"
-#include <boost/array.hpp>
 #include <boost/bind.hpp>
 #include <boost/bind/protect.hpp>
 

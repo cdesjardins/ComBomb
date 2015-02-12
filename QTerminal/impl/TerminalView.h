@@ -23,16 +23,13 @@
 
 #ifndef TERMINALVIEW_H
 #define TERMINALVIEW_H
-
+#include <memory>
 // Qt
 #include <QtGui/QColor>
 #include <QtCore/QPointer>
 #include <QWidget>
 
 #include "Character.h"
-#ifndef Q_MOC_RUN
-#include <boost/smart_ptr.hpp>
-#endif
 
 class QDrag;
 class QDragEnterEvent;

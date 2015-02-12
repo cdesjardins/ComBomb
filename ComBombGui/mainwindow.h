@@ -24,7 +24,7 @@
 #include "childform.h"
 #include <QMdiArea>
 #include <QMainWindow>
-#include <boost/atomic.hpp>
+#include <atomic>
 
 namespace Ui {
 class MainWindow;
@@ -78,7 +78,7 @@ private:
     QMdiArea* _mdiArea;
     FileClipboardDialog* _fileClipboardDialog;
     static MainWindow* _instance;
-    boost::atomic<int> _windowCnt;
+    std::atomic_int _windowCnt;
     QString _runProcessIconText;
     std::chrono::time_point<std::chrono::system_clock> _startTime;
 };
