@@ -12,10 +12,30 @@ git submodule init
 git submodule update
 [./]makeboost.py
 cd cl
-make -j or build is msvc on windows
+make -j or build with msvc on windows
 ```
 
 Once those commands are complete build the cryptlib library in the cl directory, and then open ComBomb.pro in QT Creator Based on QT 5, then run qmake, and build.
+
+I also typically link to Qt5 statically, to build a statically I use the following commands:
+
+Windows:
+```
+perl init-repo --no-webkit
+jom -j 15 distclean
+configure -opensource -nomake examples -nomake tests -prefix C:\Qt\<version> -confirm-license -static -no-openssl -opengl desktop
+jom -j 5
+jom install
+```
+
+Linux:
+```
+./configure -opensource -nomake examples -nomake tests -prefix ~/Qt/<version> -confirm-license -static -no-openssl -no-gtkstyle
+perl init-repo --no-webkit
+make -j15 distclean
+make -j5
+make install
+```
 
 Requires:
 python 2.6, or 2.7

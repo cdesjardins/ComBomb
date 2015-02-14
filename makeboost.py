@@ -59,7 +59,7 @@ def runB2Windows(extraArgs):
             visualStudioInstallDir = os.environ[envvar];
             file.write("call \"" + visualStudioInstallDir + "..\\..\\VC\\vcvarsall.bat\" x86\n")
             file.write("call bootstrap.bat msvc\n")
-            cmd = "b2 --toolset=msvc-" + str(ver) + ".0 " + " ".join(extraArgs) + " link=static -j 8 stage --layout=system -a variant="
+            cmd = "b2 --toolset=msvc-" + str(ver) + ".0 " + " ".join(extraArgs) + " link=static runtime-link=static -j 8 stage --layout=system -a variant="
             file.write(cmd + "release\n")
             file.write("move stage\\lib stage\\release\n")
             file.write(cmd + "debug\n")
@@ -98,8 +98,6 @@ def main(argv):
         runBootstrap()
         extraArgs = [
             "--with-system",
-            "--with-thread",
-            "--with-chrono",
             ]
         runB2(extraArgs)
     except:

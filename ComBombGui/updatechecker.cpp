@@ -71,14 +71,19 @@ void UpdateChecker::replyFinished(QNetworkReply*)
 {
     QJsonDocument d(QJsonDocument::fromJson(_result.toUtf8()));
     QJsonArray tags = d.array();
-    QString verStr = tags[0].toObject()["name"].toString();
-    int32_t currentVersion = parseVersionStr(getVersion());
-    _latestVersion = parseVersionStr(verStr.toLocal8Bit().constData());
-    if ((_latestVersion != -1) && (currentVersion != -1) && (_latestVersion > currentVersion))
+    int s = tags.size();
+    if (tags.size() == 1)
     {
-        _latestVersionStr = verStr;
-        emit newVersionAvailable();
+        QString verStr = tags[0].toObject()["name"].toString();
+        int32_t currentVersion = parseVersionStr(getVersion());
+        _latestVersion = parseVersionStr(verStr.toLocal8Bit().constData());
+        if ((_latestVersion != -1) && (currentVersion != -1) && (_latestVersion > currentVersion))
+        {
+            _latestVersionStr = verStr;
+            emit newVersionAvailable();
+        }
     }
+    _reply->close();
 }
 
 void UpdateChecker::slotReadyRead()
