@@ -22,19 +22,19 @@ I also typically link to Qt5 statically, to build a statically I use the followi
 Windows:
 ```
 perl init-repo --no-webkit
-jom -j 15 distclean
 configure -opensource -nomake examples -nomake tests -prefix C:\Qt\<version> -confirm-license -static -no-openssl -opengl desktop
 jom -j 5
 jom install
+jom -j 15 distclean
 ```
 
 Linux:
 ```
-./configure -opensource -nomake examples -nomake tests -prefix ~/Qt/<version> -confirm-license -static -no-openssl -no-gtkstyle
 perl init-repo --no-webkit
-make -j15 distclean
+./configure -opensource -nomake examples -nomake tests -prefix ~/Qt/<version> -confirm-license -static -no-openssl -no-gtkstyle
 make -j5
 make install
+make -j15 distclean
 ```
 
 Requires:
