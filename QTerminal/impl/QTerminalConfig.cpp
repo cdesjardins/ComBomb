@@ -31,15 +31,12 @@ QTerminalConfig::QTerminalConfig()
 
     foreach(const QString &family, database.families())
     {
-        if (database.isFixedPitch(family) == true)
+        QFont f(family);
+        QList<int> sizes;
+        if (QTerminalInterface::findAcceptableFontSizes(f, &sizes) == true)
         {
-            QFont f(family);
-            QList<int> sizes;
-            if (QTerminalInterface::findAcceptableFontSizes(f, &sizes) == true)
-            {
-                _font = QFont(f.family(), sizes[sizes.size() / 2]);
-                break;
-            }
+            _font = QFont(f.family(), sizes[sizes.size() / 2]);
+            break;
         }
     }
 }
@@ -53,21 +50,39 @@ QDataStream& operator<<(QDataStream& out, const QTerminalConfig& q)
     return out;
 }
 
+void QTerminalConfig::readCfgV1(QDataStream& in, QTerminalConfig& q)
+{
+    QString family;
+    int pointSize;
+    QFont testFont;
+    QList<int> sizes;
+
+    in >> q._wordSelectionDelimiters;
+    in >> family;
+    in >> pointSize;
+
+    testFont.setFamily(family);
+    testFont.setPointSize(pointSize);
+    if (QTerminalInterface::findAcceptableFontSizes(testFont, &sizes) == true)
+    {
+        q._font.setFamily(family);
+        if (sizes.indexOf(pointSize) != -1)
+        {
+            q._font.setPointSize(pointSize);
+        }
+    }
+}
+
+
 QDataStream& operator>>(QDataStream& in, QTerminalConfig& q)
 {
     int version;
     q = QTerminalConfig();
-    QString family;
-    int pointSize;
     in >> version;
     switch (version)
     {
         case CP_TERM_CFG_VER_1:
-            in >> q._wordSelectionDelimiters;
-            in >> family;
-            q._font.setFamily(family);
-            in >> pointSize;
-            q._font.setPointSize(pointSize);
+            QTerminalConfig::readCfgV1(in, q);
             break;
     }
     return in;

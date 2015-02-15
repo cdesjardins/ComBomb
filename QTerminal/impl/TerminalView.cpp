@@ -231,31 +231,26 @@ void TerminalView::setVTFont(const QFont& f)
 {
     QFont font = f;
 
-    QFontMetrics metrics(font);
-
-    if (metrics.height() < height() && metrics.maxWidth() < width())
+    // hint that text should be drawn without anti-aliasing.
+    // depending on the user's font configuration, this may not be respected
+    if (!_antialiasText)
     {
-        // hint that text should be drawn without anti-aliasing.
-        // depending on the user's font configuration, this may not be respected
-        if (!_antialiasText)
-        {
-            font.setStyleStrategy(QFont::NoAntialias);
-        }
+        font.setStyleStrategy(QFont::NoAntialias);
+    }
 
-        // experimental optimization.  Konsole assumes that the terminal is using a
-        // mono-spaced font, in which case kerning information should have an effect.
-        // Disabling kerning saves some computation when rendering text.
-        font.setKerning(false);
+    // experimental optimization.  Konsole assumes that the terminal is using a
+    // mono-spaced font, in which case kerning information should have an effect.
+    // Disabling kerning saves some computation when rendering text.
+    font.setKerning(false);
 
-        if (QTerminalInterface::isFontFixed(font) == true)
-        {
-            QWidget::setFont(font);
-            fontChange(font);
-        }
-        else
-        {
-            emit updateStatusSignal("Unable to change font, becuase selected font is not fixed width.");
-        }
+    if (QTerminalInterface::isFontFixed(font) == true)
+    {
+        QWidget::setFont(font);
+        fontChange(font);
+    }
+    else
+    {
+        emit updateStatusSignal("Unable to change font, becuase selected font is not fixed width.");
     }
 }
 
