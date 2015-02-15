@@ -103,7 +103,7 @@ def main(argv):
         call([which("jom"), "-j", "5", "release"])
         pass
     else:
-        call(["make", "-j5", "release"])
+        call(["make", "-j5"])
         pass
     buildLog()
     zipIt(gitVerStr, qtDir)
