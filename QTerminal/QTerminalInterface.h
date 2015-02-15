@@ -25,6 +25,7 @@ along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QWidget>
 #include <QMenu>
+#include <QFontDatabase>
 
 #define REPCHAR   "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefgjijklmnopqrstuvwxyz0123456789./+@"
 
@@ -90,15 +91,19 @@ public:
 
     static bool isFontFixed(const QFont& font)
     {
-        bool ret = true;
-        QFontMetrics fm(font);
-        int fw = fm.width(REPCHAR[0]);
-        for (unsigned int i = 1; i < strlen(REPCHAR); i++)
+        QFontDatabase database;
+        bool ret = database.isFixedPitch(font.family());
+        if (ret == true)
         {
-            if (fw != fm.width(REPCHAR[i]))
+            QFontMetrics fm(font);
+            int fw = fm.width(REPCHAR[0]);
+            for (unsigned int i = 1; i < strlen(REPCHAR); i++)
             {
-                ret = false;
-                break;
+                if (fw != fm.width(REPCHAR[i]))
+                {
+                    ret = false;
+                    break;
+                }
             }
         }
         return ret;

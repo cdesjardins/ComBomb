@@ -73,7 +73,6 @@ void QTerminalConfig::readCfgV1(QDataStream& in, QTerminalConfig& q)
     }
 }
 
-
 QDataStream& operator>>(QDataStream& in, QTerminalConfig& q)
 {
     int version;

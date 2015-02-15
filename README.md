@@ -30,8 +30,9 @@ jom -j 15 distclean
 
 Linux:
 ```
+sudo apt-get install libfontconfig1-dev
 perl init-repo --no-webkit
-./configure -opensource -nomake examples -nomake tests -prefix ~/Qt/<version> -confirm-license -static -no-openssl -no-gtkstyle
+./configure -opensource -nomake examples -nomake tests -prefix ~/Qt/<version> -confirm-license -static -no-openssl -no-gtkstyle -qt-xcb
 make -j5
 make install
 make -j15 distclean

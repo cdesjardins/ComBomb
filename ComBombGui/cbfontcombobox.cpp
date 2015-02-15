@@ -28,15 +28,12 @@ CBFontComboBox::CBFontComboBox(QWidget* parent)
 
     foreach(const QString &family, database.families())
     {
-        if (database.isFixedPitch(family) == true)
+        QFont f(family);
+        QList<int> sizes;
+        if (QTerminalInterface::findAcceptableFontSizes(f, &sizes) == true)
         {
-            QFont f(family);
-            QList<int> sizes;
-            if (QTerminalInterface::findAcceptableFontSizes(f, &sizes) == true)
-            {
-                addItem(family, QVariant::fromValue< QList<int> >(sizes));
-                setItemData(count() - 1, QFont(family), Qt::FontRole);
-            }
+            addItem(family, QVariant::fromValue< QList<int> >(sizes));
+            setItemData(count() - 1, QFont(family), Qt::FontRole);
         }
     }
 }
