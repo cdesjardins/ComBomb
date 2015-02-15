@@ -52,7 +52,7 @@ void UpdateChecker::checkForNewVersion()
 {
     connect(_manager.get(), SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
 
-    _reply = _manager->get(QNetworkRequest(QUrl("https://api.github.com/repos/cdesjardins/ComBomb/tags")));
+    _reply = _manager->get(QNetworkRequest(QUrl("http://blog.chrisd.info/download/combombversion/latest.txt")));
 
     connect(_reply, SIGNAL(readyRead()), this, SLOT(slotReadyRead()));
     connect(_reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(slotError(QNetworkReply::NetworkError)));
@@ -69,19 +69,13 @@ void UpdateChecker::slotError(QNetworkReply::NetworkError err)
 
 void UpdateChecker::replyFinished(QNetworkReply*)
 {
-    QJsonDocument d(QJsonDocument::fromJson(_result.toUtf8()));
-    QJsonArray tags = d.array();
-    int s = tags.size();
-    if (tags.size() == 1)
+    QString verStr = _result.toUtf8();
+    int32_t currentVersion = parseVersionStr(getVersion());
+    _latestVersion = parseVersionStr(verStr.toLocal8Bit().constData());
+    if ((_latestVersion != -1) && (currentVersion != -1) && (_latestVersion > currentVersion))
     {
-        QString verStr = tags[0].toObject()["name"].toString();
-        int32_t currentVersion = parseVersionStr(getVersion());
-        _latestVersion = parseVersionStr(verStr.toLocal8Bit().constData());
-        if ((_latestVersion != -1) && (currentVersion != -1) && (_latestVersion > currentVersion))
-        {
-            _latestVersionStr = verStr;
-            emit newVersionAvailable();
-        }
+        _latestVersionStr = verStr;
+        emit newVersionAvailable();
     }
     _reply->close();
 }

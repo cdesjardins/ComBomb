@@ -79,6 +79,9 @@ def zipIt(gitVerStr, qtDir):
         zipItWindows(filename, qtDir)
     else:
         zipItPosix(filename, qtDir)
+    latest = open("latest.txt", 'w')
+    latest.write(vers[0])
+    latest.close()
     
 def buildLog():
     logFile = open(releaseNotes, 'w')
