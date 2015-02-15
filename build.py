@@ -49,46 +49,21 @@ def which(file):
     os._exit(1)
     return None
 
+files = {
+    "../ComBombGui/images/ComBomb128.png": "ComBomb/ComBomb128.png",
+    releaseNotes : "ComBomb/" + releaseNotes,
+    "../addons/savetofile.py" : "ComBomb/addons/savetofile.py",
+}
+
 def zipItWindows(filename, qtDir):
-    msvs10Dir = os.environ['VS120COMNTOOLS'] + "../../VC/redist/x86/Microsoft.VC120.CRT/"
-    files = {
-        "ComBombGui/release/ComBombGui.exe": "ComBombGui.exe",
-        "../ComBombGui/images/ComBomb128.png": "ComBomb128.png",
-        qtDir + "/Qt5Widgets.dll": "Qt5Widgets.dll",
-        qtDir + "/Qt5Gui.dll": "Qt5Gui.dll",
-        qtDir + "/Qt5Network.dll": "Qt5Network.dll",
-        qtDir + "/Qt5Core.dll": "Qt5Core.dll",
-        qtDir + "/icuin53.dll": "icuin53.dll",
-        qtDir + "/icudt53.dll": "icudt53.dll",
-        qtDir + "/icuuc53.dll": "icuuc53.dll",
-        qtDir + "/../plugins/platforms/qminimal.dll": "platforms/qminimal.dll",
-        qtDir + "/../plugins/platforms/qwindows.dll": "platforms/qwindows.dll",
-        msvs10Dir + "msvcr120.dll": "msvcr120.dll",
-        msvs10Dir + "msvcp120.dll": "msvcp120.dll",
-        releaseNotes : releaseNotes,
-        "../addons/savetofile.py" : "addons/savetofile.py",
-    }
+    files["ComBombGui/release/ComBombGui.exe"] = "ComBomb/ComBombGui.exe"
     filename += ".zip"
     combombZip = zipfile.ZipFile(filename, "w")
     for k, v in files.iteritems():
         combombZip.write(k, v, zipfile.ZIP_DEFLATED)
     
 def zipItPosix(filename, qtDir):
-    files = {
-        "ComBombGui/ComBombGui": "ComBomb/ComBombGui",
-        "../ComBombGui/images/ComBomb128.png": "ComBomb/ComBomb128.png",
-        qtDir + "/../lib/libQt5Widgets.so.5": "ComBomb/libQt5Widgets.so.5",
-        qtDir + "/../lib/libQt5Core.so.5": "ComBomb/libQt5Core.so.5",
-        qtDir + "/../lib/libQt5Gui.so.5": "ComBomb/libQt5Gui.so.5",
-        qtDir + "/../lib/libQt5DBus.so.5": "ComBomb/libQt5DBus.so.5",
-        qtDir + "/../lib/libicui18n.so.53": "ComBomb/libicui18n.so.53",
-        qtDir + "/../lib/libicuuc.so.53": "ComBomb/libicuuc.so.53",
-        qtDir + "/../lib/libicudata.so.53": "ComBomb/libicudata.so.53",
-        qtDir + "/../lib/libQt5Network.so.5": "ComBomb/libQt5Network.so.5",
-        qtDir + "/../plugins/platforms/libqxcb.so": "ComBomb/platforms/libqxcb.so",
-        releaseNotes : "ComBomb/" + releaseNotes,
-        "../addons/savetofile.py" : "ComBomb/addons/savetofile.py",
-    }
+    files["ComBombGui/ComBombGui"] = "ComBomb/ComBombGui"
     filename += ".tar.bz2"
     file = tarfile.open(filename, "w:bz2")
     for k, v in files.iteritems():
@@ -106,7 +81,7 @@ def zipIt(gitVerStr, qtDir):
         zipItPosix(filename, qtDir)
     
 def buildLog():
-    logFile = open('releasenotes.txt', 'w')
+    logFile = open(releaseNotes, 'w')
     process = Popen(["git", "log", "--pretty=%an %ai %d %s"], stdout=logFile)
     process.wait()
     logFile.flush()
@@ -125,10 +100,10 @@ def main(argv):
     (qtDir, tail) = os.path.split(qmake)
     call([qmake, ".."])
     if (platform.system() == "Windows"):
-        call([which("jom")])
+        call([which("jom"), "-j", "5", "release"])
         pass
     else:
-        call(["make", "-j"])
+        call(["make", "-j5", "release"])
         pass
     buildLog()
     zipIt(gitVerStr, qtDir)
