@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 # This is the master combomb build script
+# which is used to create releases.
 
 import shutil, sys, os, platform, createVersion, zipfile, tarfile
 from subprocess import call
