@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# This is the master combomb build script
+
 import shutil, sys, os, platform, createVersion, zipfile, tarfile
 from subprocess import call
 from subprocess import Popen, PIPE
