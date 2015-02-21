@@ -1,6 +1,0 @@
-[submodule "QueuePtr"]
-	path = QueuePtr
-	url = git://github.com/cdesjardins/QueuePtr.git
-[submodule "cl"]
-	path = cl
-	url = git@github.com:cdesjardins/cl342.git
