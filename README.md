@@ -6,13 +6,10 @@ ComBomb is a terminal emulator for debugging embedded systems in the modern era.
 
 Note: The makeboost python script assumes pyton 2.6 or 2.7, it will download and build boost the way ComBomb expects it.
 ```
-git clone https://github.com/cdesjardins/ComBomb.git
+repo init -u git@github.com:cdesjardins/ComBombManifest.git
+repo sync
 cd ComBomb
-git submodule init
-git submodule update
 [./]makeboost.py
-cd cl
-make -j or build with msvc on windows
 ```
 
 Once those commands are complete build the cryptlib library in the cl directory, and then open ComBomb.pro in QT Creator Based on QT 5, then run qmake, and build.

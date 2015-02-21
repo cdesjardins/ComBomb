@@ -81,6 +81,9 @@ def runB2(extraArgs):
     
 def main(argv):
     try:
+        if (os.path.exists("../boost") == False):
+            os.mkdir("../boost")
+        os.chdir("../boost")
         if (os.path.exists(boostfile) == False):
             downloadBoost()
         else:
