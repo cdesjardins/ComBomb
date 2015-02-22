@@ -62,8 +62,8 @@ FORMS    += mainwindow.ui \
 RESOURCES += \
     ComBomb.qrc
 
-INCLUDEPATH += $$PWD/.. $$PWD/../QueuePtr/include
-DEPENDPATH += $$PWD/..  $$PWD/../QueuePtr/include
+INCLUDEPATH += $$PWD/.. $$PWD/../../QueuePtr/include
+DEPENDPATH += $$PWD/..  $$PWD/../../QueuePtr/include
 
 # Targetconnection
 
@@ -91,12 +91,12 @@ else:unix: PRE_TARGETDEPS += $$OUT_PWD/../QTerminal/libQTerminal.a
 # I changed the build type to static lib
 # I also had to add the -DSTATIC_LIB to the cryptlib project settings
 # Then build both debug and release.
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../cl/release/ -ladvapi32 -lcl32 -luser32
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../cl/debug/ -ladvapi32 -lcl32 -luser32
-else:unix: LIBS += $$PWD/../cl/libcl.a
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../cryptlib/release/ -ladvapi32 -lcl32 -luser32
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../cryptlib/debug/ -ladvapi32 -lcl32 -luser32
+else:unix: LIBS += $$PWD/../../cryptlib/libcl.a
 
-win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../cl/release/cl32.lib
-else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../cl/debug/cl32.lib
+win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../cryptlib/release/cl32.lib
+else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../cryptlib/debug/cl32.lib
 
 
 
@@ -106,12 +106,12 @@ QMAKE_CXXFLAGS += -DBOOST_ALL_NO_LIB
 
 win32:QMAKE_CXXFLAGS += -D_WIN32_WINNT=0x0501
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../boost_$${BOOSTVER}/stage/release/ -llibboost_system
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../boost_$${BOOSTVER}/stage/debug/ -llibboost_system
-else:unix: LIBS += $$PWD/../boost_$${BOOSTVER}/stage/lib/libboost_system.a
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../boost/boost_$${BOOSTVER}/stage/release/ -llibboost_system
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../boost/boost_$${BOOSTVER}/stage/debug/ -llibboost_system
+else:unix: LIBS += $$PWD/../../boost/boost_$${BOOSTVER}/stage/lib/libboost_system.a
 
-INCLUDEPATH += $$PWD/../boost_$${BOOSTVER}
-DEPENDPATH += $$PWD/../boost_$${BOOSTVER}
+INCLUDEPATH += $$PWD/../../boost/boost_$${BOOSTVER}
+DEPENDPATH += $$PWD/../../boost/boost_$${BOOSTVER}
 
 OTHER_FILES += \
     ComBomb.rc

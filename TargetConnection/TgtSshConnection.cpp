@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "cl/cryptlib.h"
+#include "cryptlib/cryptlib.h"
 #include "TgtSshConnection.h"
 #include "TgtThread.h"
 #include "CBException.h"

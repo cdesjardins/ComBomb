@@ -25,7 +25,7 @@ SOURCES += \
     impl/KeyboardTranslator.cpp \
     impl/TgtIntf.cpp \
     impl/QTerminalConfig.cpp \
-    ../QueuePtr/src/RefCntBufferPool.cpp \
+    ../../QueuePtr/src/RefCntBufferPool.cpp \
     impl/CharacterColor.cpp
 
 HEADERS += QTerminalInterface.h \
@@ -50,11 +50,11 @@ HEADERS += QTerminalInterface.h \
     impl/ExtendedDefaultTranslator.h \
     QTerminalConfig.h \
     impl/BackTabEvent.h \
-    ../QueuePtr/include/IntrusivePtrBase.h \
-    ../QueuePtr/include/RefCntBuffer.h \
-    ../QueuePtr/include/RefCntBufferPool.h \
-    ../QueuePtr/include/ThreadSafePool.h \
-    ../QueuePtr/include/ThreadSafeQueue.h
+    ../../QueuePtr/include/IntrusivePtrBase.h \
+    ../../QueuePtr/include/RefCntBuffer.h \
+    ../../QueuePtr/include/RefCntBufferPool.h \
+    ../../QueuePtr/include/ThreadSafePool.h \
+    ../../QueuePtr/include/ThreadSafeQueue.h
 unix:!symbian {
     maemo5 {
         target.path = /opt/usr/lib
@@ -65,8 +65,8 @@ unix:!symbian {
 }
 
 
-INCLUDEPATH += $$PWD/.. $$PWD/../QTerminal $$PWD/../QueuePtr/include
-DEPENDPATH  += $$PWD/.. $$PWD/../QTerminal $$PWD/../QueuePtr/include
+INCLUDEPATH += $$PWD/.. $$PWD/../QTerminal $$PWD/../../QueuePtr/include
+DEPENDPATH  += $$PWD/.. $$PWD/../QTerminal $$PWD/../../QueuePtr/include
 
 # Boost
 
@@ -74,8 +74,8 @@ QMAKE_CXXFLAGS += -DBOOST_ALL_NO_LIB
 
 win32:QMAKE_CXXFLAGS += -D_WIN32_WINNT=0x0501
 BOOSTVER = 1_57_0
-INCLUDEPATH += $$PWD/../boost_$${BOOSTVER}
-DEPENDPATH += $$PWD/../boost_$${BOOSTVER}
+INCLUDEPATH += $$PWD/../../boost/boost_$${BOOSTVER}
+DEPENDPATH += $$PWD/../../boost/boost_$${BOOSTVER}
 
 unix: {
 QMAKE_CXXFLAGS += -std=c++11
