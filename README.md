@@ -16,10 +16,16 @@ Once those commands are complete build the cryptlib library in the cl directory,
 
 I also typically link to Qt5 statically, to build a statically I use the following commands:
 
+```
+git clone git://gitorious.org/qt/qt5.git qt5
+cd qt5
+git checkout 5.4
+```
+
 Windows:
 ```
-perl init-repo --no-webkit
-configure -opensource -nomake examples -nomake tests -prefix C:\Qt\<version> -confirm-license -static -no-openssl -opengl desktop
+perl init-repository --no-webkit
+configure -opensource -nomake examples -nomake tests -prefix C:\Qt\5.4 -confirm-license -static -no-openssl -opengl desktop
 jom -j 5
 jom install
 jom -j 15 distclean
@@ -28,8 +34,8 @@ jom -j 15 distclean
 Linux:
 ```
 sudo apt-get install libfontconfig1-dev
-perl init-repo --no-webkit
-./configure -opensource -nomake examples -nomake tests -prefix ~/Qt/<version> -confirm-license -static -no-openssl -no-gtkstyle -qt-xcb
+perl init-repository --no-webkit
+./configure -opensource -nomake examples -nomake tests -prefix ~/Qt/5.4 -confirm-license -static -no-openssl -no-gtkstyle -qt-xcb
 make -j5
 make install
 make -j15 distclean
