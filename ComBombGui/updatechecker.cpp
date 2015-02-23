@@ -18,7 +18,7 @@
 */
 #include "updatechecker.h"
 #include "versioning.h"
-#include "../unparam.h"
+#include "unparam.h"
 #include <QNetworkAccessManager>
 #include <QJsonDocument>
 #include <QJsonArray>

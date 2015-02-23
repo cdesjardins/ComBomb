@@ -19,7 +19,7 @@
 #define SELFLISTENER_H
 
 #include <QThread>
-#include "QTerminal/TgtIntf.h"
+#include "../TgtIntf.h"
 
 class SelfListener : public QThread
 {

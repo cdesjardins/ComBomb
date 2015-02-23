@@ -27,7 +27,7 @@
 #endif
 #include "QueuePtr/ThreadSafeQueue.h"
 #include "QueuePtr/RefCntBufferPool.h"
-#include "../unparam.h"
+#include "unparam.h"
 #include <QWidget>
 #include <fstream>
 #include <thread>

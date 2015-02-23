@@ -18,7 +18,7 @@
 */
 
 #include "TgtProcessConnection.h"
-#include "../unparam.h"
+#include "unparam.h"
 #include <boost/bind/protect.hpp>
 
 std::shared_ptr<TgtProcessIntf> TgtProcessIntf::createProcessConnection(const std::shared_ptr<const TgtConnectionConfig>& config)

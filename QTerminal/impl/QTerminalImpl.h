@@ -23,8 +23,8 @@
 #include <QtGui>
 #include "TerminalModel.h"
 #include "TerminalView.h"
-#include "QTerminal/QTerminalInterface.h"
-#include "QTerminal/QTerminalConfig.h"
+#include "../QTerminalInterface.h"
+#include "../QTerminalConfig.h"
 
 class TgtIntf;
 

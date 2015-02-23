@@ -20,7 +20,7 @@
 #define CONFIGDIALOG_H
 
 #include "cbdialog.h"
-#include "QTerminal/QTerminalConfig.h"
+#include "../QTerminal/QTerminalConfig.h"
 
 namespace Ui {
 class ConfigDialog;

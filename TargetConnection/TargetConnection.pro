@@ -36,8 +36,8 @@ unix:!symbian {
 }
 
 CRYPTLIBINC = $$PWD/../..
-INCLUDEPATH += $$PWD/.. $$PWD/../../install/include $${CRYPTLIBINC}
-DEPENDPATH  += $$PWD/.. $$PWD/../../install/include $${CRYPTLIBINC}
+INCLUDEPATH += $$PWD/../../install/include $${CRYPTLIBINC} $$PWD/../../include
+DEPENDPATH  += $$PWD/../../install/include $${CRYPTLIBINC} $$PWD/../../include
 
 # Boost
 

@@ -33,7 +33,7 @@
 #include <QWidget>
 
 #include "SelfListener.h"
-#include "QTerminal/TgtIntf.h"
+#include "../TgtIntf.h"
 
 // Konsole
 #include "History.h"

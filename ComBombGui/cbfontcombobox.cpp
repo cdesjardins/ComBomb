@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "cbfontcombobox.h"
-#include "QTerminal/QTerminalInterface.h"
+#include "../QTerminal/QTerminalInterface.h"
 
 Q_DECLARE_METATYPE(QList<int>)
 

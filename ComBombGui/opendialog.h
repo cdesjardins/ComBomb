@@ -20,7 +20,7 @@
 #define CB_OPENDIALOG_H
 
 #include <QDialog>
-#include "TargetConnection/TgtConnection.h"
+#include "../TargetConnection/TgtConnection.h"
 
 namespace Ui {
 class OpenDialog;

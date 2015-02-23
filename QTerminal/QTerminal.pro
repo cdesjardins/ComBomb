@@ -59,8 +59,8 @@ unix:!symbian {
 }
 
 
-INCLUDEPATH += $$PWD/.. $$PWD/../QTerminal $$PWD/../../install/include
-DEPENDPATH  += $$PWD/.. $$PWD/../QTerminal $$PWD/../../install/include
+INCLUDEPATH += $$PWD/../QTerminal $$PWD/../../install/include $$PWD/../../include
+DEPENDPATH  += $$PWD/../QTerminal $$PWD/../../install/include $$PWD/../../include
 
 # Boost
 

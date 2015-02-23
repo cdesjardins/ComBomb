@@ -62,8 +62,8 @@ FORMS    += mainwindow.ui \
 RESOURCES += \
     ComBomb.qrc
 
-INCLUDEPATH += $$PWD/..  $$PWD/../../install/include
-DEPENDPATH += $$PWD/..  $$PWD/../../install/include
+INCLUDEPATH += $$PWD/../../install/include $$PWD/../../include
+DEPENDPATH += $$PWD/../../install/include $$PWD/../../include
 
 # Targetconnection
 

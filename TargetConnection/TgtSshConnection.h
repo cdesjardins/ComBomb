@@ -19,7 +19,7 @@
 #ifndef CB_TGT_SSH_CONNECTION_H
 #define CB_TGT_SSH_CONNECTION_H
 
-#include "QTerminal/TgtIntf.h"
+#include "../QTerminal/TgtIntf.h"
 
 struct TgtSshImpl;
 

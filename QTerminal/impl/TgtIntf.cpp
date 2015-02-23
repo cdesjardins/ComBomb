@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "QTerminal/TgtIntf.h"
+#include "../TgtIntf.h"
 
 /*
 ** If telnet or ssh to a remote server and it is unix based and you see

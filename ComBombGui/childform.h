@@ -21,8 +21,8 @@
 
 #include <QWidget>
 #include <QMutex>
-#include "QTerminal/TgtIntf.h"
-#include "QTerminal/QTerminal"
+#include "../QTerminal/TgtIntf.h"
+#include "../QTerminal/QTerminal"
 
 namespace Ui {
 class ChildForm;
