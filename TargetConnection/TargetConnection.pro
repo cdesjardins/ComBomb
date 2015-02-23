@@ -35,8 +35,9 @@ unix:!symbian {
     INSTALLS += target
 }
 
-INCLUDEPATH += $$PWD/.. $$PWD/../.. $$PWD/../../QueuePtr/include
-DEPENDPATH  += $$PWD/.. $$PWD/../.. $$PWD/../../QueuePtr/include
+CRYPTLIBINC = $$PWD/../..
+INCLUDEPATH += $$PWD/.. $$PWD/../../install/include $${CRYPTLIBINC}
+DEPENDPATH  += $$PWD/.. $$PWD/../../install/include $${CRYPTLIBINC}
 
 # Boost
 

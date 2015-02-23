@@ -62,8 +62,8 @@ FORMS    += mainwindow.ui \
 RESOURCES += \
     ComBomb.qrc
 
-INCLUDEPATH += $$PWD/.. $$PWD/../../QueuePtr/include
-DEPENDPATH += $$PWD/..  $$PWD/../../QueuePtr/include
+INCLUDEPATH += $$PWD/..  $$PWD/../../install/include
+DEPENDPATH += $$PWD/..  $$PWD/../../install/include
 
 # Targetconnection
 
@@ -116,6 +116,10 @@ DEPENDPATH += $$PWD/../../boost/boost_$${BOOSTVER}
 OTHER_FILES += \
     ComBomb.rc
 
+# QueuePtr
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../install/lib/ -lQueuePtr
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../install/lib/ -lQueuePtr
+else:unix: LIBS += $$PWD/../../install/lib/libQueuePtr.a
 
 unix: {
 QMAKE_CXXFLAGS += -std=c++11

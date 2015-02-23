@@ -25,7 +25,6 @@ SOURCES += \
     impl/KeyboardTranslator.cpp \
     impl/TgtIntf.cpp \
     impl/QTerminalConfig.cpp \
-    ../../QueuePtr/src/RefCntBufferPool.cpp \
     impl/CharacterColor.cpp
 
 HEADERS += QTerminalInterface.h \
@@ -49,12 +48,7 @@ HEADERS += QTerminalInterface.h \
     impl/KeyboardTranslator.h \
     impl/ExtendedDefaultTranslator.h \
     QTerminalConfig.h \
-    impl/BackTabEvent.h \
-    ../../QueuePtr/include/IntrusivePtrBase.h \
-    ../../QueuePtr/include/RefCntBuffer.h \
-    ../../QueuePtr/include/RefCntBufferPool.h \
-    ../../QueuePtr/include/ThreadSafePool.h \
-    ../../QueuePtr/include/ThreadSafeQueue.h
+    impl/BackTabEvent.h
 unix:!symbian {
     maemo5 {
         target.path = /opt/usr/lib
@@ -65,8 +59,8 @@ unix:!symbian {
 }
 
 
-INCLUDEPATH += $$PWD/.. $$PWD/../QTerminal $$PWD/../../QueuePtr/include
-DEPENDPATH  += $$PWD/.. $$PWD/../QTerminal $$PWD/../../QueuePtr/include
+INCLUDEPATH += $$PWD/.. $$PWD/../QTerminal $$PWD/../../install/include
+DEPENDPATH  += $$PWD/.. $$PWD/../QTerminal $$PWD/../../install/include
 
 # Boost
 
