@@ -118,7 +118,7 @@ OTHER_FILES += \
 
 # QueuePtr
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../install/lib/ -lQueuePtr
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../install/lib/ -lQueuePtr
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../install/lib/ -lQueuePtrd
 else:unix: LIBS += $$PWD/../../install/lib/libQueuePtr.a
 
 unix: {
