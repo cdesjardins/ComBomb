@@ -912,7 +912,7 @@ bool TerminalView::inFont(QChar ch)
 {
     bool ret = true;
 
-    if (ch == QChar::ReplacementCharacter)
+    if ((ch == QChar::ReplacementCharacter) || (_fontMetrics.width(ch) != _fontWidth))
     {
         ret = false;
     }
