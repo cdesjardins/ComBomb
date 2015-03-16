@@ -30,7 +30,9 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <errno.h>
-
+#ifndef WIN32
+#include <malloc.h>
+#endif
 // Reasonable line size
 #define LINE_SIZE   1024
 
@@ -51,6 +53,12 @@ void HistoryScroll::clearHistory()
 {
     _historyBuffer.clear();
     _wrappedLine.clear();
+#ifndef WIN32
+    // Clearing the history can free a ton of memory, but only small chunks
+    // on linux this was causing the memory usage to remain high even after
+    // a clear screen.
+    malloc_trim(0);
+#endif
 }
 
 void HistoryScroll::addCellsVector(const std::vector<Character>& cells, bool previousWrapped)
