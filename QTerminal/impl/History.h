@@ -30,6 +30,9 @@
 
 // Konsole
 #include "Character.h"
+#include "workqueue.h"
+#include <memory>
+#include <thread>
 
 //
 // Buffer-based history
@@ -50,8 +53,10 @@ public:
 protected:
 
 private:
+    void clearHistoryThread(std::shared_ptr<std::vector<std::vector<Character> > > historyBuffer);
+    std::shared_ptr<WorkQueue<std::vector<std::vector<Character> > > > _clearHistoryThread;
 
-    std::vector<std::vector<Character> >_historyBuffer;
+    std::shared_ptr<std::vector<std::vector<Character> > > _historyBuffer;
     QBitArray _wrappedLine;
 };
 

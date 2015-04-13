@@ -42,17 +42,28 @@ bool HistoryScroll::hasScroll()
 }
 
 HistoryScroll::HistoryScroll()
+    : _historyBuffer(new std::vector<std::vector<Character> >())
 {
+    _clearHistoryThread = WorkQueue<std::vector<std::vector<Character> > >::createWorkQueue
+            (std::bind(&HistoryScroll::clearHistoryThread, this, std::placeholders::_1));
 }
 
 HistoryScroll::~HistoryScroll()
 {
+
 }
 
 void HistoryScroll::clearHistory()
 {
-    _historyBuffer.clear();
+    std::shared_ptr<std::vector<std::vector<Character> > > historyBuffer = _historyBuffer;
+    _historyBuffer.reset(new std::vector<std::vector<Character> >());
     _wrappedLine.clear();
+    _clearHistoryThread->processData(historyBuffer);
+}
+
+void HistoryScroll::clearHistoryThread(std::shared_ptr<std::vector<std::vector<Character> > > historyBuffer)
+{
+    historyBuffer->clear();
 #ifndef WIN32
     // Clearing the history can free a ton of memory, but only small chunks
     // on linux this was causing the memory usage to remain high even after
@@ -63,23 +74,23 @@ void HistoryScroll::clearHistory()
 
 void HistoryScroll::addCellsVector(const std::vector<Character>& cells, bool previousWrapped)
 {
-    _historyBuffer.push_back(cells);
-    _wrappedLine.resize(_historyBuffer.size());
+    _historyBuffer->push_back(cells);
+    _wrappedLine.resize(_historyBuffer->size());
     _wrappedLine[_wrappedLine.size() - 1] = previousWrapped;
 }
 
 int HistoryScroll::getLines()
 {
-    return _historyBuffer.size();
+    return _historyBuffer->size();
 }
 
 int HistoryScroll::getLineLen(size_t lineNumber)
 {
-    Q_ASSERT(lineNumber < _historyBuffer.size());
+    Q_ASSERT(lineNumber < _historyBuffer->size());
 
-    if (lineNumber < _historyBuffer.size())
+    if (lineNumber < _historyBuffer->size())
     {
-        return _historyBuffer[lineNumber].size();
+        return (*_historyBuffer)[lineNumber].size();
     }
     else
     {
@@ -108,7 +119,7 @@ void HistoryScroll::getCells(size_t lineNumber, int startColumn, int count, std:
         return;
     }
 
-    if (lineNumber >= _historyBuffer.size())
+    if (lineNumber >= _historyBuffer->size())
     {
         for (int index = 0; index < count; index++)
         {
@@ -117,7 +128,7 @@ void HistoryScroll::getCells(size_t lineNumber, int startColumn, int count, std:
         return;
     }
 
-    const std::vector<Character>& line = _historyBuffer[lineNumber];
+    const std::vector<Character>& line = (*_historyBuffer)[lineNumber];
 
     Q_ASSERT((size_t)startColumn <= line.size() - count);
 

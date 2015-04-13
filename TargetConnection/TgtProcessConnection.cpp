@@ -102,7 +102,10 @@ void TgtProcessIntf::readFromStdout()
 {
     _processMutex.lock();
     QByteArray output;
-    output = _proc->readAllStandardOutput();
+    if (_proc != NULL)
+    {
+        output = _proc->readAllStandardOutput();
+    }
     _processMutex.unlock();
     processInput(output);
 }
@@ -111,7 +114,10 @@ void TgtProcessIntf::readFromStderr()
 {
     _processMutex.lock();
     QByteArray output;
-    output = _proc->readAllStandardError();
+    if (_proc != NULL)
+    {
+        output = _proc->readAllStandardError();
+    }
     _processMutex.unlock();
     processInput(output);
 }
