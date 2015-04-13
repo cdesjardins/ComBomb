@@ -165,7 +165,6 @@ private:
     void reportCursorPosition();
     void reportTerminalParms(int p);
 
-    void onScrollLock();
     void scrollLock(const bool lock);
 
     // clears the screen and resizes it to the specified

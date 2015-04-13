@@ -45,12 +45,11 @@ HistoryScroll::HistoryScroll()
     : _historyBuffer(new std::vector<std::vector<Character> >())
 {
     _clearHistoryThread = WorkQueue<std::vector<std::vector<Character> > >::createWorkQueue
-            (std::bind(&HistoryScroll::clearHistoryThread, this, std::placeholders::_1));
+                              (std::bind(&HistoryScroll::clearHistoryThread, this, std::placeholders::_1));
 }
 
 HistoryScroll::~HistoryScroll()
 {
-
 }
 
 void HistoryScroll::clearHistory()

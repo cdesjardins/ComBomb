@@ -10,6 +10,10 @@ repo init -u git@github.com:cdesjardins/ComBombManifest.git
 repo sync
 cd ComBomb
 [./]makeboost.py
+mkdir ../QueuePtr/build
+cd ../QueuePtr/build
+cmake ..
+cmake --build . --target install
 ```
 
 Once those commands are complete build the cryptlib library in the cl directory, and then open ComBomb.pro in QT Creator Based on QT 5, then run qmake, and build.
@@ -17,7 +21,7 @@ Once those commands are complete build the cryptlib library in the cl directory,
 I also typically link to Qt5 statically, to build a statically I use the following commands:
 
 ```
-git clone git://gitorious.org/qt/qt5.git qt5
+git clone git://code.qt.io/qt/qt5.git
 cd qt5
 git checkout 5.4
 ```
