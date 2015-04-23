@@ -261,7 +261,6 @@ bool ScreenWindow::findText(const QString& searchStr, const bool caseSensitive, 
     {
         ret = true;
         scrollTo(scrollToLine);
-        setTrackOutput(atEndOfOutput());
     }
 
     return ret;
@@ -369,6 +368,7 @@ void ScreenWindow::scrollTo(int line)
     _scrollCount += delta;
 
     _bufferNeedsUpdate = true;
+    setTrackOutput(atEndOfOutput());
 
     emit scrolled(_currentLine);
 }

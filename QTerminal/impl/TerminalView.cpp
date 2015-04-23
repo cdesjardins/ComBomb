@@ -1460,13 +1460,6 @@ void TerminalView::scrollBarPositionChanged(int)
 
     _screenWindow->scrollTo(_scrollBar->value());
 
-    // if the thumb has been moved to the bottom of the _scrollBar then set
-    // the display to automatically track new output,
-    // that is, scroll down automatically
-    // to how new _lines as they are added
-    const bool atEndOfOutput = (_scrollBar->value() == _scrollBar->maximum());
-    _screenWindow->setTrackOutput(atEndOfOutput);
-
     updateImage();
 }
 
@@ -2398,6 +2391,15 @@ bool TerminalView::followKey(QKeyEvent* event)
     case Qt::Key_ScrollLock:
         ret = false;
         break;
+    case Qt::Key_PageUp:
+    case Qt::Key_PageDown:
+    case Qt::Key_Up:
+    case Qt::Key_Down:
+        if (event->modifiers() == Qt::ShiftModifier)
+        {
+            ret = false;
+        }
+        break;
     }
     return ret;
 }
@@ -2416,22 +2418,18 @@ void TerminalView::keyPressEvent(QKeyEvent* event)
 
         if (event->key() == Qt::Key_PageUp)
         {
-            //qDebug("%s %d pageup", __FILE__, __LINE__);
             _screenWindow->scrollBy(ScreenWindow::ScrollPages, -1);
         }
         else if (event->key() == Qt::Key_PageDown)
         {
-            //qDebug("%s %d pagedown", __FILE__, __LINE__);
             _screenWindow->scrollBy(ScreenWindow::ScrollPages, 1);
         }
         else if (event->key() == Qt::Key_Up)
         {
-            //qDebug("%s %d keyup", __FILE__, __LINE__);
             _screenWindow->scrollBy(ScreenWindow::ScrollLines, -1);
         }
         else if (event->key() == Qt::Key_Down)
         {
-            //qDebug("%s %d keydown", __FILE__, __LINE__);
             _screenWindow->scrollBy(ScreenWindow::ScrollLines, 1);
         }
         else
