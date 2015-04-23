@@ -1741,6 +1741,7 @@ void TerminalView::extendSelection(const QPoint& position)
 
     int charColumn = 0;
     int charLine = 0;
+    int offset = 0;
     getCharacterPosition(pos, charLine, charColumn);
 
     QPoint here = QPoint(charColumn, charLine);
@@ -1751,7 +1752,7 @@ void TerminalView::extendSelection(const QPoint& position)
     _pntSelCorr.ry() -= _scrollBar->value();
     bool swapping = false;
 
-    if (_wordSelectionMode)
+    if (_wordSelectionMode == true)
     {
         // Extend to word boundaries
         int i = 0;
@@ -1820,11 +1821,11 @@ void TerminalView::extendSelection(const QPoint& position)
         }
         ohere.rx()++;
     }
-
-    if (_lineSelectionMode)
+    else if (_lineSelectionMode == true)
     {
         // Extend to complete line
         bool above_not_below = (here.y() < _iPntSelCorr.y());
+        bool old_above_not_below = (_pntSelCorr.y() < _iPntSelCorr.y());
 
         QPoint above = above_not_below ? here : _iPntSelCorr;
         QPoint below = above_not_below ? _iPntSelCorr : here;
@@ -1854,14 +1855,12 @@ void TerminalView::extendSelection(const QPoint& position)
         }
 
         QPoint newSelBegin = QPoint(ohere.x(), ohere.y());
-        swapping = !(_tripleSelBegin == newSelBegin);
+        swapping = above_not_below != old_above_not_below;
         _tripleSelBegin = newSelBegin;
 
         ohere.rx()++;
     }
-
-    int offset = 0;
-    if (!_wordSelectionMode && !_lineSelectionMode)
+    else
     {
         int i = 0;
         int selClass = 0;
