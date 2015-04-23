@@ -487,6 +487,7 @@ protected:
 
     virtual void fontChange(const QFont& font);
 
+    virtual bool followKey(QKeyEvent* event);
     virtual void keyPressEvent(QKeyEvent* event);
     virtual void mouseDoubleClickEvent(QMouseEvent* ev);
     virtual void mousePressEvent(QMouseEvent*);

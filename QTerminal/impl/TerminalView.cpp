@@ -2347,6 +2347,62 @@ void TerminalView::pasteSelection()
 /*                                                                           */
 /* ------------------------------------------------------------------------- */
 
+bool TerminalView::followKey(QKeyEvent* event)
+{
+    bool ret = true;
+    switch (event->key())
+    {
+    case Qt::Key_F1:
+    case Qt::Key_F2:
+    case Qt::Key_F3:
+    case Qt::Key_F4:
+    case Qt::Key_F5:
+    case Qt::Key_F6:
+    case Qt::Key_F7:
+    case Qt::Key_F8:
+    case Qt::Key_F9:
+    case Qt::Key_F10:
+    case Qt::Key_F11:
+    case Qt::Key_F12:
+    case Qt::Key_F13:
+    case Qt::Key_F14:
+    case Qt::Key_F15:
+    case Qt::Key_F16:
+    case Qt::Key_F17:
+    case Qt::Key_F18:
+    case Qt::Key_F19:
+    case Qt::Key_F20:
+    case Qt::Key_F21:
+    case Qt::Key_F22:
+    case Qt::Key_F23:
+    case Qt::Key_F24:
+    case Qt::Key_F25:
+    case Qt::Key_F26:
+    case Qt::Key_F27:
+    case Qt::Key_F28:
+    case Qt::Key_F29:
+    case Qt::Key_F30:
+    case Qt::Key_F31:
+    case Qt::Key_F32:
+    case Qt::Key_F33:
+    case Qt::Key_F34:
+    case Qt::Key_F35:
+    case Qt::Key_Pause:
+    case Qt::Key_Print:
+    case Qt::Key_SysReq:
+    case Qt::Key_Shift:
+    case Qt::Key_Control:
+    case Qt::Key_Alt:
+    case Qt::Key_CapsLock:
+    case Qt::Key_NumLock:
+    case Qt::Key_ScrollLock:
+        ret = false;
+        break;
+    }
+    return ret;
+}
+
+
 void TerminalView::keyPressEvent(QKeyEvent* event)
 {
     //qDebug("%s %d keyPressEvent and key is %d", __FILE__, __LINE__, event->key());
@@ -2396,7 +2452,10 @@ void TerminalView::keyPressEvent(QKeyEvent* event)
         }
     }
 
-    _screenWindow->setTrackOutput(true);
+    if (followKey(event) == true)
+    {
+        _screenWindow->setTrackOutput(true);
+    }
 
     _actSel = 0; // Key stroke implies a screen update, so TerminalDisplay won't
     // know where the current selection is.
