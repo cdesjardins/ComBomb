@@ -134,3 +134,24 @@ void FileClipboardDialog::on_sendButton_clicked()
     sendItemTriggered(ui->fileClipboardTable->currentRow());
 }
 
+
+void FileClipboardDialog::on_searchButton_clicked()
+{
+    QString searchText = ui->searchComboBox->currentText();
+    if (searchText.length() > 0)
+    {
+        int numRows = ui->fileClipboardTable->rowCount();
+        int index = ui->fileClipboardTable->currentRow() + 1;
+        for (int row = 0; row < numRows; row++)
+        {
+            QTableWidgetItem* item = ui->fileClipboardTable->item(index, 0);
+            if ((item != NULL) && (item->text().length() > 0) && (item->text().contains(searchText)))
+            {
+                ui->fileClipboardTable->setCurrentItem(ui->fileClipboardTable->item(index, 0));
+                ui->fileClipboardTable->setFocus();
+                break;
+            }
+            index = (index + 1) % numRows;
+        }
+    }
+}

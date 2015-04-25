@@ -44,6 +44,8 @@ private slots:
     void on_fileClipboardTable_cellChanged(int row, int column);
     void on_newLineCheckBox_toggled(bool checked);
     void on_sendButton_clicked();
+    void on_searchButton_clicked();
+
 private:
     Ui::FileClipboardDialog* ui;
     FileClipboardHeader* _fileClipboardHeader;
