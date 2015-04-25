@@ -134,7 +134,6 @@ void FileClipboardDialog::on_sendButton_clicked()
     sendItemTriggered(ui->fileClipboardTable->currentRow());
 }
 
-
 void FileClipboardDialog::on_searchButton_clicked()
 {
     QString searchText = ui->searchComboBox->currentText();
@@ -155,3 +154,4 @@ void FileClipboardDialog::on_searchButton_clicked()
         }
     }
 }
+
