@@ -61,7 +61,7 @@ void UpdateChecker::checkForNewVersion()
 void UpdateChecker::slotError(QNetworkReply::NetworkError err)
 {
 #ifdef QT_DEBUG
-    qDebug("Error: " + err);
+    qDebug("Error: %i", err);
 #else
     UNREF_PARAM(err);
 #endif
