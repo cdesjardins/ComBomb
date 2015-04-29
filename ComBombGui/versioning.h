@@ -23,6 +23,6 @@
 #include <stdint.h>
 
 const char* getVersion();
-int32_t parseVersionStr(std::string verStr);
+int32_t parseVersionStr(const std::string& verStr);
 
 #endif

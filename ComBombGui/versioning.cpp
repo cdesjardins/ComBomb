@@ -18,6 +18,7 @@
 */
 
 #include <boost/lexical_cast.hpp>
+#include "strtrim.h"
 #include "versioning.h"
 #include "v.h"
 
@@ -26,12 +27,14 @@ const char* getVersion()
     return CB_GIT_VER_STR;
 }
 
-int32_t parseVersionStr(std::string verStr)
+int32_t parseVersionStr(const std::string& verStr)
 {
+    std::string vs = verStr;
     int32_t ret = -1;
-    if (verStr[0] == 'v')
+    StrTrim::trim(vs);
+    if (vs[0] == 'v')
     {
-        std::string text = verStr.substr(1);
+        std::string text = vs.substr(1);
         size_t dashIndex = text.find('-');
         if (dashIndex != std::string::npos)
         {

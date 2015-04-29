@@ -52,7 +52,9 @@ void UpdateChecker::checkForNewVersion()
 {
     connect(_manager.get(), SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
 
-    _reply = _manager->get(QNetworkRequest(QUrl("http://blog.chrisd.info/download/combombversion/latest.txt")));
+    QNetworkRequest req = QNetworkRequest(QUrl("http://blog.chrisd.info/download/combombversion/latest.txt"));
+    req.setRawHeader("Accept-Encoding", "identity");
+    _reply = _manager->get(req);
 
     connect(_reply, SIGNAL(readyRead()), this, SLOT(slotReadyRead()));
     connect(_reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(slotError(QNetworkReply::NetworkError)));
