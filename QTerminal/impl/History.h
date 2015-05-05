@@ -37,11 +37,11 @@
 //
 // Buffer-based history
 //
-class HistoryScroll
+class History
 {
 public:
-    HistoryScroll();
-    virtual ~HistoryScroll();
+    History();
+    virtual ~History();
 
     virtual int getLines();
     virtual int getLineLen(size_t lineno);
@@ -49,7 +49,6 @@ public:
     virtual bool isWrappedLine(int lineno);
     virtual void clearHistory();
     virtual void addCellsVector(const std::vector<Character>& cells, bool previousWrapped);
-    virtual bool hasScroll();
 protected:
 
 private:

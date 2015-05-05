@@ -77,7 +77,7 @@ class Screen
 {
 public:
     /** Construct a new screen image of size @p lines by @p columns. */
-    Screen(const std::shared_ptr<HistoryScroll>& hist, int lines = 40, int columns = 80);
+    Screen(const std::shared_ptr<History>& hist, int lines = 40, int columns = 80);
     ~Screen();
 
     // VT100/2 Operations
@@ -393,11 +393,6 @@ public:
      * history buffer are copied into the new scroll.
      */
     void clearHistory();
-    /**
-     * Returns true if this screen keeps lines that are scrolled off the screen
-     * in a history buffer.
-     */
-    bool hasScroll();
 
     /**
      * Sets the start of the selection.
@@ -585,7 +580,7 @@ private:
     QVarLengthArray<LineProperty, 64> _lineProperties;
 
     // history buffer ---------------
-    std::shared_ptr<HistoryScroll> _hist;
+    std::shared_ptr<History> _hist;
 
     // cursor location
     int _cursorX;

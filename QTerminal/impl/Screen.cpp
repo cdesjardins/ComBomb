@@ -57,7 +57,7 @@
 
 //#define REVERSE_WRAPPED_LINES  // for wrapped line debug
 
-Screen::Screen(const std::shared_ptr<HistoryScroll>& hist, int l, int c)
+Screen::Screen(const std::shared_ptr<History>& hist, int l, int c)
     : _lines(l),
     _columns(c),
     _scrolledLines(0),
@@ -1644,68 +1644,65 @@ void Screen::addHistLine()
     // add line to history buffer
     // we have to take care about scrolling, too...
 
-    if (hasScroll())
+    int oldHistLines = _hist->getLines();
+
+    _hist->addCellsVector(_screenLines[screenLineIndex(0)], _lineProperties[0] & LINE_WRAPPED);
+
+    int newHistLines = _hist->getLines();
+
+    bool beginIsTL = (_selectionBegin == _selectionTopLeft);
+
+    // If the history is full, increment the count
+    // of dropped lines
+    if (newHistLines == oldHistLines)
     {
-        int oldHistLines = _hist->getLines();
+        _droppedLines++;
+    }
 
-        _hist->addCellsVector(_screenLines[screenLineIndex(0)], _lineProperties[0] & LINE_WRAPPED);
-
-        int newHistLines = _hist->getLines();
-
-        bool beginIsTL = (_selectionBegin == _selectionTopLeft);
-
-        // If the history is full, increment the count
-        // of dropped lines
-        if (newHistLines == oldHistLines)
-        {
-            _droppedLines++;
-        }
-
-        // Adjust selection for the new point of reference
-        if (newHistLines > oldHistLines)
-        {
-            if (_selectionBegin != -1)
-            {
-                _selectionTopLeft += _columns;
-                _selectionBottomRight += _columns;
-            }
-        }
-
+    // Adjust selection for the new point of reference
+    if (newHistLines > oldHistLines)
+    {
         if (_selectionBegin != -1)
         {
-            // Scroll selection in history up
-            int top_BR = loc(0, 1 + newHistLines);
+            _selectionTopLeft += _columns;
+            _selectionBottomRight += _columns;
+        }
+    }
 
-            if (_selectionTopLeft < top_BR)
-            {
-                _selectionTopLeft -= _columns;
-            }
+    if (_selectionBegin != -1)
+    {
+        // Scroll selection in history up
+        int top_BR = loc(0, 1 + newHistLines);
 
-            if (_selectionBottomRight < top_BR)
-            {
-                _selectionBottomRight -= _columns;
-            }
+        if (_selectionTopLeft < top_BR)
+        {
+            _selectionTopLeft -= _columns;
+        }
 
-            if (_selectionBottomRight < 0)
-            {
-                clearSelection();
-            }
-            else
-            {
-                if (_selectionTopLeft < 0)
-                {
-                    _selectionTopLeft = 0;
-                }
-            }
+        if (_selectionBottomRight < top_BR)
+        {
+            _selectionBottomRight -= _columns;
+        }
 
-            if (beginIsTL)
+        if (_selectionBottomRight < 0)
+        {
+            clearSelection();
+        }
+        else
+        {
+            if (_selectionTopLeft < 0)
             {
-                _selectionBegin = _selectionTopLeft;
+                _selectionTopLeft = 0;
             }
-            else
-            {
-                _selectionBegin = _selectionBottomRight;
-            }
+        }
+
+        if (beginIsTL)
+        {
+            _selectionBegin = _selectionTopLeft;
+        }
+        else
+        {
+            _selectionBegin = _selectionBottomRight;
         }
     }
 }
@@ -1719,11 +1716,6 @@ void Screen::clearHistory()
 {
     clearSelection();
     _hist->clearHistory();
-}
-
-bool Screen::hasScroll()
-{
-    return _hist->hasScroll();
 }
 
 void Screen::setLineProperty(LineProperty property, bool enable)

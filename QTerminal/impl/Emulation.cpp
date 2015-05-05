@@ -57,7 +57,7 @@ Emulation::Emulation() :
     QObject::connect(&_bulkTimer1, SIGNAL(timeout()), this, SLOT(showBulk()));
     QObject::connect(&_bulkTimer2, SIGNAL(timeout()), this, SLOT(showBulk()));
 
-    std::shared_ptr<HistoryScroll> hist(new HistoryScroll());
+    std::shared_ptr<History> hist(new History());
     _screen.append(std::shared_ptr<Screen>(new Screen(hist)));
     _screen.append(std::shared_ptr<Screen>(new Screen(hist)));
 

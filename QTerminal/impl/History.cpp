@@ -36,23 +36,18 @@
 // Reasonable line size
 #define LINE_SIZE   1024
 
-bool HistoryScroll::hasScroll()
-{
-    return true;
-}
-
-HistoryScroll::HistoryScroll()
+History::History()
     : _historyBuffer(new std::vector<std::vector<Character> >())
 {
     _clearHistoryThread = WorkQueue<std::vector<std::vector<Character> > >::createWorkQueue
-                              (std::bind(&HistoryScroll::clearHistoryThread, this, std::placeholders::_1));
+                              (std::bind(&History::clearHistoryThread, this, std::placeholders::_1));
 }
 
-HistoryScroll::~HistoryScroll()
+History::~History()
 {
 }
 
-void HistoryScroll::clearHistory()
+void History::clearHistory()
 {
     std::shared_ptr<std::vector<std::vector<Character> > > historyBuffer = _historyBuffer;
     _historyBuffer.reset(new std::vector<std::vector<Character> >());
@@ -60,7 +55,7 @@ void HistoryScroll::clearHistory()
     _clearHistoryThread->processData(historyBuffer);
 }
 
-void HistoryScroll::clearHistoryThread(std::shared_ptr<std::vector<std::vector<Character> > > historyBuffer)
+void History::clearHistoryThread(std::shared_ptr<std::vector<std::vector<Character> > > historyBuffer)
 {
     historyBuffer->clear();
 #ifndef WIN32
@@ -71,19 +66,19 @@ void HistoryScroll::clearHistoryThread(std::shared_ptr<std::vector<std::vector<C
 #endif
 }
 
-void HistoryScroll::addCellsVector(const std::vector<Character>& cells, bool previousWrapped)
+void History::addCellsVector(const std::vector<Character>& cells, bool previousWrapped)
 {
     _historyBuffer->push_back(cells);
     _wrappedLine.resize(_historyBuffer->size());
     _wrappedLine[_wrappedLine.size() - 1] = previousWrapped;
 }
 
-int HistoryScroll::getLines()
+int History::getLines()
 {
     return _historyBuffer->size();
 }
 
-int HistoryScroll::getLineLen(size_t lineNumber)
+int History::getLineLen(size_t lineNumber)
 {
     Q_ASSERT(lineNumber < _historyBuffer->size());
 
@@ -97,7 +92,7 @@ int HistoryScroll::getLineLen(size_t lineNumber)
     }
 }
 
-bool HistoryScroll::isWrappedLine(int lineNumber)
+bool History::isWrappedLine(int lineNumber)
 {
     Q_ASSERT(lineNumber >= 0 && lineNumber < _wrappedLine.size());
 
@@ -111,7 +106,7 @@ bool HistoryScroll::isWrappedLine(int lineNumber)
     }
 }
 
-void HistoryScroll::getCells(size_t lineNumber, int startColumn, int count, std::vector<Character>::iterator buffer, Character defaultChar)
+void History::getCells(size_t lineNumber, int startColumn, int count, std::vector<Character>::iterator buffer, Character defaultChar)
 {
     if (count == 0)
     {
