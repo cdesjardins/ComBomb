@@ -25,14 +25,10 @@
 
 // Qt
 #include <QtCore/QBitRef>
-#include <QtCore/QHash>
-#include <QtCore>
 
 // Konsole
 #include "Character.h"
-#include "workqueue.h"
-#include <memory>
-#include <thread>
+#include <boost/circular_buffer.hpp>
 
 //
 // Buffer-based history
@@ -52,10 +48,8 @@ public:
 protected:
 
 private:
-    void clearHistoryThread(std::shared_ptr<std::vector<std::vector<Character> > > historyBuffer);
-    std::shared_ptr<WorkQueue<std::vector<std::vector<Character> > > > _clearHistoryThread;
+    boost::circular_buffer<std::vector<Character> > _historyBuffer;
 
-    std::shared_ptr<std::vector<std::vector<Character> > > _historyBuffer;
     QBitArray _wrappedLine;
 };
 

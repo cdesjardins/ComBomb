@@ -33,14 +33,14 @@
 #ifndef WIN32
 #include <malloc.h>
 #endif
+
+#include <QThread>
 // Reasonable line size
 #define LINE_SIZE   1024
 
 History::History()
-    : _historyBuffer(new std::vector<std::vector<Character> >())
+    : _historyBuffer(1000000)
 {
-    _clearHistoryThread = WorkQueue<std::vector<std::vector<Character> > >::createWorkQueue
-                              (std::bind(&History::clearHistoryThread, this, std::placeholders::_1));
 }
 
 History::~History()
@@ -49,42 +49,29 @@ History::~History()
 
 void History::clearHistory()
 {
-    std::shared_ptr<std::vector<std::vector<Character> > > historyBuffer = _historyBuffer;
-    _historyBuffer.reset(new std::vector<std::vector<Character> >());
     _wrappedLine.clear();
-    _clearHistoryThread->processData(historyBuffer);
-}
-
-void History::clearHistoryThread(std::shared_ptr<std::vector<std::vector<Character> > > historyBuffer)
-{
-    historyBuffer->clear();
-#ifndef WIN32
-    // Clearing the history can free a ton of memory, but only small chunks
-    // on linux this was causing the memory usage to remain high even after
-    // a clear screen.
-    malloc_trim(0);
-#endif
+    _historyBuffer.clear();
 }
 
 void History::addCellsVector(const std::vector<Character>& cells, bool previousWrapped)
 {
-    _historyBuffer->push_back(cells);
-    _wrappedLine.resize(_historyBuffer->size());
+    _historyBuffer.push_back(cells);
+    _wrappedLine.resize(_historyBuffer.size());
     _wrappedLine[_wrappedLine.size() - 1] = previousWrapped;
 }
 
 int History::getLines()
 {
-    return _historyBuffer->size();
+    return _historyBuffer.size();
 }
 
 int History::getLineLen(size_t lineNumber)
 {
-    Q_ASSERT(lineNumber < _historyBuffer->size());
+    Q_ASSERT(lineNumber < _historyBuffer.size());
 
-    if (lineNumber < _historyBuffer->size())
+    if (lineNumber < _historyBuffer.size())
     {
-        return (*_historyBuffer)[lineNumber].size();
+        return _historyBuffer[lineNumber].size();
     }
     else
     {
@@ -113,7 +100,7 @@ void History::getCells(size_t lineNumber, int startColumn, int count, std::vecto
         return;
     }
 
-    if (lineNumber >= _historyBuffer->size())
+    if (lineNumber >= _historyBuffer.size())
     {
         for (int index = 0; index < count; index++)
         {
@@ -122,13 +109,11 @@ void History::getCells(size_t lineNumber, int startColumn, int count, std::vecto
         return;
     }
 
-    const std::vector<Character>& line = (*_historyBuffer)[lineNumber];
-
-    Q_ASSERT((size_t)startColumn <= line.size() - count);
+    Q_ASSERT((size_t)startColumn <= _historyBuffer[lineNumber].size() - count);
 
     for (int index = 0; index < count; index++)
     {
-        buffer[index] = line[index + startColumn];
+        buffer[index] = _historyBuffer[lineNumber][index + startColumn];
     }
 }
 
