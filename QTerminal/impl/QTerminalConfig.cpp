@@ -27,7 +27,7 @@
 
 QTerminalConfig::QTerminalConfig()
     : _wordSelectionDelimiters("@-./_~"),
-      _histSize(500000)
+    _histSize(500000)
 {
     QFontDatabase database;
 
@@ -92,6 +92,7 @@ QDataStream& operator>>(QDataStream& in, QTerminalConfig& q)
         case CP_TERM_CFG_VER_1:
             QTerminalConfig::readCfgV1(in, q);
             break;
+
         case CP_TERM_CFG_VER_2:
             QTerminalConfig::readCfgV2(in, q);
             break;
