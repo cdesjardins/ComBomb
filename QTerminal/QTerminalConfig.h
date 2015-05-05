@@ -30,7 +30,9 @@ public:
     QTerminalConfig();
     QString _wordSelectionDelimiters;
     QFont _font;
+    size_t _histSize;
     static void readCfgV1(QDataStream& in, QTerminalConfig& q);
+    static void readCfgV2(QDataStream& in, QTerminalConfig& q);
 };
 
 QDataStream& operator<<(QDataStream& out, const QTerminalConfig& q);

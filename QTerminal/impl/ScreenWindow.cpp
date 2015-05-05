@@ -373,6 +373,11 @@ void ScreenWindow::scrollTo(int line)
     emit scrolled(_currentLine);
 }
 
+void ScreenWindow::scrollToEnd()
+{
+    scrollTo(lineCount() - windowLines());
+}
+
 void ScreenWindow::setTrackOutput(bool trackOutput)
 {
     _trackOutput = trackOutput;

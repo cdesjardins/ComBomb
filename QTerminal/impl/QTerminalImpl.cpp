@@ -47,7 +47,7 @@ void QTerminalImpl::initialize(const QTerminalConfig& terminalConfig, const std:
 
     setFocusProxy(_terminalView.get());
 
-    _terminalModel.reset(new TerminalModel(targetInterface));
+    _terminalModel.reset(new TerminalModel(targetInterface, terminalConfig._histSize));
     _terminalModel->setCodec(QTextCodec::codecForName("UTF-8"));
     _terminalModel->setDarkBackground(true);
     _terminalModel->setKeyBindings("");
@@ -94,6 +94,10 @@ void QTerminalImpl::connectToRecvText(QObject* who)
 void QTerminalImpl::applyTerminalConfig(const QTerminalConfig& terminalConfig)
 {
     _terminalView->setWordCharacters(terminalConfig._wordSelectionDelimiters);
+    if (_terminalModel->resizeHistory(terminalConfig._histSize) == true)
+    {
+        _terminalView->scrollToEnd();
+    }
     setTerminalFont(terminalConfig._font);
 }
 

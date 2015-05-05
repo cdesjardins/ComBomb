@@ -22,10 +22,12 @@
 #include <QStringList>
 
 #define CP_TERM_CFG_VER_1       1
-#define CP_TERM_CFG_LATEST      CP_TERM_CFG_VER_1
+#define CP_TERM_CFG_VER_2       2 // added history size
+#define CP_TERM_CFG_LATEST      CP_TERM_CFG_VER_2
 
 QTerminalConfig::QTerminalConfig()
-    : _wordSelectionDelimiters("@-./_~")
+    : _wordSelectionDelimiters("@-./_~"),
+      _histSize(500000)
 {
     QFontDatabase database;
 
@@ -47,6 +49,7 @@ QDataStream& operator<<(QDataStream& out, const QTerminalConfig& q)
     out << q._wordSelectionDelimiters;
     out << q._font.family();
     out << q._font.pointSize();
+    out << q._histSize;
     return out;
 }
 
@@ -73,6 +76,12 @@ void QTerminalConfig::readCfgV1(QDataStream& in, QTerminalConfig& q)
     }
 }
 
+void QTerminalConfig::readCfgV2(QDataStream& in, QTerminalConfig& q)
+{
+    readCfgV1(in, q);
+    in >> q._histSize;
+}
+
 QDataStream& operator>>(QDataStream& in, QTerminalConfig& q)
 {
     int version;
@@ -82,6 +91,9 @@ QDataStream& operator>>(QDataStream& in, QTerminalConfig& q)
     {
         case CP_TERM_CFG_VER_1:
             QTerminalConfig::readCfgV1(in, q);
+            break;
+        case CP_TERM_CFG_VER_2:
+            QTerminalConfig::readCfgV2(in, q);
             break;
     }
     return in;

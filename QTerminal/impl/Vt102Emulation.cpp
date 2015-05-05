@@ -76,8 +76,8 @@ void scrolllock_set_on();
 /*                                                                           */
 /* ------------------------------------------------------------------------- */
 
-Vt102Emulation::Vt102Emulation()
-    : Emulation(),
+Vt102Emulation::Vt102Emulation(size_t histSize)
+    : Emulation(histSize),
     _titleUpdateTimer(new QTimer(this))
 {
     _titleUpdateTimer->setSingleShot(true);

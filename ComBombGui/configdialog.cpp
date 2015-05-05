@@ -52,6 +52,8 @@ ConfigDialog::ConfigDialog(QWidget* parent) :
     ui->tabsRadioButton->setChecked(getTabbedViewSettings());
     ui->blackRadioButton->setChecked(getBlackBackSettings());
     ui->whiteRadioButton->setChecked(!getBlackBackSettings());
+    ui->historyLineEdit->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
+    ui->historyLineEdit->setText(QString("%1").arg(terminalConfig._histSize));
 }
 
 void ConfigDialog::setPortListSettings()
@@ -153,6 +155,7 @@ void ConfigDialog::on_buttonBox_accepted()
     QTerminalConfig terminalConfig;
     QDataStream q(&qbytes, QIODevice::WriteOnly);
     terminalConfig._wordSelectionDelimiters = ui->wordSelectionDelimitersLineEdit->text().toLocal8Bit().constData();
+    terminalConfig._histSize = ui->historyLineEdit->text().toLong();
     terminalConfig._font = ui->fontComboBox->currentFont();
     terminalConfig._font.setPointSize(ui->fontSizeComboBox->currentData().toInt());
     q << terminalConfig;

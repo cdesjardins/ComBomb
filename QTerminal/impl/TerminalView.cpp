@@ -1463,6 +1463,11 @@ void TerminalView::scrollBarPositionChanged(int)
     updateImage();
 }
 
+void TerminalView::scrollToEnd()
+{
+    _screenWindow->scrollToEnd();
+}
+
 void TerminalView::setScroll(int cursor, int slines)
 {
     //qDebug("%s %d setScroll", __FILE__, __LINE__);

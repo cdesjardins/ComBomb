@@ -44,7 +44,7 @@
 
 Q_DECLARE_METATYPE(boost::intrusive_ptr<RefCntBuffer>)
 
-TerminalModel::TerminalModel(const std::shared_ptr<TgtIntf>& targetInterface) :
+TerminalModel::TerminalModel(const std::shared_ptr<TgtIntf>& targetInterface, size_t histSize) :
     _monitorActivity(false)
     , _monitorSilence(false)
     , _notifiedActivity(false)
@@ -58,7 +58,7 @@ TerminalModel::TerminalModel(const std::shared_ptr<TgtIntf>& targetInterface) :
 {
     qRegisterMetaType<boost::intrusive_ptr<RefCntBuffer> >();
     //create emulation backend
-    _emulation.reset(new Vt102Emulation());
+    _emulation.reset(new Vt102Emulation(histSize));
     connect(_emulation.get(), SIGNAL(stateSet(int)), this, SLOT(activityStateSet(int)));
     connect(_emulation.get(), SIGNAL(changeTabTextColorRequest(int)), this, SIGNAL(changeTabTextColorRequest(int)));
     connect(_emulation.get(), SIGNAL(profileChangeCommandReceived(const QString &)), this, SIGNAL(profileChangeCommandReceived(const QString &)));
@@ -245,10 +245,6 @@ void TerminalModel::updateTerminalSize()
     }
 }
 
-void TerminalModel::refresh()
-{
-}
-
 void TerminalModel::closeEvent(QCloseEvent*)
 {
     _closed = true;
@@ -329,6 +325,11 @@ void TerminalModel::setKeyBindings(const QString& id)
 void TerminalModel::clearHistory()
 {
     _emulation->clearHistory();
+}
+
+bool TerminalModel::resizeHistory(size_t histSize)
+{
+    return _emulation->resizeHistory(histSize);
 }
 
 void TerminalModel::clearScreen()

@@ -80,7 +80,7 @@ class Vt102Emulation : public Emulation
 public:
 
     /** Constructs a new emulation */
-    Vt102Emulation();
+    Vt102Emulation(size_t histSize);
     ~Vt102Emulation();
 
     // reimplemented

@@ -37,7 +37,6 @@
 #include <QtCore/QTimer>
 
 class KeyboardTranslator;
-class HistoryType;
 class Screen;
 class ScreenWindow;
 class TerminalCharacterDecoder;
@@ -123,7 +122,7 @@ class Emulation : public QObject
 public:
 
     /** Constructs a new terminal emulation */
-    Emulation();
+    Emulation(size_t histSize);
     ~Emulation();
 
     /**
@@ -143,6 +142,7 @@ public:
 
     /** Clears the history scroll. */
     void clearHistory();
+    bool resizeHistory(size_t histSize);
 
     /** Returns the codec used to decode incoming characters.  See setCodec() */
     const QTextCodec* codec()

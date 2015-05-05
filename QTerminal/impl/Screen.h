@@ -393,7 +393,7 @@ public:
      * history buffer are copied into the new scroll.
      */
     void clearHistory();
-
+    bool resizeHistory(size_t histSize);
     /**
      * Sets the start of the selection.
      *

@@ -71,7 +71,7 @@ public:
      * falls back to using the program specified in the SHELL environment
      * variable.
      */
-    TerminalModel(const std::shared_ptr<TgtIntf>& targetInterface);
+    TerminalModel(const std::shared_ptr<TgtIntf>& targetInterface, size_t histSize);
     ~TerminalModel();
 
     /**
@@ -103,6 +103,7 @@ public:
      * Clears the history store used by this session.
      */
     void clearHistory();
+    bool resizeHistory(size_t histSize);
     void clearScreen();
     void suppressOutput(bool suppress);
     /**
@@ -181,12 +182,6 @@ public:
      */
     bool hasDarkBackground() const;
 
-    /**
-     * Attempts to get the shell program to redraw the current display area.
-     * This can be used after clearing the screen, for example, to get the
-     * shell to redraw the prompt line.
-     */
-    void refresh();
     void newlineToggle();
     bool newlines();
     void connectToRecvText(QObject* who);

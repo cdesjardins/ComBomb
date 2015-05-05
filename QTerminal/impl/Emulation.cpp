@@ -48,7 +48,7 @@
 #include "TerminalCharacterDecoder.h"
 #include "ScreenWindow.h"
 
-Emulation::Emulation() :
+Emulation::Emulation(size_t histSize) :
     _currentScreenIndex(0),
     _codec(0),
     _decoder(NULL),
@@ -57,7 +57,7 @@ Emulation::Emulation() :
     QObject::connect(&_bulkTimer1, SIGNAL(timeout()), this, SLOT(showBulk()));
     QObject::connect(&_bulkTimer2, SIGNAL(timeout()), this, SLOT(showBulk()));
 
-    std::shared_ptr<History> hist(new History());
+    std::shared_ptr<History> hist(new History(histSize));
     _screen.append(std::shared_ptr<Screen>(new Screen(hist)));
     _screen.append(std::shared_ptr<Screen>(new Screen(hist)));
 
@@ -125,6 +125,11 @@ void Emulation::setScreen(int n)
 void Emulation::clearHistory()
 {
     _screen[_currentScreenIndex]->clearHistory();
+}
+
+bool Emulation::resizeHistory(size_t histSize)
+{
+    return _screen[_currentScreenIndex]->resizeHistory(histSize);
 }
 
 void Emulation::home()

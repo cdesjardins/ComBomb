@@ -1718,6 +1718,11 @@ void Screen::clearHistory()
     _hist->clearHistory();
 }
 
+bool Screen::resizeHistory(size_t histSize)
+{
+    return _hist->resizeHistory(histSize);
+}
+
 void Screen::setLineProperty(LineProperty property, bool enable)
 {
     if (enable)

@@ -173,6 +173,7 @@ public:
 
     /** Scrolls the window so that @p line is at the top of the window */
     void scrollTo(int line);
+    void scrollToEnd();
 
     enum RelativeScrollMode
     {

@@ -38,8 +38,8 @@
 // Reasonable line size
 #define LINE_SIZE   1024
 
-History::History()
-    : _historyBuffer(1000000)
+History::History(size_t histSize)
+    : _historyBuffer(histSize)
 {
 }
 
@@ -51,6 +51,17 @@ void History::clearHistory()
 {
     _wrappedLine.clear();
     _historyBuffer.clear();
+}
+
+bool History::resizeHistory(size_t histSize)
+{
+    bool ret = false;
+    if (histSize != _historyBuffer.capacity())
+    {
+        ret = histSize < _historyBuffer.capacity();
+        _historyBuffer.rset_capacity(histSize);
+    }
+    return ret;
 }
 
 void History::addCellsVector(const std::vector<Character>& cells, bool previousWrapped)
@@ -79,11 +90,11 @@ int History::getLineLen(size_t lineNumber)
     }
 }
 
-bool History::isWrappedLine(int lineNumber)
+bool History::isWrappedLine(size_t lineNumber)
 {
-    Q_ASSERT(lineNumber >= 0 && lineNumber < _wrappedLine.size());
+    Q_ASSERT(lineNumber >= 0 && lineNumber < (size_t)_wrappedLine.size());
 
-    if (lineNumber < _wrappedLine.size())
+    if (lineNumber < (size_t)_wrappedLine.size())
     {
         return _wrappedLine[lineNumber];
     }

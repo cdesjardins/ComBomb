@@ -97,6 +97,7 @@ public:
      * @param lines The maximum value of the scroll bar.
      */
     void setScroll(int cursor, int lines);
+    void scrollToEnd();
 
     /** Returns true if the cursor is set to blink or false otherwise. */
     bool blinkingCursor()
