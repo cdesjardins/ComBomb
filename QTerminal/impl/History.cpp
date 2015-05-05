@@ -92,11 +92,11 @@ int History::getLineLen(size_t lineNumber)
 
 bool History::isWrappedLine(size_t lineNumber)
 {
-    Q_ASSERT(lineNumber >= 0 && lineNumber < (size_t)_wrappedLine.size());
+    Q_ASSERT(lineNumber < (size_t)_wrappedLine.size());
 
     if (lineNumber < (size_t)_wrappedLine.size())
     {
-        return _wrappedLine[lineNumber];
+        return _wrappedLine[(uint)lineNumber];
     }
     else
     {

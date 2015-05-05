@@ -49,7 +49,7 @@ QDataStream& operator<<(QDataStream& out, const QTerminalConfig& q)
     out << q._wordSelectionDelimiters;
     out << q._font.family();
     out << q._font.pointSize();
-    out << q._histSize;
+    out << (uint)q._histSize;
     return out;
 }
 
@@ -79,7 +79,7 @@ void QTerminalConfig::readCfgV1(QDataStream& in, QTerminalConfig& q)
 void QTerminalConfig::readCfgV2(QDataStream& in, QTerminalConfig& q)
 {
     readCfgV1(in, q);
-    in >> q._histSize;
+    in >> (uint&)q._histSize;
 }
 
 QDataStream& operator>>(QDataStream& in, QTerminalConfig& q)
