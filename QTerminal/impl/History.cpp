@@ -51,6 +51,12 @@ void History::clearHistory()
 {
     _wrappedLine.clear();
     _historyBuffer.clear();
+#ifndef WIN32
+    // Clearing the history can free a ton of memory, but only small chunks
+    // on linux this was causing the memory usage to remain high even after
+    // a clear screen.
+    malloc_trim(0);
+#endif
 }
 
 bool History::resizeHistory(size_t histSize)
