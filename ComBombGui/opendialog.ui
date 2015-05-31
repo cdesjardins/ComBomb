@@ -438,6 +438,9 @@
   <tabstop>privKeyFileComboBox</tabstop>
   <tabstop>privKeyBrowseButton</tabstop>
   <tabstop>newLineCheckBox</tabstop>
+  <tabstop>portNumLineEdit</tabstop>
+  <tabstop>telnetHostNameComboBox</tabstop>
+  <tabstop>telnetPortNumLineEdit</tabstop>
   <tabstop>comPortComboBox</tabstop>
   <tabstop>baudRateComboBox</tabstop>
   <tabstop>parityComboBox</tabstop>
@@ -449,7 +452,12 @@
   <tabstop>argumentsComboBox</tabstop>
   <tabstop>workingDirComboBox</tabstop>
   <tabstop>workingDirButton</tabstop>
-  <tabstop>portNumLineEdit</tabstop>
+  <tabstop>cppsshHostNameComboBox</tabstop>
+  <tabstop>cppsshUserNameComboBox</tabstop>
+  <tabstop>cppsshPasswordLineEdit</tabstop>
+  <tabstop>cppsshPrivKeyFileComboBox</tabstop>
+  <tabstop>cppsshPrivKeyBrowseButton</tabstop>
+  <tabstop>cppsshPortNumLineEdit</tabstop>
   <tabstop>tabWidget</tabstop>
  </tabstops>
  <resources>
