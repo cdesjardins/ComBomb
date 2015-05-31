@@ -20,9 +20,11 @@
 #include "TgtSshConnection.h"
 #include "TgtThread.h"
 #include "CBException.h"
+#include "CDLogger/Logger.h"
 #include <boost/format.hpp>
 #include <boost/bind.hpp>
 #include <sstream>
+#define LOG_TAG "SshConnection"
 
 class TgtSshInit
 {
@@ -322,6 +324,7 @@ bool TgtSshIntf::sshSend()
         }
         else
         {
+            cdLog(LogLevel::Debug) << data;
             status = cryptFlushData(_sshData->_cryptSession);
             if (cryptStatusError(status))
             {

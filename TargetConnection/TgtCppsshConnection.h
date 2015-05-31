@@ -34,8 +34,6 @@ public:
     virtual void tgtGetTitle(std::string* szTitle);
 
 protected:
-    bool tryPrivateKey(std::shared_ptr<const TgtConnectionConfig> connectionConfig);
-    void tgtGetErrorMsg(std::string* errmsg, int status, const std::string& defaultErrMsg);
     TgtCppsshIntf(const std::shared_ptr<const TgtConnectionConfig>& config);
     bool sshThread();
     bool sshRecv();

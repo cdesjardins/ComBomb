@@ -20,9 +20,11 @@
 #include "TgtCppsshConnection.h"
 #include "TgtThread.h"
 #include "CBException.h"
+#include "CDLogger/Logger.h"
 #include <boost/format.hpp>
 #include <boost/bind.hpp>
 #include <sstream>
+#define LOG_TAG "CppsshConnection"
 
 class TgtCppsshInit
 {
@@ -98,10 +100,6 @@ TgtCppsshIntf::~TgtCppsshIntf()
     _sshData.reset();
 }
 
-void TgtCppsshIntf::tgtGetErrorMsg(std::string* errmsg, int sts, const std::string& defaultErrMsg)
-{
-}
-
 void TgtCppsshIntf::tgtMakeConnection()
 {
     std::shared_ptr<const TgtConnectionConfig> connectionConfig = std::dynamic_pointer_cast<const TgtConnectionConfig>(_connectionConfig);
@@ -112,13 +110,6 @@ void TgtCppsshIntf::tgtMakeConnection()
     {
         _sshData->_sshThread = TgtThread::create(boost::bind(std::bind(&TgtCppsshIntf::sshThread, this)));
     }
-}
-
-bool TgtCppsshIntf::tryPrivateKey(std::shared_ptr<const TgtConnectionConfig> connectionConfig)
-{
-    bool ret = false;
-
-    return ret;
 }
 
 void TgtCppsshIntf::tgtBreakConnection()
@@ -160,7 +151,11 @@ bool TgtCppsshIntf::sshSend()
 
         if (Cppssh::write(_sshData->_connectionId, data, boost::asio::buffer_size(b->_buffer)) == false)
         {
-            // FIXME: Report error
+            cdLog(LogLevel::Error) << "Unable to write to host";
+        }
+        else
+        {
+            cdLog(LogLevel::Debug) << data;
         }
     }
     return ret;
@@ -186,10 +181,11 @@ bool TgtCppsshIntf::sshRecv()
                 {
                     qint64 len = msg.length() - sentBytes;
                     size_t copyLen = std::min((size_t)len, boost::asio::buffer_size(currentIncomingBuffer->_buffer) - 1);
-                    boost::asio::const_buffer b = boost::asio::buffer(msg.message() + sentBytes, len);
+                    boost::asio::const_buffer b = boost::asio::const_buffer(msg.message() + sentBytes, len);
                     sentBytes += boost::asio::buffer_copy(currentIncomingBuffer->_buffer, b, copyLen);
                     currentIncomingBuffer->_buffer = boost::asio::buffer(currentIncomingBuffer->_buffer, copyLen);
                     _incomingData.enqueue(currentIncomingBuffer);
+                    //cdLog(LogLevel::Debug) << msg.message();
                 }
                 else
                 {
@@ -198,7 +194,7 @@ bool TgtCppsshIntf::sshRecv()
                 }
             }
         }
-    } while ((sentBytes > 0) && (_sshData->_sshThread->threadRun() == true));
+    } while ((sentBytes > 0) && (ret == true) && (_sshData->_sshThread->threadRun() == true));
     return ret;
 }
 
