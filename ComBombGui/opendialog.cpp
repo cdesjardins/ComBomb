@@ -43,10 +43,13 @@ OpenDialog::OpenDialog(QWidget* parent) :
     addByteSize();
     addFlowControl();
     ui->portNumLineEdit->setValidator(new QIntValidator(0, 65536, this));
-    ui->passwordLineEdit->setEchoMode(QLineEdit::Password);
+    ui->cppsshPortNumLineEdit->setValidator(new QIntValidator(0, 65536, this));
     QSettings settings;
     ui->tabWidget->setCurrentIndex(settings.value(CB_OPEN_CONN_TYPE, CB_CONN_SSH).toInt());
     ui->newLineCheckBox->setChecked(settings.value(CB_OPEN_CONN_CRLF, false).toBool());
+#ifndef QT_DEBUG
+    ui->tabWidget->setTabEnabled(CB_CONN_CPPSSH, false);
+#endif
 }
 
 OpenDialog::ConnectionType OpenDialog::getConnectionType()
@@ -70,6 +73,17 @@ std::shared_ptr<const TgtSshIntf::TgtConnectionConfig> OpenDialog::getSshConfig(
                                                              ui->userNameComboBox->currentText().toLocal8Bit().constData(),
                                                              ui->passwordLineEdit->text().toLocal8Bit().constData(),
                                                              ui->privKeyFileComboBox->currentText().toLocal8Bit().constData()));
+    return ret;
+}
+
+std::shared_ptr<const TgtCppsshIntf::TgtConnectionConfig> OpenDialog::getCppsshConfig() const
+{
+    std::shared_ptr<TgtCppsshIntf::TgtConnectionConfig> ret(new TgtCppsshIntf::TgtConnectionConfig(
+                                                             ui->cppsshHostNameComboBox->currentText().toLocal8Bit().constData(),
+                                                             ui->cppsshPortNumLineEdit->text().toInt(),
+                                                             ui->cppsshUserNameComboBox->currentText().toLocal8Bit().constData(),
+                                                             ui->cppsshPasswordLineEdit->text().toLocal8Bit().constData(),
+                                                             ui->cppsshPrivKeyFileComboBox->currentText().toLocal8Bit().constData()));
     return ret;
 }
 

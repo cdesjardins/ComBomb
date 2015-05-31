@@ -16,7 +16,8 @@ SOURCES += \
     TgtSshConnection.cpp \
     TgtSerialConnection.cpp \
     TgtProcessConnection.cpp \
-    TgtThread.cpp
+    TgtThread.cpp \
+    TgtCppsshConnection.cpp
 
 HEADERS += \
     TgtTelnetConnection.h \
@@ -25,7 +26,8 @@ HEADERS += \
     TgtConnection.h \
     CBException.h \
     TgtProcessConnection.h \
-    TgtThread.h
+    TgtThread.h \
+    TgtCppsshConnection.h
 unix:!symbian {
     maemo5 {
         target.path = /opt/usr/lib
@@ -62,3 +64,6 @@ QMAKE_CXXFLAGS_DEBUG += -MTd
 QMAKE_LFLAGS_DEBUG += /NODEFAULTLIB:msvcrtd.lib
 QMAKE_LFLAGS_RELEASE += /NODEFAULTLIB:msvcrt.lib
 }
+
+# cppssh
+QMAKE_CXXFLAGS += -DCPPSSH_STATIC

@@ -148,6 +148,13 @@ void MainWindow::on_actionOpen_triggered()
                 }
                 break;
 
+                case OpenDialog::CB_CONN_CPPSSH:
+                {
+                    std::shared_ptr<const TgtCppsshIntf::TgtConnectionConfig> p = openDialog.getCppsshConfig();
+                    intf = TgtCppsshIntf::createCppsshConnection(p);
+                }
+                break;
+
                 case OpenDialog::CB_CONN_TELNET:
                 {
                     std::shared_ptr<const TgtTelnetIntf::TgtConnectionConfig> p = openDialog.getTelnetConfig();

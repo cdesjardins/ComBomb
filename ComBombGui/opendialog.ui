@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>470</width>
-    <height>333</height>
+    <height>263</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -62,7 +62,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>4</number>
      </property>
      <widget class="QWidget" name="Ssh">
       <property name="layoutDirection">
@@ -71,8 +71,8 @@
       <attribute name="title">
        <string>SSH</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_5">
-       <item row="0" column="0">
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
         <widget class="QWidget" name="OpenSsh" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -130,7 +130,11 @@
            </widget>
           </item>
           <item row="3" column="2" colspan="2">
-           <widget class="QLineEdit" name="passwordLineEdit"/>
+           <widget class="QLineEdit" name="passwordLineEdit">
+            <property name="echoMode">
+             <enum>QLineEdit::Password</enum>
+            </property>
+           </widget>
           </item>
           <item row="0" column="2">
            <widget class="QLabel" name="label_9">
@@ -178,62 +182,58 @@
       <attribute name="title">
        <string>Telnet</string>
       </attribute>
-      <widget class="QWidget" name="OpenTelnet" native="true">
-       <property name="geometry">
-        <rect>
-         <x>9</x>
-         <y>9</y>
-         <width>431</width>
-         <height>140</height>
-        </rect>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout">
-        <item>
-         <widget class="QLabel" name="label_7">
-          <property name="text">
-           <string>Hostname</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="CBComboBox" name="telnetHostNameComboBox">
-          <property name="editable">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_12">
-          <property name="text">
-           <string>Port</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="telnetPortNumLineEdit">
-          <property name="maximumSize">
-           <size>
-            <width>197</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="inputMethodHints">
-           <set>Qt::ImhDigitsOnly</set>
-          </property>
-          <property name="text">
-           <string>23</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QWidget" name="OpenTelnet" native="true">
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <item>
+           <widget class="QLabel" name="label_7">
+            <property name="text">
+             <string>Hostname</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="CBComboBox" name="telnetHostNameComboBox">
+            <property name="editable">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_12">
+            <property name="text">
+             <string>Port</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="telnetPortNumLineEdit">
+            <property name="maximumSize">
+             <size>
+              <width>197</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="inputMethodHints">
+             <set>Qt::ImhDigitsOnly</set>
+            </property>
+            <property name="text">
+             <string>23</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
      </widget>
      <widget class="QWidget" name="Serial">
       <attribute name="title">
        <string>Serial</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_6">
-       <item row="0" column="0">
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
         <widget class="QWidget" name="OpenSerial" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -343,8 +343,8 @@
       <attribute name="title">
        <string>Process</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_9">
-       <item row="0" column="0">
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
         <widget class="QWidget" name="widget" native="true">
          <layout class="QGridLayout" name="gridLayout_4">
           <item row="0" column="0">
@@ -412,6 +412,117 @@
             </property>
             <property name="text">
              <string>Browse</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="cppsshTab">
+      <attribute name="title">
+       <string>CPPSSH</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_6">
+       <item>
+        <widget class="QWidget" name="OpenCppSsh" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_7">
+          <item row="3" column="0">
+           <widget class="CBComboBox" name="cppsshUserNameComboBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="editable">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_14">
+            <property name="text">
+             <string>Hostname</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="CBComboBox" name="cppsshHostNameComboBox">
+            <property name="editable">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_15">
+            <property name="text">
+             <string>Username</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2">
+           <widget class="QLabel" name="label_16">
+            <property name="text">
+             <string>Password</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="3">
+           <widget class="QPushButton" name="cppsshPrivKeyBrowseButton">
+            <property name="text">
+             <string>Browse</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="2" colspan="2">
+           <widget class="QLineEdit" name="cppsshPasswordLineEdit">
+            <property name="echoMode">
+             <enum>QLineEdit::Password</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLabel" name="label_17">
+            <property name="text">
+             <string>Port</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0" colspan="3">
+           <widget class="CBComboBox" name="cppsshPrivKeyFileComboBox">
+            <property name="editable">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_18">
+            <property name="text">
+             <string>Private key filename</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2" colspan="2">
+           <widget class="QLineEdit" name="cppsshPortNumLineEdit">
+            <property name="maximumSize">
+             <size>
+              <width>197</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="inputMethodHints">
+             <set>Qt::ImhDigitsOnly</set>
+            </property>
+            <property name="text">
+             <string>22</string>
             </property>
            </widget>
           </item>
