@@ -37,12 +37,14 @@ public:
         CB_CONN_TELNET,
         CB_CONN_SERIAL,
         CB_CONN_PROCESS,
+        CB_CONN_CPPSSH,
     };
 
     explicit OpenDialog(QWidget* parent = 0);
     virtual ~OpenDialog();
 
     std::shared_ptr<const TgtSshIntf::TgtConnectionConfig> getSshConfig() const;
+    std::shared_ptr<const TgtCppsshIntf::TgtConnectionConfig> getCppsshConfig() const;
     std::shared_ptr<const TgtTelnetIntf::TgtConnectionConfig> getTelnetConfig() const;
     std::shared_ptr<const TgtSerialIntf::TgtConnectionConfig> getSerialConfig() const;
     std::shared_ptr<const TgtProcessIntf::TgtConnectionConfig> getProcessConfig() const;

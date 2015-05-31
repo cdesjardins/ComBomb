@@ -19,4 +19,5 @@
 #include "TgtTelnetConnection.h"
 #include "TgtSerialConnection.h"
 #include "TgtSshConnection.h"
+#include "TgtCppsshConnection.h"
 #include "TgtProcessConnection.h"

@@ -131,7 +131,14 @@ void FileClipboardDialog::loadNewLineSettings()
 
 void FileClipboardDialog::on_sendButton_clicked()
 {
-    sendItemTriggered(ui->fileClipboardTable->currentRow());
+    if (ui->searchComboBox->hasFocus() == true)
+    {
+        on_searchButton_clicked();
+    }
+    else
+    {
+        sendItemTriggered(ui->fileClipboardTable->currentRow());
+    }
 }
 
 void FileClipboardDialog::on_searchButton_clicked()
