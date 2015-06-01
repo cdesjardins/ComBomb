@@ -30,6 +30,7 @@
 #include <QWidget>
 
 #include "Character.h"
+#include "../TgtIntf.h"
 
 class QDrag;
 class QDragEnterEvent;
@@ -64,7 +65,7 @@ class TerminalView : public QWidget
 
 public:
     /** Constructs a new terminal display widget with the specified parent. */
-    TerminalView(QWidget* parent = 0);
+    TerminalView(const std::shared_ptr<TgtIntf>& targetInterface, QWidget* parent = 0);
     virtual ~TerminalView();
 
     /** Returns the terminal color palette used by the display. */
@@ -706,6 +707,7 @@ private:
 
     bool _readonly;
     QFontMetrics _fontMetrics;
+    std::shared_ptr<TgtIntf> _targetInterface;
 };
 
 #endif // TERMINALVIEW_H

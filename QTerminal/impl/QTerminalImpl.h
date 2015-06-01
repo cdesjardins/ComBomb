@@ -36,7 +36,6 @@ public:
     virtual ~QTerminalImpl();
 
     void setTerminalFont(const QFont& font);
-    void setSize(int h, int v);
     void sendText(const QString& text);
     void sendText(const QByteArray& text);
     void recvText(const QByteArray& data);

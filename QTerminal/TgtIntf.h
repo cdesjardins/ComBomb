@@ -51,6 +51,13 @@ public:
     virtual int tgtRead(boost::intrusive_ptr<RefCntBuffer>& b);
     virtual int tgtWrite(const char* szWriteData, int nBytes);
     virtual void tgtGetTitle(std::string* szTitle) = 0;
+    // Override to handle window resize events
+    virtual void tgtWindowResize(int cols, int rows)
+    {
+        UNREF_PARAM(cols);
+        UNREF_PARAM(rows);
+    }
+
     virtual int tgtGetBytesRx()
     {
         return m_nTotalRx;

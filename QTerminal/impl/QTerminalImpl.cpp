@@ -33,7 +33,7 @@ QTerminalImpl::QTerminalImpl(const QTerminalConfig& terminalConfig, const std::s
 
 void QTerminalImpl::initialize(const QTerminalConfig& terminalConfig, const std::shared_ptr<TgtIntf>& targetInterface, int width, int height)
 {
-    _terminalView.reset(new TerminalView(this));
+    _terminalView.reset(new TerminalView(targetInterface, this));
     _terminalView->setKeyboardCursorShape(TerminalView::IBeamCursor);
     _terminalView->setBlinkingCursor(true);
     _terminalView->setBellMode(TerminalView::NotifyBell);
@@ -108,15 +108,6 @@ void QTerminalImpl::setTerminalFont(const QFont& font)
         return;
     }
     _terminalView->setVTFont(font);
-}
-
-void QTerminalImpl::setSize(int h, int v)
-{
-    if (!_terminalView)
-    {
-        return;
-    }
-    _terminalView->setSize(h, v);
 }
 
 void QTerminalImpl::sendText(const QString& text)

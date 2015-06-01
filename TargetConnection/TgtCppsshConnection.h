@@ -32,6 +32,7 @@ public:
     static std::shared_ptr<TgtCppsshIntf> createCppsshConnection(const std::shared_ptr<const TgtConnectionConfig>& config);
     virtual ~TgtCppsshIntf ();
     virtual void tgtGetTitle(std::string* szTitle);
+    virtual void tgtWindowResize(int cols, int rows);
 
 protected:
     TgtCppsshIntf(const std::shared_ptr<const TgtConnectionConfig>& config);

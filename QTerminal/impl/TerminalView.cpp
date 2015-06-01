@@ -265,7 +265,7 @@ void TerminalView::setFont(const QFont&)
 /*                                                                           */
 /* ------------------------------------------------------------------------- */
 
-TerminalView::TerminalView(QWidget* parent)
+TerminalView::TerminalView(const std::shared_ptr<TgtIntf>& targetInterface, QWidget* parent)
     : QWidget(parent)
     , _screenWindow(0)
     , _allowBell(true)
@@ -301,6 +301,7 @@ TerminalView::TerminalView(QWidget* parent)
     , _cursorShape(BlockCursor)
     , _readonly(false)
     , _fontMetrics(font())
+    , _targetInterface(targetInterface)
 {
     // terminal applications are not designed with Right-To-Left in mind,
     // so the layout is forced to Left-To-Right
@@ -1388,6 +1389,7 @@ void TerminalView::blinkCursorEvent()
 void TerminalView::resizeEvent(QResizeEvent*)
 {
     updateImageSize();
+    _targetInterface->tgtWindowResize(columns(), lines());
 }
 
 void TerminalView::propagateSize()

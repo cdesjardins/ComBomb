@@ -67,7 +67,10 @@ struct TgtCppsshImpl
 {
     TgtCppsshImpl()
         : _sshInit(TgtCppsshInit::instance()),
-          _connectionId(-1)
+          _connectionId(-1),
+          _columns(0),
+          _rows(0),
+          _windowResize(false)
     {
     }
 
@@ -79,6 +82,10 @@ struct TgtCppsshImpl
     std::shared_ptr<TgtThread> _sshThread;
     std::shared_ptr<TgtCppsshInit> _sshInit;
     int _connectionId;
+    int _columns;
+    int _rows;
+    bool _windowResize;
+    std::mutex _windowResizeMutex;
 };
 
 std::shared_ptr<TgtCppsshIntf> TgtCppsshIntf::createCppsshConnection(const std::shared_ptr<const TgtConnectionConfig>& config)
@@ -133,10 +140,15 @@ bool TgtCppsshIntf::sshThread()
     {
         attemptReconnect = true;
     }
+    if (_sshData->_windowResize == true)
+    {
+        tgtWindowResize(_sshData->_columns, _sshData->_rows);
+    }
 
     if (attemptReconnect == true)
     {
         tgtAttemptReconnect();
+        _sshData->_windowResize = true;
     }
     return !attemptReconnect;
 }
@@ -199,3 +211,18 @@ bool TgtCppsshIntf::sshRecv()
     return ret;
 }
 
+void TgtCppsshIntf::tgtWindowResize(int cols, int rows)
+{
+    std::unique_lock<std::mutex> guard(_sshData->_windowResizeMutex);
+    if ((_sshData->_columns != cols) || (_sshData->_rows != rows))
+    {
+        _sshData->_columns = cols;
+        _sshData->_rows = rows;
+        _sshData->_windowResize = true;
+    }
+    if ((_sshData->_windowResize == true) && (Cppssh::isConnected(_sshData->_connectionId) == true))
+    {
+        Cppssh::windowChange(_sshData->_connectionId, cols, rows);
+        _sshData->_windowResize = false;
+    }
+}
