@@ -24,7 +24,6 @@
 #include <boost/format.hpp>
 #include <boost/bind.hpp>
 #include <sstream>
-#define LOG_TAG "SshConnection"
 
 class TgtSshInit
 {
