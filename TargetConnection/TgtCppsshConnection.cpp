@@ -165,10 +165,6 @@ bool TgtCppsshIntf::sshSend()
         {
             cdLog(LogLevel::Error) << "Unable to write to host";
         }
-        else
-        {
-            cdLog(LogLevel::Debug) << data;
-        }
     }
     return ret;
 }
