@@ -115,6 +115,7 @@ void TgtCppsshIntf::tgtMakeConnection()
 void TgtCppsshIntf::tgtBreakConnection()
 {
     _sshData->_sshThread.reset();
+    Cppssh::close(_sshData->_connectionId);
 }
 
 void TgtCppsshIntf::tgtGetTitle(std::string* szTitle)
