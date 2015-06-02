@@ -79,11 +79,11 @@ std::shared_ptr<const TgtSshIntf::TgtConnectionConfig> OpenDialog::getSshConfig(
 std::shared_ptr<const TgtCppsshIntf::TgtConnectionConfig> OpenDialog::getCppsshConfig() const
 {
     std::shared_ptr<TgtCppsshIntf::TgtConnectionConfig> ret(new TgtCppsshIntf::TgtConnectionConfig(
-                                                             ui->cppsshHostNameComboBox->currentText().toLocal8Bit().constData(),
-                                                             ui->cppsshPortNumLineEdit->text().toInt(),
-                                                             ui->cppsshUserNameComboBox->currentText().toLocal8Bit().constData(),
-                                                             ui->cppsshPasswordLineEdit->text().toLocal8Bit().constData(),
-                                                             ui->cppsshPrivKeyFileComboBox->currentText().toLocal8Bit().constData()));
+                                                                ui->cppsshHostNameComboBox->currentText().toLocal8Bit().constData(),
+                                                                ui->cppsshPortNumLineEdit->text().toInt(),
+                                                                ui->cppsshUserNameComboBox->currentText().toLocal8Bit().constData(),
+                                                                ui->cppsshPasswordLineEdit->text().toLocal8Bit().constData(),
+                                                                ui->cppsshPrivKeyFileComboBox->currentText().toLocal8Bit().constData()));
     return ret;
 }
 

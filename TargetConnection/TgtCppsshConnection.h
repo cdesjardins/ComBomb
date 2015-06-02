@@ -43,7 +43,6 @@ protected:
     virtual void tgtMakeConnection();
 
     std::unique_ptr<TgtCppsshImpl> _sshData;
-
 };
 
 #endif

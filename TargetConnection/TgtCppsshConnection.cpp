@@ -66,10 +66,10 @@ struct TgtCppsshImpl
 {
     TgtCppsshImpl()
         : _sshInit(TgtCppsshInit::instance()),
-          _connectionId(-1),
-          _columns(0),
-          _rows(0),
-          _windowResize(false)
+        _connectionId(-1),
+        _columns(0),
+        _rows(0),
+        _windowResize(false)
     {
     }
 
@@ -78,11 +78,11 @@ struct TgtCppsshImpl
         _sshInit.reset();
     }
 
-    std::shared_ptr<TgtThread> _sshThread;
+    std::shared_ptr<TgtThread>     _sshThread;
     std::shared_ptr<TgtCppsshInit> _sshInit;
-    int _connectionId;
-    int _columns;
-    int _rows;
+    int  _connectionId;
+    int  _columns;
+    int  _rows;
     bool _windowResize;
     std::mutex _windowResizeMutex;
 };
@@ -220,3 +220,4 @@ void TgtCppsshIntf::tgtWindowResize(int cols, int rows)
         _sshData->_windowResize = false;
     }
 }
+
