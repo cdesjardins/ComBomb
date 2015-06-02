@@ -193,7 +193,6 @@ bool TgtCppsshIntf::sshRecv()
                     sentBytes += boost::asio::buffer_copy(currentIncomingBuffer->_buffer, b, copyLen);
                     currentIncomingBuffer->_buffer = boost::asio::buffer(currentIncomingBuffer->_buffer, copyLen);
                     _incomingData.enqueue(currentIncomingBuffer);
-                    //cdLog(LogLevel::Debug) << msg.message();
                 }
                 else
                 {

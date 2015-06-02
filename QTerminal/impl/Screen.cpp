@@ -971,9 +971,11 @@ void Screen::scrollUp(int n)
     The n new lines are cleared.
 */
 
-QRect Screen::lastScrolledRegion() const
+QRect Screen::lastScrolledRegion()
 {
-    return _lastScrolledRegion;
+    QRect ret = _lastScrolledRegion;
+    _lastScrolledRegion.setCoords(0, 0, 0, 0);
+    return ret;
 }
 
 void Screen::scrollUp(int from, int n)

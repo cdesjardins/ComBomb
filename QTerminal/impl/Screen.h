@@ -491,7 +491,7 @@ public:
      * This is the area of the image from the top margin to the
      * bottom margin when the last scroll occurred.
      */
-    QRect lastScrolledRegion() const;
+    QRect lastScrolledRegion();
 
     /**
      * Resets the count of the number of lines that the image has been scrolled up or down by,
