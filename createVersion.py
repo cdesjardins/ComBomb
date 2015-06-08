@@ -26,7 +26,7 @@ def touch(fname, times=None):
         os.utime(fname, times)
         
 class CreateVer:
-    def __init__(self, argv):
+    def __init__(self):
         pass
         
     def run(self):
@@ -60,7 +60,7 @@ class CreateVer:
 
 if __name__ == "__main__":
     try:
-        CreateVer = CreateVer(sys.argv[1:])
+        CreateVer = CreateVer()
         CreateVer.run();
     except Exception as e:
         print e

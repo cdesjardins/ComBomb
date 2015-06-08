@@ -3,7 +3,7 @@
 # This is the master combomb build script
 # which is used to create releases.
 
-import shutil, sys, os, platform, createVersion, zipfile, tarfile
+import shutil, sys, os, platform, createVersion, zipfile, tarfile, getopt
 from subprocess import call
 from subprocess import Popen, PIPE
 
@@ -28,6 +28,36 @@ class uncrustify:
                 self.callUncrustify("QTerminal", "h")
                 self.callUncrustify("TargetConnection", "cpp")
                 self.callUncrustify("TargetConnection", "h")
+
+def cmakeBuildLinux():
+    call(["cmake", ".."])
+    call(["make", "-j8", "install"])
+    shutil.rmtree(".", True)
+    call(["cmake", "-DCMAKE_BUILD_TYPE=Debug", ".."])
+    call(["make", "-j8", "install"])
+
+def cmakeBuildWindows():
+    call(["cmake", ".."])
+    call(["cmake", "--build", ".", "--target", "install", "--config", "Release"])
+    call(["cmake", "--build", ".", "--target", "install", "--config", "Debug"])
+
+def cmakeBuild(baseDir):
+    os.chdir(baseDir)
+    shutil.rmtree("build", True)
+    os.mkdir("build")
+    os.chdir("build")
+    if (platform.system() == "Linux"):    
+        cmakeBuildLinux()
+    else:
+        cmakeBuildWindows()
+    os.chdir("../..")
+
+def botanBuild():
+    os.chdir("cppssh")
+    if (platform.system() == "Linux"):    
+        call(["pwd"])
+        call(["./buildbotan.sh"])
+    os.chdir("..")
 
 def rmerror(function, path, excinfo):
     exc_type, exc_value, exc_traceback = excinfo
@@ -94,14 +124,32 @@ def buildLog():
     logFile.close()
 
 def main(argv):
+    buildAll = False
     uncrustify().uncrustify()
     delBuildTree("build")
     os.makedirs("build")
     os.chdir("build")
-    CreateVer = createVersion.CreateVer(sys.argv[1:])
+    CreateVer = createVersion.CreateVer()
     gitVerStr = CreateVer.run()
     if (gitVerStr.find("dirty") > 0):
         raw_input("Building on dirty codebase (" + gitVerStr + "): ")
+    os.chdir("..")
+    
+    opts, args = getopt.getopt(argv, "a", ["all"])
+    for opt, arg in opts:
+        if (opt in ('-a', '--all')):
+            buildAll = True
+
+    if (buildAll == True):
+        os.chdir("..")
+        shutil.rmtree("install", True)
+        cmakeBuild("QueuePtr")
+        cmakeBuild("CDLogger")
+        botanBuild()
+        cmakeBuild("cppssh")
+        os.chdir("ComBomb")
+
+    os.chdir("build")
     qmake = which("qmake")
     (qtDir, tail) = os.path.split(qmake)
     call([qmake, ".."])
@@ -113,7 +161,6 @@ def main(argv):
         pass
     buildLog()
     zipIt(gitVerStr, qtDir)
-    
     print("Done")
 
 if __name__ == "__main__":
