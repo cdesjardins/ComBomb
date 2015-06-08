@@ -43,8 +43,11 @@ def cmakeBuildWindows():
 
 def cmakeBuild(baseDir):
     os.chdir(baseDir)
+    previousDir = os.getcwd()
+    print previousDir
     shutil.rmtree("build", True)
-    os.mkdir("build")
+    if not os.path.exists("build"):
+        os.mkdir("build")
     os.chdir("build")
     if (platform.system() == "Linux"):    
         cmakeBuildLinux()
@@ -55,8 +58,9 @@ def cmakeBuild(baseDir):
 def botanBuild():
     os.chdir("cppssh")
     if (platform.system() == "Linux"):    
-        call(["pwd"])
         call(["./buildbotan.sh"])
+    else:
+        call(["buildbotan.bat"])
     os.chdir("..")
 
 def rmerror(function, path, excinfo):
@@ -143,9 +147,9 @@ def main(argv):
     if (buildAll == True):
         os.chdir("..")
         shutil.rmtree("install", True)
+        botanBuild()
         cmakeBuild("QueuePtr")
         cmakeBuild("CDLogger")
-        botanBuild()
         cmakeBuild("cppssh")
         os.chdir("ComBomb")
 
