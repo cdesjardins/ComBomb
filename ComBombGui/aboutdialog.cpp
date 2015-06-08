@@ -47,6 +47,7 @@ void CBLabel::mouseDoubleClickEvent(QMouseEvent*)
         QPixmap pixma = QPixmap::fromImage(*_qImg);
         setPixmap(pixma);
     }
+    OpenDialog::enablecppssh();
 }
 
 AboutDialog::AboutDialog(QWidget* parent) :

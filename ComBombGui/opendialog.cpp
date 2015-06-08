@@ -31,6 +31,8 @@
 #define CB_OPEN_CONN_PB         CB_OPEN_SETTINGS_ROOT "Process/Browser"
 #define CB_OPEN_CONN_WDB        CB_OPEN_SETTINGS_ROOT "WorkingDir/Browser"
 
+bool OpenDialog::_sCppssh = false;
+
 OpenDialog::OpenDialog(QWidget* parent) :
     QDialog(parent),
     ui(new Ui::OpenDialog)
@@ -47,9 +49,7 @@ OpenDialog::OpenDialog(QWidget* parent) :
     QSettings settings;
     ui->tabWidget->setCurrentIndex(settings.value(CB_OPEN_CONN_TYPE, CB_CONN_SSH).toInt());
     ui->newLineCheckBox->setChecked(settings.value(CB_OPEN_CONN_CRLF, false).toBool());
-#ifndef QT_DEBUG
-    ui->tabWidget->setTabEnabled(CB_CONN_CPPSSH, false);
-#endif
+    ui->tabWidget->setTabEnabled(CB_CONN_CPPSSH, _sCppssh);
 }
 
 OpenDialog::ConnectionType OpenDialog::getConnectionType()

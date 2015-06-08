@@ -54,6 +54,11 @@ public:
 
     bool newlines();
 
+    static void enablecppssh()
+    {
+        _sCppssh = true;
+    }
+
 private slots:
     void hostNameSelectionChanged(int x);
     void on_privKeyBrowseButton_clicked();
@@ -72,6 +77,7 @@ private:
     void addFlowControl();
 
     Ui::OpenDialog* ui;
+    static bool _sCppssh;
 };
 
 #endif // OPENDIALOG_H
