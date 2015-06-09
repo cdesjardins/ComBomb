@@ -137,6 +137,7 @@ QMAKE_LFLAGS_RELEASE += /NODEFAULTLIB:msvcrt.lib
 
 win32:CONFIG(release, debug|release): LIBS += -lbotan-1.11 -lCDLogger -lcppssh
 else:win32:CONFIG(debug, debug|release): LIBS += -lbotan-1.11 -lCDLoggerd -lcppsshd
-else:unix: LIBS += $$PWD/../../install/lib/libcppssh.a $$PWD/../../install/lib/libCDLogger.a $$PWD/../../install/lib/libbotan-1.11.a
+else:unix:CONFIG(release, debug|release): LIBS += $$PWD/../../install/lib/libcppssh.a $$PWD/../../install/lib/libCDLogger.a $$PWD/../../install/lib/libbotan-1.11.a
+else:unix:CONFIG(debug, debug|release): LIBS += $$PWD/../../install/lib/libcppsshd.a $$PWD/../../install/lib/libCDLoggerd.a $$PWD/../../install/lib/Debug/libbotan-1.11.a
 
 
