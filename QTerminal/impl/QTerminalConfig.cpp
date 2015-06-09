@@ -79,7 +79,9 @@ void QTerminalConfig::readCfgV1(QDataStream& in, QTerminalConfig& q)
 void QTerminalConfig::readCfgV2(QDataStream& in, QTerminalConfig& q)
 {
     readCfgV1(in, q);
-    in >> (uint&)q._histSize;
+    uint histSize;
+    in >> histSize;
+    q._histSize = histSize;
 }
 
 QDataStream& operator>>(QDataStream& in, QTerminalConfig& q)
