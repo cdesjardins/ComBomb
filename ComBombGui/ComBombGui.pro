@@ -135,9 +135,9 @@ QMAKE_LFLAGS_RELEASE += /NODEFAULTLIB:msvcrt.lib
 
 # Cppssh
 
-win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../install/lib/botan/Release -lbotan-1.11 -lCDLogger -lcppssh
-else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../install/lib/botan/Debug   -lbotan-1.11 -lCDLoggerd -lcppsshd
-else:unix:CONFIG(release, debug|release): LIBS += $$PWD/../../install/lib/libcppssh.a  $$PWD/../../install/lib/libCDLogger.a  $$PWD/../../install/lib/libbotan-1.11.a
-else:unix:CONFIG(debug, debug|release):   LIBS += $$PWD/../../install/lib/libcppsshd.a $$PWD/../../install/lib/libCDLoggerd.a $$PWD/../../install/lib/Debug/libbotan-1.11.a
+win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../install/lib/botan/Release -lbotan-111 -lCDLogger -lcppssh
+else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../install/lib/botan/Debug   -lbotan-111 -lCDLoggerd -lcppsshd
+else:unix:CONFIG(release, debug|release): LIBS += $$PWD/../../install/lib/libcppssh.a  $$PWD/../../install/lib/libCDLogger.a  $$PWD/../../install/lib/libbotan-111.a
+else:unix:CONFIG(debug, debug|release):   LIBS += $$PWD/../../install/lib/libcppsshd.a $$PWD/../../install/lib/libCDLoggerd.a $$PWD/../../install/lib/Debug/libbotan-111.a
 
 
