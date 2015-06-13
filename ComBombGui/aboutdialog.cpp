@@ -21,8 +21,10 @@
 #include "versioning.h"
 #include "cblabel.h"
 #include "mainwindow.h"
+#include "cppssh/cppssh.h"
 
 #include <iomanip>
+
 
 CBLabel::CBLabel(QWidget* parent)
     : QLabel(parent),
@@ -57,7 +59,11 @@ AboutDialog::AboutDialog(QWidget* parent) :
     ui->setupUi(this);
     QString ver("ComBomb version: ");
     ver.append(getVersion());
-    ui->versionLabel->setText(ver);
+    ui->combombVersionLabel->setText(ver);
+    ver.clear();
+    ver.append("CppSsh version: ");
+    ver.append(Cppssh::getCppsshVersion(true));
+    ui->cppsshVersionLabel->setText(ver);
 
     QString uptime("Uptime: ");
     std::stringstream buf;
