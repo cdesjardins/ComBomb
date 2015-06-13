@@ -28,12 +28,13 @@ class uncrustify:
         gitVerStr = CreateVer.getVerStr()
         if (gitVerStr.find("dirty") > 0):
             raw_input("Building on dirty codebase (" + gitVerStr + " - " + os.getcwd() + "): ")
+        return gitVerStr
 
 def cmakeBuildLinux():
     uncrustify().uncrustify("..")
     call(["cmake", ".."])
     call(["make", "-j8", "install"])
-    shutil.rmtree(".", True)
+    delBuildTree(".")
     call(["cmake", "-DCMAKE_BUILD_TYPE=Debug", ".."])
     call(["make", "-j8", "install"])
 
@@ -44,10 +45,7 @@ def cmakeBuildWindows():
 
 def cmakeBuild(baseDir):
     os.chdir(baseDir)
-    previousDir = os.getcwd()
-    print previousDir
-    shutil.rmtree("build", True)
-    if not os.path.exists("build"):
+    if (delBuildTree("build") == True):
         os.mkdir("build")
     os.chdir("build")
     if (platform.system() == "Linux"):    
@@ -64,18 +62,33 @@ def botanBuild():
         call(["buildbotan.bat"])
     os.chdir("..")
 
-def rmerror(function, path, excinfo):
-    exc_type, exc_value, exc_traceback = excinfo
-    print exc_value
-    os._exit(1)
+def combombBuild():
+    os.chdir("ComBomb")
+    gitVerStr = uncrustify().uncrustify(".")
+    if (delBuildTree("build") == True):
+        os.mkdir("build")
+    os.chdir("build")
+    qmake = which("qmake")
+    (qtDir, tail) = os.path.split(qmake)
+    call([qmake, ".."])
+    if (platform.system() == "Windows"):
+        call([which("jom"), "-j", "5", "release"])
+        pass
+    else:
+        call(["make", "-j5"])
+        pass
+    buildLog()
+    zipIt(gitVerStr, qtDir)
+    os.chdir("../..")
 
 def delBuildTree(delDir):
     retries = 0
     while (os.path.exists(delDir) == True):
-        shutil.rmtree(delDir, False, rmerror)
+        shutil.rmtree(delDir, True)
         retries += 1
         if (retries > 10):
             break
+    return not os.path.exists(delDir)
 
 def which(file):
     if (platform.system() == "Windows"):
@@ -128,42 +141,46 @@ def buildLog():
     logFile.flush()
     logFile.close()
 
+def usage(builds):
+    print("Build the ComBomb software suite")
+    print("The following modules can be individually built")
+    for b in builds:
+        print ("    --" + b)
+    os._exit(1)
+
 def main(argv):
-    buildAll = False
-    uncrustify().uncrustify(".")
-    delBuildTree("build")
-    os.makedirs("build")
-    os.chdir("build")
-    CreateVer = createVersion.CreateVer()
-    gitVerStr = CreateVer.run()
-    os.chdir("..")
-    
-    opts, args = getopt.getopt(argv, "a", ["all"])
+    builds = ["botan", "QueuePtr", "CDLogger", "cppssh", "ComBomb"]
+    buildVals = {}
+    for b in builds:
+        buildVals[b] = True
+    args = ["help"]
+    args.extend(builds)
+    buildsToRun = []
+    opts, args = getopt.getopt(argv, "h", args)
     for opt, arg in opts:
-        if (opt in ('-a', '--all')):
-            buildAll = True
+        if (opt in ('-h', '--help')):
+            usage(builds)
+        if opt[2:] in buildVals.keys():
+            buildsToRun.append(opt[2:])
 
-    if (buildAll == True):
-        os.chdir("..")
-        shutil.rmtree("install", True)
-        botanBuild()
-        cmakeBuild("QueuePtr")
-        cmakeBuild("CDLogger")
-        cmakeBuild("cppssh")
-        os.chdir("ComBomb")
-
-    os.chdir("build")
-    qmake = which("qmake")
-    (qtDir, tail) = os.path.split(qmake)
-    call([qmake, ".."])
-    if (platform.system() == "Windows"):
-        call([which("jom"), "-j", "5", "release"])
-        pass
+    os.chdir("..")
+    if (len(buildsToRun) > 0):
+        for b in builds:
+            buildVals[b] = False
+        for b in buildsToRun:
+            buildVals[b] = True
     else:
-        call(["make", "-j5"])
-        pass
-    buildLog()
-    zipIt(gitVerStr, qtDir)
+        delBuildTree("install")
+    if (buildVals["botan"] == True):
+        botanBuild()
+    if (buildVals["QueuePtr"] == True):
+        cmakeBuild("QueuePtr")
+    if (buildVals["CDLogger"] == True):
+        cmakeBuild("CDLogger")
+    if (buildVals["cppssh"] == True):
+        cmakeBuild("cppssh")
+    if (buildVals["ComBomb"] == True):
+        combombBuild()
     print("Done")
 
 if __name__ == "__main__":
