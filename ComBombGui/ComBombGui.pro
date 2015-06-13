@@ -134,7 +134,7 @@ QMAKE_LFLAGS_RELEASE += /NODEFAULTLIB:msvcrt.lib
 }
 
 # Cppssh
-
+QMAKE_CXXFLAGS += -DCPPSSH_STATIC
 win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../install/lib/botan/Release -lbotan-1.11 -lCDLogger -lcppssh
 else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../install/lib/botan/Debug   -lbotan-1.11 -lCDLoggerd -lcppsshd
 else:unix:CONFIG(release, debug|release): LIBS += $$PWD/../../install/lib/libcppssh.a  $$PWD/../../install/lib/libCDLogger.a  $$PWD/../../install/lib/botan/Release/libbotan-1.11.a
