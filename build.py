@@ -19,17 +19,18 @@ class uncrustify:
         process = Popen([self.uncrust, directory, ext])
         process.wait()
 
-    def uncrustify(self):
+    def uncrustify(self, directory):
         if (platform.system() == "Linux"):
-            if ((os.path.isfile(self.uncrust) == True) and (os.path.isfile(self.config))):
-                self.callUncrustify("ComBombGui", "cpp")
-                self.callUncrustify("ComBombGui", "h")
-                self.callUncrustify("QTerminal", "cpp")
-                self.callUncrustify("QTerminal", "h")
-                self.callUncrustify("TargetConnection", "cpp")
-                self.callUncrustify("TargetConnection", "h")
+            if ((os.path.isfile(self.uncrust) == True) and (os.path.isfile(self.config) == True)):
+                self.callUncrustify(directory, "cpp")
+                self.callUncrustify(directory, "h")
+        CreateVer = createVersion.CreateVer()
+        gitVerStr = CreateVer.getVerStr()
+        if (gitVerStr.find("dirty") > 0):
+            raw_input("Building on dirty codebase (" + gitVerStr + " - " + os.getcwd() + "): ")
 
 def cmakeBuildLinux():
+    uncrustify().uncrustify("..")
     call(["cmake", ".."])
     call(["make", "-j8", "install"])
     shutil.rmtree(".", True)
@@ -129,14 +130,12 @@ def buildLog():
 
 def main(argv):
     buildAll = False
-    uncrustify().uncrustify()
+    uncrustify().uncrustify(".")
     delBuildTree("build")
     os.makedirs("build")
     os.chdir("build")
     CreateVer = createVersion.CreateVer()
     gitVerStr = CreateVer.run()
-    if (gitVerStr.find("dirty") > 0):
-        raw_input("Building on dirty codebase (" + gitVerStr + "): ")
     os.chdir("..")
     
     opts, args = getopt.getopt(argv, "a", ["all"])

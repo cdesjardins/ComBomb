@@ -28,10 +28,13 @@ def touch(fname, times=None):
 class CreateVer:
     def __init__(self):
         pass
+
+    def getVerStr(self):
+        process = Popen(["git", "describe", "--dirty", "--always"], stdout=PIPE)
+        return process.communicate()[0].strip()
         
     def run(self):
-        process = Popen(["git", "describe", "--dirty", "--always"], stdout=PIPE, cwd="../../ComBomb/")
-        gitVerStr = process.communicate()[0].strip()
+        gitVerStr = self.getVerStr()
         f = open("../../ComBomb/ComBombGui/v.h", "wb")
         f.write("/*\n\
     ComBomb - Terminal emulator\n\
