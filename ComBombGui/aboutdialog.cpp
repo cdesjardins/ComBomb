@@ -25,7 +25,6 @@
 
 #include <iomanip>
 
-
 CBLabel::CBLabel(QWidget* parent)
     : QLabel(parent),
     _qImg(NULL)
