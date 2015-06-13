@@ -156,7 +156,11 @@ def main(argv):
     args = ["help"]
     args.extend(builds)
     buildsToRun = []
-    opts, args = getopt.getopt(argv, "h", args)
+    try:
+        opts, args = getopt.getopt(argv, "h", args)
+    except getopt.GetoptError as e:
+        print "Error: " + str(e)
+        usage(builds)
     for opt, arg in opts:
         if (opt in ('-h', '--help')):
             usage(builds)
