@@ -7,7 +7,7 @@
 "key Backtab     -Ansi  : \"\\t\"\n"
 "key Return-Shift-NewLine : \"\\r\"\n"
 "key Return-Shift+NewLine : \"\\r\\n\"\n"
-"key Return+Shift         : \"\\EOM\"\n"
+"key Return+Shift         : \"\\r\"\n"
 "key Backspace      : \"\\x7f\"\n"
 "key Up   -Shift-Ansi : \"\\EA\"\n"
 "key Down -Shift-Ansi : \"\\EB\"\n"
