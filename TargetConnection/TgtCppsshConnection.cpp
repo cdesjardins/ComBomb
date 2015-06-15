@@ -112,6 +112,7 @@ void TgtCppsshIntf::tgtMakeConnection()
 
     if (Cppssh::connect(&_sshData->_connectionId, connectionConfig->_hostName.c_str(),
                         connectionConfig->_portNum, connectionConfig->_userName.c_str(),
+                        connectionConfig->_privKeyFile.c_str(),
                         connectionConfig->_password.c_str()) == true)
     {
         _sshData->_sshThread = TgtThread::create(boost::bind(std::bind(&TgtCppsshIntf::sshThread, this)));

@@ -12,7 +12,7 @@ TEMPLATE = app
 
 versionTarget.target = versioning.h
 versionTarget.depends = $$PWD/../.git
-versionTarget.commands = cd $$PWD $$escape_expand(\n\t) $$PWD/../createVersion.py
+versionTarget.commands = cd $$PWD && $$PWD/../createVersion.py
 PRE_TARGETDEPS += versioning.h
 QMAKE_EXTRA_TARGETS += versionTarget
 DEPENDPATH += .
