@@ -35,7 +35,7 @@ class CreateVer:
         
     def run(self):
         gitVerStr = self.getVerStr()
-        f = open("../../ComBomb/ComBombGui/v.h", "wb")
+        f = open("v.h", "wb")
         f.write("/*\n\
     ComBomb - Terminal emulator\n\
     Copyright (C) 2014  Chris Desjardins\n\
@@ -57,7 +57,6 @@ class CreateVer:
         f.write("/* This is a generated file, do not change, see " + os.path.basename(__file__) + "   */\n")
         f.write("#define CB_GIT_VER_STR \"" + gitVerStr + "\"\n")
         f.close()
-        #touch("../../ComBomb/ComBombGui/versioning.h")
         return gitVerStr
 
 
