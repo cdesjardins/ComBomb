@@ -10,10 +10,10 @@ CONFIG += static
 TARGET = ComBombGui
 TEMPLATE = app
 
-versionTarget.target = versioning.h
+versionTarget.target = ../../ComBomb/ComBombGui/v.h
 versionTarget.depends = $$PWD/../.git
 versionTarget.commands = cd $$PWD && $$PWD/../createVersion.py
-PRE_TARGETDEPS += versioning.h
+
 QMAKE_EXTRA_TARGETS += versionTarget
 DEPENDPATH += .
 
