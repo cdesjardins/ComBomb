@@ -13,7 +13,7 @@ TEMPLATE = app
 versionTarget.target = ../../ComBomb/ComBombGui/v.h
 versionTarget.depends = $$PWD/../.git
 versionTarget.commands = cd $$PWD && $$PWD/../createVersion.py
-
+PRE_TARGETDEPS += ../../ComBomb/ComBombGui/v.h
 QMAKE_EXTRA_TARGETS += versionTarget
 DEPENDPATH += .
 
