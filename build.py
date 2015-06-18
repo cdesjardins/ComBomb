@@ -32,13 +32,17 @@ class uncrustify:
 
 def cmakeBuildLinux():
     uncrustify().uncrustify("..")
-    call(["cmake", ".."])
-    call(["make", "-j8", "install"])
+    cmakeRelease = "cmake -DCMAKE_BUILD_TYPE=Release .."
+    cmakeDebug = "cmake -DCMAKE_BUILD_TYPE=Debug .."
+    make = "make -j8 install"
+    call(cmakeRelease.split(' '))
+    call(make.split(' '))
     delBuildTree(".")
-    call(["cmake", "-DCMAKE_BUILD_TYPE=Debug", ".."])
-    call(["make", "-j8", "install"])
+    call(cmakeDebug.split(' '))
+    call(make.split(' '))
 
 def cmakeBuildWindows():
+    uncrustify().uncrustify("..")
     cmake = "cmake .."
     cmakeRelease = "cmake --build . --target install --config Release"
     cmakeDebug = "cmake --build . --target install --config Debug"
