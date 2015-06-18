@@ -48,6 +48,7 @@ void CBLabel::mouseDoubleClickEvent(QMouseEvent*)
         QPixmap pixma = QPixmap::fromImage(*_qImg);
         setPixmap(pixma);
     }
+    MainWindow::enableDebugLogging();
     OpenDialog::enablecppssh();
 }
 

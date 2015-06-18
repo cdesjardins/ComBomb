@@ -43,6 +43,7 @@ public:
     void swapProcessIcon(bool processRunning);
     const std::chrono::duration<double> getStartTimeDelta();
     void setInterfaceType();
+    static void enableDebugLogging();
 protected:
     explicit MainWindow(QWidget* parent = 0);
     void enableMenuItems(bool enabled);
