@@ -39,9 +39,12 @@ def cmakeBuildLinux():
     call(["make", "-j8", "install"])
 
 def cmakeBuildWindows():
-    call(["cmake", ".."])
-    call(["cmake", "--build", ".", "--target", "install", "--config", "Release"])
-    call(["cmake", "--build", ".", "--target", "install", "--config", "Debug"])
+    cmake = "cmake .."
+    cmakeRelease = "cmake --build . --target install --config Release"
+    cmakeDebug = "cmake --build . --target install --config Debug"
+    call(cmake.split(' '))
+    call(cmakeRelease.split(' '))
+    call(cmakeDebug.split(' '))
 
 def cmakeBuild(baseDir):
     os.chdir(baseDir)
@@ -73,10 +76,8 @@ def combombBuild():
     call([qmake, ".."])
     if (platform.system() == "Windows"):
         call([which("jom"), "-j", "5", "release"])
-        pass
     else:
         call(["make", "-j5"])
-        pass
     buildLog()
     zipIt(gitVerStr, qtDir)
     os.chdir("../..")
