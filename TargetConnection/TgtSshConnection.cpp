@@ -323,7 +323,6 @@ bool TgtSshIntf::sshSend()
         }
         else
         {
-            cdLog(LogLevel::Debug) << data;
             status = cryptFlushData(_sshData->_cryptSession);
             if (cryptStatusError(status))
             {

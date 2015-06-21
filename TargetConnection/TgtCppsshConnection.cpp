@@ -69,7 +69,8 @@ struct TgtCppsshImpl
         _connectionId(-1),
         _columns(0),
         _rows(0),
-        _windowResize(false)
+        _windowResize(false),
+        _connected(false)
     {
     }
 
@@ -85,6 +86,7 @@ struct TgtCppsshImpl
     int  _rows;
     bool _windowResize;
     std::mutex _windowResizeMutex;
+    bool _connected;
 };
 
 std::shared_ptr<TgtCppsshIntf> TgtCppsshIntf::createCppsshConnection(const std::shared_ptr<const TgtConnectionConfig>& config)
@@ -115,6 +117,7 @@ void TgtCppsshIntf::tgtMakeConnection()
                         connectionConfig->_privKeyFile.c_str(),
                         connectionConfig->_password.c_str()) == true)
     {
+        _sshData->_connected = true;
         _sshData->_sshThread = TgtThread::create(boost::bind(std::bind(&TgtCppsshIntf::sshThread, this)));
     }
 }
@@ -133,14 +136,20 @@ void TgtCppsshIntf::tgtGetTitle(std::string* szTitle)
     *szTitle = t.str();
 }
 
+bool TgtCppsshIntf::isConnected()
+{
+    return Cppssh::isConnected(_sshData->_connectionId) && _sshData->_connected;
+}
+
 bool TgtCppsshIntf::sshThread()
 {
     bool attemptReconnect = false;
-    if ((Cppssh::isConnected(_sshData->_connectionId) == false) || (sshSend() == false) || (sshRecv() == false))
+    if ((isConnected() == false) || (sshSend() == false) || (sshRecv() == false))
     {
         attemptReconnect = true;
+        _sshData->_connected = false;
     }
-    if (_sshData->_windowResize == true)
+    else if (_sshData->_windowResize == true)
     {
         tgtWindowResize(_sshData->_columns, _sshData->_rows);
     }
@@ -158,7 +167,7 @@ bool TgtCppsshIntf::sshSend()
     int ret = true;
     boost::intrusive_ptr<RefCntBuffer> b;
 
-    while (_outgoingData.dequeue(b) == true)
+    while ((isConnected() == true) && (_outgoingData.dequeue(b) == true))
     {
         uint8_t* data = boost::asio::buffer_cast<uint8_t*>(b->_buffer);
 
@@ -183,7 +192,7 @@ bool TgtCppsshIntf::sshRecv()
         if ((Cppssh::read(_sshData->_connectionId, &msg) == true) && (msg.length() > 0))
         {
             size_t length = msg.length();
-            while ((sentBytes < length) && (ret == true) && (_sshData->_sshThread->threadRun() == true))
+            while ((isConnected() == true) && (sentBytes < length) && (ret == true))
             {
                 boost::intrusive_ptr<RefCntBuffer> currentIncomingBuffer;
                 if (_bufferPool->dequeue(currentIncomingBuffer, 100) == true)
@@ -202,7 +211,7 @@ bool TgtCppsshIntf::sshRecv()
                 }
             }
         }
-    } while ((sentBytes > 0) && (ret == true) && (_sshData->_sshThread->threadRun() == true));
+    } while ((isConnected() == true) && (sentBytes > 0) && (ret == true));
     return ret;
 }
 

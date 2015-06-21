@@ -36,6 +36,7 @@ public:
 
 protected:
     TgtCppsshIntf(const std::shared_ptr<const TgtConnectionConfig>& config);
+    bool isConnected();
     bool sshThread();
     bool sshRecv();
     bool sshSend();
