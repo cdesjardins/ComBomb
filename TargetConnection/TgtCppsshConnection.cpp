@@ -120,6 +120,12 @@ void TgtCppsshIntf::tgtMakeConnection()
         _sshData->_connected = true;
         _sshData->_sshThread = TgtThread::create(boost::bind(std::bind(&TgtCppsshIntf::sshThread, this)));
     }
+    else
+    {
+        boost::format f("Unable to connect to: %s");
+        std::string errmsg = str(f % connectionConfig->_hostName.c_str());
+        throw CB_EXCEPTION_STR(CBException::CbExcp, errmsg.c_str());
+    }
 }
 
 void TgtCppsshIntf::tgtBreakConnection()
