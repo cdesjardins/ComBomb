@@ -61,6 +61,7 @@ MainWindow::MainWindow(QWidget* parent) :
 {
 #ifdef QT_DEBUG
     enableDebugLogging();
+    OpenDialog::enablecppssh();
 #endif
     _windowCnt.store(0);
     _startTime = std::chrono::system_clock::now();
