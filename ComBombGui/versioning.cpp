@@ -40,17 +40,33 @@ int32_t parseVersionStr(const std::string& verStr)
         {
             text = text.substr(0, dashIndex);
         }
-        size_t dotIndex = text.find('.');
-        if (dotIndex != std::string::npos)
+        size_t numDots = std::count(text.begin(), text.end(), '.');
+        if (numDots == 1)
         {
-            try
+            size_t dotIndex = text.find('.');
+            if (dotIndex != std::string::npos)
             {
-                int32_t major = boost::lexical_cast<int32_t>(text.substr(0, dotIndex));
-                int32_t minor = boost::lexical_cast<int32_t>(text.substr(dotIndex + 1));
-                ret = ((major << 16) | minor);
+                try
+                {
+                    int32_t major = boost::lexical_cast<int32_t>(text.substr(0, dotIndex));
+                    int32_t minor = boost::lexical_cast<int32_t>(text.substr(dotIndex + 1));
+                    ret = ((major << 16) | minor);
+                }
+                catch (const boost::bad_lexical_cast&)
+                {
+                }
             }
-            catch (const boost::bad_lexical_cast&)
+        }
+        else if (numDots == 2)
+        {
+            size_t dotIndex0 = text.find('.');
+            size_t dotIndex1 = text.rfind('.');
+            if ((dotIndex0 != std::string::npos) && (dotIndex1 != std::string::npos))
             {
+                int32_t year = boost::lexical_cast<int32_t>(text.substr(0, dotIndex1));
+                int32_t month = boost::lexical_cast<int32_t>(text.substr(dotIndex1 + 1, dotIndex2));
+                int32_t day = boost::lexical_cast<int32_t>(text.substr(dotIndex2 + 1));
+                ret = (year << 9) | (month << 5) | day;
             }
         }
     }
