@@ -60,10 +60,6 @@ AboutDialog::AboutDialog(QWidget* parent) :
     QString ver("ComBomb version: ");
     ver.append(getVersion());
     ui->combombVersionLabel->setText(ver);
-    ver.clear();
-    ver.append("CppSsh version: ");
-    ver.append(Cppssh::getCppsshVersion(true));
-    ui->cppsshVersionLabel->setText(ver);
 
     QString uptime("Uptime: ");
     std::stringstream buf;
