@@ -173,7 +173,7 @@ bool TgtCppsshIntf::sshSend()
     int ret = true;
     boost::intrusive_ptr<RefCntBuffer> b;
 
-    while ((isConnected() == true) && (_outgoingData.dequeue(b) == true))
+    while ((isConnected() == true) && (_outgoingData.dequeue(b, 1) == true))
     {
         uint8_t* data = boost::asio::buffer_cast<uint8_t*>(b->_buffer);
 
