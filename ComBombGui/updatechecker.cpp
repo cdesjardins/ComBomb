@@ -80,6 +80,8 @@ void UpdateChecker::replyFinished(QNetworkReply*)
         emit newVersionAvailable();
     }
     _reply->close();
+    _manager->deleteLater();
+    _reply->deleteLater();
 }
 
 void UpdateChecker::slotReadyRead()
