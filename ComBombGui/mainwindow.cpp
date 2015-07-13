@@ -86,6 +86,7 @@ MainWindow::MainWindow(QWidget* parent) :
         CharacterColor::setWhiteBackground();
     }
     _runProcessIconText = _ui->action_Run_Process->text();
+    _captureLogsIconText = _ui->actionCapture_output->text();
     connect(_mdiArea, SIGNAL(subWindowActivated(QMdiSubWindow*)), this, SLOT(subWindowActivatedSlot(QMdiSubWindow*)));
     UpdateChecker::instance()->checkForNewVersion();
     connect(UpdateChecker::instance().get(), SIGNAL(newVersionAvailable()), this, SLOT(newVersionAvailableSlot()));
@@ -108,6 +109,7 @@ void MainWindow::enableMenuItems(bool enabled)
     _ui->actionFind_next->setEnabled(enabled);
     _ui->actionFind_prev->setEnabled(enabled);
     _ui->actionFind_highlighted_text->setEnabled(enabled);
+    _ui->actionCapture_output->setEnabled(enabled);
 }
 
 void MainWindow::swapProcessIcon(bool processRunning)
@@ -121,6 +123,20 @@ void MainWindow::swapProcessIcon(bool processRunning)
     {
         _ui->action_Run_Process->setIcon(QIcon(":/images/script_gear.png"));
         _ui->action_Run_Process->setText(_runProcessIconText);
+    }
+}
+
+void MainWindow::swapCaptureIcon(bool captureRunning)
+{
+    if (captureRunning == true)
+    {
+        _ui->actionCapture_output->setIcon(QIcon(":/images/raw_access_logs_stop.png"));
+        _ui->actionCapture_output->setText("&Stop capture");
+    }
+    else
+    {
+        _ui->actionCapture_output->setIcon(QIcon(":/images/raw_access_logs.png"));
+        _ui->actionCapture_output->setText(_captureLogsIconText);
     }
 }
 
@@ -393,3 +409,11 @@ void MainWindow::setInterfaceType()
     }
 }
 
+void MainWindow::on_actionCapture_output_triggered()
+{
+    ChildForm* activeWindow = getActiveChildWindow();
+    if (activeWindow != NULL)
+    {
+        activeWindow->captureLog();
+    }
+}

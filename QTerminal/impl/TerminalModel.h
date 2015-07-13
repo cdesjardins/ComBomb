@@ -186,6 +186,10 @@ public:
     bool newlines();
     void connectToRecvText(QObject* who);
     int lineCount();
+
+    bool startCapture(const QString& captureFilename);
+    void stopCapture();
+
 protected:
     virtual void closeEvent(QCloseEvent* event);
 public slots:
@@ -305,6 +309,7 @@ private:
     std::shared_ptr<TgtIntf> _targetInterface;
     bool _closed;
     bool _suppressOutput;
+    std::ofstream _captureFile;
 };
 
 #endif // TERMINALMODEL_H

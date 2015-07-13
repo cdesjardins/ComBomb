@@ -31,7 +31,8 @@ SOURCES += main.cpp\
     cbdialog.cpp \
     finddialog.cpp \
     updatechecker.cpp \
-    cbfontcombobox.cpp
+    cbfontcombobox.cpp \
+    capturedialog.cpp
 
 HEADERS  += mainwindow.h \
     childform.h \
@@ -48,7 +49,8 @@ HEADERS  += mainwindow.h \
     cbdialog.h \
     finddialog.h \
     updatechecker.h \
-    cbfontcombobox.h
+    cbfontcombobox.h \
+    capturedialog.h
 
 FORMS    += mainwindow.ui \
     childform.ui \
@@ -57,7 +59,8 @@ FORMS    += mainwindow.ui \
     fileclipboarddialog.ui \
     configdialog.ui \
     runprocessdialog.ui \
-    finddialog.ui
+    finddialog.ui \
+    capturedialog.ui
 
 RESOURCES += \
     ComBomb.qrc

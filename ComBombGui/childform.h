@@ -39,6 +39,7 @@ public:
     void findTextNext(const bool backward);
     void findTextHighlighted();
     bool isProcessRunning();
+    void captureLog();
     virtual ~ChildForm();
 private slots:
     void updateTitleSlot(QString title);
@@ -64,6 +65,7 @@ private:
     bool _lastSearchCaseSensitivity;
     bool _redirectStdout;
     bool _redirectStderr;
+    bool _captureLogging;
 };
 
 #endif // CHILDFORM_H

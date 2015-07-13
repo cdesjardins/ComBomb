@@ -48,6 +48,8 @@ public:
     bool eventFilter(QObject*, QEvent* event);
     void suppressOutput(bool suppress);
     void setTrackOutput(bool trackOutput);
+    bool startCapture(const QString& captureFilename);
+    void stopCapture();
 public slots:
     void copyClipboard();
     void pasteClipboard();

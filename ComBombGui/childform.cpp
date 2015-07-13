@@ -17,6 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "runprocessdialog.h"
+#include "capturedialog.h"
 #include "finddialog.h"
 #include "mainwindow.h"
 #include "childform.h"
@@ -28,7 +29,8 @@ ChildForm::ChildForm(const QTerminalConfig& terminalConfig, const std::shared_pt
     _processMutex(QMutex::Recursive),
     ui(new Ui::ChildForm),
     _proc(NULL),
-    _procError(false)
+    _procError(false),
+    _captureLogging(false)
 {
     std::string szTitle;
     ui->setupUi(this);
@@ -250,3 +252,22 @@ bool ChildForm::isProcessRunning()
     return ((_procError == false) && (_proc != NULL));
 }
 
+void ChildForm::captureLog()
+{
+    if (_captureLogging == false)
+    {
+        CaptureDialog captureDialog(this);
+        if (captureDialog.exec() == CaptureDialog::Accepted)
+        {
+            _captureLogging = true;
+            startCapture(captureDialog.getCaptureFilename());
+            MainWindow::getMainWindow()->swapCaptureIcon(true);
+        }
+    }
+    else
+    {
+        _captureLogging = false;
+        stopCapture();
+        MainWindow::getMainWindow()->swapCaptureIcon(false);
+    }
+}

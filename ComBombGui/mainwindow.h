@@ -41,6 +41,7 @@ public:
     static void errorBox(QString errMsg);
     ChildForm* getActiveChildWindow();
     void swapProcessIcon(bool processRunning);
+    void swapCaptureIcon(bool captureRunning);
     const std::chrono::duration<double> getStartTimeDelta();
     void setInterfaceType();
     static void enableDebugLogging();
@@ -71,6 +72,8 @@ private slots:
     void newVersionAvailableSlot();
     void on_actionNew_Version_Available_triggered();
 
+    void on_actionCapture_output_triggered();
+
 signals:
     void findSignal();
 private:
@@ -81,6 +84,7 @@ private:
     static MainWindow* _instance;
     std::atomic_int _windowCnt;
     QString _runProcessIconText;
+    QString _captureLogsIconText;
     std::chrono::time_point<std::chrono::system_clock> _startTime;
 };
 

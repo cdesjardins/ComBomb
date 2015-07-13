@@ -279,6 +279,24 @@ void TerminalModel::onReceiveBlock(boost::intrusive_ptr<RefCntBuffer> incoming)
         char* buf = boost::asio::buffer_cast<char*>(incoming->_buffer);
         int len = boost::asio::buffer_size(incoming->_buffer);
         _emulation->receiveData(buf, len);
+        if (_captureFile.is_open() == true)
+        {
+            _captureFile.write(buf, len);
+        }
+    }
+}
+
+bool TerminalModel::startCapture(const QString& captureFilename)
+{
+    _captureFile.open(captureFilename.toLocal8Bit().constData(), std::ios::out | std::ios::binary);
+    return _captureFile.is_open();
+}
+
+void TerminalModel::stopCapture()
+{
+    if (_captureFile.is_open() == true)
+    {
+        _captureFile.close();
     }
 }
 
@@ -294,6 +312,7 @@ TerminalModel::~TerminalModel()
     _selfListener.reset();
     _emulation.reset();
     _views.clear();
+    stopCapture();
 }
 
 void TerminalModel::setProfileKey(const QString& key)

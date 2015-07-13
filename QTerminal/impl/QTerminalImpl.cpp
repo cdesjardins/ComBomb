@@ -125,6 +125,16 @@ void QTerminalImpl::recvText(const QByteArray& data)
     _terminalModel->receiveBlock(data);
 }
 
+bool QTerminalImpl::startCapture(const QString& captureFilename)
+{
+    return _terminalModel->startCapture(captureFilename);
+}
+
+void QTerminalImpl::stopCapture()
+{
+    _terminalModel->stopCapture();
+}
+
 void QTerminalImpl::findText(const QString& searchStr, const bool caseSensitive, const bool searchUp, const bool cont)
 {
     _terminalView->findText(searchStr, caseSensitive, searchUp, cont);

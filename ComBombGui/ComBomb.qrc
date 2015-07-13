@@ -23,5 +23,7 @@
         <file>images/script_delete.png</file>
         <file>images/script_error.png</file>
         <file>images/alarm_bell.png</file>
+        <file>images/raw_access_logs.png</file>
+        <file>images/raw_access_logs_stop.png</file>
     </qresource>
 </RCC>
