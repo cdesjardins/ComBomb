@@ -57,6 +57,8 @@ TerminalModel::TerminalModel(const std::shared_ptr<TgtIntf>& targetInterface, si
     , _suppressOutput(false)
 {
     qRegisterMetaType<boost::intrusive_ptr<RefCntBuffer> >();
+    _captureLogFlusher.setSingleShot(true);
+    connect(&_captureLogFlusher, SIGNAL(timeout()), this, SLOT(captureLogFlush()));
     //create emulation backend
     _emulation.reset(new Vt102Emulation(histSize));
     connect(_emulation.get(), SIGNAL(stateSet(int)), this, SLOT(activityStateSet(int)));
@@ -282,6 +284,7 @@ void TerminalModel::onReceiveBlock(boost::intrusive_ptr<RefCntBuffer> incoming)
         if (_captureFile.is_open() == true)
         {
             _captureFile.write(buf, len);
+            _captureLogFlusher.start(100);
         }
     }
 }
@@ -296,8 +299,14 @@ void TerminalModel::stopCapture()
 {
     if (_captureFile.is_open() == true)
     {
+        captureLogFlush();
         _captureFile.close();
     }
+}
+
+void TerminalModel::captureLogFlush()
+{
+    _captureFile.flush();
 }
 
 void TerminalModel::receiveBlock(const QByteArray& data)

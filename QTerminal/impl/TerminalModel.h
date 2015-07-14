@@ -273,6 +273,7 @@ private slots:
     void activityStateSet(int);
 
     void sendData(const char* buf, int len);
+    void captureLogFlush();
 
 private:
 
@@ -310,6 +311,7 @@ private:
     bool _closed;
     bool _suppressOutput;
     std::ofstream _captureFile;
+    QTimer _captureLogFlusher;
 };
 
 #endif // TERMINALMODEL_H
