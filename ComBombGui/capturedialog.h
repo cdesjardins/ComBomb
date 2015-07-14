@@ -30,7 +30,7 @@ class CaptureDialog : public CBDialog
     Q_OBJECT
 
 public:
-    explicit CaptureDialog(QWidget *parent = 0);
+    explicit CaptureDialog(QWidget* parent = 0);
     ~CaptureDialog();
 
     QString getCaptureFilename();
@@ -42,7 +42,7 @@ private slots:
     void on_pushButton_clicked();
 
 private:
-    Ui::CaptureDialog *ui;
+    Ui::CaptureDialog* ui;
 };
 
 #endif // CAPTUREDIALOG_H

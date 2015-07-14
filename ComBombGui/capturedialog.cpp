@@ -23,7 +23,7 @@
 
 #define CB_CAPTURE_SETTINGS_BROWSE_DIR      getSettingsRoot() + "/Filename/Browser"
 
-CaptureDialog::CaptureDialog(QWidget *parent) :
+CaptureDialog::CaptureDialog(QWidget* parent) :
     CBDialog(parent),
     ui(new Ui::CaptureDialog)
 {
@@ -57,3 +57,4 @@ void CaptureDialog::on_pushButton_clicked()
         ui->captureFileComboBox->addOrUpdateItem(fileName);
     }
 }
+

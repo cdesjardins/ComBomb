@@ -417,3 +417,4 @@ void MainWindow::on_actionCapture_output_triggered()
         activeWindow->captureLog();
     }
 }
+

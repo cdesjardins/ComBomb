@@ -271,3 +271,4 @@ void ChildForm::captureLog()
         MainWindow::getMainWindow()->swapCaptureIcon(false);
     }
 }
+
