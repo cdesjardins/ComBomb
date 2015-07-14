@@ -252,6 +252,11 @@ bool ChildForm::isProcessRunning()
     return ((_procError == false) && (_proc != NULL));
 }
 
+bool ChildForm::isCaptureRunning()
+{
+    return _captureLogging;
+}
+
 void ChildForm::captureLog()
 {
     if (_captureLogging == false)

@@ -263,6 +263,7 @@ void MainWindow::subWindowActivatedSlot(QMdiSubWindow* subWindow)
     {
         ChildForm* childForm = dynamic_cast<ChildForm*>(subWindow->widget());
         swapProcessIcon(childForm->isProcessRunning());
+        swapCaptureIcon(childForm->isCaptureRunning());
     }
 }
 

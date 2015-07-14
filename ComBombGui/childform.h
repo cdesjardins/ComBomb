@@ -39,6 +39,7 @@ public:
     void findTextNext(const bool backward);
     void findTextHighlighted();
     bool isProcessRunning();
+    bool isCaptureRunning();
     void captureLog();
     virtual ~ChildForm();
 private slots:
