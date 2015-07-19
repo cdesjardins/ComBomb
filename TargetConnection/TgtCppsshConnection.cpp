@@ -25,6 +25,12 @@
 #include <boost/bind.hpp>
 #include <sstream>
 
+#ifdef WIN32
+#define CPPSSH_TIMEOUT 10000
+#else
+#define CPPSSH_TIMEOUT 1000
+#endif
+
 class TgtCppsshInit
 {
 public:
@@ -115,7 +121,7 @@ void TgtCppsshIntf::tgtMakeConnection()
     if (Cppssh::connect(&_sshData->_connectionId, connectionConfig->_hostName.c_str(),
                         connectionConfig->_portNum, connectionConfig->_userName.c_str(),
                         connectionConfig->_privKeyFile.c_str(),
-                        connectionConfig->_password.c_str()) == true)
+                        connectionConfig->_password.c_str(), CPPSSH_TIMEOUT) == true)
     {
         _sshData->_connected = true;
         _sshData->_sshThread = TgtThread::create(boost::bind(std::bind(&TgtCppsshIntf::sshThread, this)));
