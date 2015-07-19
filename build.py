@@ -76,15 +76,14 @@ def handleComBombDirty(gitVerStr):
             dirty = True
             index = gitVerStr.find("dirty")
             if (index == -1):
-                gitVerStr += "-libs-dirty"
+                gitVerStr += "-libs"
             else:
                 gitVerStr = gitVerStr.replace("dirty", "libs")
             cmd = "git tag -a " + gitVerStr + " -m"
             cmdArray = cmd.split(' ')
             cmdArray.extend(["\"build script says you are dirty\""])
             call(cmdArray)
-            if (index != -1):
-                gitVerStr += "-dirty"
+            gitVerStr += "-dirty"
             break
     return gitVerStr 
 
