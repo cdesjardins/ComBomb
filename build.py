@@ -74,15 +74,22 @@ def handleComBombDirty(gitVerStr):
     for k, v in gitVersions.iteritems():
         if (v != gitVerStr):
             dirty = True
-            if (gitVerStr.find("dirty") == -1):
+            index = gitVerStr.find("dirty")
+            if (index == -1):
+                gitVerStr += "-libs-dirty"
+            else:
+                gitVerStr = gitVerStr.replace("dirty", "libs")
+            cmd = "git tag -a " + gitVerStr + " -m"
+            cmdArray = cmd.split(' ')
+            cmdArray.extend(["\"build script says you are dirty\""])
+            call(cmdArray)
+            if (index != -1):
                 gitVerStr += "-dirty"
-            gitVerStr += "-libs"
-            cmd = "git tag " + gitVerStr
-            call(cmd.split(' '))
             break
     return gitVerStr 
 
 def cleanupComBombDirty(gitVerStr):
+    gitVerStr = gitVerStr.replace("-dirty", "")
     cmd = "git tag -d " + gitVerStr
     call(cmd.split(' '))
 
@@ -148,9 +155,11 @@ def zipItPosix(filename, qtDir):
 def zipIt(gitVerStr, qtDir):
     vers = gitVerStr.split("-")
 
-    filename = "ComBomb-" + vers[0]
-    if (len(vers) > 1):
-        filename = filename + "-" + vers[1]
+    #filename = "ComBomb-" + vers[0]
+    #if (len(vers) > 1):
+    #    filename = filename + "-" + vers[1]
+
+    filename = "ComBomb-" + gitVerStr
     if (platform.system() == "Windows"):
         zipItWindows(filename, qtDir)
     else:
