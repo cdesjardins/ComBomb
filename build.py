@@ -8,6 +8,7 @@ from subprocess import call
 from subprocess import Popen, PIPE
 
 releaseNotes = "releasenotes.txt"
+gitVersions = {}
 
 class uncrustify:
     def __init__(self):
@@ -31,7 +32,6 @@ class uncrustify:
         return gitVerStr
 
 def cmakeBuildLinux():
-    uncrustify().uncrustify("..")
     cmakeRelease = "cmake -DCMAKE_BUILD_TYPE=Release .."
     cmakeDebug = "cmake -DCMAKE_BUILD_TYPE=Debug .."
     make = "make -j8 install"
@@ -42,7 +42,6 @@ def cmakeBuildLinux():
     call(make.split(' '))
 
 def cmakeBuildWindows():
-    uncrustify().uncrustify("..")
     cmake = "cmake .."
     cmakeRelease = "cmake --build . --target install --config Release"
     cmakeDebug = "cmake --build . --target install --config Debug"
@@ -55,6 +54,8 @@ def cmakeBuild(baseDir):
     if (delBuildTree("build") == True):
         os.mkdir("build")
     os.chdir("build")
+    gitVerStr = uncrustify().uncrustify("..")
+    gitVersions[baseDir] = gitVerStr
     if (platform.system() == "Linux"):    
         cmakeBuildLinux()
     else:
@@ -69,9 +70,24 @@ def botanBuild():
         call(["buildbotan.bat"])
     os.chdir("..")
 
+def handleComBombDirty(gitVerStr):
+    dirty = False
+    for k, v in gitVersions.iteritems():
+        if (v != gitVerStr):
+            dirty = True
+            cmd = "git tag " + gitVerStr + "-dirty-libs"
+            call(cmd.split(' '))
+            break
+    return dirty
+
+def cleanupComBombDirty(gitVerStr):
+    cmd = "git tag -d " + gitVerStr + "-dirty-libs"
+    call(cmd.split(' '))
+
 def combombBuild():
     os.chdir("ComBomb")
     gitVerStr = uncrustify().uncrustify(".")
+    dirty = handleComBombDirty(gitVerStr)
     if (delBuildTree("build") == True):
         os.mkdir("build")
     os.chdir("build")
@@ -84,6 +100,8 @@ def combombBuild():
         call(["make", "-j5"])
     buildLog()
     zipIt(gitVerStr, qtDir)
+    if (dirty):
+        cleanupComBombDirty(gitVerStr)
     os.chdir("../..")
 
 def delBuildTree(delDir):
