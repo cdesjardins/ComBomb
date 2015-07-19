@@ -143,4 +143,9 @@ else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../install/lib/bota
 else:unix:CONFIG(release, debug|release): LIBS += $$PWD/../../install/lib/libcppssh.a  $$PWD/../../install/lib/libCDLogger.a  $$PWD/../../install/lib/botan/Release/libbotan-1.11.a
 else:unix:CONFIG(debug, debug|release):   LIBS += $$PWD/../../install/lib/libcppsshd.a $$PWD/../../install/lib/libCDLoggerd.a $$PWD/../../install/lib/botan/Debug/libbotan-1.11.a
 
+win32:CONFIG(release, debug|release):     PRE_TARGETDEPS += $$PWD/../../install/lib/cppssh.lib   $$PWD/../../install/lib/CDLogger.lib   $$PWD/../../install/lib/botan/Release/botan.lib
+else:win32:CONFIG(debug, debug|release):  PRE_TARGETDEPS += $$PWD/../../install/lib/cppsshd.lib  $$PWD/../../install/lib/CDLoggerd.lib  $$PWD/../../install/lib/botan/Debug/botan.lib
+else:unix:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../install/lib/libcppssh.a  $$PWD/../../install/lib/libCDLogger.a  $$PWD/../../install/lib/botan/Release/libbotan-1.11.a
+else:unix:CONFIG(debug, debug|release):   PRE_TARGETDEPS += $$PWD/../../install/lib/libcppsshd.a $$PWD/../../install/lib/libCDLoggerd.a $$PWD/../../install/lib/botan/Debug/libbotan-1.11.a
+
 
