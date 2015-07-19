@@ -71,23 +71,25 @@ def botanBuild():
     os.chdir("..")
 
 def handleComBombDirty(gitVerStr):
-    dirty = False
     for k, v in gitVersions.iteritems():
         if (v != gitVerStr):
             dirty = True
-            cmd = "git tag " + gitVerStr + "-dirty-libs"
+            if (gitVerStr.find("dirty") == -1):
+                gitVerStr += "-dirty"
+            gitVerStr += "-libs"
+            cmd = "git tag " + gitVerStr
             call(cmd.split(' '))
             break
-    return dirty
+    return gitVerStr 
 
 def cleanupComBombDirty(gitVerStr):
-    cmd = "git tag -d " + gitVerStr + "-dirty-libs"
+    cmd = "git tag -d " + gitVerStr
     call(cmd.split(' '))
 
 def combombBuild():
     os.chdir("ComBomb")
     gitVerStr = uncrustify().uncrustify(".")
-    dirty = handleComBombDirty(gitVerStr)
+    newGitVerStr = handleComBombDirty(gitVerStr)
     if (delBuildTree("build") == True):
         os.mkdir("build")
     os.chdir("build")
@@ -99,9 +101,9 @@ def combombBuild():
     else:
         call(["make", "-j5"])
     buildLog()
-    zipIt(gitVerStr, qtDir)
-    if (dirty):
-        cleanupComBombDirty(gitVerStr)
+    zipIt(newGitVerStr, qtDir)
+    if (gitVerStr != newGitVerStr):
+        cleanupComBombDirty(newGitVerStr)
     os.chdir("../..")
 
 def delBuildTree(delDir):
