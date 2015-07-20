@@ -1390,8 +1390,8 @@ void TerminalView::blinkCursorEvent()
 
 void TerminalView::resizeEvent(QResizeEvent* e)
 {
-    if ( ! ((e->oldSize().width() == -1) && (e->oldSize().height() == -1) &&
-        (e->size().width() == minimumWidth()) && (e->size().height() == minimumHeight())))
+    if (!((e->oldSize().width() == -1) && (e->oldSize().height() == -1) &&
+          (e->size().width() == minimumWidth()) && (e->size().height() == minimumHeight())))
     {
         updateImageSize();
         _targetInterface->tgtWindowResize(columns(), lines());
