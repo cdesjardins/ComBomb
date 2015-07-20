@@ -48,7 +48,8 @@ HEADERS += QTerminalInterface.h \
     impl/KeyboardTranslator.h \
     impl/ExtendedDefaultTranslator.h \
     QTerminalConfig.h \
-    impl/BackTabEvent.h
+    impl/BackTabEvent.h \
+    impl/TerminalDefaults.h
 unix:!symbian {
     maemo5 {
         target.path = /opt/usr/lib

@@ -23,11 +23,12 @@
 #include "QTerminalImpl.h"
 #include "BackTabEvent.h"
 #include "KeyboardTranslator.h"
+#include "TerminalDefaults.h"
 
 QTerminalImpl::QTerminalImpl(const QTerminalConfig& terminalConfig, const std::shared_ptr<TgtIntf>& targetInterface, int width, int height, QWidget* parent)
     : QTerminalInterface(parent)
 {
-    setMinimumSize(600, 400);
+    setMinimumSize(TERMINAL_MIN_WIDTH, TERMINAL_MIN_HEIGHT);
     initialize(terminalConfig, targetInterface, width, height);
 }
 

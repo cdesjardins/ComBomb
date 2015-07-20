@@ -49,7 +49,7 @@
 #include "TerminalCharacterDecoder.h"
 #include "BackTabEvent.h"
 #include "QTerminalInterface.h"
-
+#include "TerminalDefaults.h"
 #ifndef loc
 #define loc(X, Y) ((Y)*_columns + (X))
 #endif
@@ -303,6 +303,8 @@ TerminalView::TerminalView(const std::shared_ptr<TgtIntf>& targetInterface, QWid
     , _fontMetrics(font())
     , _targetInterface(targetInterface)
 {
+    setMinimumSize(TERMINAL_MIN_WIDTH, TERMINAL_MIN_HEIGHT);
+
     // terminal applications are not designed with Right-To-Left in mind,
     // so the layout is forced to Left-To-Right
     setLayoutDirection(Qt::LeftToRight);
@@ -1386,15 +1388,19 @@ void TerminalView::blinkCursorEvent()
 /*                                                                           */
 /* ------------------------------------------------------------------------- */
 
-void TerminalView::resizeEvent(QResizeEvent*)
+void TerminalView::resizeEvent(QResizeEvent* e)
 {
-    updateImageSize();
-    _targetInterface->tgtWindowResize(columns(), lines());
+    if ( ! ((e->oldSize().width() == -1) && (e->oldSize().height() == -1) &&
+        (e->size().width() == minimumWidth()) && (e->size().height() == minimumHeight())))
+    {
+        updateImageSize();
+        _targetInterface->tgtWindowResize(columns(), lines());
+    }
 }
 
 void TerminalView::propagateSize()
 {
-    if (_isFixedSize)
+    if (_isFixedSize == true)
     {
         setSize(_columns, _lines);
         QWidget::setFixedSize(sizeHint());
@@ -1422,7 +1428,7 @@ void TerminalView::updateImageSize()
 
     _resizing = (oldlin != _lines) || (oldcol != _columns);
 
-    if (_resizing)
+    if (_resizing == true)
     {
         showResizeNotification();
         emit changedContentSizeSignal(_contentHeight, _contentWidth); // expose resizeEvent
