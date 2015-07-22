@@ -31,48 +31,10 @@
 #define CPPSSH_TIMEOUT 1000
 #endif
 
-class TgtCppsshInit
-{
-public:
-    static std::shared_ptr<TgtCppsshInit> instance()
-    {
-        std::shared_ptr<TgtCppsshInit> tmp = _instance;
-        if (!tmp)
-        {
-            std::unique_lock<std::mutex> guard(_instantiationMutex);
-            tmp = _instance;
-            if (!tmp)
-            {
-                _instance.reset(new TgtCppsshInit);
-                tmp = _instance;
-            }
-        }
-        return tmp;
-    }
-
-    TgtCppsshInit()
-    {
-        Cppssh::create();
-    }
-
-    ~TgtCppsshInit()
-    {
-        Cppssh::destroy();
-    }
-
-private:
-    static std::shared_ptr<TgtCppsshInit> _instance;
-    static std::mutex _instantiationMutex;
-};
-
-std::shared_ptr<TgtCppsshInit> TgtCppsshInit::_instance;
-std::mutex TgtCppsshInit::_instantiationMutex;
-
 struct TgtCppsshImpl
 {
     TgtCppsshImpl()
-        : _sshInit(TgtCppsshInit::instance()),
-        _connectionId(-1),
+        : _connectionId(-1),
         _columns(0),
         _rows(0),
         _windowResize(false),
@@ -80,13 +42,7 @@ struct TgtCppsshImpl
     {
     }
 
-    ~TgtCppsshImpl()
-    {
-        _sshInit.reset();
-    }
-
-    std::shared_ptr<TgtThread>     _sshThread;
-    std::shared_ptr<TgtCppsshInit> _sshInit;
+    std::shared_ptr<TgtThread> _sshThread;
     int  _connectionId;
     int  _columns;
     int  _rows;
