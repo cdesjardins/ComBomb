@@ -3,7 +3,7 @@
 # This is the master combomb build script
 # which is used to create releases.
 
-import shutil, sys, os, platform, createVersion, zipfile, tarfile, getopt
+import shutil, sys, os, platform, createVersion, zipfile, tarfile, getopt, atexit
 from subprocess import call
 from subprocess import Popen, PIPE
 
@@ -84,6 +84,7 @@ def handleComBombDirty(gitVerStr):
             cmdArray.extend(["\"build script says you are dirty\""])
             call(cmdArray)
             gitVerStr += "-dirty"
+            atexit.register(cleanupComBombDirty, gitVerStr=gitVerStr)
             break
     return gitVerStr 
 
@@ -108,8 +109,8 @@ def combombBuild():
         call(["make", "-j5"])
     buildLog()
     zipIt(newGitVerStr, qtDir)
-    if (gitVerStr != newGitVerStr):
-        cleanupComBombDirty(newGitVerStr)
+    #if (gitVerStr != newGitVerStr):
+        #cleanupComBombDirty(newGitVerStr)
     os.chdir("../..")
 
 def delBuildTree(delDir):
