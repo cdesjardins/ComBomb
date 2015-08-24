@@ -104,7 +104,7 @@ else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../cryptlib/
 
 
 # Boost
-BOOSTVER = 1_58_0
+BOOSTVER = 1_59_0
 QMAKE_CXXFLAGS += -DBOOST_ALL_NO_LIB
 
 win32:QMAKE_CXXFLAGS += -D_WIN32_WINNT=0x0501
