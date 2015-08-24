@@ -89,9 +89,10 @@ def handleComBombDirty(gitVerStr):
     return gitVerStr 
 
 def cleanupComBombDirty(gitVerStr):
-    gitVerStr = gitVerStr.replace("-dirty", "")
-    cmd = "git tag -d " + gitVerStr
-    call(cmd.split(' '))
+    if (os.path.exists("ComBomb") == False):
+        gitVerStr = gitVerStr.replace("-dirty", "")
+        cmd = "git tag -d " + gitVerStr
+        call(cmd.split(' '))
 
 def combombBuild():
     os.chdir("ComBomb")
@@ -109,8 +110,8 @@ def combombBuild():
         call(["make", "-j5"])
     buildLog()
     zipIt(newGitVerStr, qtDir)
-    #if (gitVerStr != newGitVerStr):
-        #cleanupComBombDirty(newGitVerStr)
+    if (gitVerStr != newGitVerStr):
+        cleanupComBombDirty(newGitVerStr)
     os.chdir("../..")
 
 def delBuildTree(delDir):
