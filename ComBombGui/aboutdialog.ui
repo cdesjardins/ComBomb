@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>408</width>
-    <height>155</height>
+    <height>175</height>
    </rect>
   </property>
   <property name="focusPolicy">
@@ -33,7 +33,8 @@
       <item>
        <widget class="QLabel" name="label_3">
         <property name="text">
-         <string>ComBomb (C) 2014 - Chris Desjardins.</string>
+         <string>ComBomb (C) 2013-2015
+Chris Desjardins</string>
         </property>
        </widget>
       </item>
