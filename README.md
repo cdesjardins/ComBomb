@@ -16,29 +16,26 @@ cd ComBomb
 Once those commands are complete build the cryptlib library in the cl directory, and then open ComBomb.pro in QT Creator Based on QT 5, then run qmake, and build.
 
 I also typically link to Qt5 statically, to build a statically I use the following commands:
+Download Qt source package from: http://www.qt.io/download-open-source/#section-2
 
 ```
-git clone git://code.qt.io/qt/qt5.git
-cd qt5
-git checkout 5.4
+cd qt-everywhere-opensource-src-<version>
 ```
 
 Windows:
 ```
-perl init-repository --no-webkit
-configure -opensource -nomake examples -nomake tests -prefix C:\Qt\5.4 -confirm-license -static -no-openssl -opengl desktop
+configure -opensource -nomake examples -nomake tests -prefix C:\Qt\<version> -confirm-license -static -no-openssl -opengl desktop
 jom -j 5
-jom install
+jom install -j
 jom -j 15 distclean
 ```
 
 Linux:
 ```
 sudo apt-get install libfontconfig1-dev
-perl init-repository --no-webkit
-./configure -opensource -nomake examples -nomake tests -prefix ~/Qt/5.4 -confirm-license -static -no-openssl -no-gtkstyle -qt-xcb
+./configure -opensource -nomake examples -nomake tests -prefix ~/Qt/<version> -confirm-license -static -no-openssl -no-gtkstyle -qt-xcb
 make -j5
-make install
+make install -j
 make -j15 distclean
 ```
 
