@@ -24,7 +24,7 @@ cd qt-everywhere-opensource-src-<version>
 
 Windows:
 ```
-configure -opensource -nomake examples -nomake tests -prefix C:\Qt\<version> -confirm-license -static -no-openssl -opengl desktop
+configure -opensource -nomake examples -nomake tests -prefix C:\Qt\<version> -confirm-license -static -static-runtime -no-openssl -opengl desktop
 jom -j 5
 jom install
 jom -j 15 distclean
