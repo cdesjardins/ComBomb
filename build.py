@@ -137,6 +137,7 @@ files = {
     "../ComBombGui/images/ComBomb128.png": "ComBomb/ComBomb128.png",
     releaseNotes : "ComBomb/" + releaseNotes,
     "../addons/savetofile.py" : "ComBomb/addons/savetofile.py",
+    "../addons/example.py" : "ComBomb/addons/example.py",
 }
 
 def zipItWindows(filename, qtDir):
