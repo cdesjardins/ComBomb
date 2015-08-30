@@ -31,8 +31,6 @@
 #define CB_OPEN_CONN_PB         CB_OPEN_SETTINGS_ROOT "Process/Browser"
 #define CB_OPEN_CONN_WDB        CB_OPEN_SETTINGS_ROOT "WorkingDir/Browser"
 
-bool OpenDialog::_sCppssh = false;
-
 OpenDialog::OpenDialog(QWidget* parent) :
     QDialog(parent),
     ui(new Ui::OpenDialog)
@@ -45,11 +43,9 @@ OpenDialog::OpenDialog(QWidget* parent) :
     addByteSize();
     addFlowControl();
     ui->portNumLineEdit->setValidator(new QIntValidator(0, 65536, this));
-    ui->cppsshPortNumLineEdit->setValidator(new QIntValidator(0, 65536, this));
     QSettings settings;
     ui->tabWidget->setCurrentIndex(settings.value(CB_OPEN_CONN_TYPE, CB_CONN_SSH).toInt());
     ui->newLineCheckBox->setChecked(settings.value(CB_OPEN_CONN_CRLF, false).toBool());
-    ui->tabWidget->setTabEnabled(CB_CONN_CPPSSH, _sCppssh);
 }
 
 OpenDialog::ConnectionType OpenDialog::getConnectionType()
@@ -58,32 +54,14 @@ OpenDialog::ConnectionType OpenDialog::getConnectionType()
     return ret;
 }
 
-void OpenDialog::addSshConfig(const TgtSshIntf::TgtConnectionConfig& config)
+std::shared_ptr<const TgtCppsshIntf::TgtConnectionConfig> OpenDialog::getSshConfig() const
 {
-    ui->hostNameComboBox->addItem(config._hostName.c_str());
-    ui->portNumLineEdit->setText(QString("%1").arg(config._portNum));
-    ui->userNameComboBox->addItem(config._userName.c_str());
-}
-
-std::shared_ptr<const TgtSshIntf::TgtConnectionConfig> OpenDialog::getSshConfig() const
-{
-    std::shared_ptr<TgtSshIntf::TgtConnectionConfig> ret(new TgtSshIntf::TgtConnectionConfig(
+    std::shared_ptr<TgtCppsshIntf::TgtConnectionConfig> ret(new TgtCppsshIntf::TgtConnectionConfig(
                                                              ui->hostNameComboBox->currentText().toLocal8Bit().constData(),
                                                              ui->portNumLineEdit->text().toInt(),
                                                              ui->userNameComboBox->currentText().toLocal8Bit().constData(),
                                                              ui->passwordLineEdit->text().toLocal8Bit().constData(),
                                                              ui->privKeyFileComboBox->currentText().toLocal8Bit().constData()));
-    return ret;
-}
-
-std::shared_ptr<const TgtCppsshIntf::TgtConnectionConfig> OpenDialog::getCppsshConfig() const
-{
-    std::shared_ptr<TgtCppsshIntf::TgtConnectionConfig> ret(new TgtCppsshIntf::TgtConnectionConfig(
-                                                                ui->cppsshHostNameComboBox->currentText().toLocal8Bit().constData(),
-                                                                ui->cppsshPortNumLineEdit->text().toInt(),
-                                                                ui->cppsshUserNameComboBox->currentText().toLocal8Bit().constData(),
-                                                                ui->cppsshPasswordLineEdit->text().toLocal8Bit().constData(),
-                                                                ui->cppsshPrivKeyFileComboBox->currentText().toLocal8Bit().constData()));
     return ret;
 }
 
@@ -213,7 +191,7 @@ void OpenDialog::on_privKeyBrowseButton_clicked()
     {
         dirName = QDir::homePath() + "/.ssh";
     }
-    fileName = QFileDialog::getOpenFileName(this, tr("Private key files"), dirName, tr("PKCS (*.p12 *.p15);;All files (*.*)"));
+    fileName = QFileDialog::getOpenFileName(this, tr("Private key files"), dirName, tr("All files (*.*)"));
     if (fileName.isNull() == false)
     {
         ui->privKeyFileComboBox->insertItem(0, fileName);

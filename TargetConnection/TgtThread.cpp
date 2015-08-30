@@ -18,6 +18,7 @@
 */
 
 #include "TgtThread.h"
+#include "CDLogger/Logger.h"
 #include <QDebug>
 #include <thread>
 #include <sstream>
@@ -45,12 +46,12 @@ void TgtThread::join()
 
 void TgtThread::start()
 {
-    //qDebug(toString("start").c_str());
+    //cdLog(LogLevel::Debug) << toString("start");
 }
 
 void TgtThread::finalize()
 {
-    //qDebug(toString("finalize").c_str());
+    //cdLog(LogLevel::Debug) << toString("finalize");
 }
 
 std::string TgtThread::toString(const std::string& tag, std::thread* thr)

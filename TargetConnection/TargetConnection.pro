@@ -13,7 +13,6 @@ CONFIG += staticlib
 
 SOURCES += \
     TgtTelnetConnection.cpp \
-    TgtSshConnection.cpp \
     TgtSerialConnection.cpp \
     TgtProcessConnection.cpp \
     TgtThread.cpp \
@@ -21,7 +20,6 @@ SOURCES += \
 
 HEADERS += \
     TgtTelnetConnection.h \
-    TgtSshConnection.h \
     TgtSerialConnection.h \
     TgtConnection.h \
     CBException.h \
@@ -37,9 +35,8 @@ unix:!symbian {
     INSTALLS += target
 }
 
-CRYPTLIBINC = $$PWD/../..
-INCLUDEPATH += $$PWD/../../install/include $${CRYPTLIBINC} $$PWD/../../include
-DEPENDPATH  += $$PWD/../../install/include $${CRYPTLIBINC} $$PWD/../../include
+INCLUDEPATH += $$PWD/../../install/include $$PWD/../../include
+DEPENDPATH  += $$PWD/../../install/include $$PWD/../../include
 
 # Boost
 
@@ -50,8 +47,6 @@ BOOSTVER = 1_59_0
 INCLUDEPATH += $$PWD/../../boost/boost_$${BOOSTVER}
 DEPENDPATH += $$PWD/../../boost/boost_$${BOOSTVER}
 
-# Crypt lib
-win32: QMAKE_CXXFLAGS += -D_WINDOWS -DSTATIC_LIB
 
 unix: {
 QMAKE_CXXFLAGS += -std=c++11

@@ -61,7 +61,6 @@ MainWindow::MainWindow(QWidget* parent) :
 {
 #ifdef QT_DEBUG
     enableDebugLogging();
-    OpenDialog::enablecppssh();
 #endif
     _windowCnt.store(0);
     _startTime = std::chrono::system_clock::now();
@@ -170,14 +169,7 @@ void MainWindow::on_actionOpen_triggered()
             {
                 case OpenDialog::CB_CONN_SSH:
                 {
-                    std::shared_ptr<const TgtSshIntf::TgtConnectionConfig> p = openDialog.getSshConfig();
-                    intf = TgtSshIntf::createSshConnection(p);
-                }
-                break;
-
-                case OpenDialog::CB_CONN_CPPSSH:
-                {
-                    std::shared_ptr<const TgtCppsshIntf::TgtConnectionConfig> p = openDialog.getCppsshConfig();
+                    std::shared_ptr<const TgtCppsshIntf::TgtConnectionConfig> p = openDialog.getSshConfig();
                     intf = TgtCppsshIntf::createCppsshConnection(p);
                 }
                 break;

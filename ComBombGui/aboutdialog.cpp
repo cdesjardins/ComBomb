@@ -49,7 +49,6 @@ void CBLabel::mouseDoubleClickEvent(QMouseEvent*)
         setPixmap(pixma);
     }
     MainWindow::enableDebugLogging();
-    OpenDialog::enablecppssh();
 }
 
 AboutDialog::AboutDialog(QWidget* parent) :

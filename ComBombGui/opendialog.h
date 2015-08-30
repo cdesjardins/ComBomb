@@ -37,35 +37,25 @@ public:
         CB_CONN_TELNET,
         CB_CONN_SERIAL,
         CB_CONN_PROCESS,
-        CB_CONN_CPPSSH,
     };
 
     explicit OpenDialog(QWidget* parent = 0);
     virtual ~OpenDialog();
 
-    std::shared_ptr<const TgtSshIntf::TgtConnectionConfig> getSshConfig() const;
-    std::shared_ptr<const TgtCppsshIntf::TgtConnectionConfig> getCppsshConfig() const;
+    std::shared_ptr<const TgtCppsshIntf::TgtConnectionConfig> getSshConfig() const;
     std::shared_ptr<const TgtTelnetIntf::TgtConnectionConfig> getTelnetConfig() const;
     std::shared_ptr<const TgtSerialIntf::TgtConnectionConfig> getSerialConfig() const;
     std::shared_ptr<const TgtProcessIntf::TgtConnectionConfig> getProcessConfig() const;
-    void addSshConfig(const TgtSshIntf::TgtConnectionConfig& config);
 
     ConnectionType getConnectionType();
 
     bool newlines();
 
-    static void enablecppssh()
-    {
-        _sCppssh = true;
-    }
-
 private slots:
     void hostNameSelectionChanged(int x);
     void on_privKeyBrowseButton_clicked();
     void on__buttonBox_accepted();
-
     void on_programBrowseButton_clicked();
-
     void on_workingDirButton_clicked();
 
 private:
@@ -77,7 +67,6 @@ private:
     void addFlowControl();
 
     Ui::OpenDialog* ui;
-    static bool _sCppssh;
 };
 
 #endif // OPENDIALOG_H

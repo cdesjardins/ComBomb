@@ -89,18 +89,6 @@ win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../QTerminal/r
 else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../QTerminal/debug/QTerminal.lib
 else:unix: PRE_TARGETDEPS += $$OUT_PWD/../QTerminal/libQTerminal.a
 
-# To build cryptLib for windows:
-# I have used version: 3.4.2
-# I changed the build type to static lib
-# I also had to add the -DSTATIC_LIB to the cryptlib project settings
-# Then build both debug and release.
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../cryptlib/release/ -ladvapi32 -lcl32 -luser32
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../cryptlib/debug/ -ladvapi32 -lcl32 -luser32
-else:unix: LIBS += $$PWD/../../cryptlib/libcl.a
-
-win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../cryptlib/release/cl32.lib
-else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../../cryptlib/debug/cl32.lib
-
 
 
 # Boost
