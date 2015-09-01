@@ -191,7 +191,7 @@ void OpenDialog::on_privKeyBrowseButton_clicked()
     {
         dirName = QDir::homePath() + "/.ssh";
     }
-    fileName = QFileDialog::getOpenFileName(this, tr("Private key files"), dirName, tr("All files (*.*)"));
+    fileName = QFileDialog::getOpenFileName(this, tr("Private key files"), dirName, tr("All files (*)"));
     if (fileName.isNull() == false)
     {
         ui->privKeyFileComboBox->insertItem(0, fileName);

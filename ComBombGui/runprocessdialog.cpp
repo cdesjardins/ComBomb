@@ -59,7 +59,7 @@ void RunProcessDialog::on_programBrowseButton_clicked()
     QSettings settings;
     QString fileName;
     QString dirName = settings.value(CB_RUN_PROCESS_SETTINGS_PB, QString()).toString();
-    fileName = QFileDialog::getOpenFileName(this, tr("Programs"), dirName, tr("All files (*.*)"));
+    fileName = QFileDialog::getOpenFileName(this, tr("Programs"), dirName, tr("All files (*)"));
     if (fileName.isNull() == false)
     {
         settings.setValue(CB_RUN_PROCESS_SETTINGS_PB, QFileInfo(fileName).canonicalPath());
