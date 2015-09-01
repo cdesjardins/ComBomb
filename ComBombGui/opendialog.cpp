@@ -57,11 +57,11 @@ OpenDialog::ConnectionType OpenDialog::getConnectionType()
 std::shared_ptr<const TgtCppsshIntf::TgtConnectionConfig> OpenDialog::getSshConfig() const
 {
     std::shared_ptr<TgtCppsshIntf::TgtConnectionConfig> ret(new TgtCppsshIntf::TgtConnectionConfig(
-                                                             ui->hostNameComboBox->currentText().toLocal8Bit().constData(),
-                                                             ui->portNumLineEdit->text().toInt(),
-                                                             ui->userNameComboBox->currentText().toLocal8Bit().constData(),
-                                                             ui->passwordLineEdit->text().toLocal8Bit().constData(),
-                                                             ui->privKeyFileComboBox->currentText().toLocal8Bit().constData()));
+                                                                ui->hostNameComboBox->currentText().toLocal8Bit().constData(),
+                                                                ui->portNumLineEdit->text().toInt(),
+                                                                ui->userNameComboBox->currentText().toLocal8Bit().constData(),
+                                                                ui->passwordLineEdit->text().toLocal8Bit().constData(),
+                                                                ui->privKeyFileComboBox->currentText().toLocal8Bit().constData()));
     return ret;
 }
 
