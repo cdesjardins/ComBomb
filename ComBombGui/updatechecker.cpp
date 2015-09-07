@@ -1,6 +1,6 @@
 /*
     ComBomb - Terminal emulator
-    Copyright (C) 2014  Chris Desjardins
+    Copyright (C) 2015  Chris Desjardins
     http://blog.chrisd.info cjd@chrisd.info
 
     This program is free software: you can redistribute it and/or modify
@@ -18,86 +18,122 @@
 */
 #include "updatechecker.h"
 #include "versioning.h"
-#include "unparam.h"
-#include <QNetworkAccessManager>
-#include <QJsonDocument>
-#include <QJsonArray>
-#include <QJsonObject>
+#include "CDLogger/Logger.h"
 
-std::shared_ptr<UpdateChecker> UpdateChecker::_inst;
+#define VERSION_HOST "blog.chrisd.info"
+#define VERSION_PATH "/download/combombversion/latest.txt"
+std::unique_ptr<UpdateChecker> UpdateChecker::_inst;
 
 UpdateChecker::UpdateChecker()
-    : _reply(NULL),
-    _latestVersion(-1),
-    _manager(new QNetworkAccessManager(this))
+    : _running(true)
 {
 }
 
 UpdateChecker::~UpdateChecker()
 {
-    _manager->disconnect();
-    _reply->disconnect();
-}
-
-std::shared_ptr<UpdateChecker> UpdateChecker::instance()
-{
-    if (_inst == NULL)
+    _running = false;
+    if ((_checkThread != NULL) && (_checkThread->joinable() == true))
     {
-        _inst.reset(new UpdateChecker());
+        _checkThread->join();
     }
-    return _inst;
 }
 
 void UpdateChecker::checkForNewVersion()
 {
-    connect(_manager.get(), SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
-
-    QNetworkRequest req = QNetworkRequest(QUrl("http://blog.chrisd.info/download/combombversion/latest.txt"));
-    req.setRawHeader("Accept-Encoding", "identity");
-    _reply = _manager->get(req);
-
-    connect(_reply, SIGNAL(readyRead()), this, SLOT(slotReadyRead()));
-    connect(_reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(slotError(QNetworkReply::NetworkError)));
-}
-
-void UpdateChecker::slotError(QNetworkReply::NetworkError err)
-{
-#ifdef QT_DEBUG
-    qDebug("Error: %i", err);
-#else
-    UNREF_PARAM(err);
-#endif
-}
-
-void UpdateChecker::replyFinished(QNetworkReply*)
-{
-    QString verStr = _result.toUtf8();
-    int32_t currentVersion = parseVersionStr(getVersion());
-    _latestVersion = parseVersionStr(verStr.toLocal8Bit().constData());
-    if ((_latestVersion != -1) && (currentVersion != -1) && (_latestVersion > currentVersion))
+    if (_inst == NULL)
     {
-        _latestVersionStr = verStr;
+        _inst.reset(new UpdateChecker());
+        _inst->_checkThread.reset(new std::thread(&UpdateChecker::checkForNewVersionThread, _inst.get()));
+    }
+}
+
+bool UpdateChecker::processResponseHeader(boost::asio::ip::tcp::socket& socket, boost::asio::streambuf& response)
+{
+    bool ret = true;
+    std::istream responseStream(&response);
+    std::string httpVersion;
+    responseStream >> httpVersion;
+    unsigned int statusCode;
+    responseStream >> statusCode;
+    std::string statusMessage;
+    std::getline(responseStream, statusMessage);
+    if ((!responseStream) || (httpVersion.substr(0, 5) != "HTTP/") || (statusCode != 200))
+    {
+        cdLog(LogLevel::Info) << "Invalid response";
+        ret = false;
+    }
+    else
+    {
+        boost::asio::read_until(socket, response, "\r\n\r\n");
+        std::string header;
+        while ((_running == true) && std::getline(responseStream, header) && (header != "\r"))
+        {
+        }
+    }
+    return ret;
+}
+
+void UpdateChecker::checkForNewVersionThread()
+{
+    try
+    {
+        boost::asio::io_service ioService;
+
+        boost::asio::ip::tcp::resolver resolver(ioService);
+        boost::asio::ip::tcp::resolver::query query(VERSION_HOST, "http");
+        boost::asio::ip::tcp::resolver::iterator endpointIterator = resolver.resolve(query);
+
+        boost::asio::ip::tcp::socket socket(ioService);
+        boost::asio::connect(socket, endpointIterator);
+
+        boost::asio::streambuf request;
+        std::ostream requestStream(&request);
+        requestStream << "GET " << VERSION_PATH << " HTTP/1.0\r\n";
+        requestStream << "Host: " << VERSION_HOST << "\r\n";
+        requestStream << "Accept: */*\r\n";
+        requestStream << "Connection: close\r\n\r\n";
+        boost::asio::write(socket, request);
+
+        boost::asio::streambuf response;
+        boost::asio::read_until(socket, response, "\r\n");
+
+        if (processResponseHeader(socket, response) == true)
+        {
+            std::string comBombVersion;
+            if (response.size() > 0)
+            {
+                std::istream responseStream(&response);
+                responseStream >> comBombVersion;
+            }
+
+            // Read until EOF, writing data to output as we go.
+            boost::system::error_code error;
+            while ((_running == true) && boost::asio::read(socket, response, boost::asio::transfer_at_least(1), error))
+            {
+                std::string respStr;
+                std::istream responseStream(&response);
+                responseStream >> respStr;
+                comBombVersion.append(respStr);
+            }
+            if (error == boost::asio::error::eof)
+            {
+                replyFinished(comBombVersion);
+            }
+            socket.close();
+        }
+    }
+    catch (std::exception& e)
+    {
+         cdLog(LogLevel::Error) << "Check for new version exception: " << e.what();
+    }
+}
+
+void UpdateChecker::replyFinished(const std::string& comBombVersion)
+{
+    int32_t currentVersion = parseVersionStr(getVersion());
+    int32_t latestVersion = parseVersionStr(comBombVersion);
+    if ((latestVersion != -1) && (currentVersion != -1) && (latestVersion > currentVersion))
+    {
         emit newVersionAvailable();
     }
-    _reply->close();
 }
-
-void UpdateChecker::slotReadyRead()
-{
-    if (_reply != NULL)
-    {
-        QByteArray result = _reply->readAll();
-        _result += result.constData();
-    }
-}
-
-int32_t UpdateChecker::getLatestVersion()
-{
-    return _latestVersion;
-}
-
-QString UpdateChecker::getLatestVersionStr()
-{
-    return _latestVersionStr;
-}
-

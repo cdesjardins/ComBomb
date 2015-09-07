@@ -87,8 +87,8 @@ MainWindow::MainWindow(QWidget* parent) :
     _runProcessIconText = _ui->action_Run_Process->text();
     _captureLogsIconText = _ui->actionCapture_output->text();
     connect(_mdiArea, SIGNAL(subWindowActivated(QMdiSubWindow*)), this, SLOT(subWindowActivatedSlot(QMdiSubWindow*)));
-    UpdateChecker::instance()->checkForNewVersion();
-    connect(UpdateChecker::instance().get(), SIGNAL(newVersionAvailable()), this, SLOT(newVersionAvailableSlot()));
+    UpdateChecker::checkForNewVersion();
+    connect(UpdateChecker::get(), SIGNAL(newVersionAvailable()), this, SLOT(newVersionAvailableSlot()), Qt::QueuedConnection);
 }
 
 void MainWindow::enableDebugLogging()

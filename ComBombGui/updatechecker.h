@@ -1,6 +1,6 @@
 /*
     ComBomb - Terminal emulator
-    Copyright (C) 2014  Chris Desjardins
+    Copyright (C) 2015  Chris Desjardins
     http://blog.chrisd.info cjd@chrisd.info
 
     This program is free software: you can redistribute it and/or modify
@@ -18,37 +18,36 @@
 */
 #ifndef UPDATECHECKER_H
 #define UPDATECHECKER_H
-
-#include <QNetworkReply>
+#include <qobject.h>
 #include <memory>
+#include <thread>
+#include <boost/asio.hpp>
 
 class UpdateChecker : public QObject
 {
     Q_OBJECT
 public:
-    static std::shared_ptr<UpdateChecker> instance();
-    void checkForNewVersion();
-    int32_t getLatestVersion();
-    QString getLatestVersionStr();
     ~UpdateChecker();
 
-private slots:
-    void slotError(QNetworkReply::NetworkError);
-    void slotReadyRead();
-    void replyFinished(QNetworkReply* reply);
+    static void checkForNewVersion();
+    static UpdateChecker* get()
+    {
+        return _inst.get();
+    }
 
 signals:
     void newVersionAvailable();
 
 private:
     UpdateChecker();
+    UpdateChecker(const UpdateChecker&) = delete;
+    void checkForNewVersionThread();
+    bool processResponseHeader(boost::asio::ip::tcp::socket& socket, boost::asio::streambuf& response);
+    void replyFinished(const std::string& comBombVersion);
 
-    static std::shared_ptr<UpdateChecker> _inst;
-    QNetworkReply* _reply;
-    QString _result;
-    int32_t _latestVersion;
-    QString _latestVersionStr;
-    std::unique_ptr<QNetworkAccessManager> _manager;
+    static std::unique_ptr<UpdateChecker> _inst;
+    std::unique_ptr<std::thread> _checkThread;
+    bool _running;
 };
 
 #endif // UPDATECHECKER_H
