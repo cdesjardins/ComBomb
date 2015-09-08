@@ -124,7 +124,7 @@ void UpdateChecker::checkForNewVersionThread()
     }
     catch (std::exception& e)
     {
-         cdLog(LogLevel::Error) << "Check for new version exception: " << e.what();
+        cdLog(LogLevel::Error) << "Check for new version exception: " << e.what();
     }
 }
 
@@ -137,3 +137,4 @@ void UpdateChecker::replyFinished(const std::string& comBombVersion)
         emit newVersionAvailable();
     }
 }
+
