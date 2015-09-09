@@ -19,7 +19,6 @@
 
 #include "TgtThread.h"
 #include "CDLogger/Logger.h"
-#include <QDebug>
 #include <thread>
 #include <sstream>
 
@@ -35,11 +34,9 @@ TgtThread::~TgtThread()
 
 void TgtThread::join()
 {
-    //qDebug(toString("join", _thread.get()).c_str());
     _threadRun = false;
     if ((_thread != NULL) && (_thread->joinable() == true) && (std::this_thread::get_id() != _thread->get_id()))
     {
-        //qDebug(toString("join for reals", _thread.get()).c_str());
         _thread->join();
     }
 }

@@ -18,7 +18,6 @@
 */
 
 #include "../TgtIntf.h"
-#include <QDebug>
 #include <QApplication>
 #include "QTerminalImpl.h"
 #include "BackTabEvent.h"

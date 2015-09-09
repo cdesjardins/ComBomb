@@ -93,8 +93,8 @@ void TgtIntf::tgtAttemptReconnect()
 
 void TgtIntf::tgtDisconnect()
 {
-    connectionManagerStop();
     tgtBreakConnection();
+    connectionManagerStop();
 }
 
 void TgtIntf::connectionManagerStop()
