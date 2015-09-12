@@ -38,17 +38,21 @@ public:
     static QStringList getPortListSettings();
     static bool getTabbedViewSettings();
     static bool getBlackBackSettings();
+    static bool getLoggingEnabledSettings();
+    static void handleLogfile();
 protected:
     void setupAcceptableFontSizes();
     static QStringList getPortListDefaults(QString basePortName, int start, int stop);
     void setPortListSettings();
     void populateComPortListWidget();
     virtual QString getSettingsRoot();
+    void handleLoggingChange();
 
 private slots:
     void on_buttonBox_accepted();
-
     void on_fontComboBox_currentIndexChanged(int index);
+    void on_logBrowseButton_clicked();
+    void on_loggingCheckBox_clicked(bool checked);
 
 private:
     Ui::ConfigDialog* ui;

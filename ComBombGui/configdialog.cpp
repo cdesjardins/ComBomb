@@ -16,9 +16,11 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "CDLogger/Logger.h"
 #include "configdialog.h"
 #include "ui_configdialog.h"
 #include "mainwindow.h"
+#include <QFileDialog>
 
 #define CB_CONFIG_SETTINGS_ROOT         "ConfigDialog/"
 #define CB_CONFIG_SETTINGS_PORT         "Port"
@@ -26,6 +28,8 @@
 #define CB_CONFIG_SETTINGS_TERM         CB_CONFIG_SETTINGS_ROOT "Terminal"
 #define CB_CONFIG_SETTINGS_TABBEDVIEW   CB_CONFIG_SETTINGS_ROOT "TabbedView"
 #define CB_CONFIG_SETTINGS_BLACKBACK    CB_CONFIG_SETTINGS_ROOT "BlackBack"
+#define CB_CONFIG_SETTINGS_LOGGING      CB_CONFIG_SETTINGS_ROOT "Logging"
+#define CB_CONFIG_SETTINGS_LOGFILENAME  CB_CONFIG_SETTINGS_ROOT "LogFilename"
 #ifdef WIN32
 #define BASE_PORTNAME_1 "COM", 1, 257
 #else
@@ -52,6 +56,10 @@ ConfigDialog::ConfigDialog(QWidget* parent) :
     ui->tabsRadioButton->setChecked(getTabbedViewSettings());
     ui->blackRadioButton->setChecked(getBlackBackSettings());
     ui->whiteRadioButton->setChecked(!getBlackBackSettings());
+    bool loggingEnabled = getLoggingEnabledSettings();
+    on_loggingCheckBox_clicked(loggingEnabled);
+    ui->loggingCheckBox->setChecked(loggingEnabled);
+
     ui->historyLineEdit->setValidator(new QIntValidator(0, std::numeric_limits<int>::max(), this));
     ui->historyLineEdit->setText(QString("%1").arg(terminalConfig._histSize));
 }
@@ -110,6 +118,12 @@ bool ConfigDialog::getBlackBackSettings()
     return settings.value(CB_CONFIG_SETTINGS_BLACKBACK, true).toBool();
 }
 
+bool ConfigDialog::getLoggingEnabledSettings()
+{
+    QSettings settings;
+    return settings.value(CB_CONFIG_SETTINGS_LOGGING, false).toBool();
+}
+
 QStringList ConfigDialog::getPortListDefaults(QString basePortName, int start, int stop)
 {
     QStringList comPorts;
@@ -148,6 +162,33 @@ QString ConfigDialog::getSettingsRoot()
     return CB_CONFIG_SETTINGS_ROOT;
 }
 
+
+void ConfigDialog::handleLoggingChange()
+{
+    QSettings settings;
+    bool wasLoggingEnabled = getLoggingEnabledSettings();
+    bool loggingEnabled = ui->loggingCheckBox->isChecked();
+    settings.setValue(CB_CONFIG_SETTINGS_LOGGING, loggingEnabled);
+    if (wasLoggingEnabled != loggingEnabled)
+    {
+        QString logFilename(ui->logFilenameComboBox->currentText());
+        settings.setValue(CB_CONFIG_SETTINGS_LOGFILENAME, logFilename);
+        handleLogfile();
+    }
+}
+
+void ConfigDialog::handleLogfile()
+{
+    QSettings settings;
+    Logger::getLogger().stopLogging();
+    if (settings.value(CB_CONFIG_SETTINGS_LOGGING).toBool() == true)
+    {
+        std::string logFilename (settings.value(CB_CONFIG_SETTINGS_LOGFILENAME).toString().toLocal8Bit().constData());
+        Logger::getLogger().addStream(logFilename);
+        Logger::getLogger().setMinLogLevel(LogLevel::Debug);
+    }
+}
+
 void ConfigDialog::on_buttonBox_accepted()
 {
     QByteArray qbytes;
@@ -163,6 +204,8 @@ void ConfigDialog::on_buttonBox_accepted()
     settings.setValue(CB_CONFIG_SETTINGS_TERM, qbytes);
     settings.setValue(CB_CONFIG_SETTINGS_TABBEDVIEW, ui->tabsRadioButton->isChecked());
     settings.setValue(CB_CONFIG_SETTINGS_BLACKBACK, ui->blackRadioButton->isChecked());
+    handleLoggingChange();
+
     MainWindow::getMainWindow()->setInterfaceType();
     setPortListSettings();
 
@@ -212,3 +255,23 @@ void ConfigDialog::on_fontComboBox_currentIndexChanged(int)
     ui->fontSizeComboBox->setCurrentIndex(closestIndex);
 }
 
+
+void ConfigDialog::on_logBrowseButton_clicked()
+{
+    QSettings settings;
+    QString fileName;
+    QString dirName = settings.value(CB_CONFIG_SETTINGS_LOGFILENAME, QString()).toString();
+    QFileDialog dialog(this, tr("Log files"), dirName, tr("Log files (*.log);;All files (*)"));
+
+    if (dialog.exec() == QDialog::Accepted)
+    {
+        fileName = dialog.selectedUrls().value(0).toLocalFile();
+        ui->logFilenameComboBox->addOrUpdateItem(fileName);
+    }
+}
+
+void ConfigDialog::on_loggingCheckBox_clicked(bool checked)
+{
+    ui->logBrowseButton->setEnabled(checked);
+    ui->logFilenameComboBox->setEnabled(checked);
+}

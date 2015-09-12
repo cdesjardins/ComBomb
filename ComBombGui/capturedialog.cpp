@@ -50,7 +50,7 @@ void CaptureDialog::on_pushButton_clicked()
     QSettings settings;
     QString fileName;
     QString dirName = settings.value(CB_CAPTURE_SETTINGS_BROWSE_DIR, QString()).toString();
-    QFileDialog dialog(this, tr("Log files"), dirName, tr("Capture files (*.cap);;All files (*.*)"));
+    QFileDialog dialog(this, tr("Capture files"), dirName, tr("Capture files (*.cap);;All files (*)"));
 
     if (dialog.exec() == QDialog::Accepted)
     {

@@ -19,7 +19,6 @@
 #include <QMdiSubWindow>
 #include <QMessageBox>
 #include <QComboBox>
-#include "CDLogger/Logger.h"
 #include "mainwindow.h"
 #include "updatechecker.h"
 #include "childform.h"
@@ -59,9 +58,7 @@ MainWindow::MainWindow(QWidget* parent) :
     _mdiArea(new QMdiArea()),
     _fileClipboardDialog(new FileClipboardDialog(this))
 {
-#ifdef QT_DEBUG
-    enableDebugLogging();
-#endif
+    ConfigDialog::handleLogfile();
     _windowCnt.store(0);
     _startTime = std::chrono::system_clock::now();
     _ui->setupUi(this);
@@ -89,12 +86,6 @@ MainWindow::MainWindow(QWidget* parent) :
     connect(_mdiArea, SIGNAL(subWindowActivated(QMdiSubWindow*)), this, SLOT(subWindowActivatedSlot(QMdiSubWindow*)));
     UpdateChecker::checkForNewVersion();
     connect(UpdateChecker::get(), SIGNAL(newVersionAvailable()), this, SLOT(newVersionAvailableSlot()), Qt::QueuedConnection);
-}
-
-void MainWindow::enableDebugLogging()
-{
-    Logger::getLogger().addStream("combomb.log");
-    Logger::getLogger().setMinLogLevel(LogLevel::Debug);
 }
 
 void MainWindow::enableMenuItems(bool enabled)
