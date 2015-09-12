@@ -162,7 +162,6 @@ QString ConfigDialog::getSettingsRoot()
     return CB_CONFIG_SETTINGS_ROOT;
 }
 
-
 void ConfigDialog::handleLoggingChange()
 {
     QSettings settings;
@@ -183,7 +182,7 @@ void ConfigDialog::handleLogfile()
     Logger::getLogger().stopLogging();
     if (settings.value(CB_CONFIG_SETTINGS_LOGGING).toBool() == true)
     {
-        std::string logFilename (settings.value(CB_CONFIG_SETTINGS_LOGFILENAME).toString().toLocal8Bit().constData());
+        std::string logFilename(settings.value(CB_CONFIG_SETTINGS_LOGFILENAME).toString().toLocal8Bit().constData());
         Logger::getLogger().addStream(logFilename);
         Logger::getLogger().setMinLogLevel(LogLevel::Debug);
     }
@@ -255,7 +254,6 @@ void ConfigDialog::on_fontComboBox_currentIndexChanged(int)
     ui->fontSizeComboBox->setCurrentIndex(closestIndex);
 }
 
-
 void ConfigDialog::on_logBrowseButton_clicked()
 {
     QSettings settings;
@@ -275,3 +273,4 @@ void ConfigDialog::on_loggingCheckBox_clicked(bool checked)
     ui->logBrowseButton->setEnabled(checked);
     ui->logFilenameComboBox->setEnabled(checked);
 }
+
