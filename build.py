@@ -101,6 +101,7 @@ def combombBuild():
     if (delBuildTree("build") == True):
         os.mkdir("build")
     os.chdir("build")
+    shutil.copy("../ComBombGui/images/ComBomb64.png", ".");
     qmake = which("qmake")
     (qtDir, tail) = os.path.split(qmake)
     call([qmake, ".."])
