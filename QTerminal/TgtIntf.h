@@ -25,7 +25,7 @@
 #ifndef Q_MOC_RUN
 #include <boost/asio/buffer.hpp>
 #endif
-#include "QueuePtr/ThreadSafeQueue.h"
+#include "threadsafequeue.h"
 #include "QueuePtr/RefCntBufferPool.h"
 #include "unparam.h"
 #include <QWidget>
