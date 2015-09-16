@@ -68,6 +68,9 @@ RESOURCES += \
 INCLUDEPATH += $$PWD/../../install/include $$PWD/../../include
 DEPENDPATH += $$PWD/../../install/include $$PWD/../../include
 
+
+
+
 # Targetconnection
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../TargetConnection/release/ -lTargetConnection
@@ -136,4 +139,4 @@ else:win32:CONFIG(debug, debug|release):  PRE_TARGETDEPS += $$PWD/../../install/
 else:unix:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../install/lib/libcppssh.a  $$PWD/../../install/lib/libCDLogger.a  $$PWD/../../install/lib/botan/Release/libbotan-1.11.a
 else:unix:CONFIG(debug, debug|release):   PRE_TARGETDEPS += $$PWD/../../install/lib/libcppsshd.a $$PWD/../../install/lib/libCDLoggerd.a $$PWD/../../install/lib/botan/Debug/libbotan-1.11.a
 
-
+unix: LIBS += -static-libstdc++

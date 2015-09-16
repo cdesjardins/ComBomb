@@ -150,6 +150,19 @@ def zipItWindows(filename, qtDir):
     
 def zipItPosix(filename, qtDir):
     files["ComBombGui/ComBombGui"] = "ComBomb/ComBombGui"
+    files["/usr/lib/x86_64-linux-gnu/libX11-xcb.so.1"]          = "ComBomb/platforms/libX11-xcb.so.1"
+    files["/usr/lib/x86_64-linux-gnu/libxcb-render-util.so.0"]  = "ComBomb/platforms/libxcb-render-util.so.0"
+    files["/usr/lib/x86_64-linux-gnu/libxcb-render.so.0"]       = "ComBomb/platforms/libxcb-render.so.0"
+    files["/usr/lib/x86_64-linux-gnu/libxcb.so.1"]              = "ComBomb/platforms/libxcb.so.1"
+    files["/usr/lib/x86_64-linux-gnu/libxcb-image.so.0"]        = "ComBomb/platforms/libxcb-image.so.0"
+    files["/usr/lib/x86_64-linux-gnu/libxcb-icccm.so.4"]        = "ComBomb/platforms/libxcb-icccm.so.4"
+    files["/usr/lib/x86_64-linux-gnu/libxcb-sync.so.0"]         = "ComBomb/platforms/libxcb-sync.so.0"
+    files["/usr/lib/x86_64-linux-gnu/libxcb-xfixes.so.0"]       = "ComBomb/platforms/libxcb-xfixes.so.0"
+    files["/usr/lib/x86_64-linux-gnu/libxcb-shm.so.0"]          = "ComBomb/platforms/libxcb-shm.so.0"
+    files["/usr/lib/x86_64-linux-gnu/libxcb-randr.so.0"]        = "ComBomb/platforms/libxcb-randr.so.0"
+    files["/usr/lib/x86_64-linux-gnu/libxcb-shape.so.0"]        = "ComBomb/platforms/libxcb-shape.so.0"
+    files["/usr/lib/x86_64-linux-gnu/libxcb-keysyms.so.1"]      = "ComBomb/platforms/libxcb-keysyms.so.1"
+    files["/usr/lib/x86_64-linux-gnu/libxcb-util.so.0"]         = "ComBomb/platforms/libxcb-util.so.0"
     filename += ".tar.bz2"
     file = tarfile.open(filename, "w:bz2")
     for k, v in files.iteritems():
