@@ -8,12 +8,11 @@ Note: The makeboost python script assumes pyton 2.6 or 2.7, it will download and
 ```
 repo init -u git@github.com:cdesjardins/ComBombManifest.git
 repo sync
-cd ComBomb
+cd build
 [./]makeboost.py
+[./]makebotan.py
 [./]build.py
 ```
-
-Once those commands are complete build the cryptlib library in the cl directory, and then open ComBomb.pro in QT Creator Based on QT 5, then run qmake, and build.
 
 I also typically link to Qt5 statically, to build a statically I use the following commands:
 Download Qt source package from: http://www.qt.io/download-open-source/#section-2
@@ -48,3 +47,7 @@ ComBomb uses the following components:
 Icons from Free FatCow-Farm Fresh Icons
 http://www.fatcow.com/free-icons
 
+cppssh - Small C++11 SSH2 library
+https://github.com/cdesjardins/cppssh
+
+Botan - Crypto and TLS for C++11 http://botan.randombit.net
