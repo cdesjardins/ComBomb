@@ -14,8 +14,8 @@ cd build
 [./]build.py
 ```
 
-I also typically link to Qt5 statically, to build a statically I use the following commands:
 Download Qt source package from: http://www.qt.io/download-open-source/#section-2
+I also typically link to Qt5 statically, to build statically I use the following commands:
 
 ```
 cd qt-everywhere-opensource-src-<version>
