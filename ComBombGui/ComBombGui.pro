@@ -111,9 +111,10 @@ OTHER_FILES += \
     ComBomb.rc
 
 # QueuePtr
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../install/lib/ -lQueuePtr
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../install/lib/ -lQueuePtrd
-else:unix: LIBS += $$PWD/../../install/lib/libQueuePtr.a
+win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../install/lib/ -lQueuePtr
+else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../install/lib/ -lQueuePtrd
+else:unix:CONFIG(release, debug|release): LIBS += $$PWD/../../install/lib/libQueuePtr.a
+else:unix:CONFIG(debug, debug|release):   LIBS += $$PWD/../../install/lib/libQueuePtrd.a
 
 unix: {
 QMAKE_CXXFLAGS += -std=c++11
