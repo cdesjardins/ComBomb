@@ -19,7 +19,7 @@ def waitForPrompt(prompt):
 
 def main(argv):
     for i in range(1, 10):
-        print "ls /usr/lib -1"
+        print("ls /usr/lib -1")
         # Make sure the data gets to the remote end
         sys.stdout.flush()
         # Wait for the command to complete
