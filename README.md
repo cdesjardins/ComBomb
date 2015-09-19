@@ -4,7 +4,7 @@ ComBomb is a terminal emulator for debugging embedded systems in the modern era.
 
 #### How to build on both Windows and Linux
 
-Note: The makeboost python script assumes pyton 2.6 or 2.7, it will download and build boost the way ComBomb expects it.
+Note: All python scripts should work with python 2.6 or higher (including python 3.x)
 ```
 repo init -u git@github.com:cdesjardins/ComBombManifest.git
 repo sync
@@ -39,7 +39,6 @@ make -j15 distclean
 ```
 
 Requires:
-python 2.6, or 2.7
 git must be in the path (for version number generation)
 
 ComBomb uses the following components:
