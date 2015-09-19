@@ -65,5 +65,5 @@ if __name__ == "__main__":
         CreateVer = CreateVer()
         CreateVer.run();
     except Exception as e:
-        print e
-        print "Check to make sure git is in the path"
+        print(e)
+        print("Check to make sure git is in the path")
