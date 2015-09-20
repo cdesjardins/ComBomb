@@ -98,14 +98,14 @@ void TgtSerialIntf::tgtReadCallback(const boost::system::error_code& error, cons
 
         if (bytesTransferred > 0)
         {
-            if (_currentIncomingBuffer != NULL)
+            if (_currentIncomingBuffer != nullptr)
             {
                 _currentIncomingBuffer->_buffer = boost::asio::buffer(_currentIncomingBuffer->_buffer, bytesTransferred);
                 _incomingData.enqueue(_currentIncomingBuffer);
             }
             _bufferPool->dequeue(_currentIncomingBuffer, 100);
         }
-        if (_currentIncomingBuffer == NULL)
+        if (_currentIncomingBuffer == nullptr)
         {
             // If there are no buffers available then just throw away the next
             // bit if incoming data...
@@ -130,7 +130,7 @@ void TgtSerialIntf::tgtBreakConnection()
 {
     _serialWriterThread.reset();
     _serialServiceThread.reset();
-    if (_port != NULL)
+    if (_port != nullptr)
     {
         if (_port->is_open())
         {

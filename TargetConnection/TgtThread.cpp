@@ -35,7 +35,7 @@ TgtThread::~TgtThread()
 void TgtThread::join()
 {
     _threadRun = false;
-    if ((_thread != NULL) && (_thread->joinable() == true) && (std::this_thread::get_id() != _thread->get_id()))
+    if ((_thread != nullptr) && (_thread->joinable() == true) && (std::this_thread::get_id() != _thread->get_id()))
     {
         _thread->join();
     }
@@ -55,7 +55,7 @@ std::string TgtThread::toString(const std::string& tag, std::thread* thr)
 {
     std::stringstream oss;
     oss << tag << ": ";
-    if (thr == NULL)
+    if (thr == nullptr)
     {
         oss << std::this_thread::get_id();
     }

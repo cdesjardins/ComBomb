@@ -1107,10 +1107,10 @@ std::shared_ptr<KeyboardTranslatorManager> KeyboardTranslatorManager::instance()
     // Note: Double check lock for performance considerations, once the
     // keyboardTranslator is created then we don't really need the lock
     // anymore...
-    if (KeyboardTranslatorManager::_theKeyboardTranslatorManager == NULL)
+    if (KeyboardTranslatorManager::_theKeyboardTranslatorManager == nullptr)
     {
         std::unique_lock<std::mutex> lock(_theKeyboardTranslatorManagerMutex);
-        if (KeyboardTranslatorManager::_theKeyboardTranslatorManager == NULL)
+        if (KeyboardTranslatorManager::_theKeyboardTranslatorManager == nullptr)
         {
             KeyboardTranslatorManager::_theKeyboardTranslatorManager.reset(new KeyboardTranslatorManager());
         }

@@ -32,7 +32,7 @@ UpdateChecker::UpdateChecker()
 UpdateChecker::~UpdateChecker()
 {
     _running = false;
-    if ((_checkThread != NULL) && (_checkThread->joinable() == true))
+    if ((_checkThread != nullptr) && (_checkThread->joinable() == true))
     {
         _checkThread->join();
     }
@@ -40,7 +40,7 @@ UpdateChecker::~UpdateChecker()
 
 void UpdateChecker::checkForNewVersion()
 {
-    if (_inst == NULL)
+    if (_inst == nullptr)
     {
         _inst.reset(new UpdateChecker());
         _inst->_checkThread.reset(new std::thread(&UpdateChecker::checkForNewVersionThread, _inst.get()));

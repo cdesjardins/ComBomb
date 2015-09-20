@@ -27,13 +27,13 @@
 
 CBLabel::CBLabel(QWidget* parent)
     : QLabel(parent),
-    _qImg(NULL)
+    _qImg(nullptr)
 {
 }
 
 CBLabel::~CBLabel()
 {
-    if (_qImg != NULL)
+    if (_qImg != nullptr)
     {
         delete _qImg;
     }
@@ -41,7 +41,7 @@ CBLabel::~CBLabel()
 
 void CBLabel::mouseDoubleClickEvent(QMouseEvent*)
 {
-    if (_qImg == NULL)
+    if (_qImg == nullptr)
     {
         _qImg = new QImage();
         _qImg->load(":/images/myicon.png");

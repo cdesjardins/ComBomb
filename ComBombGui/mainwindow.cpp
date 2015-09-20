@@ -26,11 +26,11 @@
 #include "configdialog.h"
 #include "ui_mainwindow.h"
 
-MainWindow* MainWindow ::_instance = NULL;
+MainWindow* MainWindow ::_instance = nullptr;
 
 MainWindow* MainWindow::getMainWindow(QWidget* parent)
 {
-    if (_instance == NULL)
+    if (_instance == nullptr)
     {
         _instance = new MainWindow(parent);
     }
@@ -40,10 +40,10 @@ MainWindow* MainWindow::getMainWindow(QWidget* parent)
 
 void MainWindow::destroyMainWindow()
 {
-    if (_instance != NULL)
+    if (_instance != nullptr)
     {
         delete _instance;
-        _instance = NULL;
+        _instance = nullptr;
     }
 }
 
@@ -242,7 +242,7 @@ void MainWindow::closeWindowSlot()
 
 void MainWindow::subWindowActivatedSlot(QMdiSubWindow* subWindow)
 {
-    if (subWindow != NULL)
+    if (subWindow != nullptr)
     {
         ChildForm* childForm = dynamic_cast<ChildForm*>(subWindow->widget());
         swapProcessIcon(childForm->isProcessRunning());
@@ -264,7 +264,7 @@ void MainWindow::on_actionAbout_ComBomb_triggered()
 void MainWindow::on_actionCopy_triggered()
 {
     ChildForm* childForm = getActiveChildWindow();
-    if (childForm != NULL)
+    if (childForm != nullptr)
     {
         emit childForm->triggerCopy();
     }
@@ -273,7 +273,7 @@ void MainWindow::on_actionCopy_triggered()
 void MainWindow::on_actionPaste_triggered()
 {
     ChildForm* childForm = getActiveChildWindow();
-    if (childForm != NULL)
+    if (childForm != nullptr)
     {
         emit childForm->triggerPaste();
     }
@@ -282,12 +282,12 @@ void MainWindow::on_actionPaste_triggered()
 ChildForm* MainWindow::getActiveChildWindow()
 {
     QMdiSubWindow* subWindow = _mdiArea->activeSubWindow();
-    if (subWindow != NULL)
+    if (subWindow != nullptr)
     {
         ChildForm* childForm = dynamic_cast<ChildForm*>(subWindow->widget());
         return childForm;
     }
-    return NULL;
+    return nullptr;
 }
 
 void MainWindow::on_actionFile_clipboard_triggered()
@@ -311,7 +311,7 @@ void MainWindow::on_action_Options_triggered()
 void MainWindow::on_action_Run_Process_triggered()
 {
     ChildForm* activeWindow = getActiveChildWindow();
-    if (activeWindow != NULL)
+    if (activeWindow != nullptr)
     {
         activeWindow->runProcess();
     }
@@ -320,7 +320,7 @@ void MainWindow::on_action_Run_Process_triggered()
 void MainWindow::on_action_Clear_scrollback_triggered()
 {
     ChildForm* activeWindow = getActiveChildWindow();
-    if (activeWindow != NULL)
+    if (activeWindow != nullptr)
     {
         activeWindow->clearScrollback();
     }
@@ -329,7 +329,7 @@ void MainWindow::on_action_Clear_scrollback_triggered()
 void MainWindow::on_actionSelect_All_triggered()
 {
     ChildForm* activeWindow = getActiveChildWindow();
-    if (activeWindow != NULL)
+    if (activeWindow != nullptr)
     {
         activeWindow->selectAll();
     }
@@ -338,7 +338,7 @@ void MainWindow::on_actionSelect_All_triggered()
 void MainWindow::on_action_Find_triggered()
 {
     ChildForm* activeWindow = getActiveChildWindow();
-    if (activeWindow != NULL)
+    if (activeWindow != nullptr)
     {
         activeWindow->findText();
     }
@@ -347,7 +347,7 @@ void MainWindow::on_action_Find_triggered()
 void MainWindow::on_actionFind_next_triggered()
 {
     ChildForm* activeWindow = getActiveChildWindow();
-    if (activeWindow != NULL)
+    if (activeWindow != nullptr)
     {
         activeWindow->findTextNext(false);
     }
@@ -356,7 +356,7 @@ void MainWindow::on_actionFind_next_triggered()
 void MainWindow::on_actionFind_prev_triggered()
 {
     ChildForm* activeWindow = getActiveChildWindow();
-    if (activeWindow != NULL)
+    if (activeWindow != nullptr)
     {
         activeWindow->findTextNext(true);
     }
@@ -365,7 +365,7 @@ void MainWindow::on_actionFind_prev_triggered()
 void MainWindow::on_actionFind_highlighted_text_triggered()
 {
     ChildForm* activeWindow = getActiveChildWindow();
-    if (activeWindow != NULL)
+    if (activeWindow != nullptr)
     {
         activeWindow->findTextHighlighted();
     }
@@ -396,7 +396,7 @@ void MainWindow::setInterfaceType()
 void MainWindow::on_actionCapture_output_triggered()
 {
     ChildForm* activeWindow = getActiveChildWindow();
-    if (activeWindow != NULL)
+    if (activeWindow != nullptr)
     {
         activeWindow->captureLog();
     }

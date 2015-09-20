@@ -52,7 +52,7 @@ void TgtProcessIntf::tgtMakeConnection()
 
 TgtProcessIntf::TgtProcessIntf(const std::shared_ptr<const TgtConnectionConfig>& config)
     : TgtIntf(config),
-    _proc(NULL),
+    _proc(nullptr),
     _processMutex(QMutex::Recursive)
 {
 }
@@ -81,7 +81,7 @@ bool TgtProcessIntf::writerThread()
     if (_outgoingData.dequeue(b, 100) == true)
     {
         _processMutex.lock();
-        if (_proc != NULL)
+        if (_proc != nullptr)
         {
             qint64 sentBytes;
             do
@@ -102,7 +102,7 @@ void TgtProcessIntf::readFromStdout()
 {
     _processMutex.lock();
     QByteArray output;
-    if (_proc != NULL)
+    if (_proc != nullptr)
     {
         output = _proc->readAllStandardOutput();
     }
@@ -114,7 +114,7 @@ void TgtProcessIntf::readFromStderr()
 {
     _processMutex.lock();
     QByteArray output;
-    if (_proc != NULL)
+    if (_proc != nullptr)
     {
         output = _proc->readAllStandardError();
     }
@@ -170,9 +170,9 @@ void TgtProcessIntf::deleteProcess()
 {
     _processMutex.lock();
     QProcess* p = _proc;
-    _proc = NULL;
+    _proc = nullptr;
     _processMutex.unlock();
-    if (p != NULL)
+    if (p != nullptr)
     {
         delete p;
     }

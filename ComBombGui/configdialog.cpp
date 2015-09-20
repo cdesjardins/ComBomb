@@ -152,7 +152,7 @@ ConfigDialog::~ConfigDialog()
 {
     if (isHidden() == false)
     {
-        hideEvent(NULL);
+        hideEvent(nullptr);
     }
     delete ui;
 }

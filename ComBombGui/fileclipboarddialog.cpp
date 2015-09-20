@@ -26,7 +26,7 @@
 FileClipboardDialog::FileClipboardDialog(QWidget* parent) :
     CBDialog(parent),
     ui(new Ui::FileClipboardDialog),
-    _fileClipboardHeader(NULL),
+    _fileClipboardHeader(nullptr),
     _fileClipboardLoaded(false)
 {
     ui->setupUi(this);
@@ -46,11 +46,11 @@ FileClipboardDialog::~FileClipboardDialog()
 {
     if (isHidden() == false)
     {
-        hideEvent(NULL);
+        hideEvent(nullptr);
     }
 
     delete ui;
-    if (_fileClipboardHeader != NULL)
+    if (_fileClipboardHeader != nullptr)
     {
         delete _fileClipboardHeader;
     }
@@ -89,10 +89,10 @@ void FileClipboardDialog::loadFileClipboardSettings()
 void FileClipboardDialog::sendItemTriggered(int index)
 {
     QTableWidgetItem* item = ui->fileClipboardTable->item(index, 0);
-    if ((item != NULL) && (item->text().length() > 0))
+    if ((item != nullptr) && (item->text().length() > 0))
     {
         ChildForm* c = MainWindow::getMainWindow()->getActiveChildWindow();
-        if (c != NULL)
+        if (c != nullptr)
         {
             QString text = item->text();
             if (ui->newLineCheckBox->isChecked())
@@ -151,7 +151,7 @@ void FileClipboardDialog::on_searchButton_clicked()
         for (int row = 0; row < numRows; row++)
         {
             QTableWidgetItem* item = ui->fileClipboardTable->item(index, 0);
-            if ((item != NULL) && (item->text().length() > 0) && (item->text().contains(searchText)))
+            if ((item != nullptr) && (item->text().length() > 0) && (item->text().contains(searchText)))
             {
                 ui->fileClipboardTable->setCurrentItem(ui->fileClipboardTable->item(index, 0));
                 ui->fileClipboardTable->setFocus();

@@ -35,10 +35,10 @@ QString CBComboBox::getName()
 {
     QString ret;
     QWidget* w = parentWidget();
-    for (int i = 0; ((i < 15) && (w != NULL)); i++)
+    for (int i = 0; ((i < 15) && (w != nullptr)); i++)
     {
         QDialog* d = qobject_cast<QDialog*>(w);
-        if (d != NULL)
+        if (d != nullptr)
         {
             ret = (d->objectName() + "/" + objectName());
             break;

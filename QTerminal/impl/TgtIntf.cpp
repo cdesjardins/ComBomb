@@ -82,7 +82,7 @@ int TgtIntf::tgtWrite(const char* szWriteData, int nBytes)
 
 void TgtIntf::tgtAttemptReconnect()
 {
-    if (_connectionManagerThread == NULL)
+    if (_connectionManagerThread == nullptr)
     {
         _connectionManagerThread.reset(new std::thread(std::bind(&TgtIntf::connectionManagerThread, this)));
     }
@@ -100,7 +100,7 @@ void TgtIntf::tgtDisconnect()
 void TgtIntf::connectionManagerStop()
 {
     _connectionManagerThreadRun = false;
-    if ((_connectionManagerThread != NULL) && (_connectionManagerThread->joinable() == true))
+    if ((_connectionManagerThread != nullptr) && (_connectionManagerThread->joinable() == true))
     {
         _connectionManagerThread->join();
     }

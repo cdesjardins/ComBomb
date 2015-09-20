@@ -43,7 +43,7 @@ public:
         return _threadRun;
     }
 
-    std::string toString(const std::string& tag, std::thread* thr = NULL);
+    std::string toString(const std::string& tag, std::thread* thr = nullptr);
     void start();
     void finalize();
 protected:

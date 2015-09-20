@@ -126,7 +126,7 @@ public:
                     ret = true;
                     // If sizes is null, then the caller doesn't care about the actual sizes
                     // just wants to know if it is an acceptable font.
-                    if (sizes != NULL)
+                    if (sizes != nullptr)
                     {
                         sizes->push_back(f.pointSize());
                     }

@@ -51,7 +51,7 @@
 Emulation::Emulation(size_t histSize) :
     _currentScreenIndex(0),
     _codec(0),
-    _decoder(NULL),
+    _decoder(nullptr),
     _usesMouse(false)
 {
     QObject::connect(&_bulkTimer1, SIGNAL(timeout()), this, SLOT(showBulk()));
@@ -97,10 +97,10 @@ Emulation::~Emulation()
 {
     _windows.clear();
 
-    if (_decoder != NULL)
+    if (_decoder != nullptr)
     {
         delete _decoder;
-        _decoder = NULL;
+        _decoder = nullptr;
     }
 }
 
@@ -142,10 +142,10 @@ void Emulation::setCodec(const QTextCodec* qtc)
     Q_ASSERT(qtc);
 
     _codec = qtc;
-    if (_decoder != NULL)
+    if (_decoder != nullptr)
     {
         delete _decoder;
-        _decoder = NULL;
+        _decoder = nullptr;
     }
     _decoder = _codec->makeDecoder();
 

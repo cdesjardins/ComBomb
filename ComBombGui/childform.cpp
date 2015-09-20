@@ -28,7 +28,7 @@ ChildForm::ChildForm(const QTerminalConfig& terminalConfig, const std::shared_pt
     QTerminal(terminalConfig, targetInterface, CB_DEFAULT_TERM_WIDTH, CB_DEFAULT_TERM_HEIGHT, parent),
     _processMutex(QMutex::Recursive),
     ui(new Ui::ChildForm),
-    _proc(NULL),
+    _proc(nullptr),
     _procError(false),
     _captureLogging(false)
 {
@@ -65,7 +65,7 @@ void ChildForm::closeEvent(QCloseEvent*)
 void ChildForm::onReceiveBlock(boost::intrusive_ptr<RefCntBuffer> incoming)
 {
     _processMutex.lock();
-    if (_proc != NULL)
+    if (_proc != nullptr)
     {
         qint64 sentBytes;
         do
@@ -128,11 +128,11 @@ void ChildForm::runProcess()
     // cannot be deleted from the processError call
     // because it may be called from within the call to
     // _proc->start()... so _proc cannot be deleted...
-    if ((_proc != NULL) && (_procError == true))
+    if ((_proc != nullptr) && (_procError == true))
     {
         deleteProcess();
     }
-    if (_proc == NULL)
+    if (_proc == nullptr)
     {
         if (rpd.exec() == RunProcessDialog::Accepted)
         {
@@ -174,7 +174,7 @@ void ChildForm::readFromProc(bool isStdout)
     bool redirect = false;
     _processMutex.lock();
     QByteArray output;
-    if (_proc != NULL)
+    if (_proc != nullptr)
     {
         if (isStdout == true)
         {
@@ -237,9 +237,9 @@ void ChildForm::deleteProcess()
 {
     _processMutex.lock();
     QProcess* p = _proc;
-    _proc = NULL;
+    _proc = nullptr;
     _processMutex.unlock();
-    if (p != NULL)
+    if (p != nullptr)
     {
         delete p;
     }
@@ -249,7 +249,7 @@ void ChildForm::deleteProcess()
 
 bool ChildForm::isProcessRunning()
 {
-    return ((_procError == false) && (_proc != NULL));
+    return ((_procError == false) && (_proc != nullptr));
 }
 
 bool ChildForm::isCaptureRunning()

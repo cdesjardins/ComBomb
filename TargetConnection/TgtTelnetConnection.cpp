@@ -78,7 +78,7 @@ void TgtTelnetIntf::tgtMakeConnection()
     for (std::vector<boost::asio::ip::address>::iterator it = addresses.begin(); ((it != addresses.end()) && (_abortConnection == false)); it++)
     {
         endpoint = boost::asio::ip::tcp::endpoint(*it, connectionConfig->_portNum);
-        if (_socket != NULL)
+        if (_socket != nullptr)
         {
             _socket->close();
         }
@@ -128,7 +128,7 @@ void TgtTelnetIntf::tgtBreakConnection()
     _telnetServiceThread.reset();
     _telnetWriterThread.reset();
 
-    if (_socket != NULL)
+    if (_socket != nullptr)
     {
         if (_socket->is_open())
         {
@@ -166,12 +166,12 @@ void TgtTelnetIntf::tgtReadCallback(const boost::system::error_code& error, cons
 
         if (bytesTransferred > 0)
         {
-            if (_currentIncomingBuffer != NULL)
+            if (_currentIncomingBuffer != nullptr)
             {
                 _currentIncomingBuffer->_buffer = boost::asio::buffer(_currentIncomingBuffer->_buffer, bytesTransferred);
                 boost::intrusive_ptr<RefCntBuffer> readData;
                 _bufferPool->dequeue(readData, 100);
-                if (readData != NULL)
+                if (readData != nullptr)
                 {
                     int numBytes = tgtTelnetProcessData(readData);
                     if (numBytes > 0)
@@ -183,7 +183,7 @@ void TgtTelnetIntf::tgtReadCallback(const boost::system::error_code& error, cons
             }
             _bufferPool->dequeue(_currentIncomingBuffer, 100);
         }
-        if (_currentIncomingBuffer == NULL)
+        if (_currentIncomingBuffer == nullptr)
         {
             // If there are no buffers available then just throw away the next
             // bit if incoming data...
