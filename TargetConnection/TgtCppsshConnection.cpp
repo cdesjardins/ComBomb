@@ -74,18 +74,40 @@ void TgtCppsshIntf::tgtMakeConnection()
 {
     std::shared_ptr<const TgtConnectionConfig> connectionConfig = std::dynamic_pointer_cast<const TgtConnectionConfig>(_connectionConfig);
 
-    if (Cppssh::connect(&_sshData->_connectionId, connectionConfig->_hostName.c_str(),
-                        connectionConfig->_portNum, connectionConfig->_userName.c_str(),
-                        connectionConfig->_privKeyFile.c_str(),
-                        connectionConfig->_password.c_str(), CPPSSH_TIMEOUT) == true)
+    CppsshConnectStatus_t ret = Cppssh::connect(&_sshData->_connectionId, connectionConfig->_hostName.c_str(),
+                            connectionConfig->_portNum, connectionConfig->_userName.c_str(),
+                            connectionConfig->_privKeyFile.c_str(),
+                            connectionConfig->_password.c_str(), CPPSSH_TIMEOUT);
+    if (ret == CPPSSH_CONNECT_OK)
     {
         _sshData->_connected = true;
         _sshData->_sshThread = TgtThread::create(boost::bind(std::bind(&TgtCppsshIntf::sshThread, this)));
     }
     else
     {
-        boost::format f("Unable to connect to: %s");
-        std::string errmsg = str(f % connectionConfig->_hostName.c_str());
+        boost::format f("Unable to connect to: %s - %s");
+        std::string reason;
+        switch (ret)
+        {
+        case CPPSSH_CONNECT_UNKNOWN_HOST:
+            reason = "Unknown host";
+            break;
+        case CPPSSH_CONNECT_AUTH_FAIL:
+            reason = "Authentication failure";
+            break;
+        case CPPSSH_CONNECT_INCOMPATIBLE_SERVER:
+            reason = "Incompatible server";
+            break;
+        case CPPSSH_CONNECT_KEX_FAIL:
+            reason = "Kex failure";
+            break;
+        default:
+        case CPPSSH_CONNECT_ERROR:
+            reason = "SSH Error";
+            break;
+        }
+
+        std::string errmsg = str(f % connectionConfig->_hostName.c_str() % reason);
         throw CB_EXCEPTION_STR(CBException::CbExcp, errmsg.c_str());
     }
 }
