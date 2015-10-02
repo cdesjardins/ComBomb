@@ -32,7 +32,7 @@
 #define CB_OPEN_CONN_WDB        CB_OPEN_SETTINGS_ROOT "WorkingDir/Browser"
 
 OpenDialog::OpenDialog(QWidget* parent) :
-    QDialog(parent),
+    CBDialog(parent),
     ui(new Ui::OpenDialog)
 {
     ui->setupUi(this);
@@ -236,3 +236,7 @@ void OpenDialog::on_workingDirButton_clicked()
     }
 }
 
+QString OpenDialog::getSettingsRoot()
+{
+    return objectName();
+}

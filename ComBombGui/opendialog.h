@@ -19,14 +19,14 @@
 #ifndef CB_OPENDIALOG_H
 #define CB_OPENDIALOG_H
 
-#include <QDialog>
+#include "cbdialog.h"
 #include "../TargetConnection/TgtConnection.h"
 
 namespace Ui {
 class OpenDialog;
 }
 
-class OpenDialog : public QDialog
+class OpenDialog : public CBDialog
 {
     Q_OBJECT
 
@@ -50,6 +50,8 @@ public:
     ConnectionType getConnectionType();
 
     bool newlines();
+protected:
+    virtual QString getSettingsRoot();
 
 private slots:
     void hostNameSelectionChanged(int x);
