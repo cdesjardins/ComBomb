@@ -232,3 +232,4 @@ QString OpenDialog::getSettingsRoot()
 {
     return objectName();
 }
+
