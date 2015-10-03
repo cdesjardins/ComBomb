@@ -73,14 +73,6 @@ std::shared_ptr<const TgtTelnetIntf::TgtConnectionConfig> OpenDialog::getTelnetC
     return ret;
 }
 
-void OpenDialog::hostNameSelectionChanged(int x)
-{
-    if (x < ui->userNameComboBox->count())
-    {
-        ui->userNameComboBox->setCurrentIndex(x);
-    }
-}
-
 std::shared_ptr<const TgtSerialIntf::TgtConnectionConfig> OpenDialog::getSerialConfig() const
 {
     QVariant vBaudRate    = ui->baudRateComboBox->itemData(ui->baudRateComboBox->currentIndex());

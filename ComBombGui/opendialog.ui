@@ -490,22 +490,6 @@
     </hint>
    </hints>
   </connection>
-  <connection>
-   <sender>hostNameComboBox</sender>
-   <signal>currentIndexChanged(int)</signal>
-   <receiver>OpenDialog</receiver>
-   <slot>hostNameSelectionChanged(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>191</x>
-     <y>83</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>285</x>
-     <y>246</y>
-    </hint>
-   </hints>
-  </connection>
  </connections>
  <slots>
   <slot>hostNameSelectionChanged(int)</slot>
