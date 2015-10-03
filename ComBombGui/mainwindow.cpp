@@ -25,6 +25,7 @@
 #include "aboutdialog.h"
 #include "configdialog.h"
 #include "ui_mainwindow.h"
+#include "cppssh/cppssh.h"
 
 MainWindow* MainWindow ::_instance = nullptr;
 
@@ -33,6 +34,7 @@ MainWindow* MainWindow::getMainWindow(QWidget* parent)
     if (_instance == nullptr)
     {
         _instance = new MainWindow(parent);
+        Cppssh::create();
     }
 
     return _instance;
@@ -45,6 +47,7 @@ void MainWindow::destroyMainWindow()
         delete _instance;
         _instance = nullptr;
     }
+    Cppssh::destroy();
 }
 
 const std::chrono::duration<double> MainWindow::getStartTimeDelta()
