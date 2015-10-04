@@ -24,7 +24,8 @@
 #include "configdialog.h"
 #include "ui_childform.h"
 
-ChildForm::ChildForm(const QTerminalConfig& terminalConfig, const std::shared_ptr<TgtIntf>& targetInterface, QWidget* parent) :
+ChildForm::ChildForm(const QTerminalConfig& terminalConfig, const std::shared_ptr<TgtIntf>& targetInterface,
+                     QWidget* parent) :
     QTerminal(terminalConfig, targetInterface, CB_DEFAULT_TERM_WIDTH, CB_DEFAULT_TERM_HEIGHT, parent),
     _processMutex(QMutex::Recursive),
     ui(new Ui::ChildForm),
@@ -144,7 +145,8 @@ void ChildForm::runProcess()
             connect(_proc, SIGNAL(readyReadStandardOutput()), this, SLOT(readFromStdout()));
             connect(_proc, SIGNAL(readyReadStandardError()), this, SLOT(readFromStderr()));
             connect(_proc, SIGNAL(error(QProcess::ProcessError)), this, SLOT(processError(QProcess::ProcessError)));
-            connect(_proc, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(processDone(int, QProcess::ExitStatus)));
+            connect(_proc, SIGNAL(finished(int, QProcess::ExitStatus)), this,
+                    SLOT(processDone(int, QProcess::ExitStatus)));
             _proc->setWorkingDirectory(rpd.getWorkingDirectory());
             QStringList args = rpd.getArguments();
             suppressOutput(rpd.isOutputSuppressed());

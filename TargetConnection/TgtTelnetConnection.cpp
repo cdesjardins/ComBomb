@@ -22,7 +22,8 @@
 #include <boost/bind.hpp>
 #include <boost/bind/protect.hpp>
 
-std::shared_ptr<TgtTelnetIntf> TgtTelnetIntf::createTelnetConnection(const std::shared_ptr<const TgtConnectionConfig>& config)
+std::shared_ptr<TgtTelnetIntf> TgtTelnetIntf::createTelnetConnection(
+    const std::shared_ptr<const TgtConnectionConfig>& config)
 {
     std::shared_ptr<TgtTelnetIntf> ret(new TgtTelnetIntf(config));
     ret->tgtAttemptReconnect();
@@ -54,7 +55,8 @@ void TgtTelnetIntf::clearConnectionQueue()
 
 void TgtTelnetIntf::tgtMakeConnection()
 {
-    std::shared_ptr<const TgtConnectionConfig> connectionConfig = std::dynamic_pointer_cast<const TgtConnectionConfig>(_connectionConfig);
+    std::shared_ptr<const TgtConnectionConfig> connectionConfig = std::dynamic_pointer_cast<const TgtConnectionConfig>(
+        _connectionConfig);
     std::vector<boost::asio::ip::address> addresses;
     boost::asio::ip::tcp::resolver resolver(_socketService);
     boost::asio::ip::tcp::resolver::query query(connectionConfig->_hostName, "http");
@@ -75,7 +77,8 @@ void TgtTelnetIntf::tgtMakeConnection()
 
     _telnetServiceThread = TgtThread::create(boost::protect(std::bind(&TgtTelnetIntf::serviceThread, this)));
 
-    for (std::vector<boost::asio::ip::address>::iterator it = addresses.begin(); ((it != addresses.end()) && (_abortConnection == false)); it++)
+    for (std::vector<boost::asio::ip::address>::iterator it = addresses.begin();
+         ((it != addresses.end()) && (_abortConnection == false)); it++)
     {
         endpoint = boost::asio::ip::tcp::endpoint(*it, connectionConfig->_portNum);
         if (_socket != nullptr)
@@ -168,7 +171,8 @@ void TgtTelnetIntf::tgtReadCallback(const boost::system::error_code& error, cons
         {
             if (_currentIncomingBuffer != nullptr)
             {
-                _currentIncomingBuffer->_buffer = boost::asio::buffer(_currentIncomingBuffer->_buffer, bytesTransferred);
+                _currentIncomingBuffer->_buffer =
+                    boost::asio::buffer(_currentIncomingBuffer->_buffer, bytesTransferred);
                 boost::intrusive_ptr<RefCntBuffer> readData;
                 _bufferPool->dequeue(readData, 100);
                 if (readData != nullptr)
@@ -519,7 +523,8 @@ int TgtTelnetIntf::tgtTelnetProcessData(const boost::intrusive_ptr<RefCntBuffer>
 
 void TgtTelnetIntf::tgtGetTitle(std::string* szTitle)
 {
-    std::shared_ptr<const TgtConnectionConfig> connectionConfig = std::dynamic_pointer_cast<const TgtConnectionConfig>(_connectionConfig);
+    std::shared_ptr<const TgtConnectionConfig> connectionConfig = std::dynamic_pointer_cast<const TgtConnectionConfig>(
+        _connectionConfig);
     std::stringstream t;
     t << connectionConfig->_hostName << ":" << connectionConfig->_portNum;
     *szTitle = t.str();

@@ -66,7 +66,8 @@ AboutDialog::AboutDialog(QWidget* parent) :
     std::chrono::hours::rep hours = std::chrono::duration_cast<std::chrono::hours>(elapsed).count() % 24;
     std::chrono::minutes::rep minutes = std::chrono::duration_cast<std::chrono::minutes>(elapsed).count() % 60;
     std::chrono::seconds::rep seconds = std::chrono::duration_cast<std::chrono::seconds>(elapsed).count() % 60;
-    buf << days << ":" << std::setw(2) << std::setfill('0') << hours << ":" << std::setw(2) << std::setfill('0') << minutes << ":" << std::setw(2) << std::setfill('0') << seconds;
+    buf << days << ":" << std::setw(2) << std::setfill('0') << hours << ":" << std::setw(2) << std::setfill('0') <<
+        minutes << ":" << std::setw(2) << std::setfill('0') << seconds;
 
     uptime.append(buf.str().c_str());
     ui->uptimeLabel->setText(uptime);

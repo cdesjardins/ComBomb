@@ -63,7 +63,8 @@ TerminalModel::TerminalModel(const std::shared_ptr<TgtIntf>& targetInterface, si
     _emulation.reset(new Vt102Emulation(histSize));
     connect(_emulation.get(), SIGNAL(stateSet(int)), this, SLOT(activityStateSet(int)));
     connect(_emulation.get(), SIGNAL(changeTabTextColorRequest(int)), this, SIGNAL(changeTabTextColorRequest(int)));
-    connect(_emulation.get(), SIGNAL(profileChangeCommandReceived(const QString &)), this, SIGNAL(profileChangeCommandReceived(const QString &)));
+    connect(_emulation.get(), SIGNAL(profileChangeCommandReceived(const QString &)), this,
+            SIGNAL(profileChangeCommandReceived(const QString &)));
 
     _selfListener.reset(new SelfListener(targetInterface));
     _selfListener->start();
@@ -80,7 +81,8 @@ TerminalModel::TerminalModel(const std::shared_ptr<TgtIntf>& targetInterface, si
 
 void TerminalModel::connectToRecvText(QObject* who)
 {
-    connect(_selfListener.get(), SIGNAL(recvData(boost::intrusive_ptr<RefCntBuffer>)), who, SLOT(onReceiveBlock(boost::intrusive_ptr<RefCntBuffer>)));
+    connect(_selfListener.get(), SIGNAL(recvData(boost::intrusive_ptr<RefCntBuffer>)), who,
+            SLOT(onReceiveBlock(boost::intrusive_ptr<RefCntBuffer>)));
 }
 
 void TerminalModel::setDarkBackground(bool darkBackground)

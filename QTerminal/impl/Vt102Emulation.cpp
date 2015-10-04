@@ -1682,7 +1682,8 @@ void Vt102Emulation::sendString(const char* s, int length)
 void Vt102Emulation::reportCursorPosition()
 {
     boost::format f("\033[%d;%dR");
-    sendString(str(f % (_screen[_currentScreenIndex]->getCursorY() + 1) % (_screen[_currentScreenIndex]->getCursorX() + 1)).c_str());
+    sendString(str(f % (_screen[_currentScreenIndex]->getCursorY() + 1) %
+                   (_screen[_currentScreenIndex]->getCursorX() + 1)).c_str());
 }
 
 /*

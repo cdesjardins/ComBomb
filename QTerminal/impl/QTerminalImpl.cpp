@@ -24,14 +24,16 @@
 #include "KeyboardTranslator.h"
 #include "TerminalDefaults.h"
 
-QTerminalImpl::QTerminalImpl(const QTerminalConfig& terminalConfig, const std::shared_ptr<TgtIntf>& targetInterface, int width, int height, QWidget* parent)
+QTerminalImpl::QTerminalImpl(const QTerminalConfig& terminalConfig, const std::shared_ptr<TgtIntf>& targetInterface,
+                             int width, int height, QWidget* parent)
     : QTerminalInterface(parent)
 {
     setMinimumSize(TERMINAL_MIN_WIDTH, TERMINAL_MIN_HEIGHT);
     initialize(terminalConfig, targetInterface, width, height);
 }
 
-void QTerminalImpl::initialize(const QTerminalConfig& terminalConfig, const std::shared_ptr<TgtIntf>& targetInterface, int width, int height)
+void QTerminalImpl::initialize(const QTerminalConfig& terminalConfig, const std::shared_ptr<TgtIntf>& targetInterface,
+                               int width, int height)
 {
     _terminalView.reset(new TerminalView(targetInterface, this));
     _terminalView->setKeyboardCursorShape(TerminalView::IBeamCursor);
@@ -43,7 +45,8 @@ void QTerminalImpl::initialize(const QTerminalConfig& terminalConfig, const std:
     _terminalView->setTerminalSizeStartup(true);
     _terminalView->setScrollBarPosition(TerminalView::ScrollBarRight);
 
-    connect(_terminalView.get(), SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(handleCustomContextMenuRequested(QPoint)));
+    connect(_terminalView.get(), SIGNAL(customContextMenuRequested(QPoint)), this,
+            SLOT(handleCustomContextMenuRequested(QPoint)));
 
     setFocusProxy(_terminalView.get());
 

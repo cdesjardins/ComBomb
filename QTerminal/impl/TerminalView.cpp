@@ -685,7 +685,8 @@ void TerminalView::drawCharacters(QPainter& painter,
         painter.setFont(font);
     }
 
-    const CharacterColor& textColor = (invertCharacterColor ? style->getBackgroundColor() : style->getForegroundColor());
+    const CharacterColor& textColor =
+        (invertCharacterColor ? style->getBackgroundColor() : style->getForegroundColor());
     const QColor color = textColor.color(_colorTable);
 
     QPen pen = painter.pen();
@@ -837,7 +838,8 @@ void TerminalView::scrollImage(int lines, const QRect& screenWindowRegion)
     scroll(0, _fontHeight * (-lines), scrollRect);
 }
 
-int TerminalView::resizePaint(const int columnsToUpdate, const std::vector<Character>::const_iterator& newLine, char* dirtyMask, QChar* disstrU)
+int TerminalView::resizePaint(const int columnsToUpdate, const std::vector<Character>::const_iterator& newLine,
+                              char* dirtyMask, QChar* disstrU)
 {
     int len;
     int updateLine = 0;
@@ -877,7 +879,8 @@ int TerminalView::resizePaint(const int columnsToUpdate, const std::vector<Chara
                 {
                     continue; // Skip trailing part of multi-col chars.
                 }
-                bool nextIsDoubleWidth = (x + len + 1 == columnsToUpdate) ? false : (newLine[x + len + 1].getChar() == 0);
+                bool nextIsDoubleWidth =
+                    (x + len + 1 == columnsToUpdate) ? false : (newLine[x + len + 1].getChar() == 0);
 
                 if (ch.getForegroundColor() != cf ||
                     ch.getBackgroundColor() != cb ||
@@ -1094,7 +1097,8 @@ void TerminalView::showResizeNotification()
             _resizeWidget->setMinimumHeight(_resizeWidget->sizeHint().height());
             _resizeWidget->setAlignment(Qt::AlignCenter);
 
-            _resizeWidget->setStyleSheet("background-color:palette(window);border-style:solid;border-width:1px;border-color:palette(dark)");
+            _resizeWidget->setStyleSheet(
+                "background-color:palette(window);border-style:solid;border-width:1px;border-color:palette(dark)");
 
             _resizeTimer.reset(new QTimer(this));
             _resizeTimer->setSingleShot(true);
@@ -1798,7 +1802,8 @@ void TerminalView::extendSelection(const QPoint& position)
         if (i >= 0 && i <= _imageSize)
         {
             selClass = charClass(_image[i].getChar());
-            while (((right.x() < _usedColumns - 1) || (right.y() < _usedLines - 1 && (_lineProperties[right.y()] & LINE_WRAPPED)))
+            while (((right.x() < _usedColumns - 1) ||
+                    (right.y() < _usedLines - 1 && (_lineProperties[right.y()] & LINE_WRAPPED)))
                    && charClass(_image[i + 1].getChar()) == selClass)
             {
                 i++;

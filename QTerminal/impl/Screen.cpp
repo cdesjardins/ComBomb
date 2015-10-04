@@ -886,7 +886,8 @@ void Screen::ShowCharacter(unsigned short c)
     int size = _screenLines[screenLineIndex(_cursorY)].size();
     if (size == 0 && _cursorY > 0)
     {
-        _screenLines[screenLineIndex(_cursorY)].resize(qMax(_screenLines[screenLineIndex(_cursorY - 1)].size(), (size_t)_cursorX + w));
+        _screenLines[screenLineIndex(_cursorY)].resize(qMax(_screenLines[screenLineIndex(_cursorY - 1)].size(),
+                                                            (size_t)_cursorX + w));
     }
     else
     {
@@ -906,7 +907,8 @@ void Screen::ShowCharacter(unsigned short c)
     // check if selection is still valid.
     checkSelection(_cursorX, _cursorY);
 
-    _screenLines[screenLineIndex(_cursorY)][_cursorX].setProperties(c, _effectiveCursorFg, _effectiveCursorBg, _effectiveCursorRe | RENDITION_RENDER);
+    _screenLines[screenLineIndex(_cursorY)][_cursorX].setProperties(c, _effectiveCursorFg, _effectiveCursorBg,
+                                                                    _effectiveCursorRe | RENDITION_RENDER);
 
     int i = 0;
     int newCursorX = _cursorX + w--;
@@ -919,7 +921,8 @@ void Screen::ShowCharacter(unsigned short c)
             _screenLines[screenLineIndex(_cursorY)].resize(_cursorX + i + 1);
         }
 
-        _screenLines[screenLineIndex(_cursorY)][_cursorX + i].setProperties(0, _effectiveCursorFg, _effectiveCursorBg, _effectiveCursorRe);
+        _screenLines[screenLineIndex(_cursorY)][_cursorX + i].setProperties(0, _effectiveCursorFg, _effectiveCursorBg,
+                                                                            _effectiveCursorRe);
         w--;
     }
     _cursorX = newCursorX;
@@ -1610,7 +1613,8 @@ void Screen::copyLineToStream(int line,
     //do not decode trailing whitespace characters
     for (int i = count - 1; i >= 0; i--)
     {
-        if (((characterBuffer[i].getRendition() & RENDITION_RENDER) == 0) && QChar(characterBuffer[i].getChar()).isSpace())
+        if (((characterBuffer[i].getRendition() & RENDITION_RENDER) == 0) &&
+            QChar(characterBuffer[i].getChar()).isSpace())
         {
             count--;
         }

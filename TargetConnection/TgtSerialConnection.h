@@ -28,7 +28,11 @@ class TgtSerialIntf : public TgtIntf
 public:
     struct TgtConnectionConfig : public TgtIntf::TgtConnectionConfigBase
     {
-        TgtConnectionConfig(const std::string& szPortName, const boost::asio::serial_port_base::baud_rate baudRate, const boost::asio::serial_port_base::parity parity, const boost::asio::serial_port_base::stop_bits stopBits, const boost::asio::serial_port_base::character_size byteSize, const boost::asio::serial_port_base::flow_control flowControl)
+        TgtConnectionConfig(const std::string& szPortName, const boost::asio::serial_port_base::baud_rate baudRate,
+                            const boost::asio::serial_port_base::parity parity,
+                            const boost::asio::serial_port_base::stop_bits stopBits,
+                            const boost::asio::serial_port_base::character_size byteSize,
+                            const boost::asio::serial_port_base::flow_control flowControl)
             : _portName(szPortName),
             _baudRate(baudRate),
             _parity(parity),
@@ -39,13 +43,14 @@ public:
         }
 
         std::string _portName;
-        boost::asio::serial_port_base::baud_rate      _baudRate;
-        boost::asio::serial_port_base::parity         _parity;
-        boost::asio::serial_port_base::stop_bits      _stopBits;
+        boost::asio::serial_port_base::baud_rate _baudRate;
+        boost::asio::serial_port_base::parity    _parity;
+        boost::asio::serial_port_base::stop_bits _stopBits;
         boost::asio::serial_port_base::character_size _byteSize;
-        boost::asio::serial_port_base::flow_control   _flowControl;
+        boost::asio::serial_port_base::flow_control _flowControl;
     };
-    static std::shared_ptr<TgtSerialIntf> createSerialConnection(const std::shared_ptr<const TgtConnectionConfig>& config);
+    static std::shared_ptr<TgtSerialIntf> createSerialConnection(
+        const std::shared_ptr<const TgtConnectionConfig>& config);
     virtual ~TgtSerialIntf ();
     virtual void tgtGetTitle(std::string* szTitle);
 

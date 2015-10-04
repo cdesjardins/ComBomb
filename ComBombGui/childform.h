@@ -33,7 +33,8 @@ class ChildForm : public QTerminal
     Q_OBJECT
 
 public:
-    explicit ChildForm(const QTerminalConfig& terminalConfig, const std::shared_ptr<TgtIntf>& targetInterface, QWidget* parent = 0);
+    explicit ChildForm(const QTerminalConfig& terminalConfig, const std::shared_ptr<TgtIntf>& targetInterface,
+                       QWidget* parent = 0);
     void runProcess();
     void findText();
     void findTextNext(const bool backward);

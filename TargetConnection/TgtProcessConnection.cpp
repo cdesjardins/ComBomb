@@ -21,7 +21,8 @@
 #include "unparam.h"
 #include <boost/bind/protect.hpp>
 
-std::shared_ptr<TgtProcessIntf> TgtProcessIntf::createProcessConnection(const std::shared_ptr<const TgtConnectionConfig>& config)
+std::shared_ptr<TgtProcessIntf> TgtProcessIntf::createProcessConnection(
+    const std::shared_ptr<const TgtConnectionConfig>& config)
 {
     std::shared_ptr<TgtProcessIntf> ret(new TgtProcessIntf(config));
     // This guy uses tgtMakeConnection otherwise QProcess will result in:
@@ -32,7 +33,8 @@ std::shared_ptr<TgtProcessIntf> TgtProcessIntf::createProcessConnection(const st
 
 void TgtProcessIntf::tgtMakeConnection()
 {
-    std::shared_ptr<const TgtConnectionConfig> connectionConfig = std::dynamic_pointer_cast<const TgtConnectionConfig>(_connectionConfig);
+    std::shared_ptr<const TgtConnectionConfig> connectionConfig = std::dynamic_pointer_cast<const TgtConnectionConfig>(
+        _connectionConfig);
     _proc = new QProcess(this);
     connect(_proc, SIGNAL(readyReadStandardOutput()), this, SLOT(readFromStdout()));
     connect(_proc, SIGNAL(readyReadStandardError()), this, SLOT(readFromStderr()));
@@ -70,7 +72,8 @@ void TgtProcessIntf::tgtBreakConnection()
 
 void TgtProcessIntf::tgtGetTitle(std::string* szTitle)
 {
-    std::shared_ptr<const TgtConnectionConfig> connectionConfig = std::dynamic_pointer_cast<const TgtConnectionConfig>(_connectionConfig);
+    std::shared_ptr<const TgtConnectionConfig> connectionConfig = std::dynamic_pointer_cast<const TgtConnectionConfig>(
+        _connectionConfig);
     *szTitle = connectionConfig->_program;
 }
 

@@ -65,7 +65,10 @@ int TgtIntf::tgtWrite(const char* szWriteData, int nBytes)
             boost::intrusive_ptr<RefCntBuffer> b;
             if (_bufferPool->dequeue(b, 5) == true)
             {
-                int sentBytes = boost::asio::buffer_copy(b->_buffer, boost::asio::buffer(szWriteData + totalSentBytes, nBytes - totalSentBytes));
+                int sentBytes =
+                    boost::asio::buffer_copy(b->_buffer,
+                                             boost::asio::buffer(szWriteData + totalSentBytes,
+                                                                 nBytes - totalSentBytes));
                 b->_buffer = boost::asio::buffer(b->_buffer, sentBytes);
                 _outgoingData.enqueue(b);
                 m_nTotalTx += sentBytes;
@@ -147,7 +150,8 @@ void TgtIntf::connectionManagerThread()
                     do
                     {
                         std::this_thread::sleep_for(std::chrono::milliseconds(1));
-                    } while (std::chrono::system_clock::now() < (startTime + std::chrono::seconds(1)) && (_connectionManagerThreadRun == true));
+                    } while (std::chrono::system_clock::now() < (startTime + std::chrono::seconds(1)) &&
+                             (_connectionManagerThreadRun == true));
                 }
             }
             emit updateTitleSignal(title.c_str());

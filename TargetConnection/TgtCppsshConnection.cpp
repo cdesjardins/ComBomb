@@ -51,7 +51,8 @@ struct TgtCppsshImpl
     bool _connected;
 };
 
-std::shared_ptr<TgtCppsshIntf> TgtCppsshIntf::createCppsshConnection(const std::shared_ptr<const TgtConnectionConfig>& config)
+std::shared_ptr<TgtCppsshIntf> TgtCppsshIntf::createCppsshConnection(
+    const std::shared_ptr<const TgtConnectionConfig>& config)
 {
     std::shared_ptr<TgtCppsshIntf> ret(new TgtCppsshIntf(config));
     ret->tgtAttemptReconnect();
@@ -72,7 +73,8 @@ TgtCppsshIntf::~TgtCppsshIntf()
 
 void TgtCppsshIntf::tgtMakeConnection()
 {
-    std::shared_ptr<const TgtConnectionConfig> connectionConfig = std::dynamic_pointer_cast<const TgtConnectionConfig>(_connectionConfig);
+    std::shared_ptr<const TgtConnectionConfig> connectionConfig = std::dynamic_pointer_cast<const TgtConnectionConfig>(
+        _connectionConfig);
 
     CppsshConnectStatus_t ret = Cppssh::connect(&_sshData->_connectionId, connectionConfig->_hostName.c_str(),
                                                 connectionConfig->_portNum, connectionConfig->_userName.c_str(),
@@ -124,7 +126,8 @@ void TgtCppsshIntf::tgtBreakConnection()
 
 void TgtCppsshIntf::tgtGetTitle(std::string* szTitle)
 {
-    std::shared_ptr<const TgtConnectionConfig> connectionConfig = std::dynamic_pointer_cast<const TgtConnectionConfig>(_connectionConfig);
+    std::shared_ptr<const TgtConnectionConfig> connectionConfig = std::dynamic_pointer_cast<const TgtConnectionConfig>(
+        _connectionConfig);
     std::stringstream t;
     t << connectionConfig->_hostName << ":" << connectionConfig->_portNum;
     *szTitle = t.str();
@@ -192,7 +195,8 @@ bool TgtCppsshIntf::sshRecv()
                 if (_bufferPool->dequeue(currentIncomingBuffer, 100) == true)
                 {
                     qint64 len = msg.length() - sentBytes;
-                    size_t copyLen = std::min((size_t)len, boost::asio::buffer_size(currentIncomingBuffer->_buffer) - 1);
+                    size_t copyLen =
+                        std::min((size_t)len, boost::asio::buffer_size(currentIncomingBuffer->_buffer) - 1);
                     boost::asio::const_buffer b = boost::asio::const_buffer(msg.message() + sentBytes, len);
                     sentBytes += boost::asio::buffer_copy(currentIncomingBuffer->_buffer, b, copyLen);
                     currentIncomingBuffer->_buffer = boost::asio::buffer(currentIncomingBuffer->_buffer, copyLen);

@@ -88,7 +88,8 @@ MainWindow::MainWindow(QWidget* parent) :
     _captureLogsIconText = _ui->actionCapture_output->text();
     connect(_mdiArea, SIGNAL(subWindowActivated(QMdiSubWindow*)), this, SLOT(subWindowActivatedSlot(QMdiSubWindow*)));
     UpdateChecker::checkForNewVersion();
-    connect(UpdateChecker::get(), SIGNAL(newVersionAvailable()), this, SLOT(newVersionAvailableSlot()), Qt::QueuedConnection);
+    connect(UpdateChecker::get(), SIGNAL(newVersionAvailable()), this, SLOT(
+                newVersionAvailableSlot()), Qt::QueuedConnection);
 }
 
 void MainWindow::enableMenuItems(bool enabled)

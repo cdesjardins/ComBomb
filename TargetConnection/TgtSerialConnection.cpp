@@ -25,7 +25,8 @@
 **
 ******************************************************************************/
 
-std::shared_ptr<TgtSerialIntf> TgtSerialIntf::createSerialConnection(const std::shared_ptr<const TgtConnectionConfig>& config)
+std::shared_ptr<TgtSerialIntf> TgtSerialIntf::createSerialConnection(
+    const std::shared_ptr<const TgtConnectionConfig>& config)
 {
     std::shared_ptr<TgtSerialIntf> ret(new TgtSerialIntf(config));
     ret->tgtAttemptReconnect();
@@ -34,7 +35,8 @@ std::shared_ptr<TgtSerialIntf> TgtSerialIntf::createSerialConnection(const std::
 
 void TgtSerialIntf::tgtMakeConnection()
 {
-    std::shared_ptr<const TgtConnectionConfig> connectionConfig = std::dynamic_pointer_cast<const TgtConnectionConfig>(_connectionConfig);
+    std::shared_ptr<const TgtConnectionConfig> connectionConfig = std::dynamic_pointer_cast<const TgtConnectionConfig>(
+        _connectionConfig);
     //_service.reset(new boost::asio::io_service());
     _port.reset(new boost::asio::serial_port(_service, connectionConfig->_portName));
     _port->set_option(connectionConfig->_baudRate);
@@ -100,7 +102,8 @@ void TgtSerialIntf::tgtReadCallback(const boost::system::error_code& error, cons
         {
             if (_currentIncomingBuffer != nullptr)
             {
-                _currentIncomingBuffer->_buffer = boost::asio::buffer(_currentIncomingBuffer->_buffer, bytesTransferred);
+                _currentIncomingBuffer->_buffer =
+                    boost::asio::buffer(_currentIncomingBuffer->_buffer, bytesTransferred);
                 _incomingData.enqueue(_currentIncomingBuffer);
             }
             _bufferPool->dequeue(_currentIncomingBuffer, 100);
@@ -144,7 +147,8 @@ void TgtSerialIntf::tgtGetTitle(std::string* szTitle)
 {
     std::string parity;
     std::string stopbits;
-    std::shared_ptr<const TgtConnectionConfig> connectionConfig = std::dynamic_pointer_cast<const TgtConnectionConfig>(_connectionConfig);
+    std::shared_ptr<const TgtConnectionConfig> connectionConfig = std::dynamic_pointer_cast<const TgtConnectionConfig>(
+        _connectionConfig);
 
     switch (connectionConfig->_parity.value())
     {

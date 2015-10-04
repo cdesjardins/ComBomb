@@ -83,11 +83,16 @@ std::shared_ptr<const TgtSerialIntf::TgtConnectionConfig> OpenDialog::getSerialC
 
     std::shared_ptr<TgtSerialIntf::TgtConnectionConfig> ret(new TgtSerialIntf::TgtConnectionConfig(
                                                                 ui->comPortComboBox->currentText().toUtf8().constData(),
-                                                                boost::asio::serial_port_base::baud_rate(vBaudRate.toInt()),
-                                                                boost::asio::serial_port_base::parity((boost::asio::serial_port_base::parity::type)vParity.toInt()),
-                                                                boost::asio::serial_port_base::stop_bits((boost::asio::serial_port_base::stop_bits::type)vStopBits.toInt()),
-                                                                boost::asio::serial_port_base::character_size(vByteSize.toInt()),
-                                                                boost::asio::serial_port_base::flow_control((boost::asio::serial_port_base::flow_control::type)vFlowControl.toInt())));
+                                                                boost::asio::serial_port_base::baud_rate(
+                                                                    vBaudRate.toInt()),
+                                                                boost::asio::serial_port_base::parity(
+                                                                    (boost::asio::serial_port_base::parity::type)vParity.toInt()),
+                                                                boost::asio::serial_port_base::stop_bits(
+                                                                    (boost::asio::serial_port_base::stop_bits::type)vStopBits.toInt()),
+                                                                boost::asio::serial_port_base::character_size(
+                                                                    vByteSize.toInt()),
+                                                                boost::asio::serial_port_base::flow_control(
+                                                                    (boost::asio::serial_port_base::flow_control::type)vFlowControl.toInt())));
     return ret;
 }
 

@@ -43,7 +43,8 @@ public:
 
     virtual int getLines();
     virtual int getLineLen(size_t lineno);
-    virtual void getCells(size_t lineno, int colno, int count, std::vector<Character>::iterator res, Character defaultChar);
+    virtual void getCells(size_t lineno, int colno, int count, std::vector<Character>::iterator res,
+                          Character defaultChar);
     virtual bool isWrappedLine(size_t lineno);
     virtual void clearHistory();
     // Returns true if the new histSize is smaller than the previous histSize

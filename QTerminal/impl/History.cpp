@@ -110,7 +110,8 @@ bool History::isWrappedLine(size_t lineNumber)
     }
 }
 
-void History::getCells(size_t lineNumber, int startColumn, int count, std::vector<Character>::iterator buffer, Character defaultChar)
+void History::getCells(size_t lineNumber, int startColumn, int count, std::vector<Character>::iterator buffer,
+                       Character defaultChar)
 {
     if (count == 0)
     {

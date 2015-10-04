@@ -1045,7 +1045,8 @@ void KeyboardTranslator::removeEntry(const Entry& entry)
     _entries.remove(entry.keyCode());
 }
 
-KeyboardTranslator::Entry KeyboardTranslator::findEntry(int keyCode, Qt::KeyboardModifiers modifiers, States state) const
+KeyboardTranslator::Entry KeyboardTranslator::findEntry(int keyCode, Qt::KeyboardModifiers modifiers,
+                                                        States state) const
 {
     if (_entries.contains(keyCode))
     {
