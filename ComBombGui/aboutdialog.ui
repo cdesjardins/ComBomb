@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>408</width>
-    <height>175</height>
+    <height>202</height>
    </rect>
   </property>
   <property name="focusPolicy">
@@ -31,7 +31,7 @@
     <widget class="QWidget" name="widget" native="true">
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QLabel" name="label_3">
+       <widget class="QLabel" name="copyright">
         <property name="text">
          <string>ComBomb (C) 2013-2015
 Chris Desjardins</string>
@@ -41,7 +41,7 @@ Chris Desjardins</string>
       <item>
        <widget class="QLabel" name="combombVersionLabel">
         <property name="text">
-         <string>COMBOMB VERSION</string>
+         <string>ComBomb version</string>
         </property>
         <property name="textFormat">
          <enum>Qt::RichText</enum>
@@ -52,7 +52,20 @@ Chris Desjardins</string>
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label">
+       <widget class="QLabel" name="cppsshVersionLabel">
+        <property name="text">
+         <string>cppssh version</string>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::RichText</enum>
+        </property>
+        <property name="wordWrap">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="website">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>

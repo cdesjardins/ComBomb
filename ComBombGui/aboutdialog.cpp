@@ -59,6 +59,10 @@ AboutDialog::AboutDialog(QWidget* parent) :
     ver.append(getVersion());
     ui->combombVersionLabel->setText(ver);
 
+    ver = "Cppssh version: ";
+    ver.append(Cppssh::getCppsshVersion(true));
+    ui->cppsshVersionLabel->setText(ver);
+
     QString uptime("Uptime: ");
     std::stringstream buf;
     const std::chrono::duration<double> elapsed = MainWindow::getMainWindow()->getStartTimeDelta();
