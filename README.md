@@ -1,4 +1,4 @@
-####http://blog.chrisd.info/combomb/
+####http://combomb.chrisd.info/
 
 ComBomb is a terminal emulator for debugging embedded systems in the modern era.
 
