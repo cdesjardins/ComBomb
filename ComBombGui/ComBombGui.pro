@@ -95,17 +95,16 @@ else:unix: PRE_TARGETDEPS += $$OUT_PWD/../QTerminal/libQTerminal.a
 
 
 # Boost
-BOOSTVER = 1_59_0
 QMAKE_CXXFLAGS += -DBOOST_ALL_NO_LIB
 
 win32:QMAKE_CXXFLAGS += -D_WIN32_WINNT=0x0501
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../boost/boost_$${BOOSTVER}/stage/release/ -llibboost_system
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../boost/boost_$${BOOSTVER}/stage/debug/ -llibboost_system
-else:unix: LIBS += $$PWD/../../boost/boost_$${BOOSTVER}/stage/lib/libboost_system.a
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../external/boost/install/lib/release/ -llibboost_system
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../external/boost/install/lib/debug/ -llibboost_system
+else:unix: LIBS += $$PWD/../../external/boost/install/lib//libboost_system.a
 
-INCLUDEPATH += $$PWD/../../boost/boost_$${BOOSTVER}
-DEPENDPATH += $$PWD/../../boost/boost_$${BOOSTVER}
+INCLUDEPATH += $$PWD/../../external/boost/install/include
+DEPENDPATH += $$PWD/../../external/boost/install/include
 
 OTHER_FILES += \
     ComBomb.rc
