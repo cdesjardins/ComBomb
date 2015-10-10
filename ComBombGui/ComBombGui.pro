@@ -101,7 +101,7 @@ win32:QMAKE_CXXFLAGS += -D_WIN32_WINNT=0x0501
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../external/boost/install/lib/release/ -llibboost_system
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../external/boost/install/lib/debug/ -llibboost_system
-else:unix: LIBS += $$PWD/../../external/boost/install/lib//libboost_system.a
+else:unix: LIBS += $$PWD/../../external/boost/install/lib/libboost_system.a
 
 INCLUDEPATH += $$PWD/../../external/boost/install/include
 DEPENDPATH += $$PWD/../../external/boost/install/include
