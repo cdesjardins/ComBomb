@@ -165,15 +165,11 @@ QString ConfigDialog::getSettingsRoot()
 void ConfigDialog::handleLoggingChange()
 {
     QSettings settings;
-    bool wasLoggingEnabled = getLoggingEnabledSettings();
     bool loggingEnabled = ui->loggingCheckBox->isChecked();
     settings.setValue(CB_CONFIG_SETTINGS_LOGGING, loggingEnabled);
-    if (wasLoggingEnabled != loggingEnabled)
-    {
-        QString logFilename(ui->logFilenameComboBox->currentText());
-        settings.setValue(CB_CONFIG_SETTINGS_LOGFILENAME, logFilename);
-        handleLogfile();
-    }
+    QString logFilename(ui->logFilenameComboBox->currentText());
+    settings.setValue(CB_CONFIG_SETTINGS_LOGFILENAME, logFilename);
+    handleLogfile();
 }
 
 void ConfigDialog::handleLogfile()
