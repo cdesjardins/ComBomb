@@ -22,9 +22,7 @@
 #define CB_DEFAULT_TERM_WIDTH 80
 #define CB_DEFAULT_TERM_HEIGHT 25
 
-#ifndef Q_MOC_RUN
 #include <boost/asio/buffer.hpp>
-#endif
 #include "threadsafequeue.h"
 #include "QueuePtr/RefCntBufferPool.h"
 #include "unparam.h"
