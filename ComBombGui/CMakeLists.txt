@@ -60,13 +60,15 @@ function(updateQtWidgetsLinks libbaseName)
     set_target_properties(
         Qt5::Widgets
         PROPERTIES
-        INTERFACE_LINK_LIBRARIES "${gen_expr};${linked_libs}"
+        INTERFACE_LINK_LIBRARIES "${linked_libs};${gen_expr}"
     )
+    message(STATUS "widgets: ${linked_libs};${gen_expr}")
 endfunction()
 updateQtWidgetsLinks(qtpcre)
 updateQtWidgetsLinks(qtharfbuzzng)
 
 target_link_libraries(ComBombGui Qt5::Widgets)
+
 foreach(plugin ${Qt5Gui_PLUGINS})
     get_target_property(_loc ${plugin} LOCATION)
     target_link_libraries(ComBombGui ${_loc})
