@@ -65,7 +65,7 @@ DEPENDPATH  += $$PWD/../QTerminal $$PWD/../../install/include $$PWD/../../includ
 
 # Boost
 
-QMAKE_CXXFLAGS += -DBOOST_ALL_NO_LIB
+QMAKE_CXXFLAGS += -DBOOST_ALL_NO_LIB -DBOOST_NO_AUTO_PTR
 
 win32:QMAKE_CXXFLAGS += -D_WIN32_WINNT=0x0501
 INCLUDEPATH += $$PWD/../../external/boost/install/include
