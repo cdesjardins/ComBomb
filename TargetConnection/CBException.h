@@ -20,7 +20,7 @@
 #define CBEXCEPTION_H
 
 #include <boost/asio/buffer.hpp>
-#include <boost/format.hpp>
+#include <sstream>
 
 #define CB_EXCEPTION(type)                       type(__FILE__, __LINE__)
 #define CB_EXCEPTION_INT(type, data)             type(__FILE__, __LINE__, data)
@@ -67,8 +67,9 @@ protected:
 
     void copyInt(const int data)
     {
-        boost::format f(": %i");
-        copyStr(str(f % data).c_str());
+        std::stringstream s;
+        s << ": " << data;
+        copyStr(s.str().c_str());
     }
 
     void init(const char* file, const int line)

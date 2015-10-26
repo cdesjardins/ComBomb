@@ -107,10 +107,9 @@ void TgtTelnetIntf::tgtMakeConnection()
     }
     if (error)
     {
-        std::string errmsg;
-        boost::format f("Unable to connect to '%s:%i' (%d)");
-        errmsg = str(f % connectionConfig->_hostName % connectionConfig->_portNum % error);
-        throw CB_EXCEPTION_STR(CBException::CbExcp, errmsg.c_str());
+        std::stringstream s;
+        s << "Unable to connect to '" << connectionConfig->_hostName << ":" << connectionConfig->_portNum << "' (" << error << ")";
+        throw CB_EXCEPTION_STR(CBException::CbExcp, s.str().c_str());
     }
     _socket->non_blocking(true);
 

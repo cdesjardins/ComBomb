@@ -21,7 +21,6 @@
 #include "TgtThread.h"
 #include "CBException.h"
 #include "CDLogger/Logger.h"
-#include <boost/format.hpp>
 #include <boost/bind.hpp>
 #include <sstream>
 
@@ -87,7 +86,7 @@ void TgtCppsshIntf::tgtMakeConnection()
     }
     else
     {
-        boost::format f("Unable to connect to: %s - %s");
+        std::stringstream s;
         std::string reason;
         switch (ret)
         {
@@ -113,8 +112,8 @@ void TgtCppsshIntf::tgtMakeConnection()
                 break;
         }
 
-        std::string errmsg = str(f % connectionConfig->_hostName.c_str() % reason);
-        throw CB_EXCEPTION_STR(CBException::CbExcp, errmsg.c_str());
+        s << "Unable to connect to: " << connectionConfig->_hostName.c_str() << reason;
+        throw CB_EXCEPTION_STR(CBException::CbExcp, s.str().c_str());
     }
 }
 
