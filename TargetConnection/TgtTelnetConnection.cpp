@@ -108,7 +108,8 @@ void TgtTelnetIntf::tgtMakeConnection()
     if (error)
     {
         std::stringstream s;
-        s << "Unable to connect to '" << connectionConfig->_hostName << ":" << connectionConfig->_portNum << "' (" << error << ")";
+        s << "Unable to connect to '" << connectionConfig->_hostName << ":" << connectionConfig->_portNum << "' (" <<
+            error << ")";
         throw CB_EXCEPTION_STR(CBException::CbExcp, s.str().c_str());
     }
     _socket->non_blocking(true);

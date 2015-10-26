@@ -61,7 +61,6 @@ public:
     virtual void decodeLine(const std::vector<Character>::const_iterator& characters, int count,
                             LineProperty properties) = 0;
     static const ColorEntry* getBaseColorTable();
-
 };
 
 /**

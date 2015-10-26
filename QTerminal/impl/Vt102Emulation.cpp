@@ -1680,7 +1680,8 @@ void Vt102Emulation::sendString(const char* s, int length)
 void Vt102Emulation::reportCursorPosition()
 {
     std::stringstream s;
-    s << "\033[" << _screen[_currentScreenIndex]->getCursorY() + 1 << ";" <<_screen[_currentScreenIndex]->getCursorX() + 1 << "R";
+    s << "\033[" << _screen[_currentScreenIndex]->getCursorY() + 1 << ";" <<
+        _screen[_currentScreenIndex]->getCursorX() + 1 << "R";
     sendString(s.str().c_str());
 }
 
