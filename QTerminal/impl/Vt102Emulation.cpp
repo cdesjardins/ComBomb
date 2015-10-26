@@ -46,8 +46,6 @@
 #include "KeyboardTranslator.h"
 #include "Screen.h"
 
-#include <boost/format.hpp>
-
 #if defined(HAVE_XKB)
 void scrolllock_set_off();
 void scrolllock_set_on();
@@ -1681,9 +1679,9 @@ void Vt102Emulation::sendString(const char* s, int length)
 
 void Vt102Emulation::reportCursorPosition()
 {
-    boost::format f("\033[%d;%dR");
-    sendString(str(f % (_screen[_currentScreenIndex]->getCursorY() + 1) %
-                   (_screen[_currentScreenIndex]->getCursorX() + 1)).c_str());
+    std::stringstream s;
+    s << "\033[" << _screen[_currentScreenIndex]->getCursorY() + 1 << ";" <<_screen[_currentScreenIndex]->getCursorX() + 1 << "R";
+    sendString(s.str().c_str());
 }
 
 /*
@@ -1728,8 +1726,9 @@ void Vt102Emulation::reportSecondaryAttributes()
 void Vt102Emulation::reportTerminalParms(int p)
 // DECREPTPARM
 {
-    boost::format f("\033[%d;1;1;112;112;1;0x"); // not really true.
-    sendString(str(f % p).c_str());
+    std::stringstream s;
+    s << "\033[" << p << ";1;1;112;112;1;0x"; // not really true.
+    sendString(s.str().c_str());
 }
 
 /*!
@@ -1786,8 +1785,10 @@ void Vt102Emulation::sendMouseEvent(int cb, int cx, int cy, int eventType)
     {
         cb += 0x20; //add 32 to signify motion event
     }
-    boost::format f("\033[M%c%c%c");
-    sendString(str(f % (cb + 0x20) % (cx + 0x20) % (cy + 0x20)).c_str());
+
+    std::stringstream s;
+    s << "\033[M" << (char)(cb + 0x20) << (char) (cx + 0x20) << (char) (cy + 0x20);
+    sendString(s.str().c_str());
 }
 
 // Keyboard Handling ------------------------------------------------------- --
