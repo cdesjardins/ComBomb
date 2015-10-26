@@ -61,6 +61,7 @@
 // static
 bool TerminalView::_antialiasText = true;
 
+
 /* ------------------------------------------------------------------------- */
 /*                                                                           */
 /*                                Colors                                     */
@@ -331,7 +332,7 @@ TerminalView::TerminalView(const std::shared_ptr<TgtIntf>& targetInterface, QWid
     //  QCursor::setAutoHideCursor( this, true );
 
     setUsesMouse(true);
-    setColorTable(base_color_table);
+    setColorTable(TerminalCharacterDecoder::getBaseColorTable());
     setMouseTracking(true);
 
     // Enable drag and drop

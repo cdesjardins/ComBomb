@@ -99,25 +99,6 @@ public:
 #define DEFAULT_FORE_COLOR CharacterColor::getDefaultForeColor()
 #define DEFAULT_BACK_COLOR CharacterColor::getDefaultBackColor()
 
-//a standard set of colors using black text on a white background.
-//defined in TerminalDisplay.cpp
-
-static const ColorEntry base_color_table[TABLE_COLORS] =
-{
-    // normal
-    ColorEntry(QColor(0x00, 0x00, 0x00), 1, 0), ColorEntry(QColor(0xFF, 0xFF, 0xFF), 0, 0), // Dfore, Dback
-    ColorEntry(QColor(0x00, 0x00, 0x00), 0, 0), ColorEntry(QColor(0xB2, 0x18, 0x18), 0, 0), // Black, Red
-    ColorEntry(QColor(0x18, 0xB2, 0x18), 0, 0), ColorEntry(QColor(0xB2, 0x68, 0x18), 0, 0), // Green, Yellow
-    ColorEntry(QColor(0x18, 0x18, 0xB2), 0, 0), ColorEntry(QColor(0xB2, 0x18, 0xB2), 0, 0), // Blue, Magenta
-    ColorEntry(QColor(0x18, 0xB2, 0xB2), 0, 0), ColorEntry(QColor(0xB2, 0xB2, 0xB2), 0, 0), // Cyan, White
-    // intensiv
-    ColorEntry(QColor(0x00, 0x00, 0x00), 0, 1), ColorEntry(QColor(0xFF, 0xFF, 0xFF), 1, 0),
-    ColorEntry(QColor(0x68, 0x68, 0x68), 0, 0), ColorEntry(QColor(0xFF, 0x54, 0x54), 0, 0),
-    ColorEntry(QColor(0x54, 0xFF, 0x54), 0, 0), ColorEntry(QColor(0xFF, 0xFF, 0x54), 0, 0),
-    ColorEntry(QColor(0x54, 0x54, 0xFF), 0, 0), ColorEntry(QColor(0xFF, 0x54, 0xFF), 0, 0),
-    ColorEntry(QColor(0x54, 0xFF, 0xFF), 0, 0), ColorEntry(QColor(0xFF, 0xFF, 0xFF), 0, 0)
-};
-
 /* CharacterColor is a union of the various color spaces.
 
    Assignment is as follows:

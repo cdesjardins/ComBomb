@@ -27,6 +27,30 @@
 // Qt
 #include <QtCore/QTextStream>
 
+//a standard set of colors using black text on a white background.
+//defined in TerminalDisplay.cpp
+
+static const ColorEntry s_baseColorTable[TABLE_COLORS] =
+{
+    // normal
+    ColorEntry(QColor(0x00, 0x00, 0x00), 1, 0), ColorEntry(QColor(0xFF, 0xFF, 0xFF), 0, 0), // Dfore, Dback
+    ColorEntry(QColor(0x00, 0x00, 0x00), 0, 0), ColorEntry(QColor(0xB2, 0x18, 0x18), 0, 0), // Black, Red
+    ColorEntry(QColor(0x18, 0xB2, 0x18), 0, 0), ColorEntry(QColor(0xB2, 0x68, 0x18), 0, 0), // Green, Yellow
+    ColorEntry(QColor(0x18, 0x18, 0xB2), 0, 0), ColorEntry(QColor(0xB2, 0x18, 0xB2), 0, 0), // Blue, Magenta
+    ColorEntry(QColor(0x18, 0xB2, 0xB2), 0, 0), ColorEntry(QColor(0xB2, 0xB2, 0xB2), 0, 0), // Cyan, White
+    // intensiv
+    ColorEntry(QColor(0x00, 0x00, 0x00), 0, 1), ColorEntry(QColor(0xFF, 0xFF, 0xFF), 1, 0),
+    ColorEntry(QColor(0x68, 0x68, 0x68), 0, 0), ColorEntry(QColor(0xFF, 0x54, 0x54), 0, 0),
+    ColorEntry(QColor(0x54, 0xFF, 0x54), 0, 0), ColorEntry(QColor(0xFF, 0xFF, 0x54), 0, 0),
+    ColorEntry(QColor(0x54, 0x54, 0xFF), 0, 0), ColorEntry(QColor(0xFF, 0x54, 0xFF), 0, 0),
+    ColorEntry(QColor(0x54, 0xFF, 0xFF), 0, 0), ColorEntry(QColor(0xFF, 0xFF, 0xFF), 0, 0)
+};
+
+const ColorEntry* TerminalCharacterDecoder::getBaseColorTable()
+{
+    return s_baseColorTable;
+}
+
 PlainTextDecoder::PlainTextDecoder()
     : _output(0)
     , _includeTrailingWhitespace(true)
@@ -94,7 +118,7 @@ void PlainTextDecoder::decodeLine(const std::vector<Character>::const_iterator& 
 
 HTMLDecoder::HTMLDecoder() :
     _output(0)
-    , _colorTable(base_color_table)
+    , _colorTable(s_baseColorTable)
     , _innerSpanOpen(false)
     , _lastRendition(DEFAULT_RENDITION)
 {
