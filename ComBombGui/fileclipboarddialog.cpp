@@ -24,7 +24,7 @@
 #define CB_FILE_CLIBBOARD_SETTINGS_ROOT "FileClipboard/"
 
 FileClipboardDialog::FileClipboardDialog(QWidget* parent) :
-    CBDialog(parent),
+    QDialog(parent),
     ui(new Ui::FileClipboardDialog),
     _fileClipboardHeader(nullptr),
     _fileClipboardLoaded(false)
@@ -54,11 +54,6 @@ FileClipboardDialog::~FileClipboardDialog()
     {
         delete _fileClipboardHeader;
     }
-}
-
-QString FileClipboardDialog::getSettingsRoot()
-{
-    return CB_FILE_CLIBBOARD_SETTINGS_ROOT;
 }
 
 void FileClipboardDialog::saveFileClipboardSetting(int row)

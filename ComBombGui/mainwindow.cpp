@@ -19,6 +19,7 @@
 #include <QMdiSubWindow>
 #include <QMessageBox>
 #include <QComboBox>
+#include <QDockWidget>
 #include "mainwindow.h"
 #include "updatechecker.h"
 #include "childform.h"
@@ -59,9 +60,11 @@ MainWindow::MainWindow(QWidget* parent) :
     QMainWindow(parent),
     _ui(new Ui::MainWindow),
     _mdiArea(new QMdiArea()),
-    _fileClipboardDialog(new FileClipboardDialog(this))
+    _fileClipboardDialog(new FileClipboardDialog(this)),
+    _fileClipboarDock(new QDockWidget(tr("File clipboard"), this))
 {
     ConfigDialog::handleLogfile();
+
     _windowCnt.store(0);
     _startTime = std::chrono::system_clock::now();
     _ui->setupUi(this);
@@ -214,6 +217,7 @@ void MainWindow::closeEvent(QCloseEvent* event)
     QSettings settings;
     settings.setValue("Geometry", saveGeometry());
     settings.setValue("WindowState", saveState());
+    saveFileClipboarDockSettings();
     QMainWindow::closeEvent(event);
 }
 
@@ -222,6 +226,34 @@ void MainWindow::readSettings()
     QSettings settings;
     restoreGeometry(settings.value("Geometry").toByteArray());
     restoreState(settings.value("WindowState").toByteArray());
+    restoreFileClipboardDockSettings();
+}
+
+#define FILE_CBD_SETTINGS               "FileClipBoardDock"
+#define FILE_CBD_SETTINGS_DOCKSIDE      FILE_CBD_SETTINGS "/DockSide"
+#define FILE_CBD_SETTINGS_HIDDEN        FILE_CBD_SETTINGS "/Hidden"
+#define FILE_CBD_SETTINGS_FLOATING      FILE_CBD_SETTINGS "/Floating"
+#define FILE_CBD_SETTINGS_GEOMETRY      FILE_CBD_SETTINGS "/Geometry"
+
+void MainWindow::saveFileClipboarDockSettings()
+{
+    QSettings settings;
+    settings.setValue(FILE_CBD_SETTINGS_DOCKSIDE, dockWidgetArea(_fileClipboarDock));
+    settings.setValue(FILE_CBD_SETTINGS_HIDDEN, _fileClipboarDock->isHidden());
+    settings.setValue(FILE_CBD_SETTINGS_FLOATING, _fileClipboarDock->isFloating());
+    settings.setValue(FILE_CBD_SETTINGS_GEOMETRY, _fileClipboarDock->saveGeometry());
+}
+
+void MainWindow::restoreFileClipboardDockSettings()
+{
+    QSettings settings;
+    _fileClipboarDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+    _fileClipboarDock->setWidget(_fileClipboardDialog);
+    addDockWidget((Qt::DockWidgetArea)settings.value(FILE_CBD_SETTINGS_DOCKSIDE, Qt::RightDockWidgetArea).toInt(), _fileClipboarDock);
+
+    _fileClipboarDock->setHidden(settings.value("FileClipBoardDock/Hidden").toBool());
+    _fileClipboarDock->setFloating(settings.value("FileClipBoardDock/Floating").toBool());
+    _fileClipboarDock->restoreGeometry(settings.value("FileClipBoardDock/Geometry").toByteArray());
 }
 
 void MainWindow::updateStatusSlot(QString status)
@@ -296,13 +328,13 @@ ChildForm* MainWindow::getActiveChildWindow()
 
 void MainWindow::on_actionFile_clipboard_triggered()
 {
-    if (_fileClipboardDialog->isVisible() == true)
+    if (_fileClipboarDock->isVisible() == true)
     {
-        _fileClipboardDialog->hide();
+        _fileClipboarDock->hide();
     }
     else
     {
-        _fileClipboardDialog->show();
+        _fileClipboarDock->show();
     }
 }
 

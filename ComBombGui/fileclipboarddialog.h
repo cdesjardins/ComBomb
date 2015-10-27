@@ -26,7 +26,7 @@ namespace Ui {
 class FileClipboardDialog;
 }
 
-class FileClipboardDialog : public CBDialog
+class FileClipboardDialog : public QDialog
 {
     Q_OBJECT
 
@@ -38,7 +38,7 @@ protected:
     void loadFileClipboardSettings();
     void saveFileClipboardSetting(int row);
     void loadNewLineSettings();
-    virtual QString getSettingsRoot();
+
 private slots:
     void sendItemTriggered(int index);
     void on_fileClipboardTable_cellChanged(int row, int column);

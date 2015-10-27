@@ -49,6 +49,9 @@ protected:
     void enableMenuItems(bool enabled);
     void closeEvent(QCloseEvent* event);
     void readSettings();
+    void saveFileClipboarDockSettings();
+    void restoreFileClipboardDockSettings();
+
 private slots:
     void openWindowSlot();
     void closeWindowSlot();
@@ -80,6 +83,7 @@ private:
     Ui::MainWindow* _ui;
     QMdiArea* _mdiArea;
     FileClipboardDialog* _fileClipboardDialog;
+    QDockWidget *_fileClipboarDock;
     static MainWindow* _instance;
     std::atomic_int _windowCnt;
     QString _runProcessIconText;
