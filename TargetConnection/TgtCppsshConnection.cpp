@@ -112,7 +112,7 @@ void TgtCppsshIntf::tgtMakeConnection()
                 break;
         }
 
-        s << "Unable to connect to: " << connectionConfig->_hostName.c_str() << reason;
+        s << "Unable to connect to: " << connectionConfig->_hostName.c_str() << " " << reason;
         throw CB_EXCEPTION_STR(CBException::CbExcp, s.str().c_str());
     }
 }
