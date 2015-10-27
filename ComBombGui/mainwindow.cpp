@@ -249,7 +249,8 @@ void MainWindow::restoreFileClipboardDockSettings()
     QSettings settings;
     _fileClipboarDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     _fileClipboarDock->setWidget(_fileClipboardDialog);
-    addDockWidget((Qt::DockWidgetArea)settings.value(FILE_CBD_SETTINGS_DOCKSIDE, Qt::RightDockWidgetArea).toInt(), _fileClipboarDock);
+    addDockWidget((Qt::DockWidgetArea)settings.value(FILE_CBD_SETTINGS_DOCKSIDE,
+                                                     Qt::RightDockWidgetArea).toInt(), _fileClipboarDock);
 
     _fileClipboarDock->setHidden(settings.value("FileClipBoardDock/Hidden").toBool());
     _fileClipboarDock->setFloating(settings.value("FileClipBoardDock/Floating").toBool());
