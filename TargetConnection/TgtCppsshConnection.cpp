@@ -78,7 +78,7 @@ void TgtCppsshIntf::tgtMakeConnection()
     CppsshConnectStatus_t ret = Cppssh::connect(&_sshData->_connectionId, connectionConfig->_hostName.c_str(),
                                                 connectionConfig->_portNum, connectionConfig->_userName.c_str(),
                                                 connectionConfig->_privKeyFile.c_str(),
-                                                connectionConfig->_password.c_str(), CPPSSH_TIMEOUT);
+                                                connectionConfig->_password.c_str(), CPPSSH_TIMEOUT, connectionConfig->_x11Forwarded);
     if (ret == CPPSSH_CONNECT_OK)
     {
         _sshData->_connected = true;

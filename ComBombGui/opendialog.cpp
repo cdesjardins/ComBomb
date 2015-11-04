@@ -30,6 +30,7 @@
 #define CB_OPEN_CONN_CRLF       CB_OPEN_SETTINGS_ROOT "NewLines"
 #define CB_OPEN_CONN_PB         CB_OPEN_SETTINGS_ROOT "Process/Browser"
 #define CB_OPEN_CONN_WDB        CB_OPEN_SETTINGS_ROOT "WorkingDir/Browser"
+#define CB_OPEN_CONN_X11        CB_OPEN_SETTINGS_ROOT "X11Forwarding"
 
 OpenDialog::OpenDialog(QWidget* parent) :
     CBDialog(parent),
@@ -46,6 +47,7 @@ OpenDialog::OpenDialog(QWidget* parent) :
     QSettings settings;
     ui->tabWidget->setCurrentIndex(settings.value(CB_OPEN_CONN_TYPE, CB_CONN_SSH).toInt());
     ui->newLineCheckBox->setChecked(settings.value(CB_OPEN_CONN_CRLF, false).toBool());
+    ui->x11ForwardingCheckBox->setChecked(settings.value(CB_OPEN_CONN_X11, true).toBool());
 }
 
 OpenDialog::ConnectionType OpenDialog::getConnectionType()
@@ -61,7 +63,8 @@ std::shared_ptr<const TgtCppsshIntf::TgtConnectionConfig> OpenDialog::getSshConf
                                                                 ui->portNumLineEdit->text().toInt(),
                                                                 ui->userNameComboBox->currentText().toLocal8Bit().constData(),
                                                                 ui->passwordLineEdit->text().toLocal8Bit().constData(),
-                                                                ui->privKeyFileComboBox->currentText().toLocal8Bit().constData()));
+                                                                ui->privKeyFileComboBox->currentText().toLocal8Bit().constData(),
+                                                                ui->x11ForwardingCheckBox->isChecked()));
     return ret;
 }
 
@@ -201,6 +204,7 @@ void OpenDialog::on__buttonBox_accepted()
     QSettings settings;
     settings.setValue(CB_OPEN_CONN_TYPE, getConnectionType());
     settings.setValue(CB_OPEN_CONN_CRLF, newlines());
+    settings.setValue(CB_OPEN_CONN_X11, ui->x11ForwardingCheckBox->isChecked());
 }
 
 bool OpenDialog::newlines()

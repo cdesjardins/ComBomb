@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>470</width>
-    <height>263</height>
+    <height>264</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -81,6 +81,20 @@
           </sizepolicy>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
+          <item row="0" column="2">
+           <widget class="QLabel" name="sshPortLabel">
+            <property name="text">
+             <string>Port</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0" colspan="3">
+           <widget class="CBComboBox" name="privKeyFileComboBox">
+            <property name="editable">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
           <item row="3" column="0">
            <widget class="CBComboBox" name="userNameComboBox">
             <property name="sizePolicy">
@@ -95,7 +109,7 @@
            </widget>
           </item>
           <item row="0" column="0">
-           <widget class="QLabel" name="label_8">
+           <widget class="QLabel" name="hostNameLabel">
             <property name="text">
              <string>Hostname</string>
             </property>
@@ -108,50 +122,8 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_10">
-            <property name="text">
-             <string>Username</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="2">
-           <widget class="QLabel" name="label_11">
-            <property name="text">
-             <string>Password</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="3">
-           <widget class="QPushButton" name="privKeyBrowseButton">
-            <property name="text">
-             <string>Browse</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="2" colspan="2">
-           <widget class="QLineEdit" name="passwordLineEdit">
-            <property name="echoMode">
-             <enum>QLineEdit::Password</enum>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QLabel" name="label_9">
-            <property name="text">
-             <string>Port</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0" colspan="3">
-           <widget class="CBComboBox" name="privKeyFileComboBox">
-            <property name="editable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
           <item row="4" column="0">
-           <widget class="QLabel" name="label_13">
+           <widget class="QLabel" name="privateKeyLabel">
             <property name="text">
              <string>Private key filename</string>
             </property>
@@ -173,6 +145,41 @@
             </property>
            </widget>
           </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="userNameLabel">
+            <property name="text">
+             <string>Username</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2">
+           <widget class="QLabel" name="passwordLabel">
+            <property name="text">
+             <string>Password</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="3">
+           <widget class="QPushButton" name="privKeyBrowseButton">
+            <property name="text">
+             <string>Browse</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="2" colspan="2">
+           <widget class="QLineEdit" name="passwordLineEdit">
+            <property name="echoMode">
+             <enum>QLineEdit::Password</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="2" colspan="2">
+           <widget class="QCheckBox" name="x11ForwardingCheckBox">
+            <property name="text">
+             <string>X11 Forwarding</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -187,7 +194,7 @@
         <widget class="QWidget" name="OpenTelnet" native="true">
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
-           <widget class="QLabel" name="label_7">
+           <widget class="QLabel" name="telnetHostNameLabel">
             <property name="text">
              <string>Hostname</string>
             </property>
@@ -201,7 +208,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="label_12">
+           <widget class="QLabel" name="telnetPortLabel">
             <property name="text">
              <string>Port</string>
             </property>
@@ -243,14 +250,14 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
           <item row="0" column="0">
-           <widget class="QLabel" name="label">
+           <widget class="QLabel" name="serialPortLabel">
             <property name="text">
              <string>Port</string>
             </property>
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QLabel" name="label_2">
+           <widget class="QLabel" name="serialBaudLabel">
             <property name="text">
              <string>Baud</string>
             </property>
@@ -274,14 +281,14 @@
            </widget>
           </item>
           <item row="2" column="0">
-           <widget class="QLabel" name="label_3">
+           <widget class="QLabel" name="serialParityLabel">
             <property name="text">
              <string>Parity</string>
             </property>
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="QLabel" name="label_4">
+           <widget class="QLabel" name="serialStopBitsLabel">
             <property name="text">
              <string>Stop bits</string>
             </property>
@@ -295,7 +302,7 @@
            </widget>
           </item>
           <item row="4" column="0">
-           <widget class="QLabel" name="label_5">
+           <widget class="QLabel" name="serialByteSizeLabel">
             <property name="text">
              <string>Byte size</string>
             </property>
@@ -309,7 +316,7 @@
            </widget>
           </item>
           <item row="4" column="1">
-           <widget class="QLabel" name="label_6">
+           <widget class="QLabel" name="serialFlowControlLabel">
             <property name="text">
              <string>Flow control</string>
             </property>
@@ -323,17 +330,17 @@
            </widget>
           </item>
          </layout>
-         <zorder>label_2</zorder>
+         <zorder>serialBaudLabel</zorder>
          <zorder>comPortComboBox</zorder>
          <zorder>baudRateComboBox</zorder>
-         <zorder>label</zorder>
+         <zorder>serialPortLabel</zorder>
          <zorder>parityComboBox</zorder>
-         <zorder>label_3</zorder>
-         <zorder>label_4</zorder>
+         <zorder>serialParityLabel</zorder>
+         <zorder>serialStopBitsLabel</zorder>
          <zorder>stopBitsComboBox</zorder>
-         <zorder>label_5</zorder>
+         <zorder>serialByteSizeLabel</zorder>
          <zorder>byteSizeComboBox</zorder>
-         <zorder>label_6</zorder>
+         <zorder>serialFlowControlLabel</zorder>
          <zorder>flowControlComboBox</zorder>
         </widget>
        </item>
