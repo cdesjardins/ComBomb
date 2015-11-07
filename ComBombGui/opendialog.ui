@@ -81,55 +81,28 @@
           </sizepolicy>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
-          <item row="0" column="2">
-           <widget class="QLabel" name="sshPortLabel">
-            <property name="text">
-             <string>Port</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0" colspan="3">
+          <item row="5" column="0" colspan="4">
            <widget class="CBComboBox" name="privKeyFileComboBox">
             <property name="editable">
              <bool>true</bool>
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
-           <widget class="CBComboBox" name="userNameComboBox">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="editable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="hostNameLabel">
+          <item row="2" column="3">
+           <widget class="QLabel" name="passwordLabel">
             <property name="text">
-             <string>Hostname</string>
+             <string>Password</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
-           <widget class="CBComboBox" name="hostNameComboBox">
-            <property name="editable">
-             <bool>true</bool>
+          <item row="3" column="3" colspan="2">
+           <widget class="QLineEdit" name="passwordLineEdit">
+            <property name="echoMode">
+             <enum>QLineEdit::Password</enum>
             </property>
            </widget>
           </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="privateKeyLabel">
-            <property name="text">
-             <string>Private key filename</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="2" colspan="2">
+          <item row="1" column="3" colspan="2">
            <widget class="QLineEdit" name="portNumLineEdit">
             <property name="maximumSize">
              <size>
@@ -147,36 +120,88 @@
           </item>
           <item row="2" column="0">
            <widget class="QLabel" name="userNameLabel">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>Username</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="2">
-           <widget class="QLabel" name="passwordLabel">
+          <item row="0" column="0">
+           <widget class="QLabel" name="hostNameLabel">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
-             <string>Password</string>
+             <string>Hostname</string>
             </property>
            </widget>
           </item>
-          <item row="5" column="3">
+          <item row="0" column="3">
+           <widget class="QLabel" name="sshPortLabel">
+            <property name="text">
+             <string>Port</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0" alignment="Qt::AlignLeft">
+           <widget class="QLabel" name="privateKeyLabel">
+            <property name="text">
+             <string>Private key filename</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="3" colspan="2" alignment="Qt::AlignRight">
+           <widget class="QCheckBox" name="x11ForwardingCheckBox">
+            <property name="text">
+             <string>X11 Forwarding</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="4">
            <widget class="QPushButton" name="privKeyBrowseButton">
             <property name="text">
              <string>Browse</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="2" colspan="2">
-           <widget class="QLineEdit" name="passwordLineEdit">
-            <property name="echoMode">
-             <enum>QLineEdit::Password</enum>
+          <item row="4" column="1">
+           <widget class="QCheckBox" name="keepAlivesCheckBox">
+            <property name="text">
+             <string>Keep Alives</string>
             </property>
            </widget>
           </item>
-          <item row="4" column="2" colspan="2">
-           <widget class="QCheckBox" name="x11ForwardingCheckBox">
-            <property name="text">
-             <string>X11 Forwarding</string>
+          <item row="3" column="0" colspan="2">
+           <widget class="CBComboBox" name="userNameComboBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="editable">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" colspan="2">
+           <widget class="CBComboBox" name="hostNameComboBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="editable">
+             <bool>true</bool>
             </property>
            </widget>
           </item>

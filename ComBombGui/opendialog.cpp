@@ -31,6 +31,7 @@
 #define CB_OPEN_CONN_PB         CB_OPEN_SETTINGS_ROOT "Process/Browser"
 #define CB_OPEN_CONN_WDB        CB_OPEN_SETTINGS_ROOT "WorkingDir/Browser"
 #define CB_OPEN_CONN_X11        CB_OPEN_SETTINGS_ROOT "X11Forwarding"
+#define CB_OPEN_CONN_KEEP_ALIVE CB_OPEN_SETTINGS_ROOT "KeepAlives"
 
 OpenDialog::OpenDialog(QWidget* parent) :
     CBDialog(parent),
@@ -48,6 +49,7 @@ OpenDialog::OpenDialog(QWidget* parent) :
     ui->tabWidget->setCurrentIndex(settings.value(CB_OPEN_CONN_TYPE, CB_CONN_SSH).toInt());
     ui->newLineCheckBox->setChecked(settings.value(CB_OPEN_CONN_CRLF, false).toBool());
     ui->x11ForwardingCheckBox->setChecked(settings.value(CB_OPEN_CONN_X11, true).toBool());
+    ui->keepAlivesCheckBox->setChecked(settings.value(CB_OPEN_CONN_KEEP_ALIVE, true).toBool());
 }
 
 OpenDialog::ConnectionType OpenDialog::getConnectionType()
@@ -64,7 +66,8 @@ std::shared_ptr<const TgtCppsshIntf::TgtConnectionConfig> OpenDialog::getSshConf
                                                                 ui->userNameComboBox->currentText().toLocal8Bit().constData(),
                                                                 ui->passwordLineEdit->text().toLocal8Bit().constData(),
                                                                 ui->privKeyFileComboBox->currentText().toLocal8Bit().constData(),
-                                                                ui->x11ForwardingCheckBox->isChecked()));
+                                                                ui->x11ForwardingCheckBox->isChecked(),
+                                                                ui->keepAlivesCheckBox->isChecked()));
     return ret;
 }
 
@@ -205,6 +208,7 @@ void OpenDialog::on__buttonBox_accepted()
     settings.setValue(CB_OPEN_CONN_TYPE, getConnectionType());
     settings.setValue(CB_OPEN_CONN_CRLF, newlines());
     settings.setValue(CB_OPEN_CONN_X11, ui->x11ForwardingCheckBox->isChecked());
+    settings.setValue(CB_OPEN_CONN_KEEP_ALIVE, ui->keepAlivesCheckBox->isChecked());
 }
 
 bool OpenDialog::newlines()

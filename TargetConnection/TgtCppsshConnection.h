@@ -11,13 +11,15 @@ public:
     struct TgtConnectionConfig : public TgtIntf::TgtConnectionConfigBase
     {
         TgtConnectionConfig(const std::string& hostName, const int portNum, const std::string& userName,
-                            const std::string& password, const std::string& privKeyFile, const bool x11Forwarded)
+                            const std::string& password, const std::string& privKeyFile, const bool x11Forwarded,
+                            const bool keepAlives)
             : _hostName(hostName),
             _portNum(portNum),
             _userName(userName),
             _password(password),
             _privKeyFile(privKeyFile),
-            _x11Forwarded(x11Forwarded)
+            _x11Forwarded(x11Forwarded),
+            _keepAlives(keepAlives)
         {
         }
 
@@ -31,6 +33,7 @@ public:
         std::string _password;
         std::string _privKeyFile;
         bool _x11Forwarded;
+        bool _keepAlives;
     };
     static std::shared_ptr<TgtCppsshIntf> createCppsshConnection(
         const std::shared_ptr<const TgtConnectionConfig>& config);
