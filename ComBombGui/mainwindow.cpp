@@ -443,3 +443,4 @@ void MainWindow::on_actionHelp_triggered()
 {
     QDesktopServices::openUrl(QUrl("http://combomb.chrisd.info/"));
 }
+
