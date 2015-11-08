@@ -76,6 +76,8 @@ private slots:
 
     void on_actionCapture_output_triggered();
 
+    void on_actionHelp_triggered();
+
 signals:
     void findSignal();
 private:

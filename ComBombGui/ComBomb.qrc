@@ -25,5 +25,6 @@
         <file>images/alarm_bell.png</file>
         <file>images/raw_access_logs.png</file>
         <file>images/raw_access_logs_stop.png</file>
+        <file>images/question.png</file>
     </qresource>
 </RCC>

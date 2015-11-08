@@ -37,7 +37,7 @@
      <x>0</x>
      <y>0</y>
      <width>917</width>
-     <height>23</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -57,6 +57,7 @@
     <property name="title">
      <string>&amp;Help</string>
     </property>
+    <addaction name="actionHelp"/>
     <addaction name="actionNew_Version_Available"/>
     <addaction name="actionAbout_ComBomb"/>
    </widget>
@@ -295,6 +296,15 @@
    </property>
    <property name="text">
     <string>Cap&amp;ture output</string>
+   </property>
+  </action>
+  <action name="actionHelp">
+   <property name="icon">
+    <iconset resource="ComBomb.qrc">
+     <normaloff>:/images/question.png</normaloff>:/images/question.png</iconset>
+   </property>
+   <property name="text">
+    <string>Online &amp;Help</string>
    </property>
   </action>
  </widget>

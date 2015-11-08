@@ -439,3 +439,7 @@ void MainWindow::on_actionCapture_output_triggered()
     }
 }
 
+void MainWindow::on_actionHelp_triggered()
+{
+    QDesktopServices::openUrl(QUrl("http://combomb.chrisd.info/"));
+}
