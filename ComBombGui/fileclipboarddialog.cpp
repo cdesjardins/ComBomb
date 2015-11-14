@@ -121,7 +121,7 @@ void FileClipboardDialog::on_newLineCheckBox_toggled(bool checked)
 void FileClipboardDialog::loadNewLineSettings()
 {
     QSettings settings;
-    bool sendNewLineChecked = settings.value(CB_FILE_CLIBBOARD_SETTINGS_ROOT "SendNewLine").toBool();
+    bool sendNewLineChecked = settings.value(CB_FILE_CLIBBOARD_SETTINGS_ROOT "SendNewLine", true).toBool();
     ui->newLineCheckBox->setChecked(sendNewLineChecked);
 }
 
