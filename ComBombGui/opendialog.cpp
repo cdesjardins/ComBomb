@@ -182,6 +182,7 @@ void OpenDialog::addComPorts()
         if (port.is_open() == true)
         {
             ui->comPortComboBox->addItem(*it);
+            port.close();
         }
     }
 }
