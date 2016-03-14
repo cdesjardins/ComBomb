@@ -219,12 +219,14 @@ public slots:
      * the outputChanged() signal to be emitted.
      */
     void notifyOutputChanged();
+    void notifyImageSizeChanged(int lines, int columns);
 
 signals:
     /**
      * Emitted when the contents of the associated terminal screen ( see screen() ) changes.
      */
     void outputChanged();
+    void imageSizeChanged(int lines, int columns);
 
     /**
      * Emitted when the screen window is scrolled to a different position.

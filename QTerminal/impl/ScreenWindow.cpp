@@ -412,6 +412,11 @@ QRect ScreenWindow::scrollRegion() const
     }
 }
 
+void ScreenWindow::notifyImageSizeChanged(int lines, int columns)
+{
+    emit imageSizeChanged(lines, columns);
+}
+
 void ScreenWindow::notifyOutputChanged()
 {
     // move window to the bottom of the screen and update scroll count

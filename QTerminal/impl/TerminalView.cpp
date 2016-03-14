@@ -95,6 +95,7 @@ void TerminalView::setScreenWindow(ScreenWindow* window)
         //#warning "The order here is not specified - does it matter whether updateImage or updateLineProperties comes first?"
         connect(_screenWindow, SIGNAL(outputChanged()), this, SLOT(updateLineProperties()));
         connect(_screenWindow, SIGNAL(outputChanged()), this, SLOT(updateImage()));
+        connect(_screenWindow, SIGNAL(imageSizeChanged(int, int)), this, SLOT(notifyImageSizeChanged(int, int)));
         window->setWindowLines(_lines);
     }
 }
@@ -1398,7 +1399,6 @@ void TerminalView::resizeEvent(QResizeEvent* e)
           (e->size().width() == minimumWidth()) && (e->size().height() == minimumHeight())))
     {
         updateImageSize();
-        _targetInterface->tgtWindowResize(columns(), lines());
     }
 }
 
@@ -2047,6 +2047,11 @@ void TerminalView::updateLineProperties()
     }
 
     _lineProperties = _screenWindow->getLineProperties();
+}
+
+void TerminalView::notifyImageSizeChanged(int lines, int columns)
+{
+    _targetInterface->tgtWindowResize(columns, lines);
 }
 
 void TerminalView::mouseDoubleClickEvent(QMouseEvent* ev)

@@ -415,6 +415,8 @@ public slots:
      */
     void updateLineProperties();
 
+    void notifyImageSizeChanged(int lines, int columns);
+
     /** Copies the selected text to the clipboard. */
     void copyClipboard();
     /**
