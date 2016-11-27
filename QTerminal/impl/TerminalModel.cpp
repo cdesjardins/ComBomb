@@ -293,7 +293,11 @@ void TerminalModel::onReceiveBlock(boost::intrusive_ptr<RefCntBuffer> incoming)
 
 bool TerminalModel::startCapture(const QString& captureFilename, const bool append)
 {
-    std::ios_base::openmode mode = std::ios::out | std::ios::binary | ((append == true) ? std::ios::app : 0);
+    std::ios_base::openmode mode = std::ios::out | std::ios::binary;
+    if (append == true)
+    {
+        mode |= std::ios::app;
+    }
     _captureFile.open(captureFilename.toLocal8Bit().constData(), mode);
     return _captureFile.is_open();
 }

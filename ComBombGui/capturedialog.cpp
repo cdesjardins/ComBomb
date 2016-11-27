@@ -73,3 +73,4 @@ void CaptureDialog::on_buttonBox_accepted()
     QSettings settings;
     settings.setValue(CB_CAPTURE_SETTINGS_APPEND, getAppend());
 }
+
