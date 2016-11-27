@@ -34,12 +34,13 @@ public:
     ~CaptureDialog();
 
     QString getCaptureFilename();
-
+    bool getAppend();
 protected:
     virtual QString getSettingsRoot();
 
 private slots:
     void on_pushButton_clicked();
+    void on_buttonBox_accepted();
 
 private:
     Ui::CaptureDialog* ui;

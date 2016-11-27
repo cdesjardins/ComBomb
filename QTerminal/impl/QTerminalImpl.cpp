@@ -128,9 +128,9 @@ void QTerminalImpl::recvText(const QByteArray& data)
     _terminalModel->receiveBlock(data);
 }
 
-bool QTerminalImpl::startCapture(const QString& captureFilename)
+bool QTerminalImpl::startCapture(const QString& captureFilename, const bool append)
 {
-    return _terminalModel->startCapture(captureFilename);
+    return _terminalModel->startCapture(captureFilename, append);
 }
 
 void QTerminalImpl::stopCapture()

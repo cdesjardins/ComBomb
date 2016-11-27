@@ -187,7 +187,7 @@ public:
     void connectToRecvText(QObject* who);
     int lineCount();
 
-    bool startCapture(const QString& captureFilename);
+    bool startCapture(const QString& captureFilename, const bool append);
     void stopCapture();
 
 protected:

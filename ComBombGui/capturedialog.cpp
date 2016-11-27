@@ -22,12 +22,15 @@
 #include "ui_capturedialog.h"
 
 #define CB_CAPTURE_SETTINGS_BROWSE_DIR      getSettingsRoot() + "/Filename/Browser"
+#define CB_CAPTURE_SETTINGS_APPEND      getSettingsRoot() + "/append"
 
 CaptureDialog::CaptureDialog(QWidget* parent) :
     CBDialog(parent),
     ui(new Ui::CaptureDialog)
 {
     ui->setupUi(this);
+    QSettings settings;
+    ui->append->setChecked(settings.value(CB_CAPTURE_SETTINGS_APPEND, false).toBool());
 }
 
 CaptureDialog::~CaptureDialog()
@@ -45,6 +48,11 @@ QString CaptureDialog::getCaptureFilename()
     return ui->captureFileComboBox->currentText();
 }
 
+bool CaptureDialog::getAppend()
+{
+    return ui->append->isChecked();
+}
+
 void CaptureDialog::on_pushButton_clicked()
 {
     QSettings settings;
@@ -60,3 +68,8 @@ void CaptureDialog::on_pushButton_clicked()
     }
 }
 
+void CaptureDialog::on_buttonBox_accepted()
+{
+    QSettings settings;
+    settings.setValue(CB_CAPTURE_SETTINGS_APPEND, getAppend());
+}

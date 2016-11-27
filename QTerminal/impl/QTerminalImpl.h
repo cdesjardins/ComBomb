@@ -49,7 +49,7 @@ public:
     bool eventFilter(QObject*, QEvent* event);
     void suppressOutput(bool suppress);
     void setTrackOutput(bool trackOutput);
-    bool startCapture(const QString& captureFilename);
+    bool startCapture(const QString& captureFilename, const bool append);
     void stopCapture();
 public slots:
     void copyClipboard();
