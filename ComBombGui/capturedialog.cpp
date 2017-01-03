@@ -22,7 +22,8 @@
 #include "ui_capturedialog.h"
 
 #define CB_CAPTURE_SETTINGS_BROWSE_DIR      getSettingsRoot() + "/Filename/Browser"
-#define CB_CAPTURE_SETTINGS_APPEND      getSettingsRoot() + "/append"
+#define CB_CAPTURE_SETTINGS_APPEND          getSettingsRoot() + "/append"
+#define CB_CAPTURE_SETTINGS_TIMESTAMP       getSettingsRoot() + "/timestamp"
 
 CaptureDialog::CaptureDialog(QWidget* parent) :
     CBDialog(parent),
@@ -31,6 +32,7 @@ CaptureDialog::CaptureDialog(QWidget* parent) :
     ui->setupUi(this);
     QSettings settings;
     ui->append->setChecked(settings.value(CB_CAPTURE_SETTINGS_APPEND, false).toBool());
+    ui->timestamp->setChecked(settings.value(CB_CAPTURE_SETTINGS_TIMESTAMP, false).toBool());
 }
 
 CaptureDialog::~CaptureDialog()
@@ -53,6 +55,11 @@ bool CaptureDialog::getAppend()
     return ui->append->isChecked();
 }
 
+bool CaptureDialog::getTimestamp()
+{
+    return ui->timestamp->isChecked();
+}
+
 void CaptureDialog::on_pushButton_clicked()
 {
     QSettings settings;
@@ -72,5 +79,6 @@ void CaptureDialog::on_buttonBox_accepted()
 {
     QSettings settings;
     settings.setValue(CB_CAPTURE_SETTINGS_APPEND, getAppend());
+    settings.setValue(CB_CAPTURE_SETTINGS_TIMESTAMP, getTimestamp());
 }
 

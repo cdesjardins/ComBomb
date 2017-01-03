@@ -35,6 +35,7 @@ public:
 
     QString getCaptureFilename();
     bool getAppend();
+    bool getTimestamp();
 protected:
     virtual QString getSettingsRoot();
 

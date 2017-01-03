@@ -29,6 +29,8 @@
 // Standard
 #include <assert.h>
 #include <stdlib.h>
+#include <ctime>
+#include <iomanip>
 
 // Qt
 #include <QApplication>
@@ -276,6 +278,55 @@ void TerminalModel::suppressOutput(bool suppress)
     _suppressOutput = suppress;
 }
 
+void TerminalModel::writeTimeStampToCaptureFile()
+{
+    std::time_t t = std::time(nullptr);
+    _captureFile << std::put_time(std::localtime(&t), "%D %T ");
+}
+
+void TerminalModel::addToCaptureFile(const char* buf, int len)
+{
+    if (_captureFile.is_open() == true)
+    {
+        if (_timestampCapture == true)
+        {
+            const char* prevTok = buf;
+            const char* tok = (buf + len);
+            do {
+                tok = std::find(prevTok, buf + len, '\n');
+                // If tok and prevTok are both at the end of the line
+                // then the line ended with a newline char
+                // so next text that comes in should be timestamped
+                // when it arrives
+                if ((tok == (buf + len)) && (prevTok == (buf + len)))
+                {
+                    _timestampExpected = true;
+                }
+                else if ((_timestampExpected == true) || (prevTok != buf))
+                {
+                    writeTimeStampToCaptureFile();
+                    _timestampExpected = false;
+                }
+                if (prevTok < (buf + len))
+                {
+                    int lenToWrite = tok - prevTok;
+                    if (tok < (buf + len))
+                    {
+                        lenToWrite++;
+                    }
+                    _captureFile.write(prevTok, lenToWrite);
+                }
+                prevTok = tok + 1;
+            } while (tok != (buf + len));
+        }
+        else
+        {
+            _captureFile.write(buf, len);
+        }
+        _captureLogFlusher.start(100);
+    }
+}
+
 void TerminalModel::onReceiveBlock(boost::intrusive_ptr<RefCntBuffer> incoming)
 {
     if ((_closed == false) && (_suppressOutput == false))
@@ -283,21 +334,19 @@ void TerminalModel::onReceiveBlock(boost::intrusive_ptr<RefCntBuffer> incoming)
         char* buf = boost::asio::buffer_cast<char*>(incoming->_buffer);
         int len = boost::asio::buffer_size(incoming->_buffer);
         _emulation->receiveData(buf, len);
-        if (_captureFile.is_open() == true)
-        {
-            _captureFile.write(buf, len);
-            _captureLogFlusher.start(100);
-        }
+        addToCaptureFile(buf, len);
     }
 }
 
-bool TerminalModel::startCapture(const QString& captureFilename, const bool append)
+bool TerminalModel::startCapture(const QString& captureFilename, const bool append, const bool timestamp)
 {
     std::ios_base::openmode mode = std::ios::out | std::ios::binary;
     if (append == true)
     {
         mode |= std::ios::app;
     }
+    _timestampCapture = timestamp;
+    _timestampExpected = true;
     _captureFile.open(captureFilename.toLocal8Bit().constData(), mode);
     return _captureFile.is_open();
 }

@@ -187,7 +187,7 @@ public:
     void connectToRecvText(QObject* who);
     int lineCount();
 
-    bool startCapture(const QString& captureFilename, const bool append);
+    bool startCapture(const QString& captureFilename, const bool append, const bool timestamp);
     void stopCapture();
 
 protected:
@@ -276,6 +276,8 @@ private slots:
     void captureLogFlush();
 
 private:
+    void addToCaptureFile(const char* buf, int len);
+    void writeTimeStampToCaptureFile();
 
     void updateTerminalSize();
     WId windowId() const;
@@ -312,6 +314,8 @@ private:
     bool _suppressOutput;
     std::ofstream _captureFile;
     QTimer _captureLogFlusher;
+    bool _timestampCapture;
+    bool _timestampExpected;
 };
 
 #endif // TERMINALMODEL_H

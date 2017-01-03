@@ -267,7 +267,7 @@ void ChildForm::captureLog()
         if (captureDialog.exec() == CaptureDialog::Accepted)
         {
             _captureLogging = true;
-            startCapture(captureDialog.getCaptureFilename(), captureDialog.getAppend());
+            startCapture(captureDialog.getCaptureFilename(), captureDialog.getAppend(), captureDialog.getTimestamp());
             MainWindow::getMainWindow()->swapCaptureIcon(true);
         }
     }

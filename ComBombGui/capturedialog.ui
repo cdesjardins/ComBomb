@@ -38,7 +38,7 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QPushButton" name="pushButton">
+       <widget class="QPushButton" name="browse">
         <property name="maximumSize">
          <size>
           <width>90</width>
@@ -50,12 +50,23 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
-       <widget class="QCheckBox" name="append">
-        <property name="text">
-         <string>Append to existing file</string>
-        </property>
-       </widget>
+      <item row="2" column="0">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QCheckBox" name="append">
+          <property name="text">
+           <string>Append to existing file</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="timestamp">
+          <property name="text">
+           <string>Timestamp</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>
