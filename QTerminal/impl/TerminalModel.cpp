@@ -308,7 +308,8 @@ void TerminalModel::addToCaptureFile(const char* buf, int len)
         {
             const char* prevTok = buf;
             const char* tok = (buf + len);
-            do {
+            do
+            {
                 tok = std::find(prevTok, buf + len, '\n');
                 // If tok and prevTok are both at the end of the line
                 // then the line ended with a newline char
