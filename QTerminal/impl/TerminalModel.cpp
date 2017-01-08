@@ -292,12 +292,12 @@ void TerminalModel::writeTimeStampToCaptureFile()
     std::chrono::seconds::rep milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(tse).count() % 1000;
 
     _captureFile << (1900 + localTime.tm_year) << '-'
-        << std::setfill('0') << std::setw(2) << (localTime.tm_mon + 1) << '-'
-        << std::setfill('0') << std::setw(2) << localTime.tm_mday << ' '
-        << std::setfill('0') << std::setw(2) << localTime.tm_hour << ':'
-        << std::setfill('0') << std::setw(2) << localTime.tm_min << ':'
-        << std::setfill('0') << std::setw(2) << localTime.tm_sec << '.'
-        << std::setfill('0') << std::setw(3) << milliseconds << " ";
+                 << std::setfill('0') << std::setw(2) << (localTime.tm_mon + 1) << '-'
+                 << std::setfill('0') << std::setw(2) << localTime.tm_mday << ' '
+                 << std::setfill('0') << std::setw(2) << localTime.tm_hour << ':'
+                 << std::setfill('0') << std::setw(2) << localTime.tm_min << ':'
+                 << std::setfill('0') << std::setw(2) << localTime.tm_sec << '.'
+                 << std::setfill('0') << std::setw(3) << milliseconds << " ";
 }
 
 void TerminalModel::addToCaptureFile(const char* buf, int len)
