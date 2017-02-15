@@ -126,6 +126,16 @@ std::vector<LineProperty> ScreenWindow::getLineProperties()
     return result;
 }
 
+long ScreenWindow::findLineStart(const long line) const
+{
+    return _screen->findLineStart(qMin(line + currentLine(), (long)endWindowLine())) - currentLine();
+}
+
+long ScreenWindow::findLineEnd(const long line) const
+{
+    return _screen->findLineEnd(qMin(line + currentLine(), (long)endWindowLine())) - currentLine();
+}
+
 QString ScreenWindow::getSelectedText() const
 {
     return _screen->getSelectedText();
@@ -160,7 +170,7 @@ void ScreenWindow::setSelectionStart(int column, int line)
 
 void ScreenWindow::setSelectionEnd(int column, int line)
 {
-    _screen->setSelectionEnd(column, qMin(line + currentLine(), endWindowLine()));
+    _screen->setSelectionEnd(column, line + currentLine());
 
     _bufferNeedsUpdate = true;
     emit selectionChanged();

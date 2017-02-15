@@ -86,6 +86,9 @@ public:
      */
     std::vector<LineProperty> getLineProperties();
 
+    long findLineStart(const long line) const;
+    long findLineEnd(const long line) const;
+
     /**
      * Returns the number of lines which the region of the window
      * specified by scrollRegion() has been scrolled by since the last call

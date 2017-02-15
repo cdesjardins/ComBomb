@@ -2203,18 +2203,12 @@ void TerminalView::mouseTripleClickEvent(QMouseEvent* ev)
     _actSel = 2; // within selection
     emit isBusySelecting(true); // Keep it steady...
 
-    while (_iPntSel.y() > 0 && (_lineProperties[_iPntSel.y() - 1] & LINE_WRAPPED))
-    {
-        _iPntSel.ry()--;
-    }
+    _iPntSel.ry() = _screenWindow->findLineStart(charLine);
 
     _screenWindow->setSelectionStart(0, _iPntSel.y());
     _tripleSelBegin = QPoint(0, _iPntSel.y());
 
-    while (_iPntSel.y() < _lines - 1 && (_lineProperties[_iPntSel.y()] & LINE_WRAPPED))
-    {
-        _iPntSel.ry()++;
-    }
+    _iPntSel.ry() = _screenWindow->findLineEnd(charLine);
 
     _screenWindow->setSelectionEnd(_columns - 1, _iPntSel.y());
 

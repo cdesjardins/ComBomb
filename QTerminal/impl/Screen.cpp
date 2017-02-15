@@ -1463,6 +1463,26 @@ long Screen::findLineStart(const long line)
     return ret;
 }
 
+long Screen::findLineEnd(const long line)
+{
+    long ret = line;
+    std::vector<LineProperty> lineProps;
+    for (long curLine = line; curLine < (_hist->getLines() + _lines); curLine++)
+    {
+        lineProps = getLineProperties(curLine, curLine);
+        if ((lineProps[0] & LINE_WRAPPED) == 0)
+        {
+            ret = curLine;
+            break;
+        }
+        if ((curLine == 0) && (lineProps[0] & LINE_WRAPPED))
+        {
+            ret = curLine;
+        }
+    }
+    return ret;
+}
+
 long Screen::writeLineToString(long* line, QString& result)
 {
     long ret = 0;
