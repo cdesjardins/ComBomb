@@ -294,7 +294,6 @@ TerminalView::TerminalView(const std::shared_ptr<TgtIntf>& targetInterface, QWid
     , _cursorBlinking(false)
     , _hasBlinkingCursor(false)
     , _ctrlDrag(false)
-    , _tripleClickMode(SelectWholeLine)
     , _isFixedSize(false)
     , _possibleTripleClick(false)
     , _colorsInverted(false)
@@ -2209,38 +2208,8 @@ void TerminalView::mouseTripleClickEvent(QMouseEvent* ev)
         _iPntSel.ry()--;
     }
 
-    if (_tripleClickMode == SelectForwardsFromCursor)
-    {
-        // find word boundary start
-        int i = loc(_iPntSel.x(), _iPntSel.y());
-        int selClass = charClass(_image[i].getChar());
-        int x = _iPntSel.x();
-
-        while (((x > 0) ||
-                (_iPntSel.y() > 0 && (_lineProperties[_iPntSel.y() - 1] & LINE_WRAPPED))
-                )
-               && charClass(_image[i - 1].getChar()) == selClass)
-        {
-            i--;
-            if (x > 0)
-            {
-                x--;
-            }
-            else
-            {
-                x = _columns - 1;
-                _iPntSel.ry()--;
-            }
-        }
-
-        _screenWindow->setSelectionStart(x, _iPntSel.y());
-        _tripleSelBegin = QPoint(x, _iPntSel.y());
-    }
-    else if (_tripleClickMode == SelectWholeLine)
-    {
-        _screenWindow->setSelectionStart(0, _iPntSel.y());
-        _tripleSelBegin = QPoint(0, _iPntSel.y());
-    }
+    _screenWindow->setSelectionStart(0, _iPntSel.y());
+    _tripleSelBegin = QPoint(0, _iPntSel.y());
 
     while (_iPntSel.y() < _lines - 1 && (_lineProperties[_iPntSel.y()] & LINE_WRAPPED))
     {

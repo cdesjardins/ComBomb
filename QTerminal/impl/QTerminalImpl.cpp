@@ -41,7 +41,6 @@ void QTerminalImpl::initialize(const QTerminalConfig& terminalConfig, const std:
     _terminalView->setBellMode(TerminalView::NotifyBell);
     _terminalView->setTerminalSizeHint(true);
     _terminalView->setContextMenuPolicy(Qt::CustomContextMenu);
-    _terminalView->setTripleClickMode(TerminalView::SelectWholeLine);
     _terminalView->setTerminalSizeStartup(true);
     _terminalView->setScrollBarPosition(TerminalView::ScrollBarRight);
 

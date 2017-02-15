@@ -119,29 +119,6 @@ public:
         return _ctrlDrag;
     }
 
-    /**
-      *  This enum describes the methods for selecting text when
-     *  the user triple-clicks within the display.
-     */
-    enum TripleClickMode
-    {
-        /** Select the whole line underneath the cursor. */
-        SelectWholeLine,
-        /** Select from the current cursor position to the end of the line. */
-        SelectForwardsFromCursor
-    };
-    /** Sets how the text is selected when the user triple clicks within the display. */
-    void setTripleClickMode(TripleClickMode mode)
-    {
-        _tripleClickMode = mode;
-    }
-
-    /** See setTripleClickSelectionMode() */
-    TripleClickMode tripleClickMode()
-    {
-        return _tripleClickMode;
-    }
-
     void selectAll();
     void emitSelection(bool useXselection, bool appendReturn);
 
@@ -667,7 +644,6 @@ private:
     bool _cursorBlinking; // hide cursor in paintEvent
     bool _hasBlinkingCursor; // has blinking cursor enabled
     bool _ctrlDrag; // require Ctrl key for drag
-    TripleClickMode _tripleClickMode;
     bool _isFixedSize; //Columns / lines are locked.
     std::unique_ptr<QTimer> _blinkTimer; // active when hasBlinker
     std::unique_ptr<QTimer> _blinkCursorTimer; // active when hasBlinkingCursor
