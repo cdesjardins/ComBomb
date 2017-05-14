@@ -176,4 +176,3 @@ void CBComboBox::setDefault(const QString& defaultVal)
 {
     _default = defaultVal;
 }
-

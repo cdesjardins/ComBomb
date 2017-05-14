@@ -1118,4 +1118,3 @@ std::shared_ptr<KeyboardTranslatorManager> KeyboardTranslatorManager::instance()
     }
     return KeyboardTranslatorManager::_theKeyboardTranslatorManager;
 }
-

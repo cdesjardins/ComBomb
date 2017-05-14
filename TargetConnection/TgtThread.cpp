@@ -66,4 +66,3 @@ std::string TgtThread::toString(const std::string& tag, std::thread* thr)
     oss << " " << _threadRun;
     return oss.str();
 }
-

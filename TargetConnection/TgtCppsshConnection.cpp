@@ -228,4 +228,3 @@ void TgtCppsshIntf::tgtWindowResize(int cols, int rows)
         _sshData->_windowResize = false;
     }
 }
-

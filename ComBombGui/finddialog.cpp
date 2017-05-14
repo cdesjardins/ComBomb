@@ -72,4 +72,3 @@ QString FindDialog::getSettingsRoot()
 {
     return objectName();
 }
-

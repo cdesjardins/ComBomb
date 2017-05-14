@@ -529,4 +529,3 @@ void TgtTelnetIntf::tgtGetTitle(std::string* szTitle)
     t << connectionConfig->_hostName << ":" << connectionConfig->_portNum;
     *szTitle = t.str();
 }
-

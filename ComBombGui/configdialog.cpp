@@ -269,4 +269,3 @@ void ConfigDialog::on_loggingCheckBox_clicked(bool checked)
     ui->logBrowseButton->setEnabled(checked);
     ui->logFilenameComboBox->setEnabled(checked);
 }
-

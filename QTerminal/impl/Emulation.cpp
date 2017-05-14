@@ -88,7 +88,7 @@ ScreenWindow* Emulation::createWindow()
     connect(this, SIGNAL(outputChanged()),
             window.get(), SLOT(notifyOutputChanged()));
 
-    connect(this, SIGNAL(imageSizeChanged(int, int)), window.get(), SLOT(notifyImageSizeChanged(int, int)));
+    connect(this, SIGNAL(imageSizeChanged(int,int)), window.get(), SLOT(notifyImageSizeChanged(int,int)));
 
     return window.get();
 }

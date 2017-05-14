@@ -265,4 +265,3 @@ void HTMLDecoder::setColorTable(const ColorEntry* table)
 {
     _colorTable = table;
 }
-

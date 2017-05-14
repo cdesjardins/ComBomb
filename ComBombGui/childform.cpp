@@ -145,8 +145,8 @@ void ChildForm::runProcess()
             connect(_proc, SIGNAL(readyReadStandardOutput()), this, SLOT(readFromStdout()));
             connect(_proc, SIGNAL(readyReadStandardError()), this, SLOT(readFromStderr()));
             connect(_proc, SIGNAL(error(QProcess::ProcessError)), this, SLOT(processError(QProcess::ProcessError)));
-            connect(_proc, SIGNAL(finished(int, QProcess::ExitStatus)), this,
-                    SLOT(processDone(int, QProcess::ExitStatus)));
+            connect(_proc, SIGNAL(finished(int,QProcess::ExitStatus)), this,
+                    SLOT(processDone(int,QProcess::ExitStatus)));
             _proc->setWorkingDirectory(rpd.getWorkingDirectory());
             QStringList args = rpd.getArguments();
             suppressOutput(rpd.isOutputSuppressed());
@@ -278,4 +278,3 @@ void ChildForm::captureLog()
         MainWindow::getMainWindow()->swapCaptureIcon(false);
     }
 }
-

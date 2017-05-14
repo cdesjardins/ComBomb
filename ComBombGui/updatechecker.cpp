@@ -137,4 +137,3 @@ void UpdateChecker::replyFinished(const std::string& comBombVersion)
         emit newVersionAvailable();
     }
 }
-

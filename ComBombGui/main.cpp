@@ -35,4 +35,3 @@ int main(int argc, char* argv[])
     MainWindow::destroyMainWindow();
     return ret;
 }
-

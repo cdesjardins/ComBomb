@@ -110,4 +110,3 @@ bool RunProcessDialog::isOutputSuppressed()
 {
     return ui->suppressOutputCheckBox->isChecked();
 }
-

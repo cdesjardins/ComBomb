@@ -65,15 +65,15 @@ TerminalModel::TerminalModel(const std::shared_ptr<TgtIntf>& targetInterface, si
     _emulation.reset(new Vt102Emulation(histSize));
     connect(_emulation.get(), SIGNAL(stateSet(int)), this, SLOT(activityStateSet(int)));
     connect(_emulation.get(), SIGNAL(changeTabTextColorRequest(int)), this, SIGNAL(changeTabTextColorRequest(int)));
-    connect(_emulation.get(), SIGNAL(profileChangeCommandReceived(const QString &)), this,
-            SIGNAL(profileChangeCommandReceived(const QString &)));
+    connect(_emulation.get(), SIGNAL(profileChangeCommandReceived(const QString&)), this,
+            SIGNAL(profileChangeCommandReceived(const QString&)));
 
     _selfListener.reset(new SelfListener(targetInterface));
     _selfListener->start();
 
     connectToRecvText(this);
 
-    connect(_emulation.get(), SIGNAL(sendData(const char*, int)), this, SLOT(sendData(const char*, int)));
+    connect(_emulation.get(), SIGNAL(sendData(const char*,int)), this, SLOT(sendData(const char*,int)));
 
     //setup timer for monitoring session activity
     _monitorTimer.reset(new QTimer(this));
@@ -113,8 +113,8 @@ void TerminalModel::addView(const std::shared_ptr<TerminalView>& widget)
         // connect emulation - view signals and slots
         connect(widget.get(), SIGNAL(keyPressedSignal(QKeyEvent*)), _emulation.get(),
                 SLOT(sendKeyEvent(QKeyEvent*)));
-        connect(widget.get(), SIGNAL(mouseSignal(int, int, int, int)), _emulation.get(),
-                SLOT(sendMouseEvent(int, int, int, int)));
+        connect(widget.get(), SIGNAL(mouseSignal(int,int,int,int)), _emulation.get(),
+                SLOT(sendMouseEvent(int,int,int,int)));
         connect(widget.get(), SIGNAL(sendStringToEmu(const char*)), _emulation.get(),
                 SLOT(sendString(const char*)));
 
@@ -129,8 +129,8 @@ void TerminalModel::addView(const std::shared_ptr<TerminalView>& widget)
     }
 
     //connect view signals and slots
-    QObject::connect(widget.get(), SIGNAL(changedContentSizeSignal(int, int)), this,
-                     SLOT(onViewSizeChange(int, int)));
+    QObject::connect(widget.get(), SIGNAL(changedContentSizeSignal(int,int)), this,
+                     SLOT(onViewSizeChange(int,int)));
 
     //slot for close
     //QObject::connect(this, SIGNAL(finished()), widget, SLOT(close()));
@@ -523,4 +523,3 @@ int TerminalModel::lineCount()
 {
     return _emulation->lineCount();
 }
-

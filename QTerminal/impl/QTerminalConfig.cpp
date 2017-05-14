@@ -101,4 +101,3 @@ QDataStream& operator>>(QDataStream& in, QTerminalConfig& q)
     }
     return in;
 }
-

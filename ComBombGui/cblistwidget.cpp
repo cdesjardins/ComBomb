@@ -51,4 +51,3 @@ void CBListWidget::addBlankItem()
     newBlankItem->setFlags(newBlankItem->flags() | Qt::ItemIsEditable);
     addItem(newBlankItem);
 }
-

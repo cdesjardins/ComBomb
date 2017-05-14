@@ -23,4 +23,3 @@
 #define TERMINAL_MIN_WIDTH  600
 
 #endif // TERMINALDEFAULTS_H
-

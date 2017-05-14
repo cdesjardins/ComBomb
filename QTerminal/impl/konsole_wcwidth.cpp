@@ -235,4 +235,3 @@ int string_width(const QString& txt)
     }
     return w;
 }
-

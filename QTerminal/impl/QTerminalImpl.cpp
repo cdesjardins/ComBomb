@@ -234,4 +234,3 @@ void QTerminalImpl::setTrackOutput(bool trackOutput)
 {
     _terminalView->setTrackOutput(trackOutput);
 }
-

@@ -158,4 +158,3 @@ void TgtIntf::connectionManagerThread()
         }
     }
 }
-

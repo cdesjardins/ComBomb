@@ -2186,4 +2186,3 @@ void Vt102Emulation::ReportErrorToken()
 }
 
 #endif
-

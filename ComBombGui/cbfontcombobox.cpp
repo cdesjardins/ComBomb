@@ -61,4 +61,3 @@ void CBFontComboBox::getAcceptableFontSizes(QList<int>* sizes)
 {
     *sizes = itemData(currentIndex()).value< QList<int> >();
 }
-

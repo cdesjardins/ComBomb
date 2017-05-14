@@ -39,7 +39,7 @@ void TgtProcessIntf::tgtMakeConnection()
     connect(_proc, SIGNAL(readyReadStandardOutput()), this, SLOT(readFromStdout()));
     connect(_proc, SIGNAL(readyReadStandardError()), this, SLOT(readFromStderr()));
     connect(_proc, SIGNAL(error(QProcess::ProcessError)), this, SLOT(processError(QProcess::ProcessError)));
-    connect(_proc, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(processDone(int, QProcess::ExitStatus)));
+    connect(_proc, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(processDone(int,QProcess::ExitStatus)));
     _proc->setWorkingDirectory(connectionConfig->_workingDir.c_str());
     QStringList args(connectionConfig->_args.c_str());
 
@@ -180,4 +180,3 @@ void TgtProcessIntf::deleteProcess()
         delete p;
     }
 }
-

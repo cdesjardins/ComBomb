@@ -95,7 +95,7 @@ void TerminalView::setScreenWindow(ScreenWindow* window)
         //#warning "The order here is not specified - does it matter whether updateImage or updateLineProperties comes first?"
         connect(_screenWindow, SIGNAL(outputChanged()), this, SLOT(updateLineProperties()));
         connect(_screenWindow, SIGNAL(outputChanged()), this, SLOT(updateImage()));
-        connect(_screenWindow, SIGNAL(imageSizeChanged(int, int)), this, SLOT(notifyImageSizeChanged(int, int)));
+        connect(_screenWindow, SIGNAL(imageSizeChanged(int,int)), this, SLOT(notifyImageSizeChanged(int,int)));
         window->setWindowLines(_lines);
     }
 }
@@ -2736,4 +2736,3 @@ void TerminalView::setTrackOutput(bool trackOutput)
 {
     _screenWindow->setTrackOutput(trackOutput);
 }
-

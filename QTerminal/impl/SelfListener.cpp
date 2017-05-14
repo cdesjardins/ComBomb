@@ -48,4 +48,3 @@ void SelfListener::run()
         }
     }
 }
-

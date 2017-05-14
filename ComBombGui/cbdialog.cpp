@@ -35,4 +35,3 @@ void CBDialog::hideEvent(QHideEvent*)
     QSettings settings;
     settings.setValue(getSettingsRoot() + "Geometry", saveGeometry());
 }
-

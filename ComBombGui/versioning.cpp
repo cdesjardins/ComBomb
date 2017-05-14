@@ -56,4 +56,3 @@ int32_t parseVersionStr(const std::string& verStr)
     }
     return ret;
 }
-

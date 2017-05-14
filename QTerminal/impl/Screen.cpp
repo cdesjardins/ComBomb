@@ -1768,4 +1768,3 @@ void Screen::fillWithDefaultChar(std::vector<Character>::iterator dest, int coun
         dest[i] = Character();
     }
 }
-

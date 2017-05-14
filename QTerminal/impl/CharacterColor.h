@@ -329,4 +329,3 @@ inline void CharacterColor::toggleIntensive()
 }
 
 #endif // CHARACTERCOLOR_H
-

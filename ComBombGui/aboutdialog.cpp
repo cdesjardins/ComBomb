@@ -86,4 +86,3 @@ QString AboutDialog::getSettingsRoot()
 {
     return objectName();
 }
-

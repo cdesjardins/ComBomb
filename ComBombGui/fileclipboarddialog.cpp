@@ -157,4 +157,3 @@ void FileClipboardDialog::on_searchButton_clicked()
         }
     }
 }
-

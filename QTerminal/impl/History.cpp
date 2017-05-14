@@ -134,4 +134,3 @@ void History::getCells(size_t lineNumber, int startColumn, int count, std::vecto
         buffer[index] = _historyBuffer[lineNumber][index + startColumn];
     }
 }
-
