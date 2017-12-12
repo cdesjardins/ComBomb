@@ -137,7 +137,8 @@ void TgtSerialIntf::tgtBreakConnection()
     {
         if (_port->is_open())
         {
-            _port->close();
+            boost::system::error_code ec;
+            _port->close(ec);
         }
         _port.reset();
     }
