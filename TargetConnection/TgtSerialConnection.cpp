@@ -44,10 +44,12 @@ void TgtSerialIntf::tgtMakeConnection()
     _port->set_option(connectionConfig->_byteSize);
     _port->set_option(connectionConfig->_stopBits);
     _port->set_option(connectionConfig->_flowControl);
+    boost::system::error_code err;
+
+    _port->send_break(err);
 
     _serialWriterThread = TgtThread::create(boost::protect(std::bind(&TgtSerialIntf::writerThread, this)));
     _serialServiceThread = TgtThread::create(boost::protect(std::bind(&TgtSerialIntf::serviceThread, this)));
-    boost::system::error_code err;
     _bufferPool->dequeue(_currentIncomingBuffer);
     tgtReadCallback(err, 0);
 }
