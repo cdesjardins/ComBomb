@@ -19,6 +19,11 @@
 #include "TgtSerialConnection.h"
 #include <boost/bind.hpp>
 #include <boost/bind/protect.hpp>
+#ifndef WIN32
+#include <termios.h>
+#include <unistd.h>
+#endif
+
 /******************************************************************************
 **
 **  Serial
@@ -33,6 +38,18 @@ std::shared_ptr<TgtSerialIntf> TgtSerialIntf::createSerialConnection(
     return ret;
 }
 
+void TgtSerialIntf::platformSerialConfig()
+{
+#ifndef WIN32
+    struct termios tty;
+    tcgetattr(_port->native_handle(), &tty);
+    tty.c_cc[VTIME] = 5;
+    tty.c_cc[VMIN] = 1;
+    tty.c_iflag =  IGNBRK;
+    tcsetattr(_port->native_handle(), TCSANOW, &tty);
+#endif
+}
+
 void TgtSerialIntf::tgtMakeConnection()
 {
     std::shared_ptr<const TgtConnectionConfig> connectionConfig = std::dynamic_pointer_cast<const TgtConnectionConfig>(
@@ -44,9 +61,8 @@ void TgtSerialIntf::tgtMakeConnection()
     _port->set_option(connectionConfig->_byteSize);
     _port->set_option(connectionConfig->_stopBits);
     _port->set_option(connectionConfig->_flowControl);
+    platformSerialConfig();
     boost::system::error_code err;
-
-    _port->send_break(err);
 
     _serialWriterThread = TgtThread::create(boost::protect(std::bind(&TgtSerialIntf::writerThread, this)));
     _serialServiceThread = TgtThread::create(boost::protect(std::bind(&TgtSerialIntf::serviceThread, this)));

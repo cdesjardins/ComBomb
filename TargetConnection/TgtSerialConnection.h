@@ -61,6 +61,7 @@ protected:
     bool writerThread();
     virtual void tgtBreakConnection();
     virtual void tgtMakeConnection();
+    void platformSerialConfig();
 
     boost::asio::io_service _service;
     std::unique_ptr<boost::asio::serial_port> _port;
