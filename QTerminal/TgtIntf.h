@@ -81,6 +81,7 @@ protected:
     void connectionManagerThread();
     bool connectionManagerWait();
     void connectionManagerStop();
+    void updateTitle(bool disconnected);
     virtual void tgtMakeConnection() = 0;
     virtual void tgtBreakConnection() = 0;
 

@@ -89,6 +89,8 @@ void TgtIntf::tgtAttemptReconnect()
     {
         _connectionManagerThread.reset(new std::thread(std::bind(&TgtIntf::connectionManagerThread, this)));
     }
+    updateTitle(true);
+
     std::unique_lock<std::mutex> lock(_connectionManagerMutex);
     _connectionManagerSignal = true;
     _connectionManagerCondition.notify_all();
@@ -112,10 +114,21 @@ void TgtIntf::connectionManagerStop()
 bool TgtIntf::connectionManagerWait()
 {
     std::unique_lock<std::mutex> lock(_connectionManagerMutex);
-    _connectionManagerCondition.wait_for(lock, std::chrono::milliseconds(10));
+    _connectionManagerCondition.wait_for(lock, std::chrono::milliseconds(1000));
     bool ret = _connectionManagerSignal;
     _connectionManagerSignal = false;
     return ret;
+}
+
+void TgtIntf::updateTitle(bool disconnected)
+{
+    std::string title;
+    tgtGetTitle(&title);
+    if (disconnected == true)
+    {
+        title.append(" Disconnected");
+    }
+    emit updateTitleSignal(title.c_str());
 }
 
 void TgtIntf::connectionManagerThread()
@@ -125,14 +138,8 @@ void TgtIntf::connectionManagerThread()
         if (connectionManagerWait() == true)
         {
             bool reconnected = false;
-            std::string title;
-            std::string newTitle;
-            tgtGetTitle(&title);
-            newTitle = title;
-            newTitle.append(" Disconnected");
             while ((reconnected == false) && (_connectionManagerThreadRun == true))
             {
-                emit updateTitleSignal(newTitle.c_str());
                 try
                 {
                     tgtBreakConnection();
@@ -154,7 +161,7 @@ void TgtIntf::connectionManagerThread()
                              (_connectionManagerThreadRun == true));
                 }
             }
-            emit updateTitleSignal(title.c_str());
+            updateTitle(false);
         }
     }
 }
