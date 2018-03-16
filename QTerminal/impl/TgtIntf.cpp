@@ -132,6 +132,7 @@ void TgtIntf::updateTitle(bool disconnected)
 
 void TgtIntf::connectionManagerThread()
 {
+    std::chrono::system_clock::time_point startTime = std::chrono::system_clock::now();
     while (_connectionManagerThreadRun)
     {
         if (connectionManagerWait() == true)
@@ -142,9 +143,13 @@ void TgtIntf::connectionManagerThread()
                 updateTitle(true);
                 try
                 {
-                    tgtBreakConnection();
-                    tgtMakeConnection();
-                    reconnected = true;
+                    if ((startTime + std::chrono::seconds(1)) < std::chrono::system_clock::now())
+                    {
+                        tgtBreakConnection();
+                        tgtMakeConnection();
+                        reconnected = true;
+                        startTime = std::chrono::system_clock::now();
+                    }
                 }
                 catch (const std::exception& e)
                 {
@@ -153,7 +158,6 @@ void TgtIntf::connectionManagerThread()
                 }
                 if (reconnected == false)
                 {
-                    std::chrono::system_clock::time_point startTime = std::chrono::system_clock::now();
                     do
                     {
                         std::this_thread::sleep_for(std::chrono::milliseconds(1));
