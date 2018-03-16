@@ -89,7 +89,6 @@ void TgtIntf::tgtAttemptReconnect()
     {
         _connectionManagerThread.reset(new std::thread(std::bind(&TgtIntf::connectionManagerThread, this)));
     }
-    updateTitle(true);
 
     std::unique_lock<std::mutex> lock(_connectionManagerMutex);
     _connectionManagerSignal = true;
@@ -140,6 +139,7 @@ void TgtIntf::connectionManagerThread()
             bool reconnected = false;
             while ((reconnected == false) && (_connectionManagerThreadRun == true))
             {
+                updateTitle(true);
                 try
                 {
                     tgtBreakConnection();
