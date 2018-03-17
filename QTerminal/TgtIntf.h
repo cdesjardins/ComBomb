@@ -79,7 +79,7 @@ signals:
 protected:
     void tgtAttemptReconnect();
     void connectionManagerThread();
-    bool connectionManagerWait();
+    bool connectionManagerWait(std::chrono::system_clock::time_point startTime);
     void connectionManagerStop();
     void updateTitle(bool disconnected);
     virtual void tgtMakeConnection() = 0;
@@ -94,8 +94,7 @@ protected:
     std::unique_ptr<std::thread> _connectionManagerThread;
     volatile bool _connectionManagerThreadRun;
     std::mutex _connectionManagerMutex;
-    std::condition_variable _connectionManagerCondition;
-    volatile bool _connectionManagerSignal;
+    volatile bool _attemptReconnect;
 };
 
 #endif // TGTINTF_H

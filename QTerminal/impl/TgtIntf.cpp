@@ -30,7 +30,7 @@ TgtIntf::TgtIntf(const std::shared_ptr<const TgtConnectionConfigBase>& config)
     : _bufferPool(new RefCntBufferPool(CB_TGT_INTF_NUM_BUFFS, CB_TGT_INTF_BUFF_SIZE)),
     _connectionConfig(config),
     _connectionManagerThreadRun(true),
-    _connectionManagerSignal(false)
+    _attemptReconnect(false)
 {
     m_nTotalTx = 0;
     m_nTotalRx = 0;
@@ -91,8 +91,7 @@ void TgtIntf::tgtAttemptReconnect()
     }
 
     std::unique_lock<std::mutex> lock(_connectionManagerMutex);
-    _connectionManagerSignal = true;
-    _connectionManagerCondition.notify_all();
+    _attemptReconnect = true;
 }
 
 void TgtIntf::tgtDisconnect()
@@ -110,12 +109,17 @@ void TgtIntf::connectionManagerStop()
     }
 }
 
-bool TgtIntf::connectionManagerWait()
+bool TgtIntf::connectionManagerWait(std::chrono::system_clock::time_point startTime)
 {
+    while (std::chrono::system_clock::now() < (startTime + std::chrono::seconds(1)) &&
+                (_connectionManagerThreadRun == true))
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    }
+
     std::unique_lock<std::mutex> lock(_connectionManagerMutex);
-    _connectionManagerCondition.wait_for(lock, std::chrono::milliseconds(1000));
-    bool ret = _connectionManagerSignal;
-    _connectionManagerSignal = false;
+    bool ret = _attemptReconnect;
+    _attemptReconnect = false;
     return ret;
 }
 
@@ -132,40 +136,28 @@ void TgtIntf::updateTitle(bool disconnected)
 
 void TgtIntf::connectionManagerThread()
 {
-    std::chrono::system_clock::time_point startTime = std::chrono::system_clock::now();
-    while (_connectionManagerThreadRun)
+    std::chrono::system_clock::time_point startTime = std::chrono::system_clock::now() - std::chrono::minutes(1);
+    while (_connectionManagerThreadRun == true)
     {
-        if (connectionManagerWait() == true)
+        if (connectionManagerWait(startTime) == true)
         {
-            bool reconnected = false;
-            while ((reconnected == false) && (_connectionManagerThreadRun == true))
+            updateTitle(true);
+            try
             {
-                updateTitle(true);
-                try
-                {
-                    if ((startTime + std::chrono::seconds(1)) < std::chrono::system_clock::now())
-                    {
-                        tgtBreakConnection();
-                        tgtMakeConnection();
-                        reconnected = true;
-                        startTime = std::chrono::system_clock::now();
-                    }
-                }
-                catch (const std::exception& e)
-                {
-                    // update status bar
-                    emit updateStatusSignal(e.what());
-                }
-                if (reconnected == false)
-                {
-                    do
-                    {
-                        std::this_thread::sleep_for(std::chrono::milliseconds(1));
-                    } while (std::chrono::system_clock::now() < (startTime + std::chrono::seconds(1)) &&
-                             (_connectionManagerThreadRun == true));
-                }
+                startTime = std::chrono::system_clock::now();
+                tgtBreakConnection();
+                tgtMakeConnection();
+                updateTitle(false);
             }
-            updateTitle(false);
+            catch (const std::exception& e)
+            {
+                // update status bar
+                emit updateStatusSignal(e.what());
+            }
+        }
+        else
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
     }
 }
