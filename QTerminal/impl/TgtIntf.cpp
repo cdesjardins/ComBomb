@@ -153,6 +153,7 @@ void TgtIntf::connectionManagerThread()
             {
                 // update status bar
                 emit updateStatusSignal(e.what());
+                tgtAttemptReconnect();
             }
         }
         else
