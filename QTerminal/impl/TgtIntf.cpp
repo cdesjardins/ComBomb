@@ -112,7 +112,7 @@ void TgtIntf::connectionManagerStop()
 bool TgtIntf::connectionManagerWait(std::chrono::system_clock::time_point startTime)
 {
     while (std::chrono::system_clock::now() < (startTime + std::chrono::seconds(1)) &&
-                (_connectionManagerThreadRun == true))
+           (_connectionManagerThreadRun == true))
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
