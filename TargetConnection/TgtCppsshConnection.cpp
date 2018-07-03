@@ -47,7 +47,6 @@ struct TgtCppsshImpl
     int  _rows;
     bool _windowResize;
     std::mutex _windowResizeMutex;
-    std::mutex _disconnectionMutex;
     bool _connected;
 };
 
@@ -121,12 +120,8 @@ void TgtCppsshIntf::tgtMakeConnection()
 
 void TgtCppsshIntf::tgtBreakConnection()
 {
-    std::unique_lock<std::mutex> guard(_sshData->_disconnectionMutex);
-
     _sshData->_sshThread.reset();
-    if (isConnected()) {
-        Cppssh::close(_sshData->_connectionId);
-    }
+    Cppssh::close(_sshData->_connectionId);
 }
 
 void TgtCppsshIntf::tgtGetTitle(std::string* szTitle)
