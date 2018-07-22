@@ -113,8 +113,7 @@ public:
         unsigned short _portNum;
     };
 
-    static std::shared_ptr<TgtTelnetIntf> createTelnetConnection(
-        const std::shared_ptr<const TgtConnectionConfig>& config);
+    static std::shared_ptr<TgtTelnetIntf> createTelnetConnection(const std::shared_ptr<const TgtConnectionConfig>& config);
     virtual ~TgtTelnetIntf();
     virtual void tgtGetTitle(std::string* szTitle);
 

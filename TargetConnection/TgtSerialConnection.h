@@ -49,8 +49,7 @@ public:
         boost::asio::serial_port_base::character_size _byteSize;
         boost::asio::serial_port_base::flow_control   _flowControl;
     };
-    static std::shared_ptr<TgtSerialIntf> createSerialConnection(
-        const std::shared_ptr<const TgtConnectionConfig>& config);
+    static std::shared_ptr<TgtSerialIntf> createSerialConnection(const std::shared_ptr<const TgtConnectionConfig>& config);
     virtual ~TgtSerialIntf ();
     virtual void tgtGetTitle(std::string* szTitle);
 

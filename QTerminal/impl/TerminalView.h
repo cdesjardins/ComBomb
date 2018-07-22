@@ -534,11 +534,9 @@ private:
     // will be drawn fully opaque
     void drawBackground(QPainter& painter, const QRect& rect, const QColor& color);
     // draws the cursor character
-    void drawCursor(QPainter& painter, const QRect& rect, const QColor& foregroundColor, const QColor& backgroundColor,
-                    bool& invertColors);
+    void drawCursor(QPainter& painter, const QRect& rect, const QColor& foregroundColor, const QColor& backgroundColor, bool& invertColors);
     // draws the characters or line graphics in a text fragment
-    void drawCharacters(QPainter& painter, const QRect& rect, const QString& text, const Character* style,
-                        bool invertCharacterColor);
+    void drawCharacters(QPainter& painter, const QRect& rect, const QString& text, const Character* style, bool invertCharacterColor);
     // draws a string of line graphics
     void drawLineCharString(QPainter& painter, int x, int y, const QString& str, const Character* attributes);
 
@@ -573,8 +571,7 @@ private:
     void propagateSize();
     void updateImageSize();
     void makeImage();
-    int resizePaint(const int columnsToUpdate, const std::vector<Character>::const_iterator& newLine, char* dirtyMask,
-                    QChar* disstrU);
+    int resizePaint(const int columnsToUpdate, const std::vector<Character>::const_iterator& newLine, char* dirtyMask, QChar* disstrU);
 
     // returns the position of the cursor in columns and lines
     QPoint cursorPosition() const;

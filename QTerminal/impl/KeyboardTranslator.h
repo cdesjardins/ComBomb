@@ -406,9 +406,7 @@ private:
     };
     QList<Token> tokenize(const QString&);
     void readNext();
-    bool decodeSequence(const QString&, int& keyCode, Qt::KeyboardModifiers& modifiers,
-                        Qt::KeyboardModifiers& modifierMask, KeyboardTranslator::States& state,
-                        KeyboardTranslator::States& stateFlags);
+    bool decodeSequence(const QString&, int& keyCode, Qt::KeyboardModifiers& modifiers, Qt::KeyboardModifiers& modifierMask, KeyboardTranslator::States& state, KeyboardTranslator::States& stateFlags);
 
     static bool parseAsModifier(const QString& item, Qt::KeyboardModifier& modifier);
     static bool parseAsStateFlag(const QString& item, KeyboardTranslator::State& state);

@@ -41,8 +41,7 @@ public:
         std::string _workingDir;
         std::string _args;
     };
-    static std::shared_ptr<TgtProcessIntf> createProcessConnection(
-        const std::shared_ptr<const TgtConnectionConfig>& config);
+    static std::shared_ptr<TgtProcessIntf> createProcessConnection(const std::shared_ptr<const TgtConnectionConfig>& config);
 
     TgtProcessIntf(const std::shared_ptr<const TgtConnectionConfig>& config);
     virtual ~TgtProcessIntf();
