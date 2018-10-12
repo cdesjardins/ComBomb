@@ -38,6 +38,7 @@ protected:
     void loadFileClipboardSettings();
     void saveFileClipboardSetting(int row);
     void loadNewLineSettings();
+    void keyPressEvent(QKeyEvent* e);
 
 private slots:
     void sendItemTriggered(int index);

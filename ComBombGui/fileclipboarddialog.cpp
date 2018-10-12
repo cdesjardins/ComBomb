@@ -157,3 +157,11 @@ void FileClipboardDialog::on_searchButton_clicked()
         }
     }
 }
+
+void FileClipboardDialog::keyPressEvent(QKeyEvent* e)
+{
+    if (e->key() != Qt::Key_Escape)
+    {
+        QDialog::keyPressEvent(e);
+    }
+}
