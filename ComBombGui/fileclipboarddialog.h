@@ -39,6 +39,7 @@ protected:
     void saveFileClipboardSetting(int row);
     void loadNewLineSettings();
     void keyPressEvent(QKeyEvent* e);
+    bool eventFilter(QObject* obj, QEvent* event);
 
 private slots:
     void sendItemTriggered(int index);

@@ -40,6 +40,7 @@ FileClipboardDialog::FileClipboardDialog(QWidget* parent) :
     connect(_fileClipboardHeader, SIGNAL(sendItemSignal(int)), this, SLOT(sendItemTriggered(int)));
     ui->fileClipboardTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     _fileClipboardLoaded = true;
+    ui->searchComboBox->installEventFilter(this);
 }
 
 FileClipboardDialog::~FileClipboardDialog()
@@ -164,4 +165,23 @@ void FileClipboardDialog::keyPressEvent(QKeyEvent* e)
     {
         QDialog::keyPressEvent(e);
     }
+}
+
+bool FileClipboardDialog::eventFilter(QObject* obj, QEvent* event)
+{
+    bool ret = true;
+    if (event->type() == QEvent::KeyPress)
+    {
+        QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
+        if ((keyEvent->key() == Qt::Key_Enter) || (keyEvent->key() == Qt::Key_Return))
+        {
+            ret = false;
+            on_searchButton_clicked();
+        }
+    }
+    if (ret == true)
+    {
+        ret = QDialog::eventFilter(obj, event);
+    }
+    return ret;
 }
