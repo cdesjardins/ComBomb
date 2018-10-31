@@ -185,7 +185,7 @@ public:
     virtual void clearEntireScreen() = 0;
 
     /** Resets the state of the terminal. */
-    virtual void reset() = 0;
+    virtual void resetTerminal() = 0;
 
     /**
      * Returns true if the active terminal program wants

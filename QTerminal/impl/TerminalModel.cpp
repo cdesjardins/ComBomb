@@ -438,6 +438,7 @@ void TerminalModel::clearScreen()
     _emulation->clearEntireScreen();
     _emulation->clearHistory();
     _emulation->home();
+    _emulation->resetTerminal();
 }
 
 // unused currently

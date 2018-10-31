@@ -83,7 +83,7 @@ Vt102Emulation::Vt102Emulation(size_t histSize)
     QObject::connect(_titleUpdateTimer, SIGNAL(timeout()), this, SLOT(updateTitle()));
 
     initTokenizer();
-    reset();
+    resetTerminal();
 }
 
 Vt102Emulation::~Vt102Emulation()
@@ -97,7 +97,7 @@ void Vt102Emulation::clearEntireScreen()
     bufferedUpdate();
 }
 
-void Vt102Emulation::reset()
+void Vt102Emulation::resetTerminal()
 {
     //kDebug(1211)<<"Vt102Emulation::reset() resetToken()";
     resetToken();
@@ -753,7 +753,7 @@ void Vt102Emulation::tau(int token, int p, int q)
             break;
 
         case TY_ESC('c'):
-            reset();
+            resetTerminal();
             break;
 
         case TY_ESC('n'):

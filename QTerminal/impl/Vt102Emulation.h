@@ -85,7 +85,7 @@ public:
 
     // reimplemented
     virtual void clearEntireScreen();
-    virtual void reset();
+    virtual void resetTerminal();
 
     // reimplemented
     virtual char getErase() const;
