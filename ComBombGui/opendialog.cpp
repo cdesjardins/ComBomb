@@ -246,3 +246,15 @@ QString OpenDialog::getSettingsRoot()
 {
     return objectName();
 }
+
+void OpenDialog::on_tabWidget_currentChanged(int index)
+{
+    if ((index == ui->tabWidget->indexOf(ui->Serial)) && (ui->comPortComboBox->count() == 0))
+    {
+        ui->_buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+    }
+    else
+    {
+        ui->_buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
+    }
+}

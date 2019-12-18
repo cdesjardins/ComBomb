@@ -59,6 +59,8 @@ private slots:
     void on_programBrowseButton_clicked();
     void on_workingDirButton_clicked();
 
+    void on_tabWidget_currentChanged(int index);
+
 private:
     void addComPorts();
     void addBaudRates();
