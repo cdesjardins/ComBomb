@@ -40,8 +40,9 @@ protected:
     virtual QString getSettingsRoot();
 
 private slots:
-    void on_pushButton_clicked();
     void on_buttonBox_accepted();
+
+    void on_browse_clicked();
 
 private:
     Ui::CaptureDialog* ui;
