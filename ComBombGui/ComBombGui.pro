@@ -12,7 +12,7 @@ TEMPLATE = app
 
 versionTarget.target = createVersion
 versionTarget.depends = $$PWD/../.git
-versionTarget.commands = cd $$PWD && $$PWD/../createVersion.py
+versionTarget.commands = cd $$PWD && python $$PWD/../createVersion.py
 
 QMAKE_EXTRA_TARGETS += versionTarget
 PRE_TARGETDEPS += createVersion

@@ -45,6 +45,7 @@ private slots:
     void sendItemTriggered(int index);
     void on_fileClipboardTable_cellChanged(int row, int column);
     void on_newLineCheckBox_toggled(bool checked);
+    void on_returnCheckBox_toggled(bool checked);
     void on_sendButton_clicked();
     void on_searchButton_clicked();
 

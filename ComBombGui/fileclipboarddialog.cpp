@@ -91,6 +91,10 @@ void FileClipboardDialog::sendItemTriggered(int index)
         if (c != nullptr)
         {
             QString text = item->text();
+            if (ui->returnCheckBox->isChecked())
+            {
+                text += "\r";
+            }
             if (ui->newLineCheckBox->isChecked())
             {
                 text += "\n";
@@ -119,11 +123,19 @@ void FileClipboardDialog::on_newLineCheckBox_toggled(bool checked)
     settings.setValue(CB_FILE_CLIBBOARD_SETTINGS_ROOT "SendNewLine", checked);
 }
 
+void FileClipboardDialog::on_returnCheckBox_toggled(bool checked)
+{
+    QSettings settings;
+    settings.setValue(CB_FILE_CLIBBOARD_SETTINGS_ROOT "SendReturn", checked);
+}
+
 void FileClipboardDialog::loadNewLineSettings()
 {
     QSettings settings;
     bool sendNewLineChecked = settings.value(CB_FILE_CLIBBOARD_SETTINGS_ROOT "SendNewLine", true).toBool();
     ui->newLineCheckBox->setChecked(sendNewLineChecked);
+    bool sendReturnChecked = settings.value(CB_FILE_CLIBBOARD_SETTINGS_ROOT "SendReturn", true).toBool();
+    ui->returnCheckBox->setChecked(sendReturnChecked);
 }
 
 void FileClipboardDialog::on_sendButton_clicked()
