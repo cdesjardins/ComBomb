@@ -81,4 +81,3 @@ void CaptureDialog::on_buttonBox_accepted()
     settings.setValue(CB_CAPTURE_SETTINGS_APPEND, getAppend());
     settings.setValue(CB_CAPTURE_SETTINGS_TIMESTAMP, getTimestamp());
 }
-

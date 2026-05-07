@@ -26,7 +26,7 @@ CBFontComboBox::CBFontComboBox(QWidget* parent)
 {
     QFontDatabase database;
 
-    foreach(const QString &family, database.families())
+    foreach(const QString& family, database.families())
     {
         QFont f(family);
         QList<int> sizes;

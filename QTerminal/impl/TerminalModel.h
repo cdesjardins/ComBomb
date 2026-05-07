@@ -59,7 +59,6 @@ class TerminalModel : public QObject
 public:
     Q_PROPERTY(QString keyBindings READ keyBindings WRITE setKeyBindings)
     Q_PROPERTY(QSize size READ size WRITE setSize)
-
     /**
      * Constructs a new session.
      *
