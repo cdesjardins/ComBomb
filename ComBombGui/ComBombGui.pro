@@ -117,7 +117,7 @@ else:unix:CONFIG(release, debug|release): LIBS += $$PWD/../../install/lib/libQue
 else:unix:CONFIG(debug, debug|release):   LIBS += $$PWD/../../install/lib/libQueuePtrd.a
 
 unix: {
-QMAKE_CXXFLAGS += -std=c++11
+QMAKE_CXXFLAGS += -std=c++20
 }
 win32: {
 QMAKE_CXXFLAGS_RELEASE -= -MD
@@ -132,12 +132,12 @@ QMAKE_LFLAGS_RELEASE += /NODEFAULTLIB:msvcrt.lib
 QMAKE_CXXFLAGS += -DCPPSSH_STATIC
 win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../botan/install/lib/botan/release -lbotan -lCDLogger -lcppssh
 else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../botan/install/lib/botan/debug   -lbotan -lCDLoggerd -lcppsshd
-else:unix:CONFIG(release, debug|release): LIBS += $$PWD/../../install/lib/libcppssh.a  $$PWD/../../install/lib/libCDLogger.a  $$PWD/../../botan/install/lib/botan/release/libbotan-2.a
-else:unix:CONFIG(debug, debug|release):   LIBS += $$PWD/../../install/lib/libcppsshd.a $$PWD/../../install/lib/libCDLoggerd.a $$PWD/../../botan/install/lib/botan/debug/libbotan-2.a
+else:unix:CONFIG(release, debug|release): LIBS += $$PWD/../../install/lib/libcppssh.a  $$PWD/../../install/lib/libCDLogger.a  $$PWD/../../botan/install/lib/botan/release/libbotan-3.a
+else:unix:CONFIG(debug, debug|release):   LIBS += $$PWD/../../install/lib/libcppsshd.a $$PWD/../../install/lib/libCDLoggerd.a $$PWD/../../botan/install/lib/botan/debug/libbotan-3.a
 
 win32:CONFIG(release, debug|release):     PRE_TARGETDEPS += $$PWD/../../install/lib/cppssh.lib   $$PWD/../../install/lib/CDLogger.lib   $$PWD/../../botan/install/lib/botan/release/botan.lib
 else:win32:CONFIG(debug, debug|release):  PRE_TARGETDEPS += $$PWD/../../install/lib/cppsshd.lib  $$PWD/../../install/lib/CDLoggerd.lib  $$PWD/../../botan/install/lib/botan/debug/botan.lib
-else:unix:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../install/lib/libcppssh.a  $$PWD/../../install/lib/libCDLogger.a  $$PWD/../../botan/install/lib/botan/release/libbotan-2.a
-else:unix:CONFIG(debug, debug|release):   PRE_TARGETDEPS += $$PWD/../../install/lib/libcppsshd.a $$PWD/../../install/lib/libCDLoggerd.a $$PWD/../../botan/install/lib/botan/debug/libbotan-2.a
+else:unix:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../install/lib/libcppssh.a  $$PWD/../../install/lib/libCDLogger.a  $$PWD/../../botan/install/lib/botan/release/libbotan-3.a
+else:unix:CONFIG(debug, debug|release):   PRE_TARGETDEPS += $$PWD/../../install/lib/libcppsshd.a $$PWD/../../install/lib/libCDLoggerd.a $$PWD/../../botan/install/lib/botan/debug/libbotan-3.a
 
 unix: LIBS += -static-libstdc++
