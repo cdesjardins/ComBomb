@@ -38,6 +38,45 @@ make install -j
 make -j15 distclean
 ```
 
+#### Generating SSH key pairs
+
+ComBomb's SSH client loads private keys in PKCS#8 PEM format
+(`-----BEGIN PRIVATE KEY-----`). Use `ssh-keygen` with `-m PKCS8` to
+produce a compatible key file for any of the supported algorithms.
+
+RSA:
+```
+ssh-keygen -t rsa -b 4096 -m PKCS8 -f ~/.ssh/id_rsa
+```
+
+DSA:
+```
+ssh-keygen -t dsa -b 1024 -m PKCS8 -f ~/.ssh/id_dsa
+```
+
+ECDSA (NIST P-256, P-384, P-521):
+```
+ssh-keygen -t ecdsa -b 256 -m PKCS8 -f ~/.ssh/id_ecdsa
+ssh-keygen -t ecdsa -b 384 -m PKCS8 -f ~/.ssh/id_ecdsa
+ssh-keygen -t ecdsa -b 521 -m PKCS8 -f ~/.ssh/id_ecdsa
+```
+
+Ed25519:
+```
+ssh-keygen -t ed25519 -m PKCS8 -f ~/.ssh/id_ed25519
+```
+
+If you already have a key in OpenSSH's default format
+(`-----BEGIN OPENSSH PRIVATE KEY-----`), convert it in place with:
+```
+ssh-keygen -p -m PKCS8 -f <keyfile>
+```
+
+To convert a PEM/PKCS#8 key back to OpenSSH's default format:
+```
+ssh-keygen -p -N "" -f <keyfile>
+```
+
 Requires:
 git must be in the path (for version number generation)
 
