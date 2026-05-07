@@ -49,11 +49,6 @@ RSA:
 ssh-keygen -t rsa -b 4096 -m PKCS8 -f ~/.ssh/id_rsa
 ```
 
-DSA:
-```
-ssh-keygen -t dsa -b 1024 -m PKCS8 -f ~/.ssh/id_dsa
-```
-
 ECDSA (NIST P-256, P-384, P-521):
 ```
 ssh-keygen -t ecdsa -b 256 -m PKCS8 -f ~/.ssh/id_ecdsa
