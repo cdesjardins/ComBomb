@@ -130,13 +130,13 @@ QMAKE_LFLAGS_RELEASE += /NODEFAULTLIB:msvcrt.lib
 
 # Cppssh
 QMAKE_CXXFLAGS += -DCPPSSH_STATIC
-win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../botan/install/lib/botan/release -lbotan -lCDLogger -lcppssh
-else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../botan/install/lib/botan/debug   -lbotan -lCDLoggerd -lcppsshd
+win32:CONFIG(release, debug|release):     LIBS += -L$$PWD/../../botan/install/lib/botan/release -lbotan-3 -lCDLogger -lcppssh
+else:win32:CONFIG(debug, debug|release):  LIBS += -L$$PWD/../../botan/install/lib/botan/debug   -lbotan-3 -lCDLoggerd -lcppsshd
 else:unix:CONFIG(release, debug|release): LIBS += $$PWD/../../install/lib/libcppssh.a  $$PWD/../../install/lib/libCDLogger.a  $$PWD/../../botan/install/lib/botan/release/libbotan-3.a
 else:unix:CONFIG(debug, debug|release):   LIBS += $$PWD/../../install/lib/libcppsshd.a $$PWD/../../install/lib/libCDLoggerd.a $$PWD/../../botan/install/lib/botan/debug/libbotan-3.a
 
-win32:CONFIG(release, debug|release):     PRE_TARGETDEPS += $$PWD/../../install/lib/cppssh.lib   $$PWD/../../install/lib/CDLogger.lib   $$PWD/../../botan/install/lib/botan/release/botan.lib
-else:win32:CONFIG(debug, debug|release):  PRE_TARGETDEPS += $$PWD/../../install/lib/cppsshd.lib  $$PWD/../../install/lib/CDLoggerd.lib  $$PWD/../../botan/install/lib/botan/debug/botan.lib
+win32:CONFIG(release, debug|release):     PRE_TARGETDEPS += $$PWD/../../install/lib/cppssh.lib   $$PWD/../../install/lib/CDLogger.lib   $$PWD/../../botan/install/lib/botan/release/botan-3.lib
+else:win32:CONFIG(debug, debug|release):  PRE_TARGETDEPS += $$PWD/../../install/lib/cppsshd.lib  $$PWD/../../install/lib/CDLoggerd.lib  $$PWD/../../botan/install/lib/botan/debug/botan-3.lib
 else:unix:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../../install/lib/libcppssh.a  $$PWD/../../install/lib/libCDLogger.a  $$PWD/../../botan/install/lib/botan/release/libbotan-3.a
 else:unix:CONFIG(debug, debug|release):   PRE_TARGETDEPS += $$PWD/../../install/lib/libcppsshd.a $$PWD/../../install/lib/libCDLoggerd.a $$PWD/../../botan/install/lib/botan/debug/libbotan-3.a
 
