@@ -19,7 +19,7 @@
 
 #include "TgtTelnetConnection.h"
 #include "CBException.h"
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/bind/protect.hpp>
 
 std::shared_ptr<TgtTelnetIntf> TgtTelnetIntf::createTelnetConnection(

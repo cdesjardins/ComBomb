@@ -205,7 +205,6 @@ void ChildForm::readFromProc(bool isStdout)
 
 void ChildForm::processError(QProcess::ProcessError error)
 {
-    QString errMsg;
     QString errors[] =
     {
         "failed to start",
@@ -217,7 +216,7 @@ void ChildForm::processError(QProcess::ProcessError error)
     };
     _procError = true;
     suppressOutput(false);
-    errMsg.sprintf("Error: (%d) Process ", error);
+    QString errMsg = QString::asprintf("Error: (%d) Process ", error);
     if (error < sizeof(errors) / sizeof(errors[0]))
     {
         errMsg.append(errors[error].toLocal8Bit().constData());

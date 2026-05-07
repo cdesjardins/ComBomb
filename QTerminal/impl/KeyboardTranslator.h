@@ -322,7 +322,7 @@ private:
 
 private:
 
-    QHash<int, Entry> _entries; // entries in this keyboard translation,
+    QMultiHash<int, Entry> _entries; // entries in this keyboard translation,
     // entries are indexed according to
     // their keycode
     QString _name;

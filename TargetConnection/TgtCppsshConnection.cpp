@@ -21,7 +21,7 @@
 #include "TgtThread.h"
 #include "CBException.h"
 #include "CDLogger/Logger.h"
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <sstream>
 
 #ifdef WIN32

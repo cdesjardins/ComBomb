@@ -595,7 +595,7 @@ void TerminalView::drawBackground(QPainter& painter, const QRect& rect, const QC
     QRect contentsRect = contentsRegion.boundingRect();
 
     painter.fillRect(contentsRect, backgroundColor);
-    painter.fillRect(scrollBarArea, _scrollBar->palette().background());
+    painter.fillRect(scrollBarArea, _scrollBar->palette().window());
 }
 
 void TerminalView::drawCursor(QPainter& painter,
@@ -723,7 +723,7 @@ void TerminalView::drawTextFragment(QPainter& painter,
     const QColor backgroundColor = style->getBackgroundColor().color(_colorTable);
 
     // draw background if different from the display's background color
-    if (backgroundColor != palette().background().color())
+    if (backgroundColor != palette().window().color())
     {
         drawBackground(painter, rect, backgroundColor);
     }
@@ -918,7 +918,7 @@ bool TerminalView::inFont(QChar ch)
 {
     bool ret = true;
 
-    if ((ch == QChar::ReplacementCharacter) || (_fontMetrics.width(ch) != _fontWidth))
+    if ((ch == QChar::ReplacementCharacter) || (_fontMetrics.horizontalAdvance(ch) != _fontWidth))
     {
         ret = false;
     }
@@ -1093,7 +1093,7 @@ void TerminalView::showResizeNotification()
         if (!_resizeWidget)
         {
             _resizeWidget.reset(new QLabel(("Size: XXX x XXX"), this->parentWidget()));
-            _resizeWidget->setMinimumWidth(_resizeWidget->fontMetrics().width(("Size: XXX x XXX")));
+            _resizeWidget->setMinimumWidth(_resizeWidget->fontMetrics().horizontalAdvance(("Size: XXX x XXX")));
             _resizeWidget->setMinimumHeight(_resizeWidget->sizeHint().height());
             _resizeWidget->setAlignment(Qt::AlignCenter);
 
@@ -1107,8 +1107,7 @@ void TerminalView::showResizeNotification()
             _resizeWidget->move((width() - _resizeWidget->width()) / 2,
                                 (height() - _resizeWidget->height()) / 2 + 20);
         }
-        QString sizeStr;
-        sizeStr.sprintf("Size: %d x %d", _columns, _lines);
+        QString sizeStr = QString::asprintf("Size: %d x %d", _columns, _lines);
         _resizeWidget->setText(sizeStr);
         _resizeWidget->show();
         _resizeTimer->start(1000);
@@ -1145,12 +1144,13 @@ void TerminalView::paintEvent(QPaintEvent* pe)
     QPainter paint(this);
     //qDebug("%s %d paintEvent %d %d", __FILE__, __LINE__, paint.window().top(), paint.window().right());
 
-    foreach(QRect rect, (pe->region() & contentsRect()).rects())
+    const QRegion paintRegion = pe->region() & contentsRect();
+    for (const QRect& rect : paintRegion)
     {
-        drawBackground(paint, rect, palette().background().color());
+        drawBackground(paint, rect, palette().window().color());
         drawContents(paint, rect);
     }
-    //    drawBackground(paint,contentsRect(),palette().background().color(),	true /* use opacity setting */);
+    //    drawBackground(paint,contentsRect(),palette().window().color(),	true /* use opacity setting */);
     //    drawContents(paint, contentsRect());
     drawInputMethodPreeditString(paint, preeditRect());
     paint.end();
@@ -1325,7 +1325,7 @@ void TerminalView::drawContents(QPainter& paint, const QRect& rect)
             // transformation has been applied to the painter.  this ensures that
             // painting does actually start from textArea.topLeft()
             // (instead of textArea.topLeft() * painter-scale)
-            QMatrix inverted = paint.matrix().inverted();
+            QTransform inverted = paint.transform().inverted();
             textArea.moveCenter(inverted.map(textArea.center()));
 
             //paint text fragment
@@ -1335,7 +1335,7 @@ void TerminalView::drawContents(QPainter& paint, const QRect& rect)
                              &_image[loc(x, y)]);
             _fixedFont = savefixedFont;
             //reset back to single-width, single-height _lines
-            paint.resetMatrix();
+            paint.resetTransform();
 
             if ((size_t)y < _lineProperties.size() - 1)
             {
@@ -2156,7 +2156,8 @@ void TerminalView::mouseDoubleClickEvent(QMouseEvent* ev)
 
 void TerminalView::wheelEvent(QWheelEvent* ev)
 {
-    if (ev->orientation() != Qt::Vertical)
+    const int verticalDelta = ev->angleDelta().y();
+    if (verticalDelta == 0 || qAbs(ev->angleDelta().x()) > qAbs(verticalDelta))
     {
         return;
     }
@@ -2169,9 +2170,9 @@ void TerminalView::wheelEvent(QWheelEvent* ev)
     {
         int charLine;
         int charColumn;
-        getCharacterPosition(ev->pos(), charLine, charColumn);
+        getCharacterPosition(ev->position().toPoint(), charLine, charColumn);
 
-        emit mouseSignal(ev->delta() > 0 ? 4 : 5,
+        emit mouseSignal(verticalDelta > 0 ? 4 : 5,
                          charColumn + 1,
                          charLine + 1 + _scrollBar->value() - _scrollBar->maximum(),
                          0);
@@ -2710,7 +2711,7 @@ void TerminalView::doDrag()
     QMimeData* mimeData = new QMimeData;
     mimeData->setText(QApplication::clipboard()->text(QClipboard::Selection));
     dragInfo.dragObject->setMimeData(mimeData);
-    dragInfo.dragObject->start(Qt::CopyAction);
+    dragInfo.dragObject->exec(Qt::CopyAction);
     // Don't delete the QTextDrag object.  Qt will delete it when it's done with it.
 }
 

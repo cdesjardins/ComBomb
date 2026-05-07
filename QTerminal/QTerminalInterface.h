@@ -95,10 +95,10 @@ public:
         if (ret == true)
         {
             QFontMetrics fm(font);
-            int fw = fm.width(REPCHAR[0]);
+            int fw = fm.horizontalAdvance(REPCHAR[0]);
             for (unsigned int i = 1; i < strlen(REPCHAR); i++)
             {
-                if (fw != fm.width(REPCHAR[i]))
+                if (fw != fm.horizontalAdvance(REPCHAR[i]))
                 {
                     ret = false;
                     break;
@@ -120,7 +120,7 @@ public:
                 f.setPointSize(size);
                 QFontMetrics fm = QFontMetrics(f);
                 double dwidth = fontWidth(fm);
-                int iwidth = fm.width(REPCHAR) / strlen(REPCHAR);
+                int iwidth = fm.horizontalAdvance(REPCHAR) / strlen(REPCHAR);
                 if (dwidth == iwidth)
                 {
                     ret = true;
@@ -142,7 +142,7 @@ public:
 
     static double fontWidth(const QFontMetrics& fontMetrics)
     {
-        return (double)fontMetrics.width(REPCHAR) / (double)strlen(REPCHAR);
+        return (double)fontMetrics.horizontalAdvance(REPCHAR) / (double)strlen(REPCHAR);
     }
 
 public slots:
