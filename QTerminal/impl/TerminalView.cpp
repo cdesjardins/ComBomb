@@ -1602,7 +1602,7 @@ void TerminalView::mousePressEvent(QMouseEvent* ev)
     {
         if (_mouseMarks || (!_mouseMarks && (ev->modifiers() & Qt::ShiftModifier)))
         {
-            emitSelection(true, ev->modifiers() & Qt::ControlModifier);
+            emitSelection(false, ev->modifiers() & Qt::ControlModifier);
         }
         else
         {
@@ -2300,6 +2300,7 @@ void TerminalView::emitSelection(bool useXselection, bool appendReturn)
 void TerminalView::setSelection(const QString& t)
 {
     QApplication::clipboard()->setText(t, QClipboard::Selection);
+    QApplication::clipboard()->setText(t, QClipboard::Clipboard);
 }
 
 void TerminalView::copyClipboard()
