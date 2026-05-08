@@ -1,7 +1,7 @@
 /*
     ComBomb - Terminal emulator
     Copyright (C) 2014  Chris Desjardins
-    http://blog.chrisd.info cjd@chrisd.info
+    https://github.com/cdesjardins/ComBomb cjd@chrisd.info
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@
 #include <QComboBox>
 #include <QDockWidget>
 #include "mainwindow.h"
-#include "updatechecker.h"
 #include "childform.h"
 #include "aboutdialog.h"
 #include "configdialog.h"
@@ -68,7 +67,6 @@ MainWindow::MainWindow(QWidget* parent) :
     _windowCnt.store(0);
     _startTime = std::chrono::system_clock::now();
     _ui->setupUi(this);
-    _ui->actionNew_Version_Available->setVisible(false);
     _ui->menuBar->show();
     setMinimumSize(650, 500);
 
@@ -90,9 +88,6 @@ MainWindow::MainWindow(QWidget* parent) :
     _runProcessIconText = _ui->action_Run_Process->text();
     _captureLogsIconText = _ui->actionCapture_output->text();
     connect(_mdiArea, SIGNAL(subWindowActivated(QMdiSubWindow*)), this, SLOT(subWindowActivatedSlot(QMdiSubWindow*)));
-    UpdateChecker::checkForNewVersion();
-    connect(UpdateChecker::get(), SIGNAL(newVersionAvailable()), this, SLOT(
-                newVersionAvailableSlot()), Qt::QueuedConnection);
 }
 
 void MainWindow::enableMenuItems(bool enabled)
@@ -408,16 +403,6 @@ void MainWindow::on_actionFind_highlighted_text_triggered()
     }
 }
 
-void MainWindow::newVersionAvailableSlot()
-{
-    _ui->actionNew_Version_Available->setVisible(true);
-}
-
-void MainWindow::on_actionNew_Version_Available_triggered()
-{
-    QDesktopServices::openUrl(QUrl("http://blog.chrisd.info/combomb/?ref=ComBomb#downloadComBomb"));
-}
-
 void MainWindow::setInterfaceType()
 {
     if (ConfigDialog::getTabbedViewSettings() == true)
@@ -441,5 +426,5 @@ void MainWindow::on_actionCapture_output_triggered()
 
 void MainWindow::on_actionHelp_triggered()
 {
-    QDesktopServices::openUrl(QUrl("http://combomb.chrisd.info/"));
+    QDesktopServices::openUrl(QUrl("https://github.com/cdesjardins/ComBomb"));
 }

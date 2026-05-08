@@ -1,4 +1,4 @@
-####http://combomb.chrisd.info/
+#### https://github.com/cdesjardins/ComBomb
 
 ComBomb is a terminal emulator for debugging embedded systems in the modern era.
 

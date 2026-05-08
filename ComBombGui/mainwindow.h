@@ -1,7 +1,7 @@
 /*
     ComBomb - Terminal emulator
     Copyright (C) 2014  Chris Desjardins
-    http://blog.chrisd.info cjd@chrisd.info
+    https://github.com/cdesjardins/ComBomb cjd@chrisd.info
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -71,8 +71,6 @@ private slots:
     void on_actionFind_next_triggered();
     void on_actionFind_prev_triggered();
     void on_actionFind_highlighted_text_triggered();
-    void newVersionAvailableSlot();
-    void on_actionNew_Version_Available_triggered();
 
     void on_actionCapture_output_triggered();
 

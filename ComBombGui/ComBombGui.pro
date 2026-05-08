@@ -31,7 +31,6 @@ SOURCES += main.cpp\
     cblistwidget.cpp \
     cbdialog.cpp \
     finddialog.cpp \
-    updatechecker.cpp \
     cbfontcombobox.cpp \
     capturedialog.cpp
 
@@ -49,7 +48,6 @@ HEADERS  += mainwindow.h \
     cblistwidget.h \
     cbdialog.h \
     finddialog.h \
-    updatechecker.h \
     cbfontcombobox.h \
     capturedialog.h
 
