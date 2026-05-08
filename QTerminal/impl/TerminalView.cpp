@@ -1392,10 +1392,12 @@ void TerminalView::blinkCursorEvent()
 /*                                                                           */
 /* ------------------------------------------------------------------------- */
 
-void TerminalView::resizeEvent(QResizeEvent* e)
+void TerminalView::resizeEvent(QResizeEvent*)
 {
-    if (!((e->oldSize().width() == -1) && (e->oldSize().height() == -1) &&
-          (e->size().width() == minimumWidth()) && (e->size().height() == minimumHeight())))
+    // QMdiSubWindow delivers oldSize()==(-1,-1) on every maximize/unmaximize transition,
+    // so it cannot be used as an "initial resize" indicator. Use the image buffer instead:
+    // makeImage() populates _image the first time updateImageSize() runs.
+    if (_image.size() != 0)
     {
         updateImageSize();
     }
