@@ -103,7 +103,7 @@ void FileClipboardDialog::sendItemTriggered(int index)
             c->sendText(text);
             c->setTrackOutput(true);
             c->setFocus();
-            QApplication::setActiveWindow(c);
+            c->activateWindow();
         }
     }
 }

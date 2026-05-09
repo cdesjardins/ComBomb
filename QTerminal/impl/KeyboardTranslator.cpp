@@ -373,10 +373,10 @@ bool KeyboardTranslatorReader::decodeSequence(const QString& text,
     KeyboardTranslator::States tempFlags = flags;
     KeyboardTranslator::States tempFlagMask = flagMask;
 
-    for (int i = 0; i < text.count(); i++)
+    for (int i = 0; i < text.size(); i++)
     {
         const QChar& ch = text[i];
-        bool isLastLetter = (i == text.count() - 1);
+        bool isLastLetter = (i == text.size() - 1);
 
         endOfItem = true;
         if (ch.isLetterOrNumber())
@@ -506,7 +506,7 @@ bool KeyboardTranslatorReader::parseAsKeyCode(const QString& item, int& keyCode)
     QKeySequence sequence = QKeySequence::fromString(item);
     if (!sequence.isEmpty())
     {
-        keyCode = sequence[0];
+        keyCode = sequence[0].toCombined();
 
         if (sequence.count() > 1)
         {
@@ -729,7 +729,7 @@ QByteArray KeyboardTranslator::Entry::escapedText(bool expandWildCards, Qt::Keyb
 {
     QByteArray result(text(expandWildCards, modifiers));
 
-    for (int i = 0; i < result.count(); i++)
+    for (int i = 0; i < result.size(); i++)
     {
         char ch = result[i];
         char replacement = 0;
@@ -788,7 +788,7 @@ QByteArray KeyboardTranslator::Entry::unescape(const QByteArray& input) const
 {
     QByteArray result(input);
 
-    for (int i = 0; i < result.count() - 1; i++)
+    for (int i = 0; i < result.size() - 1; i++)
     {
         char& ch = result[i];
         if (ch == '\\')
@@ -830,11 +830,11 @@ QByteArray KeyboardTranslator::Entry::unescape(const QByteArray& input) const
                     // with the corresponding character value
                     char hexDigits[3] = {0};
 
-                    if ((i < result.count() - 2) && isxdigit(result[i + 2]))
+                    if ((i < result.size() - 2) && isxdigit(result[i + 2]))
                     {
                         hexDigits[0] = result[i + 2];
                     }
-                    if ((i < result.count() - 3) && isxdigit(result[i + 3]))
+                    if ((i < result.size() - 3) && isxdigit(result[i + 3]))
                     {
                         hexDigits[1] = result[i + 3];
                     }
