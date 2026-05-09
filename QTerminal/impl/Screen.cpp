@@ -31,6 +31,7 @@
 #include <ctype.h>
 
 // Qt
+#include <QtCore/QIODevice>
 #include <QtCore/QTextStream>
 #include <QtCore/QDate>
 

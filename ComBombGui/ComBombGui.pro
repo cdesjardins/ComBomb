@@ -4,9 +4,10 @@
 #
 #-------------------------------------------------
 
-QT       += core gui widgets network
+QT       += core gui widgets network core5compat
 
 CONFIG += static
+QTPLUGIN += qwayland-generic qminimal qoffscreen
 TARGET = ComBombGui
 TEMPLATE = app
 

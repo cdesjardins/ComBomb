@@ -27,7 +27,6 @@
 ChildForm::ChildForm(const QTerminalConfig& terminalConfig, const std::shared_ptr<TgtIntf>& targetInterface,
                      QWidget* parent) :
     QTerminal(terminalConfig, targetInterface, CB_DEFAULT_TERM_WIDTH, CB_DEFAULT_TERM_HEIGHT, parent),
-    _processMutex(QMutex::Recursive),
     ui(new Ui::ChildForm),
     _proc(nullptr),
     _procError(false),

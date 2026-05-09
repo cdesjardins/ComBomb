@@ -54,8 +54,7 @@ void TgtProcessIntf::tgtMakeConnection()
 
 TgtProcessIntf::TgtProcessIntf(const std::shared_ptr<const TgtConnectionConfig>& config)
     : TgtIntf(config),
-    _proc(nullptr),
-    _processMutex(QMutex::Recursive)
+    _proc(nullptr)
 {
 }
 

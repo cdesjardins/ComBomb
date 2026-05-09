@@ -348,7 +348,7 @@ TerminalView::TerminalView(const std::shared_ptr<TgtIntf>& targetInterface, QWid
     setAttribute(Qt::WA_OpaquePaintEvent);
 
     _gridLayout.reset(new QGridLayout(this));
-    _gridLayout->setMargin(0);
+    _gridLayout->setContentsMargins(0, 0, 0, 0);
 
     setLayout(_gridLayout.get());
 }
@@ -1598,7 +1598,7 @@ void TerminalView::mousePressEvent(QMouseEvent* ev)
             }
         }
     }
-    else if (ev->button() == Qt::MidButton)
+    else if (ev->button() == Qt::MiddleButton)
     {
         if (_mouseMarks || (!_mouseMarks && (ev->modifiers() & Qt::ShiftModifier)))
         {
@@ -1650,7 +1650,7 @@ void TerminalView::mouseMoveEvent(QMouseEvent* ev)
         {
             button = 0;
         }
-        if (ev->buttons() & Qt::MidButton)
+        if (ev->buttons() & Qt::MiddleButton)
         {
             button = 1;
         }
@@ -1697,7 +1697,7 @@ void TerminalView::mouseMoveEvent(QMouseEvent* ev)
     }
 
     // don't extend selection while pasting
-    if (ev->buttons() & Qt::MidButton)
+    if (ev->buttons() & Qt::MiddleButton)
     {
         return;
     }
@@ -1999,7 +1999,7 @@ void TerminalView::mouseReleaseEvent(QMouseEvent* ev)
 
     if (!_mouseMarks &&
         ((ev->button() == Qt::RightButton && !(ev->modifiers() & Qt::ShiftModifier))
-         || ev->button() == Qt::MidButton))
+         || ev->button() == Qt::MiddleButton))
     {
         emit mouseSignal(3,
                          charColumn + 1,
@@ -2492,7 +2492,7 @@ QVariant TerminalView::inputMethodQuery(Qt::InputMethodQuery query) const
     const QPoint cursorPos = _screenWindow ? _screenWindow->cursorPosition() : QPoint(0, 0);
     switch (query)
     {
-        case Qt::ImMicroFocus:
+        case Qt::ImCursorRectangle:
             return imageToWidget(QRect(cursorPos.x(), cursorPos.y(), 1, 1));
             break;
 
@@ -2668,7 +2668,7 @@ void TerminalView::makeImage()
 void TerminalView::setSize(int columns, int lines)
 {
     int scrollBarWidth = _scrollBar->style()->pixelMetric(QStyle::PM_ScrollBarExtent) +
-                         style()->pixelMetric(QStyle::PM_MDIFrameWidth);
+                         style()->pixelMetric(QStyle::PM_MdiSubWindowFrameWidth);
     QSize newSize = QSize((columns * _fontWidth) + scrollBarWidth, lines * _fontHeight);
 
     if (newSize != size())

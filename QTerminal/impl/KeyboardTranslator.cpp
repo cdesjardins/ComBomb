@@ -33,6 +33,7 @@
 #include <QtCore/QBuffer>
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
+#include <QtCore/QRegularExpression>
 #include <QtCore>
 #include <QtGui>
 
@@ -596,44 +597,46 @@ QList<KeyboardTranslatorReader::Token> KeyboardTranslatorReader::tokenize(const 
     QString text = line.simplified();
 
     // comment line: # comment
-    static QRegExp comment("\\#.*");
+    static const QRegularExpression comment(QRegularExpression::anchoredPattern("\\#.*"));
     // title line: keyboard "title"
-    static QRegExp title("keyboard\\s+\"(.*)\"");
+    static const QRegularExpression title(QRegularExpression::anchoredPattern("keyboard\\s+\"(.*)\""));
     // key line: key KeySequence : "output"
     // key line: key KeySequence : command
-    static QRegExp key("key\\s+([\\w\\+\\s\\-]+)\\s*:\\s*(\"(.*)\"|\\w+)");
+    static const QRegularExpression key(QRegularExpression::anchoredPattern("key\\s+([\\w\\+\\s\\-]+)\\s*:\\s*(\"(.*)\"|\\w+)"));
 
     QList<Token> list;
 
-    if (text.isEmpty() || comment.exactMatch(text))
+    if (text.isEmpty() || comment.match(text).hasMatch())
     {
         return list;
     }
 
-    if (title.exactMatch(text))
+    QRegularExpressionMatch titleMatch = title.match(text);
+    QRegularExpressionMatch keyMatch;
+    if (titleMatch.hasMatch())
     {
         Token titleToken = { Token::TitleKeyword, QString() };
-        Token textToken = { Token::TitleText, title.capturedTexts()[1] };
+        Token textToken = { Token::TitleText, titleMatch.captured(1) };
 
         list << titleToken << textToken;
     }
-    else if  (key.exactMatch(text))
+    else if  ((keyMatch = key.match(text)).hasMatch())
     {
         Token keyToken = { Token::KeyKeyword, QString() };
-        Token sequenceToken = { Token::KeySequence, key.capturedTexts()[1].remove(' ') };
+        Token sequenceToken = { Token::KeySequence, keyMatch.captured(1).remove(' ') };
 
         list << keyToken << sequenceToken;
 
-        if (key.capturedTexts()[3].isEmpty())
+        if (keyMatch.captured(3).isEmpty())
         {
-            // capturedTexts()[2] is a command
-            Token commandToken = { Token::Command, key.capturedTexts()[2] };
+            // captured(2) is a command
+            Token commandToken = { Token::Command, keyMatch.captured(2) };
             list << commandToken;
         }
         else
         {
-            // capturedTexts()[3] is the output string
-            Token outputToken = { Token::OutputText, key.capturedTexts()[3] };
+            // captured(3) is the output string
+            Token outputToken = { Token::OutputText, keyMatch.captured(3) };
             list << outputToken;
         }
     }
@@ -787,7 +790,7 @@ QByteArray KeyboardTranslator::Entry::unescape(const QByteArray& input) const
 
     for (int i = 0; i < result.count() - 1; i++)
     {
-        QByteRef ch = result[i];
+        char& ch = result[i];
         if (ch == '\\')
         {
             char replacement[2] = {0, 0};

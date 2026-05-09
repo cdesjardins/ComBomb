@@ -31,11 +31,11 @@ jom -j 15 distclean
 
 Linux:
 ```
-sudo apt-get install libfontconfig1-dev
-./configure -opensource -nomake examples -nomake tests -prefix ~/Qt/<version> -confirm-license -static -no-openssl -no-gtkstyle -qt-xcb
-make -j5
-make install -j
-make -j15 distclean
+mkdir -p ~/dev/qt-build
+cd ~/dev/qt-build
+/path/to/qt-everywhere-src-6.x.x/configure -prefix ~/Qt/6 -opensource -confirm-license -static -nomake examples -nomake tests -no-openssl -no-feature-gtk3
+cmake --build . --parallel
+cmake --install .
 ```
 
 #### Generating SSH key pairs

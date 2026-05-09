@@ -58,7 +58,7 @@ protected:
 private:
     void deleteProcess();
     void readFromProc(bool isStdout);
-    QMutex _processMutex;
+    QRecursiveMutex _processMutex;
     Ui::ChildForm* ui;
     QProcess* _proc;
     bool _procError;

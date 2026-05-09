@@ -9,7 +9,7 @@ QT       += widgets
 
 TARGET = TargetConnection
 TEMPLATE = lib
-CONFIG += staticlib
+CONFIG += staticlib c++20
 
 SOURCES += \
     TgtTelnetConnection.cpp \
@@ -47,9 +47,6 @@ INCLUDEPATH += $$PWD/../../external/boost/install/include
 DEPENDPATH += $$PWD/../../external/boost/install/include
 
 
-unix: {
-QMAKE_CXXFLAGS += -std=c++11
-}
 win32: {
 QMAKE_CXXFLAGS_RELEASE -= -MD
 QMAKE_CXXFLAGS_RELEASE += -MT

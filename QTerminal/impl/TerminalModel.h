@@ -30,6 +30,7 @@
 // Qt
 #include <QtCore/QStringList>
 #include <QtCore>
+#include <QtCore5Compat/QTextCodec>
 #include <QWidget>
 
 #include "SelfListener.h"

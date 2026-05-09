@@ -61,7 +61,7 @@ protected:
     bool writerThread();
 
     QProcess* _proc;
-    QMutex _processMutex;
+    QRecursiveMutex _processMutex;
     std::shared_ptr<TgtThread> _processWriterThread;
 };
 

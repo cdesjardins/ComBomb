@@ -40,7 +40,6 @@
 // Qt
 #include <QtCore/QEvent>
 #include <QtGui/QKeyEvent>
-#include <QtCore/QByteRef>
 
 // Konsole
 #include "KeyboardTranslator.h"
@@ -505,7 +504,7 @@ void Vt102Emulation::XtermHack()
     QChar* str = new QChar[ppos - i - 2];
     for (int j = 0; j < ppos - i - 2; j++)
     {
-        str[j] = pbuf[i + 1 + j];
+        str[j] = QChar(static_cast<ushort>(pbuf[i + 1 + j]));
     }
     QString unistr(str, ppos - i - 2);
 

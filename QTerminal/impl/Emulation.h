@@ -32,7 +32,7 @@
 // Qt
 #include <QtGui/QKeyEvent>
 
-#include <QtCore/QTextCodec>
+#include <QtCore5Compat/QTextCodec>
 #include <QtCore/QTextStream>
 #include <QtCore/QTimer>
 

@@ -36,7 +36,6 @@
 #include <QtGui/QClipboard>
 #include <QtCore/QHash>
 #include <QtGui/QKeyEvent>
-#include <QtCore/QRegExp>
 #include <QtCore/QTextStream>
 #include <QtCore/QThread>
 

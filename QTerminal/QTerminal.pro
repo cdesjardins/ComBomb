@@ -4,11 +4,11 @@
 #
 #-------------------------------------------------
 
-QT       += gui core widgets
+QT       += gui core widgets core5compat
 
 TARGET = QTerminal
 TEMPLATE = lib
-CONFIG += staticlib
+CONFIG += staticlib c++20
 
 SOURCES += \
     impl/Vt102Emulation.cpp \
@@ -71,9 +71,6 @@ win32:QMAKE_CXXFLAGS += -D_WIN32_WINNT=0x0501
 INCLUDEPATH += $$PWD/../../external/boost/install/include
 DEPENDPATH += $$PWD/../../external/boost/install/include
 
-unix: {
-QMAKE_CXXFLAGS += -std=c++11
-}
 win32: {
 QMAKE_CXXFLAGS_RELEASE -= -MD
 QMAKE_CXXFLAGS_RELEASE += -MT
