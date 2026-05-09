@@ -32,7 +32,7 @@
 // Qt
 #include <QtGui/QKeyEvent>
 
-#include <QtCore5Compat/QTextCodec>
+#include <QtCore/QStringConverter>
 #include <QtCore/QTextStream>
 #include <QtCore/QTimer>
 
@@ -144,24 +144,17 @@ public:
     void clearHistory();
     bool resizeHistory(size_t histSize);
 
-    /** Returns the codec used to decode incoming characters.  See setCodec() */
-    const QTextCodec* codec()
-    {
-        return _codec;
-    }
-
-    /** Sets the codec used to decode incoming characters.  */
-    void setCodec(const QTextCodec*);
+    /** Sets the encoding used to decode incoming characters and encode outgoing input. */
+    void setCodec(QStringConverter::Encoding encoding);
 
     /**
      * Convenience method.
      * Returns true if the current codec used to decode incoming
      * characters is UTF-8
      */
-    bool utf8()
+    bool utf8() const
     {
-        Q_ASSERT(_codec);
-        return _codec->mibEnum() == 106;
+        return _encoding == QStringConverter::Utf8;
     }
 
     /** TODO Document me */
@@ -406,9 +399,10 @@ protected:
     //                      scrollbars are not enabled in this mode )
 
     //decodes an incoming C-style character stream into a unicode QString using
-    //the current text codec.  (this allows for rendering of non-ASCII characters in text files etc.)
-    const QTextCodec* _codec;
-    QTextDecoder* _decoder;
+    //the current encoding.  (this allows for rendering of non-ASCII characters in text files etc.)
+    QStringConverter::Encoding _encoding;
+    QStringDecoder _decoder;
+    QStringEncoder _encoder;
     std::shared_ptr<KeyboardTranslator> _keyTranslator; // the keyboard layout
 protected slots:
     /**

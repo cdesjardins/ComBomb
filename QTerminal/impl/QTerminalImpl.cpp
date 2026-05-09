@@ -50,7 +50,7 @@ void QTerminalImpl::initialize(const QTerminalConfig& terminalConfig, const std:
     setFocusProxy(_terminalView.get());
 
     _terminalModel.reset(new TerminalModel(targetInterface, terminalConfig._histSize));
-    _terminalModel->setCodec(QTextCodec::codecForName("UTF-8"));
+    _terminalModel->setCodec(QStringConverter::Utf8);
     _terminalModel->setDarkBackground(true);
     _terminalModel->setKeyBindings("");
     _terminalModel->run();

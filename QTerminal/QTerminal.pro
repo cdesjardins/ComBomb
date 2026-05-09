@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += gui core widgets core5compat
+QT       += gui core widgets
 
 TARGET = QTerminal
 TEMPLATE = lib

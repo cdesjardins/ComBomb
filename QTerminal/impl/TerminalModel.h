@@ -28,9 +28,9 @@
 
 #include <memory>
 // Qt
+#include <QtCore/QStringConverter>
 #include <QtCore/QStringList>
 #include <QtCore>
-#include <QtCore5Compat/QTextCodec>
 #include <QWidget>
 
 #include "SelfListener.h"
@@ -164,8 +164,8 @@ public:
      */
     void setSize(const QSize& size);
 
-    /** Sets the text codec used by this session's terminal emulation. */
-    void setCodec(QTextCodec* codec);
+    /** Sets the text encoding used by this session's terminal emulation. */
+    void setCodec(QStringConverter::Encoding encoding);
 
     /**
      * Sets whether the session has a dark background or not.  The session

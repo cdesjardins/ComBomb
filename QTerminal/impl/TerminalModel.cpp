@@ -95,9 +95,9 @@ bool TerminalModel::hasDarkBackground() const
     return _hasDarkBackground;
 }
 
-void TerminalModel::setCodec(QTextCodec* codec)
+void TerminalModel::setCodec(QStringConverter::Encoding encoding)
 {
-    _emulation->setCodec(codec);
+    _emulation->setCodec(encoding);
 }
 
 void TerminalModel::addView(const std::shared_ptr<TerminalView>& widget)

@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui widgets network core5compat
+QT       += core gui widgets network
 
 CONFIG += static
 QTPLUGIN += qwayland-generic qminimal qoffscreen

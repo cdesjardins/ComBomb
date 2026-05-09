@@ -49,8 +49,9 @@
 
 Emulation::Emulation(size_t histSize) :
     _currentScreenIndex(0),
-    _codec(0),
-    _decoder(nullptr),
+    _encoding(QStringConverter::Utf8),
+    _decoder(QStringConverter::Utf8),
+    _encoder(QStringConverter::Utf8),
     _usesMouse(false)
 {
     QObject::connect(&_bulkTimer1, SIGNAL(timeout()), this, SLOT(showBulk()));
@@ -98,12 +99,6 @@ ScreenWindow* Emulation::createWindow()
 Emulation::~Emulation()
 {
     _windows.clear();
-
-    if (_decoder != nullptr)
-    {
-        delete _decoder;
-        _decoder = nullptr;
-    }
 }
 
 /*! change between primary and alternate _screen
@@ -139,31 +134,18 @@ void Emulation::home()
     _screen[_currentScreenIndex]->home();
 }
 
-void Emulation::setCodec(const QTextCodec* qtc)
+void Emulation::setCodec(QStringConverter::Encoding encoding)
 {
-    Q_ASSERT(qtc);
-
-    _codec = qtc;
-    if (_decoder != nullptr)
-    {
-        delete _decoder;
-        _decoder = nullptr;
-    }
-    _decoder = _codec->makeDecoder();
+    _encoding = encoding;
+    _decoder = QStringDecoder(encoding);
+    _encoder = QStringEncoder(encoding);
 
     emit useUtf8Request(utf8());
 }
 
 void Emulation::setCodec(EmulationCodec codec)
 {
-    if (codec == Utf8Codec)
-    {
-        setCodec(QTextCodec::codecForName("utf8"));
-    }
-    else if (codec == LocaleCodec)
-    {
-        setCodec(QTextCodec::codecForLocale());
-    }
+    setCodec(codec == Utf8Codec ? QStringConverter::Utf8 : QStringConverter::System);
 }
 
 void Emulation::setKeyBindings(const QString& name)
@@ -267,7 +249,7 @@ void Emulation::receiveData(const char* text, int length)
 
     bufferedUpdate();
 
-    QString unicodeText = _decoder->toUnicode(text, length);
+    QString unicodeText = _decoder.decode(QByteArrayView(text, length));
 
     //send characters to terminal emulator
     for (int i = 0; i < unicodeText.length(); i++)
