@@ -9,6 +9,12 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set(CMAKE_BUILD_TYPE Release CACHE STRING "" FORCE)
 endif()
 
+if(WIN32)
+    # Boost headers (and the Windows headers Boost.Asio pulls in) need a
+    # target Windows version. Win7 matches what MSVC defaults to anyway.
+    add_compile_definitions(_WIN32_WINNT=0x0601)
+endif()
+
 find_package(Qt6 6.5 REQUIRED COMPONENTS Core Gui Widgets Network)
 qt_standard_project_setup()
 set(CMAKE_AUTORCC ON)

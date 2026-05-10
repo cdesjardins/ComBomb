@@ -79,11 +79,28 @@ if(UNIX AND NOT APPLE)
     target_link_options(ComBombGui PRIVATE -static-libstdc++)
 endif()
 
-# This Qt 6.8.3 install is static and does not bundle xcb. Import the
-# platform plugins matching what the local Qt build provides.
-qt_import_plugins(ComBombGui
-    INCLUDE
-        Qt6::QWaylandIntegrationPlugin
-        Qt6::QMinimalIntegrationPlugin
-        Qt6::QOffscreenIntegrationPlugin
-)
+# Static-Qt platform plugins must be imported into the executable.
+# The plugin set varies by OS (and even within an OS, by how Qt was built —
+# e.g. the Linux Qt 6.8.3 install used here lacks xcb).
+if(WIN32)
+    qt_import_plugins(ComBombGui
+        INCLUDE
+            Qt6::QWindowsIntegrationPlugin
+            Qt6::QMinimalIntegrationPlugin
+            Qt6::QOffscreenIntegrationPlugin
+    )
+elseif(APPLE)
+    qt_import_plugins(ComBombGui
+        INCLUDE
+            Qt6::QCocoaIntegrationPlugin
+            Qt6::QMinimalIntegrationPlugin
+            Qt6::QOffscreenIntegrationPlugin
+    )
+else()
+    qt_import_plugins(ComBombGui
+        INCLUDE
+            Qt6::QWaylandIntegrationPlugin
+            Qt6::QMinimalIntegrationPlugin
+            Qt6::QOffscreenIntegrationPlugin
+    )
+endif()

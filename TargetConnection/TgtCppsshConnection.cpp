@@ -83,7 +83,7 @@ void TgtCppsshIntf::tgtMakeConnection()
     if (ret == CPPSSH_CONNECT_OK)
     {
         _sshData->_connected = true;
-        _sshData->_sshThread = TgtThread::create(boost::bind(std::bind(&TgtCppsshIntf::sshThread, this)));
+        _sshData->_sshThread = TgtThread::create([this]() { return sshThread(); });
     }
     else
     {
