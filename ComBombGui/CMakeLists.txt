@@ -51,6 +51,11 @@ if(WIN32)
     target_sources(ComBombGui PRIVATE ComBomb.rc)
 endif()
 
+# Mark as a windowed (GUI subsystem) app on Windows; otherwise launching from
+# Explorer opens a console window alongside the GUI. Qt6::EntryPoint maps
+# WinMain back to the regular main(), so no source change is needed.
+set_target_properties(ComBombGui PROPERTIES WIN32_EXECUTABLE TRUE)
+
 add_dependencies(ComBombGui createVersion)
 
 target_include_directories(ComBombGui PRIVATE
