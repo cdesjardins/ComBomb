@@ -23,17 +23,18 @@ cd qt-everywhere-opensource-src-<version>
 
 Windows:
 ```
-configure -opensource -nomake examples -nomake tests -prefix C:\Qt\<version> -confirm-license -static -static-runtime -no-openssl -opengl desktop
-jom -j 5
-jom install
-jom -j 15 distclean
+mkdir -p dev\qt-build
+cd dev\qt-build
+\path\to\qt-everywhere-src-6.8.3\configure -prefix c:\Qt\6 -opensource -confirm-license -static -static-runtime -c++std c++20 -nomake examples -nomake tests -no-openssl -opengl desktop
+cmake --build . --parallel
+cmake --install .
 ```
 
 Linux:
 ```
 mkdir -p ~/dev/qt-build
 cd ~/dev/qt-build
-/path/to/qt-everywhere-src-6.x.x/configure -prefix ~/Qt/6 -opensource -confirm-license -static -nomake examples -nomake tests -no-openssl -no-feature-gtk3
+/path/to/qt-everywhere-src-6.x.x/configure -prefix ~/Qt/6 -opensource -confirm-license -static -c++std c++20 -nomake examples -nomake tests -no-openssl -no-feature-gtk3
 cmake --build . --parallel
 cmake --install .
 ```
