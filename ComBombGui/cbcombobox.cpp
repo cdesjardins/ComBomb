@@ -48,16 +48,6 @@ QString CBComboBox::getName()
     return ret;
 }
 
-void CBComboBox::showEvent(QShowEvent*)
-{
-    restoreComboBox();
-}
-
-void CBComboBox::hideEvent(QHideEvent*)
-{
-    saveComboBox();
-}
-
 void CBComboBox::saveComboBox()
 {
     // Don't persist anything until the widget has been parented under its

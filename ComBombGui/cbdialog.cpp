@@ -17,6 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "cbdialog.h"
+#include "cbcombobox.h"
 #include <QSettings>
 
 CBDialog::CBDialog(QWidget* parent) :
@@ -28,10 +29,21 @@ void CBDialog::showEvent(QShowEvent*)
 {
     QSettings settings;
     restoreGeometry(settings.value(getSettingsRoot() + "Geometry").toByteArray());
+    // Drive CBComboBox restore at dialog level so combos in non-active tab
+    // pages also load their persisted history. Per-widget showEvent only
+    // fires on currently visible widgets, missing the inactive tabs.
+    for (CBComboBox* cb : findChildren<CBComboBox*>())
+    {
+        cb->restoreComboBox();
+    }
 }
 
 void CBDialog::hideEvent(QHideEvent*)
 {
     QSettings settings;
     settings.setValue(getSettingsRoot() + "Geometry", saveGeometry());
+    for (CBComboBox* cb : findChildren<CBComboBox*>())
+    {
+        cb->saveComboBox();
+    }
 }
