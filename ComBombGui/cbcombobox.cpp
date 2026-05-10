@@ -60,7 +60,11 @@ void CBComboBox::hideEvent(QHideEvent*)
 
 void CBComboBox::saveComboBox()
 {
-    if (_saved == false)
+    // Don't persist anything until the widget has been parented under its
+    // owning QDialog — otherwise we'd write to the wrong key path (or, worse,
+    // overwrite good data with whatever transient state we currently have).
+    // hideEvent on Windows can fire before the widget hierarchy is settled.
+    if ((_saved == false) && (getName().isEmpty() == false))
     {
         _saved = true;
         if (isEditable() == true)
@@ -108,7 +112,10 @@ void CBComboBox::saveEditableComboBox()
 
 void CBComboBox::restoreComboBox()
 {
-    if (_restored == false)
+    // showEvent can fire on Windows before the widget is parented under its
+    // owning QDialog. If we can't determine the settings key, leave _restored
+    // false so we retry on the next showEvent.
+    if ((_restored == false) && (getName().isEmpty() == false))
     {
         _restored = true;
         if (isEditable() == true)
