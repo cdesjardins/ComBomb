@@ -17,8 +17,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "TgtSerialConnection.h"
-#include <boost/bind/bind.hpp>
-#include <boost/bind/protect.hpp>
 #ifndef WIN32
 #include <termios.h>
 #include <unistd.h>
@@ -64,8 +62,8 @@ void TgtSerialIntf::tgtMakeConnection()
     platformSerialConfig();
     boost::system::error_code err;
 
-    _serialWriterThread = TgtThread::create(boost::protect(std::bind(&TgtSerialIntf::writerThread, this)));
-    _serialServiceThread = TgtThread::create(boost::protect(std::bind(&TgtSerialIntf::serviceThread, this)));
+    _serialWriterThread = TgtThread::create([this]() { return writerThread(); });
+    _serialServiceThread = TgtThread::create([this]() { return serviceThread(); });
     _bufferPool->dequeue(_currentIncomingBuffer);
     tgtReadCallback(err, 0);
 }
@@ -138,9 +136,10 @@ void TgtSerialIntf::tgtReadCallback(const boost::system::error_code& error, cons
                                          _currentIncomingBuffer->_buffer.size());
         }
         _port->async_read_some(boost::asio::buffer(buffer, boost::asio::buffer_size(buffer) - 1),
-                               boost::bind(&TgtSerialIntf::tgtReadCallback, this,
-                                           boost::asio::placeholders::error,
-                                           boost::asio::placeholders::bytes_transferred));
+                               [this](const boost::system::error_code& ec, size_t bytesTransferred)
+        {
+            tgtReadCallback(ec, bytesTransferred);
+        });
     }
     else
     {

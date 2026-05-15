@@ -19,7 +19,9 @@
 #ifndef CBEXCEPTION_H
 #define CBEXCEPTION_H
 
-#include <boost/asio/buffer.hpp>
+#include <algorithm>
+#include <cstring>
+#include <span>
 #include <sstream>
 
 #define CB_EXCEPTION(type)                       type(__FILE__, __LINE__)
@@ -60,9 +62,10 @@ protected:
 
     void copyStr(const char* str)
     {
-        int len = strlen(str);
-        int numBytesCopied = boost::asio::buffer_copy(_whatBuffer, boost::asio::buffer(str, len));
-        _whatBuffer = boost::asio::buffer(_whatBuffer + numBytesCopied);
+        const size_t len = strlen(str);
+        const size_t numBytesCopied = std::min(_whatBuffer.size(), len);
+        std::memcpy(_whatBuffer.data(), str, numBytesCopied);
+        _whatBuffer = _whatBuffer.subspan(numBytesCopied);
     }
 
     void copyInt(const int data)
@@ -75,7 +78,7 @@ protected:
     void init(const char* file, const int line)
     {
         memset(_what, 0, sizeof(_what));
-        _whatBuffer = boost::asio::buffer(_what, sizeof(_what) - 1);
+        _whatBuffer = std::span<char>(_what, sizeof(_what) - 1);
 #ifdef CB_LOG_EXECP_FNL
         copyStr(file);
         copyInt(line);
@@ -85,7 +88,7 @@ protected:
 #endif
     }
 
-    boost::asio::mutable_buffer _whatBuffer;
+    std::span<char> _whatBuffer;
     char _what[2048];
 };
 

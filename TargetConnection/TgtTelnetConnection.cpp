@@ -19,8 +19,6 @@
 
 #include "TgtTelnetConnection.h"
 #include "CBException.h"
-#include <boost/bind/bind.hpp>
-#include <boost/bind/protect.hpp>
 
 std::shared_ptr<TgtTelnetIntf> TgtTelnetIntf::createTelnetConnection(
     const std::shared_ptr<const TgtConnectionConfig>& config)
@@ -75,7 +73,7 @@ void TgtTelnetIntf::tgtMakeConnection()
         endpointIterator++;
     }
 
-    _telnetServiceThread = TgtThread::create(boost::protect(std::bind(&TgtTelnetIntf::serviceThread, this)));
+    _telnetServiceThread = TgtThread::create([this]() { return serviceThread(); });
 
     for (std::vector<boost::asio::ip::address>::iterator it = addresses.begin();
          ((it != addresses.end()) && (_abortConnection == false)); it++)
@@ -88,8 +86,10 @@ void TgtTelnetIntf::tgtMakeConnection()
         _socket.reset(new boost::asio::ip::tcp::socket(_socketService));
         _socket->open(boost::asio::ip::tcp::v4());
         clearConnectionQueue();
-        _socket->async_connect(endpoint, boost::bind(
-                                   &TgtTelnetIntf::connectionHandler, this, boost::asio::placeholders::error));
+        _socket->async_connect(endpoint, [this](const boost::system::error_code& ec)
+        {
+            connectionHandler(ec);
+        });
         bool done;
         do
         {
@@ -114,7 +114,7 @@ void TgtTelnetIntf::tgtMakeConnection()
     }
     _socket->non_blocking(true);
 
-    _telnetWriterThread = TgtThread::create(boost::protect(std::bind(&TgtTelnetIntf::writerThread, this)));
+    _telnetWriterThread = TgtThread::create([this]() { return writerThread(); });
 
     boost::system::error_code err;
     _bufferPool->dequeue(_currentIncomingBuffer);
@@ -199,9 +199,10 @@ void TgtTelnetIntf::tgtReadCallback(const boost::system::error_code& error, cons
                                          _currentIncomingBuffer->_buffer.size());
         }
         _socket->async_read_some(boost::asio::buffer(buffer, boost::asio::buffer_size(buffer) - 1),
-                                 boost::bind(&TgtTelnetIntf::tgtReadCallback, this,
-                                             boost::asio::placeholders::error,
-                                             boost::asio::placeholders::bytes_transferred));
+                                 [this](const boost::system::error_code& ec, size_t bytesTransferred)
+        {
+            tgtReadCallback(ec, bytesTransferred);
+        });
     }
     else
     {

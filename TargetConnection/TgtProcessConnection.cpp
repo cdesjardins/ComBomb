@@ -21,7 +21,6 @@
 #include "unparam.h"
 #include <algorithm>
 #include <cstring>
-#include <boost/bind/protect.hpp>
 
 std::shared_ptr<TgtProcessIntf> TgtProcessIntf::createProcessConnection(
     const std::shared_ptr<const TgtConnectionConfig>& config)
@@ -51,7 +50,7 @@ void TgtProcessIntf::tgtMakeConnection()
     _proc->setProcessEnvironment(env);
 
     _proc->start(connectionConfig->_program.c_str(), args);
-    _processWriterThread = TgtThread::create(boost::protect(std::bind(&TgtProcessIntf::writerThread, this)));
+    _processWriterThread = TgtThread::create([this]() { return writerThread(); });
 }
 
 TgtProcessIntf::TgtProcessIntf(const std::shared_ptr<const TgtConnectionConfig>& config)

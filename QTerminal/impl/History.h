@@ -28,7 +28,7 @@
 
 // Konsole
 #include "Character.h"
-#include <boost/circular_buffer.hpp>
+#include "circularbuffer.h"
 
 //
 // Buffer-based history
@@ -52,7 +52,7 @@ public:
 protected:
 
 private:
-    boost::circular_buffer<std::vector<Character> > _historyBuffer;
+    CircularBuffer<std::vector<Character> > _historyBuffer;
 
     QBitArray _wrappedLine;
 };

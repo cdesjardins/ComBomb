@@ -17,10 +17,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <boost/lexical_cast.hpp>
 #include "strtrim.h"
 #include "versioning.h"
 #include "v.h"
+#include <stdexcept>
+#include <string>
 
 const char* getVersion()
 {
@@ -45,11 +46,14 @@ int32_t parseVersionStr(const std::string& verStr)
         {
             try
             {
-                int32_t major = boost::lexical_cast<int32_t>(text.substr(0, dotIndex));
-                int32_t minor = boost::lexical_cast<int32_t>(text.substr(dotIndex + 1));
+                int32_t major = std::stoi(text.substr(0, dotIndex));
+                int32_t minor = std::stoi(text.substr(dotIndex + 1));
                 ret = ((major << 16) | minor);
             }
-            catch (const boost::bad_lexical_cast&)
+            catch (const std::invalid_argument&)
+            {
+            }
+            catch (const std::out_of_range&)
             {
             }
         }
