@@ -57,20 +57,16 @@ void TgtTelnetIntf::tgtMakeConnection()
         _connectionConfig);
     std::vector<boost::asio::ip::address> addresses;
     boost::asio::ip::tcp::resolver resolver(_socketService);
-    boost::asio::ip::tcp::resolver::query query(connectionConfig->_hostName, "http");
-    boost::asio::ip::tcp::resolver::iterator endpointIterator = resolver.resolve(query);
-    boost::asio::ip::tcp::resolver::iterator end;
     boost::asio::ip::tcp::endpoint endpoint;
     boost::system::error_code error;
 
-    while (endpointIterator != end)
+    for (const auto& entry : resolver.resolve(connectionConfig->_hostName, "http"))
     {
-        endpoint = *endpointIterator;
+        endpoint = entry.endpoint();
         addresses.push_back(endpoint.address());
 #ifdef QT_DEBUG
         qDebug("addr: %s", endpoint.address().to_string().c_str());
 #endif
-        endpointIterator++;
     }
 
     _telnetServiceThread = TgtThread::create([this]() { return serviceThread(); });
@@ -212,7 +208,7 @@ void TgtTelnetIntf::tgtReadCallback(const boost::system::error_code& error, cons
 
 bool TgtTelnetIntf::serviceThread()
 {
-    _socketService.reset();
+    _socketService.restart();
     if (_socketService.poll() == 0)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(1));

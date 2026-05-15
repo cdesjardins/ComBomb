@@ -70,7 +70,7 @@ void TgtSerialIntf::tgtMakeConnection()
 
 bool TgtSerialIntf::serviceThread()
 {
-    _service.reset();
+    _service.restart();
     if (_service.poll() == 0)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(1));

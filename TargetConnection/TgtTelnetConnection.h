@@ -139,7 +139,7 @@ protected:
     void clearConnectionQueue();
 
     std::unique_ptr<boost::asio::ip::tcp::socket> _socket;
-    boost::asio::io_service _socketService;
+    boost::asio::io_context _socketService;
 
     bool m_bEcho;
     eTelnetCommand m_nCommand;

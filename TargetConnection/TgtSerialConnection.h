@@ -62,7 +62,7 @@ protected:
     virtual void tgtMakeConnection();
     void platformSerialConfig();
 
-    boost::asio::io_service _service;
+    boost::asio::io_context _service;
     std::unique_ptr<boost::asio::serial_port> _port;
     std::shared_ptr<TgtThread> _serialServiceThread;
     std::shared_ptr<TgtThread> _serialWriterThread;

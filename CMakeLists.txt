@@ -63,24 +63,12 @@ combomb_import_static(combomb::botan
     "${COMBOMB_BOTAN_DIR}/lib/botan/release/${P}botan-3${X}"
     "${COMBOMB_BOTAN_DIR}/lib/botan/debug/${P}botan-3${X}")
 
-# Boost is the odd one out: the Windows build keeps the `lib` prefix on the
-# .lib file (so the qmake .pro used `-llibboost_system`) and lives in
-# release/ and debug/ subdirectories. The Linux build is a single .a file
-# under lib/ with no debug variant.
-if(WIN32)
-    set(_boost_system_release "${COMBOMB_BOOST_DIR}/lib/release/libboost_system.lib")
-    set(_boost_system_debug   "${COMBOMB_BOOST_DIR}/lib/debug/libboost_system.lib")
-else()
-    set(_boost_system_release "${COMBOMB_BOOST_DIR}/lib/libboost_system.a")
-    set(_boost_system_debug   "${COMBOMB_BOOST_DIR}/lib/libboost_system.a")
-endif()
-add_library(combomb::boost_system STATIC IMPORTED GLOBAL)
+# Boost.System became header-only in Boost 1.89, and the headers-only install
+# of 1.91 ships no compiled libraries — Asio (the only Boost we use) builds
+# header-only against it. The target name is kept for compatibility with the
+# subdirectories that already link to it.
+add_library(combomb::boost_system INTERFACE IMPORTED GLOBAL)
 set_target_properties(combomb::boost_system PROPERTIES
-    IMPORTED_CONFIGURATIONS "RELEASE;DEBUG"
-    IMPORTED_LOCATION_RELEASE        "${_boost_system_release}"
-    IMPORTED_LOCATION_RELWITHDEBINFO "${_boost_system_release}"
-    IMPORTED_LOCATION_MINSIZEREL     "${_boost_system_release}"
-    IMPORTED_LOCATION_DEBUG          "${_boost_system_debug}"
     INTERFACE_INCLUDE_DIRECTORIES "${COMBOMB_BOOST_DIR}/include"
     INTERFACE_COMPILE_DEFINITIONS "BOOST_ALL_NO_LIB;BOOST_NO_AUTO_PTR"
 )

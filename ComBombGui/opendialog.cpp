@@ -182,7 +182,7 @@ void OpenDialog::addBaudRates()
 
 void OpenDialog::addComPorts()
 {
-    boost::asio::io_service ioService;
+    boost::asio::io_context ioService;
     boost::system::error_code ec;
     QStringList comPorts = ConfigDialog::getPortListSettings();
     for (QStringList::iterator it = comPorts.begin(); it != comPorts.end(); ++it)
