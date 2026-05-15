@@ -22,6 +22,7 @@
 #include "CBException.h"
 #include "CDLogger/Logger.h"
 #include <boost/bind/bind.hpp>
+#include <cstring>
 #include <sstream>
 
 #ifdef WIN32
@@ -162,13 +163,13 @@ bool TgtCppsshIntf::sshThread()
 bool TgtCppsshIntf::sshSend()
 {
     int ret = true;
-    boost::intrusive_ptr<RefCntBuffer> b;
+    IntrusivePtr<RefCntBuffer> b;
 
     while ((isConnected() == true) && (_outgoingData.dequeue(b, 1) == true))
     {
-        uint8_t* data = boost::asio::buffer_cast<uint8_t*>(b->_buffer);
+        uint8_t* data = reinterpret_cast<uint8_t*>(b->_buffer.data());
 
-        if (Cppssh::write(_sshData->_connectionId, data, boost::asio::buffer_size(b->_buffer)) == false)
+        if (Cppssh::write(_sshData->_connectionId, data, b->_buffer.size()) == false)
         {
             cdLog(LogLevel::Error) << "Unable to write to host";
         }
@@ -191,15 +192,15 @@ bool TgtCppsshIntf::sshRecv()
             size_t length = msg.length();
             while ((isConnected() == true) && (sentBytes < length) && (ret == true))
             {
-                boost::intrusive_ptr<RefCntBuffer> currentIncomingBuffer;
+                IntrusivePtr<RefCntBuffer> currentIncomingBuffer;
                 if (_bufferPool->dequeue(currentIncomingBuffer, 100) == true)
                 {
                     qint64 len = msg.length() - sentBytes;
                     size_t copyLen =
-                        std::min((size_t)len, boost::asio::buffer_size(currentIncomingBuffer->_buffer) - 1);
-                    boost::asio::const_buffer b = boost::asio::const_buffer(msg.message() + sentBytes, len);
-                    sentBytes += boost::asio::buffer_copy(currentIncomingBuffer->_buffer, b, copyLen);
-                    currentIncomingBuffer->_buffer = boost::asio::buffer(currentIncomingBuffer->_buffer, copyLen);
+                        std::min((size_t)len, currentIncomingBuffer->_buffer.size() - 1);
+                    std::memcpy(currentIncomingBuffer->_buffer.data(), msg.message() + sentBytes, copyLen);
+                    sentBytes += copyLen;
+                    currentIncomingBuffer->_buffer = currentIncomingBuffer->_buffer.first(copyLen);
                     _incomingData.enqueue(currentIncomingBuffer);
                 }
                 else

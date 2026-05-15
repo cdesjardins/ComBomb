@@ -119,7 +119,7 @@ public:
 
 protected:
     TgtTelnetIntf(const std::shared_ptr<const TgtConnectionConfig>& config);
-    int tgtTelnetProcessData(const boost::intrusive_ptr<RefCntBuffer>& readData);
+    int tgtTelnetProcessData(const IntrusivePtr<RefCntBuffer>& readData);
     int tgtTelnetData(unsigned char cTelnetRx, char* cReadData);
     int tgtTelnetCommand(eTelnetCommand cTelnetRx);
     int tgtTelnetOption(eTelnetOption eOpt);
@@ -146,7 +146,7 @@ protected:
     eTelnetState m_nState;
     std::shared_ptr<TgtThread> _telnetWriterThread;
     std::shared_ptr<TgtThread> _telnetServiceThread;
-    boost::intrusive_ptr<RefCntBuffer> _currentIncomingBuffer;
+    IntrusivePtr<RefCntBuffer> _currentIncomingBuffer;
     char _throwAway[1024];
     ThreadSafeQueue<boost::system::error_code> _connectionQueue;
     volatile bool _abortConnection;

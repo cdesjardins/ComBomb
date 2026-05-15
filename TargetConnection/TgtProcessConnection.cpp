@@ -19,6 +19,8 @@
 
 #include "TgtProcessConnection.h"
 #include "unparam.h"
+#include <algorithm>
+#include <cstring>
 #include <boost/bind/protect.hpp>
 
 std::shared_ptr<TgtProcessIntf> TgtProcessIntf::createProcessConnection(
@@ -78,7 +80,7 @@ void TgtProcessIntf::tgtGetTitle(std::string* szTitle)
 
 bool TgtProcessIntf::writerThread()
 {
-    boost::intrusive_ptr<RefCntBuffer> b;
+    IntrusivePtr<RefCntBuffer> b;
 
     if (_outgoingData.dequeue(b, 100) == true)
     {
@@ -88,11 +90,11 @@ bool TgtProcessIntf::writerThread()
             qint64 sentBytes;
             do
             {
-                char* data = boost::asio::buffer_cast<char*>(b->_buffer);
-                data[boost::asio::buffer_size(b->_buffer)] = 0;
-                sentBytes = _proc->write(data, boost::asio::buffer_size(b->_buffer));
-                b->_buffer = boost::asio::buffer(b->_buffer + sentBytes);
-            } while ((sentBytes > 0) && (boost::asio::buffer_size(b->_buffer) > 0));
+                char* data = b->_buffer.data();
+                data[b->_buffer.size()] = 0;
+                sentBytes = _proc->write(data, b->_buffer.size());
+                b->_buffer = b->_buffer.subspan(static_cast<size_t>(sentBytes));
+            } while ((sentBytes > 0) && (b->_buffer.size() > 0));
         }
         _processMutex.unlock();
         b.reset();
@@ -131,14 +133,14 @@ void TgtProcessIntf::processInput(const QByteArray& output)
         int sentBytes = 0;
         do
         {
-            boost::intrusive_ptr<RefCntBuffer> currentIncomingBuffer;
+            IntrusivePtr<RefCntBuffer> currentIncomingBuffer;
             if (_bufferPool->dequeue(currentIncomingBuffer, 100) == true)
             {
                 qint64 len = output.length() - sentBytes;
-                size_t copyLen = std::min((size_t)len, boost::asio::buffer_size(currentIncomingBuffer->_buffer) - 1);
-                boost::asio::const_buffer b = boost::asio::buffer(output.constData() + sentBytes, len);
-                sentBytes += boost::asio::buffer_copy(currentIncomingBuffer->_buffer, b, copyLen);
-                currentIncomingBuffer->_buffer = boost::asio::buffer(currentIncomingBuffer->_buffer, copyLen);
+                size_t copyLen = std::min((size_t)len, currentIncomingBuffer->_buffer.size() - 1);
+                std::memcpy(currentIncomingBuffer->_buffer.data(), output.constData() + sentBytes, copyLen);
+                sentBytes += static_cast<int>(copyLen);
+                currentIncomingBuffer->_buffer = currentIncomingBuffer->_buffer.first(copyLen);
                 _incomingData.enqueue(currentIncomingBuffer);
             }
             else

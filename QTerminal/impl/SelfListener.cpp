@@ -40,7 +40,7 @@ void SelfListener::run()
 {
     while (_running)
     {
-        boost::intrusive_ptr<RefCntBuffer> b;
+        IntrusivePtr<RefCntBuffer> b;
         int bytes = _targetInterface->tgtRead(b);
         if (bytes > 0)
         {

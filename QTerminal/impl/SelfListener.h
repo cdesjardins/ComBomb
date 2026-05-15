@@ -29,7 +29,7 @@ public:
     void join();
     virtual ~SelfListener();
 signals:
-    void recvData(boost::intrusive_ptr<RefCntBuffer> incoming);
+    void recvData(IntrusivePtr<RefCntBuffer> incoming);
 
 public slots:
 

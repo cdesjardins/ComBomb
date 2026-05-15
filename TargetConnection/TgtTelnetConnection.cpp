@@ -143,12 +143,12 @@ void TgtTelnetIntf::tgtBreakConnection()
 
 bool TgtTelnetIntf::writerThread()
 {
-    boost::intrusive_ptr<RefCntBuffer> b;
+    IntrusivePtr<RefCntBuffer> b;
     boost::system::error_code ec;
     bool attemptReconnect = false;
     if (_outgoingData.dequeue(b, 100) == true)
     {
-        boost::asio::write(*_socket.get(), boost::asio::buffer(b->_buffer), ec);
+        boost::asio::write(*_socket.get(), boost::asio::buffer(b->_buffer.data(), b->_buffer.size()), ec);
         if (ec)
         {
             attemptReconnect = true;
@@ -172,15 +172,15 @@ void TgtTelnetIntf::tgtReadCallback(const boost::system::error_code& error, cons
             if (_currentIncomingBuffer != nullptr)
             {
                 _currentIncomingBuffer->_buffer =
-                    boost::asio::buffer(_currentIncomingBuffer->_buffer, bytesTransferred);
-                boost::intrusive_ptr<RefCntBuffer> readData;
+                    _currentIncomingBuffer->_buffer.first(bytesTransferred);
+                IntrusivePtr<RefCntBuffer> readData;
                 _bufferPool->dequeue(readData, 100);
                 if (readData != nullptr)
                 {
                     int numBytes = tgtTelnetProcessData(readData);
                     if (numBytes > 0)
                     {
-                        readData->_buffer = boost::asio::buffer(readData->_buffer, numBytes);
+                        readData->_buffer = readData->_buffer.first(numBytes);
                         _incomingData.enqueue(readData);
                     }
                 }
@@ -195,7 +195,8 @@ void TgtTelnetIntf::tgtReadCallback(const boost::system::error_code& error, cons
         }
         else
         {
-            buffer = _currentIncomingBuffer->_buffer;
+            buffer = boost::asio::buffer(_currentIncomingBuffer->_buffer.data(),
+                                         _currentIncomingBuffer->_buffer.size());
         }
         _socket->async_read_some(boost::asio::buffer(buffer, boost::asio::buffer_size(buffer) - 1),
                                  boost::bind(&TgtTelnetIntf::tgtReadCallback, this,
@@ -487,13 +488,13 @@ int TgtTelnetIntf::tgtTelnetOption(eTelnetOption eOpt)
     return nReadIndex;
 }
 
-int TgtTelnetIntf::tgtTelnetProcessData(const boost::intrusive_ptr<RefCntBuffer>& readData)
+int TgtTelnetIntf::tgtTelnetProcessData(const IntrusivePtr<RefCntBuffer>& readData)
 {
-    size_t nNumBytes = boost::asio::buffer_size(_currentIncomingBuffer->_buffer);
+    size_t nNumBytes = _currentIncomingBuffer->_buffer.size();
     size_t nRxIndex;
     int nReadIndex = 0;
-    unsigned char* sTelnetRx = boost::asio::buffer_cast<unsigned char*>(_currentIncomingBuffer->_buffer);
-    char* szReadData = boost::asio::buffer_cast<char*>(readData->_buffer);
+    unsigned char* sTelnetRx = reinterpret_cast<unsigned char*>(_currentIncomingBuffer->_buffer.data());
+    char* szReadData = readData->_buffer.data();
     for (nRxIndex = 0; nRxIndex < nNumBytes; nRxIndex++)
     {
         switch (m_nState)

@@ -42,7 +42,7 @@
 #include "TerminalView.h"
 #include "Vt102Emulation.h"
 
-Q_DECLARE_METATYPE(boost::intrusive_ptr<RefCntBuffer>)
+Q_DECLARE_METATYPE(IntrusivePtr<RefCntBuffer>)
 
 TerminalModel::TerminalModel(const std::shared_ptr<TgtIntf>& targetInterface, size_t histSize) :
     _monitorActivity(false)
@@ -56,7 +56,7 @@ TerminalModel::TerminalModel(const std::shared_ptr<TgtIntf>& targetInterface, si
     , _closed(false)
     , _suppressOutput(false)
 {
-    qRegisterMetaType<boost::intrusive_ptr<RefCntBuffer> >();
+    qRegisterMetaType<IntrusivePtr<RefCntBuffer> >();
     _captureLogFlusher.setSingleShot(true);
     connect(&_captureLogFlusher, SIGNAL(timeout()), this, SLOT(captureLogFlush()));
     //create emulation backend
@@ -81,8 +81,8 @@ TerminalModel::TerminalModel(const std::shared_ptr<TgtIntf>& targetInterface, si
 
 void TerminalModel::connectToRecvText(QObject* who)
 {
-    connect(_selfListener.get(), SIGNAL(recvData(boost::intrusive_ptr<RefCntBuffer>)), who,
-            SLOT(onReceiveBlock(boost::intrusive_ptr<RefCntBuffer>)));
+    connect(_selfListener.get(), SIGNAL(recvData(IntrusivePtr<RefCntBuffer>)), who,
+            SLOT(onReceiveBlock(IntrusivePtr<RefCntBuffer>)));
 }
 
 void TerminalModel::setDarkBackground(bool darkBackground)
@@ -342,12 +342,12 @@ void TerminalModel::addToCaptureFile(const char* buf, int len)
     }
 }
 
-void TerminalModel::onReceiveBlock(boost::intrusive_ptr<RefCntBuffer> incoming)
+void TerminalModel::onReceiveBlock(IntrusivePtr<RefCntBuffer> incoming)
 {
     if ((_closed == false) && (_suppressOutput == false))
     {
-        char* buf = boost::asio::buffer_cast<char*>(incoming->_buffer);
-        int len = boost::asio::buffer_size(incoming->_buffer);
+        char* buf = incoming->_buffer.data();
+        int len = static_cast<int>(incoming->_buffer.size());
         _emulation->receiveData(buf, len);
         addToCaptureFile(buf, len);
     }

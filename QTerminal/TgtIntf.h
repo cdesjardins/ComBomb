@@ -22,7 +22,6 @@
 #define CB_DEFAULT_TERM_WIDTH 80
 #define CB_DEFAULT_TERM_HEIGHT 25
 
-#include <boost/asio/buffer.hpp>
 #include "threadsafequeue.h"
 #include "QueuePtr/RefCntBufferPool.h"
 #include "unparam.h"
@@ -46,7 +45,7 @@ public:
     TgtIntf(const std::shared_ptr<const TgtConnectionConfigBase>& config);
     virtual ~TgtIntf(void);
 
-    virtual int tgtRead(boost::intrusive_ptr<RefCntBuffer>& b);
+    virtual int tgtRead(IntrusivePtr<RefCntBuffer>& b);
     virtual int tgtWrite(const char* szWriteData, int nBytes);
     virtual void tgtGetTitle(std::string* szTitle) = 0;
     // Override to handle window resize events
@@ -87,8 +86,8 @@ protected:
 
     int m_nTotalTx;
     int m_nTotalRx;
-    ThreadSafeQueue<boost::intrusive_ptr<RefCntBuffer> > _incomingData;
-    ThreadSafeQueue<boost::intrusive_ptr<RefCntBuffer> > _outgoingData;
+    ThreadSafeQueue<IntrusivePtr<RefCntBuffer> > _incomingData;
+    ThreadSafeQueue<IntrusivePtr<RefCntBuffer> > _outgoingData;
     std::shared_ptr<RefCntBufferPool> _bufferPool;
     std::shared_ptr<const TgtConnectionConfigBase> _connectionConfig;
     std::unique_ptr<std::thread> _connectionManagerThread;

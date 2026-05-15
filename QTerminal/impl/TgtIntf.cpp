@@ -17,6 +17,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "../TgtIntf.h"
+#include <algorithm>
+#include <cstring>
 
 /*
 ** If telnet or ssh to a remote server and it is unix based and you see
@@ -41,13 +43,13 @@ TgtIntf::~TgtIntf(void)
     connectionManagerStop();
 }
 
-int TgtIntf::tgtRead(boost::intrusive_ptr<RefCntBuffer>& b)
+int TgtIntf::tgtRead(IntrusivePtr<RefCntBuffer>& b)
 {
     int ret = 0;
     if (_incomingData.dequeue(b, 1) == true)
     {
-        ret = boost::asio::buffer_size(b->_buffer);
-        char* data = boost::asio::buffer_cast<char*>(b->_buffer);
+        ret = static_cast<int>(b->_buffer.size());
+        char* data = b->_buffer.data();
         data[ret] = 0;
         m_nTotalRx += ret;
     }
@@ -62,17 +64,16 @@ int TgtIntf::tgtWrite(const char* szWriteData, int nBytes)
         int totalSentBytes = 0;
         do
         {
-            boost::intrusive_ptr<RefCntBuffer> b;
+            IntrusivePtr<RefCntBuffer> b;
             if (_bufferPool->dequeue(b, 5) == true)
             {
-                int sentBytes =
-                    boost::asio::buffer_copy(b->_buffer,
-                                             boost::asio::buffer(szWriteData + totalSentBytes,
-                                                                 nBytes - totalSentBytes));
-                b->_buffer = boost::asio::buffer(b->_buffer, sentBytes);
+                const size_t remaining = static_cast<size_t>(nBytes - totalSentBytes);
+                const size_t sentBytes = std::min(b->_buffer.size(), remaining);
+                std::memcpy(b->_buffer.data(), szWriteData + totalSentBytes, sentBytes);
+                b->_buffer = b->_buffer.first(sentBytes);
                 _outgoingData.enqueue(b);
-                m_nTotalTx += sentBytes;
-                totalSentBytes += sentBytes;
+                m_nTotalTx += static_cast<int>(sentBytes);
+                totalSentBytes += static_cast<int>(sentBytes);
             }
             else
             {

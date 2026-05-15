@@ -62,7 +62,7 @@ void ChildForm::closeEvent(QCloseEvent*)
     emit closeWindowSignal();
 }
 
-void ChildForm::onReceiveBlock(boost::intrusive_ptr<RefCntBuffer> incoming)
+void ChildForm::onReceiveBlock(IntrusivePtr<RefCntBuffer> incoming)
 {
     _processMutex.lock();
     if (_proc != nullptr)
@@ -70,10 +70,10 @@ void ChildForm::onReceiveBlock(boost::intrusive_ptr<RefCntBuffer> incoming)
         qint64 sentBytes;
         do
         {
-            char* buf = boost::asio::buffer_cast<char*>(incoming->_buffer);
-            sentBytes = _proc->write(buf, boost::asio::buffer_size(incoming->_buffer));
-            incoming->_buffer = boost::asio::buffer(incoming->_buffer + sentBytes);
-        } while ((sentBytes > 0) && (boost::asio::buffer_size(incoming->_buffer) > 0));
+            char* buf = incoming->_buffer.data();
+            sentBytes = _proc->write(buf, incoming->_buffer.size());
+            incoming->_buffer = incoming->_buffer.subspan(static_cast<size_t>(sentBytes));
+        } while ((sentBytes > 0) && (incoming->_buffer.size() > 0));
     }
     _processMutex.unlock();
 }

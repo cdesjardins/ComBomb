@@ -48,7 +48,7 @@ private slots:
     void readFromStderr();
     void processError(QProcess::ProcessError error);
     void processDone(int returnCode, QProcess::ExitStatus status);
-    void onReceiveBlock(boost::intrusive_ptr<RefCntBuffer> incoming);
+    void onReceiveBlock(IntrusivePtr<RefCntBuffer> incoming);
 signals:
     void updateStatusSignal(QString);
     void openWindowSignal();

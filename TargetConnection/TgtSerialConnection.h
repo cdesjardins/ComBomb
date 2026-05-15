@@ -66,7 +66,7 @@ protected:
     std::unique_ptr<boost::asio::serial_port> _port;
     std::shared_ptr<TgtThread> _serialServiceThread;
     std::shared_ptr<TgtThread> _serialWriterThread;
-    boost::intrusive_ptr<RefCntBuffer> _currentIncomingBuffer;
+    IntrusivePtr<RefCntBuffer> _currentIncomingBuffer;
     char _throwAway[1024];
 };
 

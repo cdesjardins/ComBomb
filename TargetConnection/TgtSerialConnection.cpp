@@ -82,12 +82,12 @@ bool TgtSerialIntf::serviceThread()
 
 bool TgtSerialIntf::writerThread()
 {
-    boost::intrusive_ptr<RefCntBuffer> b;
+    IntrusivePtr<RefCntBuffer> b;
     boost::system::error_code ec;
     bool attemptReconnect = false;
     if (_outgoingData.dequeue(b, 100) == true)
     {
-        boost::asio::write(*_port.get(), boost::asio::buffer(b->_buffer), ec);
+        boost::asio::write(*_port.get(), boost::asio::buffer(b->_buffer.data(), b->_buffer.size()), ec);
         if (ec)
         {
             attemptReconnect = true;
@@ -118,15 +118,15 @@ void TgtSerialIntf::tgtReadCallback(const boost::system::error_code& error, cons
 
         if (bytesTransferred > 0)
         {
-            if (_currentIncomingBuffer != nullptr)
+            if (_currentIncomingBuffer)
             {
                 _currentIncomingBuffer->_buffer =
-                    boost::asio::buffer(_currentIncomingBuffer->_buffer, bytesTransferred);
+                    _currentIncomingBuffer->_buffer.first(bytesTransferred);
                 _incomingData.enqueue(_currentIncomingBuffer);
             }
             _bufferPool->dequeue(_currentIncomingBuffer, 100);
         }
-        if (_currentIncomingBuffer == nullptr)
+        if (!_currentIncomingBuffer)
         {
             // If there are no buffers available then just throw away the next
             // bit if incoming data...
@@ -134,7 +134,8 @@ void TgtSerialIntf::tgtReadCallback(const boost::system::error_code& error, cons
         }
         else
         {
-            buffer = _currentIncomingBuffer->_buffer;
+            buffer = boost::asio::buffer(_currentIncomingBuffer->_buffer.data(),
+                                         _currentIncomingBuffer->_buffer.size());
         }
         _port->async_read_some(boost::asio::buffer(buffer, boost::asio::buffer_size(buffer) - 1),
                                boost::bind(&TgtSerialIntf::tgtReadCallback, this,

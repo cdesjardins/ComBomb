@@ -264,7 +264,7 @@ signals:
 private slots:
     void done(int);
 
-    void onReceiveBlock(boost::intrusive_ptr<RefCntBuffer> incoming);
+    void onReceiveBlock(IntrusivePtr<RefCntBuffer> incoming);
     void monitorTimerDone();
 
     void onViewSizeChange(int height, int width);
