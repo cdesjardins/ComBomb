@@ -27,7 +27,7 @@ set(CMAKE_AUTORCC ON)
 
 set(COMBOMB_INSTALL_DIR  "${CMAKE_SOURCE_DIR}/../install"   CACHE PATH "Sibling install/ dir holding QueuePtr/cppssh/CDLogger")
 set(COMBOMB_BOOST_DIR    "${CMAKE_SOURCE_DIR}/../external/boost/install" CACHE PATH "Boost install root")
-set(COMBOMB_BOTAN_DIR    "${CMAKE_SOURCE_DIR}/../botan/install"          CACHE PATH "Botan install root")
+set(COMBOMB_BOTAN_DIR    "${CMAKE_SOURCE_DIR}/../external/botan/install" CACHE PATH "Botan install root")
 
 # Imported static dependencies. The d-suffix variants live alongside the release
 # variants; CMake selects per CMAKE_BUILD_TYPE.
