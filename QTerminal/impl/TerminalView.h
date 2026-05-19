@@ -26,6 +26,7 @@
 #include <memory>
 // Qt
 #include <QtGui/QColor>
+#include <QtGui/QImage>
 #include <QtCore/QPointer>
 #include <QWidget>
 
@@ -573,6 +574,15 @@ private:
     void makeImage();
     int resizePaint(const int columnsToUpdate, const std::vector<Character>::const_iterator& newLine, char* dirtyMask, QChar* disstrU);
 
+    // Paint the given region's cells into the off-screen backing image
+    // (cell content, background, cursor decoration). paintEvent() then
+    // just blits the backing image to the screen, so partial-visibility
+    // from sibling QMdiSubWindows can no longer leave stale pixels.
+    void renderToBacking(const QRegion& region);
+    // Reallocate and fill the backing image to match the current widget
+    // size and device pixel ratio, then re-render every cell into it.
+    void rebuildBackingImage();
+
     // returns the position of the cursor in columns and lines
     QPoint cursorPosition() const;
 
@@ -615,6 +625,11 @@ private:
 
     int _imageSize;
     std::vector<LineProperty> _lineProperties;
+
+    // Off-screen image holding the fully-rendered widget pixels. paintEvent
+    // blits a sub-region of this onto the screen instead of redoing all
+    // text drawing every frame. See renderToBacking() / rebuildBackingImage().
+    QImage _backingImage;
 
     ColorEntry _colorTable[TABLE_COLORS];
 

@@ -39,6 +39,10 @@ public:
     void sendText(const QString& text);
     void sendText(const QByteArray& text);
     void recvText(const QByteArray& data);
+    // Force a full re-sync of the visible image and repaint. Used to recover from
+    // cases where a sibling QMdiSubWindow obscured this widget and Qt did not
+    // re-issue a paint event for the area that was exposed when the sibling moved.
+    void refresh();
     void findText(const QString& searchStr, const bool caseSensitive, const bool searchUp, const bool cont);
     QString findTextHighlighted(const bool caseSensitive);
     void connectToRecvText(QObject* who);

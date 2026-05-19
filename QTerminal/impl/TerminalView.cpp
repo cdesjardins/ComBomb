@@ -119,6 +119,7 @@ void TerminalView::setColorTable(const ColorEntry table[])
     // Avoid propagating the palette change to the scroll bar
     _scrollBar->setPalette(QApplication::palette());
 
+    rebuildBackingImage();
     update();
 }
 
@@ -225,6 +226,7 @@ void TerminalView::fontChange(const QFont& font)
     emit changedFontMetricSignal(_fontHeight, _fontWidth);
     //parentWidget()->setFixedWidth(_fontWidth * 80 + _leftMargin);
     propagateSize();
+    rebuildBackingImage();
     update();
 }
 
@@ -834,8 +836,21 @@ void TerminalView::scrollImage(int lines, const QRect& screenWindowRegion)
                                  linesToMove * _fontHeight));
     }
 
-    //scroll the display vertically to match internal _image
-    scroll(0, _fontHeight * (-lines), scrollRect);
+    // Shift the matching pixel region inside the off-screen backing image so
+    // it stays consistent with _image[] without re-rendering the moved rows.
+    // scrollRect is the *destination* of the shift (the rows that will hold
+    // the moved content); the source rows are scrollRect translated by
+    // `lines` cells in the opposite direction.
+    if (!_backingImage.isNull())
+    {
+        const QRect dst = scrollRect;
+        const QRect src = scrollRect.translated(0, _fontHeight * lines);
+        QImage tmp = _backingImage.copy(src);
+        QPainter p(&_backingImage);
+        p.setCompositionMode(QPainter::CompositionMode_Source);
+        p.drawImage(dst, tmp);
+    }
+    update(scrollRect);
 }
 
 int TerminalView::resizePaint(const int columnsToUpdate, const std::vector<Character>::const_iterator& newLine,
@@ -1065,7 +1080,12 @@ void TerminalView::updateImage()
 
     dirtyRegion |= _inputMethodData.previousPreeditRect;
 
-    // update the parts of the display which have changed
+    // Render the dirty cells into the off-screen backing image, then ask
+    // Qt to blit that region to the screen. The backing image is the
+    // authoritative source of pixels, so it doesn't matter how Qt clips
+    // the per-cell repaints under a sibling QMdiSubWindow -- paintEvent
+    // always blits the correct pixels for whatever portion is visible.
+    renderToBacking(dirtyRegion);
     update(dirtyRegion);
 
     if (_hasBlinker && !_blinkTimer->isActive())
@@ -1139,21 +1159,62 @@ void TerminalView::setBlinkingCursor(bool blink)
 
 void TerminalView::paintEvent(QPaintEvent* pe)
 {
-    updateImage();
-    //qDebug("%s %d paintEvent", __FILE__, __LINE__);
     QPainter paint(this);
-    //qDebug("%s %d paintEvent %d %d", __FILE__, __LINE__, paint.window().top(), paint.window().right());
 
-    const QRegion paintRegion = pe->region() & contentsRect();
-    for (const QRect& rect : paintRegion)
+    // The backing image already holds the fully-rendered terminal pixels;
+    // paintEvent just blits the dirty region. This means Qt's clip region
+    // for partially-obscured widgets no longer matters -- we always blit
+    // the correct pixels regardless of what state the OS backing store is
+    // in for our widget.
+    if (!_backingImage.isNull())
     {
-        drawBackground(paint, rect, palette().window().color());
-        drawContents(paint, rect);
+        const QRegion paintRegion = pe->region() & contentsRect();
+        for (const QRect& rect : paintRegion)
+        {
+            paint.drawImage(rect, _backingImage, rect);
+        }
     }
-    //    drawBackground(paint,contentsRect(),palette().window().color(),	true /* use opacity setting */);
-    //    drawContents(paint, contentsRect());
     drawInputMethodPreeditString(paint, preeditRect());
     paint.end();
+}
+
+void TerminalView::renderToBacking(const QRegion& region)
+{
+    // drawContents reads _image[loc(x,y)]; skip until the cell grid exists
+    // (the constructor calls setColorTable() -> rebuildBackingImage() before
+    // makeImage() has allocated _image).
+    if (!_backingImage.isNull() && !region.isEmpty() && !_image.empty())
+    {
+        QPainter painter(&_backingImage);
+        // QPainter on a QImage starts with the system default font, not the
+        // widget font. Apply the terminal font explicitly so cell metrics and
+        // glyph rendering match what paintEvent used to do via QPainter(this).
+        painter.setFont(font());
+        for (const QRect& rect : region)
+        {
+            drawBackground(painter, rect, palette().window().color());
+            drawContents(painter, rect);
+        }
+    }
+}
+
+void TerminalView::rebuildBackingImage()
+{
+    const QSize widgetSize = size();
+    if (!widgetSize.isEmpty())
+    {
+        const qreal dpr = devicePixelRatioF();
+        const QSize imgPixelSize = widgetSize * dpr;
+        if (_backingImage.size() != imgPixelSize)
+        {
+            _backingImage = QImage(imgPixelSize, QImage::Format_ARGB32_Premultiplied);
+        }
+        _backingImage.setDevicePixelRatio(dpr);
+        _backingImage.fill(palette().window().color());
+        // renderToBacking() no-ops if _image hasn't been allocated yet; the
+        // first updateImage() after makeImage() will render the real cells.
+        renderToBacking(QRegion(rect()));
+    }
 }
 
 QPoint TerminalView::cursorPosition() const
@@ -1359,9 +1420,9 @@ void TerminalView::blinkEvent()
 {
     _blinking = !_blinking;
 
-    //TODO:  Optimise to only repaint the areas of the widget
-    // where there is blinking text
-    // rather than repainting the whole widget.
+    // Re-render the whole widget into the backing image so blinking-text
+    // cells pick up the new state, then queue a screen blit.
+    renderToBacking(QRegion(rect()));
     update();
 }
 
@@ -1383,6 +1444,10 @@ void TerminalView::blinkCursorEvent()
 
     QRect cursorRect = imageToWidget(QRect(cursorPosition(), QSize(1, 1)));
 
+    // drawCursor() reads _cursorBlinking via drawContents->drawTextFragment,
+    // so we re-render just the cursor cell into the backing image before
+    // requesting the screen blit.
+    renderToBacking(QRegion(cursorRect));
     update(cursorRect);
 }
 
@@ -1400,6 +1465,13 @@ void TerminalView::resizeEvent(QResizeEvent*)
     if (_image.size() != 0)
     {
         updateImageSize();
+        // The cell grid may not have changed (sub-pixel resize) but the
+        // widget's pixel area did; the backing image must always match
+        // the widget pixel size so paintEvent's blit covers the whole area.
+        if (_backingImage.size() != size() * devicePixelRatioF())
+        {
+            rebuildBackingImage();
+        }
     }
 }
 
@@ -1424,19 +1496,35 @@ void TerminalView::updateImageSize()
     int oldlin = _lines;
     int oldcol = _columns;
 
-    makeImage();
-
-    if (_screenWindow)
-    {
-        _screenWindow->setWindowLines(_lines);
-    }
+    // Recompute the cell-grid dimensions from the current widget size. Avoid
+    // calling makeImage() unconditionally because it clears _image[] to spaces
+    // -- if the grid size hasn't actually changed there is no reason to wipe
+    // the already-rendered content (paintEvent would briefly draw blanks until
+    // the next outputChanged()).
+    calcGeometry();
 
     _resizing = (oldlin != _lines) || (oldcol != _columns);
 
     if (_resizing == true)
     {
+        makeImage();
+
+        if (_screenWindow)
+        {
+            _screenWindow->setWindowLines(_lines);
+        }
+
         showResizeNotification();
         emit changedContentSizeSignal(_contentHeight, _contentWidth); // expose resizeEvent
+    }
+    else if (_image.size() == 0)
+    {
+        // First call -- allocate and clear.
+        makeImage();
+        if (_screenWindow)
+        {
+            _screenWindow->setWindowLines(_lines);
+        }
     }
 
     _resizing = false;
@@ -2592,6 +2680,7 @@ void TerminalView::swapColorTable()
     _colorTable[1] = _colorTable[0];
     _colorTable[0] = color;
     _colorsInverted = !_colorsInverted;
+    rebuildBackingImage();
     update();
 }
 
@@ -2663,6 +2752,7 @@ void TerminalView::makeImage()
     _image.resize(_imageSize + 1);
 
     clearImage();
+    rebuildBackingImage();
 }
 
 // calculate the needed size
