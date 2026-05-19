@@ -179,6 +179,11 @@ void QTerminalImpl::setCursorType(CursorType type, bool blinking)
 void QTerminalImpl::focusInEvent(QFocusEvent* focusEvent)
 {
     Q_UNUSED(focusEvent);
+    refresh();
+}
+
+void QTerminalImpl::refresh()
+{
     _terminalView->updateImage();
     _terminalView->repaint();
     _terminalView->update();
