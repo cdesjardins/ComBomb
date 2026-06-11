@@ -27,7 +27,6 @@
 #define CB_CONFIG_SETTINGS_COM          CB_CONFIG_SETTINGS_ROOT "ComPorts"
 #define CB_CONFIG_SETTINGS_TERM         CB_CONFIG_SETTINGS_ROOT "Terminal"
 #define CB_CONFIG_SETTINGS_TABBEDVIEW   CB_CONFIG_SETTINGS_ROOT "TabbedView"
-#define CB_CONFIG_SETTINGS_BLACKBACK    CB_CONFIG_SETTINGS_ROOT "BlackBack"
 #define CB_CONFIG_SETTINGS_LOGGING      CB_CONFIG_SETTINGS_ROOT "Logging"
 #define CB_CONFIG_SETTINGS_LOGFILENAME  CB_CONFIG_SETTINGS_ROOT "LogFilename"
 #ifdef WIN32
@@ -54,8 +53,6 @@ ConfigDialog::ConfigDialog(QWidget* parent) :
     populateComPortListWidget();
     ui->mdiRdioButton->setChecked(!getTabbedViewSettings());
     ui->tabsRadioButton->setChecked(getTabbedViewSettings());
-    ui->blackRadioButton->setChecked(getBlackBackSettings());
-    ui->whiteRadioButton->setChecked(!getBlackBackSettings());
     bool loggingEnabled = getLoggingEnabledSettings();
     on_loggingCheckBox_clicked(loggingEnabled);
     ui->loggingCheckBox->setChecked(loggingEnabled);
@@ -110,12 +107,6 @@ bool ConfigDialog::getTabbedViewSettings()
 {
     QSettings settings;
     return settings.value(CB_CONFIG_SETTINGS_TABBEDVIEW, false).toBool();
-}
-
-bool ConfigDialog::getBlackBackSettings()
-{
-    QSettings settings;
-    return settings.value(CB_CONFIG_SETTINGS_BLACKBACK, true).toBool();
 }
 
 bool ConfigDialog::getLoggingEnabledSettings()
@@ -198,7 +189,6 @@ void ConfigDialog::on_buttonBox_accepted()
 
     settings.setValue(CB_CONFIG_SETTINGS_TERM, qbytes);
     settings.setValue(CB_CONFIG_SETTINGS_TABBEDVIEW, ui->tabsRadioButton->isChecked());
-    settings.setValue(CB_CONFIG_SETTINGS_BLACKBACK, ui->blackRadioButton->isChecked());
     handleLoggingChange();
 
     MainWindow::getMainWindow()->setInterfaceType();

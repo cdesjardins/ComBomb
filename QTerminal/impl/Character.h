@@ -65,8 +65,8 @@ public:
      * @param r A set of rendition flags which specify how this character is to be drawn.
      */
     inline Character(quint16 c = ' ',
-                     CharacterColor f = CharacterColor(COLOR_SPACE_DEFAULT, CharacterColor::getDefaultForeColor()),
-                     CharacterColor b = CharacterColor(COLOR_SPACE_DEFAULT, CharacterColor::getDefaultBackColor()),
+                     CharacterColor f = CharacterColor(COLOR_SPACE_DEFAULT, DEFAULT_FORE_COLOR),
+                     CharacterColor b = CharacterColor(COLOR_SPACE_DEFAULT, DEFAULT_BACK_COLOR),
                      quint8 r = DEFAULT_RENDITION)
         : _character(c),
         _rendition(r),

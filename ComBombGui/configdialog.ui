@@ -122,26 +122,6 @@
            </layout>
           </widget>
          </item>
-         <item>
-          <widget class="QWidget" name="bgWidget" native="true">
-           <layout class="QVBoxLayout" name="verticalLayout_5">
-            <item>
-             <widget class="QRadioButton" name="blackRadioButton">
-              <property name="text">
-               <string>Black background</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="whiteRadioButton">
-              <property name="text">
-               <string>White background</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
         </layout>
        </widget>
       </item>

@@ -77,14 +77,6 @@ MainWindow::MainWindow(QWidget* parent) :
     setCentralWidget(_mdiArea);
     enableMenuItems(false);
     readSettings();
-    if (ConfigDialog::getBlackBackSettings() == true)
-    {
-        CharacterColor::setBlackBackground();
-    }
-    else
-    {
-        CharacterColor::setWhiteBackground();
-    }
     _runProcessIconText = _ui->action_Run_Process->text();
     _captureLogsIconText = _ui->actionCapture_output->text();
     connect(_mdiArea, SIGNAL(subWindowActivated(QMdiSubWindow*)), this, SLOT(subWindowActivatedSlot(QMdiSubWindow*)));
