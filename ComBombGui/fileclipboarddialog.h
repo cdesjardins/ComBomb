@@ -22,6 +22,9 @@
 #include "cbdialog.h"
 #include "fileclipboardheader.h"
 
+class QTableWidget;
+class QLineEdit;
+
 namespace Ui {
 class FileClipboardDialog;
 }
@@ -35,24 +38,49 @@ public:
     virtual ~FileClipboardDialog();
 
 protected:
-    void loadFileClipboardSettings();
-    void saveFileClipboardSetting(int row);
     void loadNewLineSettings();
     void keyPressEvent(QKeyEvent* e);
     bool eventFilter(QObject* obj, QEvent* event);
 
 private slots:
-    void sendItemTriggered(int index);
-    void on_fileClipboardTable_cellChanged(int row, int column);
+    void sendItemTriggered(QTableWidget* table, int index);
+    void onTableCellChanged(int row, int column);
+    void onAddTabClicked();
+    void onTabCloseRequested(int tabPos);
+    void onTabDoubleClicked(int tabPos);
+    void onCurrentTabChanged(int tabPos);
+    void commitTabRename();
     void on_newLineCheckBox_toggled(bool checked);
     void on_returnCheckBox_toggled(bool checked);
     void on_sendButton_clicked();
     void on_searchButton_clicked();
 
 private:
+    // Tabs are addressed by a stable "slot" number, not by their position in
+    // the tab bar or their name. Each slot keeps its name and 256 entries in
+    // QSettings; closing a tab only hides the slot, so reopening it restores
+    // its contents.
+    QTableWidget* createTableForSlot(int slot);
+    QTableWidget* addTabForSlot(int slot);
+    QTableWidget* currentTable() const;
+    QList<int> openSlots() const;
+    int lowestFreeSlot() const;
+    int tabPosForSlot(int slot) const;
+    void loadTabs();
+    void migrateLegacyClipboard();
+    void saveOpenSlots();
+    void cancelTabRename();
+
     Ui::FileClipboardDialog* ui;
-    FileClipboardHeader* _fileClipboardHeader;
-    bool _fileClipboardLoaded;
+    bool _tabsLoaded;
+
+    // In-place tab rename: a QLineEdit overlaid on the tab bar. _renameSlot is
+    // the (stable) slot being edited, so a commit targets the right tab even if
+    // its position changes.
+    QLineEdit* _renameEditor;
+    int _renameSlot;
+
+    static const int kRowCount = 256;
 };
 
 #endif // FILECLIPBOARDDIALOG_H
