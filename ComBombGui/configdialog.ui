@@ -81,50 +81,9 @@
    <item row="2" column="0">
     <widget class="QGroupBox" name="Interface">
      <property name="title">
-      <string>Interface</string>
+      <string>Scrollback</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_4">
-      <item>
-       <widget class="QWidget" name="widget" native="true">
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
-         <property name="spacing">
-          <number>0</number>
-         </property>
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QWidget" name="viewWidget" native="true">
-           <layout class="QVBoxLayout" name="verticalLayout_6">
-            <item>
-             <widget class="QRadioButton" name="mdiRdioButton">
-              <property name="text">
-               <string>Sub window view</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="tabsRadioButton">
-              <property name="text">
-               <string>Tabbed view</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
       <item>
        <widget class="QWidget" name="historyWidget" native="true">
         <layout class="QVBoxLayout" name="verticalLayout_7">

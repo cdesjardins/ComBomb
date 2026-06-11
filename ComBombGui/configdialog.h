@@ -36,7 +36,6 @@ public:
 
     static bool getTerminalConfig(QTerminalConfig* terminalConfig);
     static QStringList getPortListSettings();
-    static bool getTabbedViewSettings();
     static bool getLoggingEnabledSettings();
     static void handleLogfile();
 protected:

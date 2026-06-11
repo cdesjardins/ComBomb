@@ -43,11 +43,11 @@ public:
     void swapProcessIcon(bool processRunning);
     void swapCaptureIcon(bool captureRunning);
     const std::chrono::duration<double> getStartTimeDelta();
-    void setInterfaceType();
 protected:
     explicit MainWindow(QWidget* parent = 0);
     void enableMenuItems(bool enabled);
     void closeEvent(QCloseEvent* event);
+    void decorateTabs();
     void readSettings();
     void saveFileClipboarDockSettings();
     void restoreFileClipboardDockSettings();
@@ -56,6 +56,7 @@ private slots:
     void openWindowSlot();
     void closeWindowSlot();
     void subWindowActivatedSlot(QMdiSubWindow* subWindow);
+    void subWindowStateChangedSlot(Qt::WindowStates oldState, Qt::WindowStates newState);
     void updateStatusSlot(QString status);
     void on_actionOpen_triggered();
     void on_actionExit_triggered();
@@ -75,6 +76,8 @@ private slots:
     void on_actionCapture_output_triggered();
 
     void on_actionHelp_triggered();
+
+    void restoreSubWindowViewSlot();
 
 signals:
     void findSignal();

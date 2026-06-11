@@ -20,6 +20,13 @@
 #include <QMessageBox>
 #include <QComboBox>
 #include <QDockWidget>
+#include <QToolButton>
+#include <QHBoxLayout>
+#include <QStyle>
+#include <QTabBar>
+#include <QPixmap>
+#include <QPainter>
+#include <QPen>
 #include "mainwindow.h"
 #include "childform.h"
 #include "aboutdialog.h"
@@ -72,8 +79,8 @@ MainWindow::MainWindow(QWidget* parent) :
 
     _mdiArea->setTabsMovable(true);
     _mdiArea->setTabShape(QTabWidget::Triangular);
-    _mdiArea->setTabsClosable(true);
-    setInterfaceType();
+    _mdiArea->setTabsClosable(false);
+    _mdiArea->setViewMode(QMdiArea::SubWindowView);
     setCentralWidget(_mdiArea);
     enableMenuItems(false);
     readSettings();
@@ -189,6 +196,7 @@ void MainWindow::on_actionOpen_triggered()
                 childForm->newlineToggle();
             }
             QMdiSubWindow* subWindow = _mdiArea->addSubWindow(childForm);
+            connect(subWindow, SIGNAL(windowStateChanged(Qt::WindowStates, Qt::WindowStates)), this, SLOT(subWindowStateChangedSlot(Qt::WindowStates, Qt::WindowStates)));
             subWindow->show();
             _ui->statusBar->showMessage("Opened connection", 5000);
         }
@@ -272,6 +280,11 @@ void MainWindow::subWindowActivatedSlot(QMdiSubWindow* subWindow)
         swapProcessIcon(childForm->isProcessRunning());
         swapCaptureIcon(childForm->isCaptureRunning());
     }
+    if (_mdiArea->subWindowList().isEmpty() == true)
+    {
+        _mdiArea->setViewMode(QMdiArea::SubWindowView);
+    }
+    decorateTabs();
 }
 
 void MainWindow::on_actionExit_triggered()
@@ -395,15 +408,95 @@ void MainWindow::on_actionFind_highlighted_text_triggered()
     }
 }
 
-void MainWindow::setInterfaceType()
+void MainWindow::subWindowStateChangedSlot(Qt::WindowStates oldState, Qt::WindowStates newState)
 {
-    if (ConfigDialog::getTabbedViewSettings() == true)
+    (void)oldState;
+    if (((newState & Qt::WindowMaximized) != 0) && (_mdiArea->viewMode() == QMdiArea::SubWindowView))
     {
         _mdiArea->setViewMode(QMdiArea::TabbedView);
+        decorateTabs();
     }
-    else
+}
+
+// Draws the "restore to sub-window view" tab button glyph: a downward chevron
+// (collapse arrow) in the given colour, sized/weighted to sit next to the tab's
+// close button. Returns it as a QIcon ready to hand to a QToolButton.
+static QIcon renderRestoreChevronIcon(const QColor& color, qreal devicePixelRatio)
+{
+    const int iconSide = 12;
+    QPixmap pixmap(QSize(iconSide, iconSide) * devicePixelRatio);
+    pixmap.setDevicePixelRatio(devicePixelRatio);
+    pixmap.fill(Qt::transparent);
+
+    QPainter painter(&pixmap);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    QPen pen(color);
+    pen.setWidthF(1.5);
+    pen.setCapStyle(Qt::RoundCap);
+    pen.setJoinStyle(Qt::RoundJoin);
+    painter.setPen(pen);
+    const QPointF chevron[3] = { QPointF(3.0, 4.5), QPointF(6.0, 8.0), QPointF(9.0, 4.5) };
+    painter.drawPolyline(chevron, 3);
+    painter.end();
+
+    return QIcon(pixmap);
+}
+
+void MainWindow::decorateTabs()
+{
+    QTabBar* tabBar = _mdiArea->findChild<QTabBar*>();
+    if (tabBar != nullptr)
     {
-        _mdiArea->setViewMode(QMdiArea::SubWindowView);
+        QList<QMdiSubWindow*> subWindows = _mdiArea->subWindowList(QMdiArea::CreationOrder);
+        for (int i = 0; i < tabBar->count(); i++)
+        {
+            QWidget* existing = tabBar->tabButton(i, QTabBar::RightSide);
+            bool decorated = ((existing != nullptr) && (existing->objectName() == "cbTabControls"));
+            if ((decorated == false) && (i < subWindows.size()))
+            {
+                QMdiSubWindow* subWindow = subWindows.at(i);
+
+                QWidget* controls = new QWidget(tabBar);
+                controls->setObjectName("cbTabControls");
+                QHBoxLayout* layout = new QHBoxLayout(controls);
+                layout->setContentsMargins(0, 0, 0, 0);
+                layout->setSpacing(0);
+
+                QIcon restoreIcon = renderRestoreChevronIcon(tabBar->palette().color(QPalette::WindowText), devicePixelRatioF());
+                QToolButton* restoreButton = new QToolButton(controls);
+                restoreButton->setAutoRaise(true);
+                restoreButton->setIcon(restoreIcon);
+                QList<QSize> restoreIconSizes = restoreIcon.availableSizes();
+                if (restoreIconSizes.isEmpty() == false)
+                {
+                    restoreButton->setIconSize(restoreIconSizes.first());
+                }
+                restoreButton->setToolTip(tr("Restore sub-window view"));
+                connect(restoreButton, SIGNAL(clicked()), this, SLOT(restoreSubWindowViewSlot()));
+
+                QToolButton* closeButton = new QToolButton(controls);
+                closeButton->setAutoRaise(true);
+                closeButton->setIconSize(QSize(12, 12));
+                closeButton->setIcon(style()->standardIcon(QStyle::SP_TabCloseButton));
+                closeButton->setToolTip(tr("Close window"));
+                connect(closeButton, SIGNAL(clicked()), subWindow, SLOT(close()));
+
+                layout->addWidget(restoreButton);
+                layout->addWidget(closeButton);
+
+                tabBar->setTabButton(i, QTabBar::RightSide, controls);
+            }
+        }
+    }
+}
+
+void MainWindow::restoreSubWindowViewSlot()
+{
+    _mdiArea->setViewMode(QMdiArea::SubWindowView);
+    QMdiSubWindow* activeSubWindow = _mdiArea->activeSubWindow();
+    if (activeSubWindow != nullptr)
+    {
+        activeSubWindow->showNormal();
     }
 }
 

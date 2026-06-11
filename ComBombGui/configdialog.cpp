@@ -26,7 +26,6 @@
 #define CB_CONFIG_SETTINGS_PORT         "Port"
 #define CB_CONFIG_SETTINGS_COM          CB_CONFIG_SETTINGS_ROOT "ComPorts"
 #define CB_CONFIG_SETTINGS_TERM         CB_CONFIG_SETTINGS_ROOT "Terminal"
-#define CB_CONFIG_SETTINGS_TABBEDVIEW   CB_CONFIG_SETTINGS_ROOT "TabbedView"
 #define CB_CONFIG_SETTINGS_LOGGING      CB_CONFIG_SETTINGS_ROOT "Logging"
 #define CB_CONFIG_SETTINGS_LOGFILENAME  CB_CONFIG_SETTINGS_ROOT "LogFilename"
 #ifdef WIN32
@@ -51,8 +50,6 @@ ConfigDialog::ConfigDialog(QWidget* parent) :
     ui->wordSelectionDelimitersLineEdit->setText(terminalConfig._wordSelectionDelimiters);
 
     populateComPortListWidget();
-    ui->mdiRdioButton->setChecked(!getTabbedViewSettings());
-    ui->tabsRadioButton->setChecked(getTabbedViewSettings());
     bool loggingEnabled = getLoggingEnabledSettings();
     on_loggingCheckBox_clicked(loggingEnabled);
     ui->loggingCheckBox->setChecked(loggingEnabled);
@@ -101,12 +98,6 @@ QStringList ConfigDialog::getPortListSettings()
 #endif
     }
     return comPorts;
-}
-
-bool ConfigDialog::getTabbedViewSettings()
-{
-    QSettings settings;
-    return settings.value(CB_CONFIG_SETTINGS_TABBEDVIEW, false).toBool();
 }
 
 bool ConfigDialog::getLoggingEnabledSettings()
@@ -188,10 +179,8 @@ void ConfigDialog::on_buttonBox_accepted()
     q << terminalConfig;
 
     settings.setValue(CB_CONFIG_SETTINGS_TERM, qbytes);
-    settings.setValue(CB_CONFIG_SETTINGS_TABBEDVIEW, ui->tabsRadioButton->isChecked());
     handleLoggingChange();
 
-    MainWindow::getMainWindow()->setInterfaceType();
     setPortListSettings();
 
     QList<ChildForm*> list = MainWindow::getMainWindow()->findChildren<ChildForm*>();
