@@ -41,6 +41,7 @@
 #include <QtGui/QPixmap>
 #include <QScrollBar>
 #include <QStyle>
+#include <QStyleFactory>
 #include <QtCore>
 #include <QtGui>
 
@@ -320,6 +321,20 @@ TerminalView::TerminalView(const std::shared_ptr<TgtIntf>& targetInterface, QWid
     // create scroll bar for scrolling output up and down
     // set the scroll bar's slider to occupy the whole area of the scroll bar initially
     _scrollBar.reset(new QScrollBar(this));
+    // Render the scroll bar with the Fusion style rather than the platform
+    // native style. On Windows the native style is a thin, auto-hiding overlay
+    // scroll bar that fades out, fails to repaint reliably over the terminal's
+    // custom-painted surface, and has a low-contrast thumb. Fusion is a classic
+    // always-visible, fixed-width, non-animated scroll bar with a solid
+    // proportional thumb and real arrow buttons. The style is parented to the
+    // scroll bar so its lifetime is managed for us (QWidget::setStyle does not
+    // take ownership).
+    QStyle* scrollBarStyle = QStyleFactory::create("Fusion");
+    if (scrollBarStyle != nullptr)
+    {
+        scrollBarStyle->setParent(_scrollBar.get());
+        _scrollBar->setStyle(scrollBarStyle);
+    }
     setScroll(0, 0);
     _scrollBar->setCursor(Qt::ArrowCursor);
     connect(_scrollBar.get(), SIGNAL(valueChanged(int)), this, SLOT(scrollBarPositionChanged(int)));
