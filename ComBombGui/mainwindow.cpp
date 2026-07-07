@@ -242,6 +242,9 @@ void MainWindow::saveFileClipboarDockSettings()
 void MainWindow::restoreFileClipboardDockSettings()
 {
     QSettings settings;
+    // QMainWindow::saveState()/restoreState() identify dock widgets by their
+    // objectName; without it Qt warns and cannot persist the dock's placement.
+    _fileClipboarDock->setObjectName("fileClipboardDock");
     _fileClipboarDock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     _fileClipboarDock->setWidget(_fileClipboardDialog);
     addDockWidget((Qt::DockWidgetArea)settings.value(FILE_CBD_SETTINGS_DOCKSIDE,

@@ -19,7 +19,7 @@
 #ifndef FILECLIPBOARDDIALOG_H
 #define FILECLIPBOARDDIALOG_H
 
-#include "cbdialog.h"
+#include <QWidget>
 #include "fileclipboardheader.h"
 
 class QTableWidget;
@@ -29,7 +29,7 @@ namespace Ui {
 class FileClipboardDialog;
 }
 
-class FileClipboardDialog : public QDialog
+class FileClipboardDialog : public QWidget
 {
     Q_OBJECT
 

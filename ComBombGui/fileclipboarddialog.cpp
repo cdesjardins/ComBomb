@@ -65,7 +65,7 @@ QList<int> parseSlotList(const QString& packed)
 }
 
 FileClipboardDialog::FileClipboardDialog(QWidget* parent) :
-    QDialog(parent),
+    QWidget(parent),
     ui(new Ui::FileClipboardDialog),
     _tabsLoaded(false),
     _renameEditor(nullptr),
@@ -482,7 +482,7 @@ void FileClipboardDialog::keyPressEvent(QKeyEvent* e)
 {
     if (e->key() != Qt::Key_Escape)
     {
-        QDialog::keyPressEvent(e);
+        QWidget::keyPressEvent(e);
     }
 }
 
@@ -524,7 +524,7 @@ bool FileClipboardDialog::eventFilter(QObject* obj, QEvent* event)
     }
     if (ret == true)
     {
-        ret = QDialog::eventFilter(obj, event);
+        ret = QWidget::eventFilter(obj, event);
     }
     return ret;
 }

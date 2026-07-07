@@ -34,7 +34,7 @@ Linux:
 ```
 mkdir -p ~/dev/qt-build
 cd ~/dev/qt-build
-/path/to/qt-everywhere-src-6.x.x/configure -prefix ~/Qt/6 -opensource -confirm-license -static -c++std c++20 -nomake examples -nomake tests -no-openssl -no-feature-gtk3
+/path/to/qt-everywhere-src-6.x.x/configure -prefix ~/Qt/6 -opensource -confirm-license -static -c++std c++20 -nomake examples -nomake tests -no-openssl -no-feature-gtk3 -qt-pcre -system-freetype -fontconfig
 cmake --build . --parallel
 cmake --install .
 ```

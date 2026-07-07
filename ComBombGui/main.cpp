@@ -22,6 +22,16 @@
 
 int main(int argc, char* argv[])
 {
+    // On a Wayland session Qt picks the wayland platform plugin, which cannot
+    // move or resize a floating QDockWidget (the compositor owns window
+    // placement, so the drag is silently rejected and resizing comes from the
+    // wrong edge). Force xcb (via XWayland) so docks behave like X11/Windows.
+    // An explicit QT_QPA_PLATFORM in the environment still overrides this.
+    if (qEnvironmentVariableIsEmpty("QT_QPA_PLATFORM"))
+    {
+        qputenv("QT_QPA_PLATFORM", "xcb");
+    }
+
     QCoreApplication::setOrganizationName("Desjardins");
     QCoreApplication::setOrganizationDomain("chrisd.info");
     QCoreApplication::setApplicationName("ComBomb");
