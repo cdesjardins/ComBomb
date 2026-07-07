@@ -865,7 +865,6 @@ void Vt102Emulation::tau(int token, int p, int q)
 
 // resize = \e[8;<row>;<col>t
         case TY_CSI_PS('t', 8):
-            setImageSize(q /* colums */, p /* lines */);
             break;
 
 // change tab text color : \e[28;<color>t  color: 0-16,777,215
