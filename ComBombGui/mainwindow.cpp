@@ -34,6 +34,11 @@
 #include "ui_mainwindow.h"
 #include "cppssh/cppssh.h"
 
+// Dynamic-property key: stashes a subwindow's SubWindowView (floating) geometry
+// on the QMdiSubWindow itself while tabbed/maximized, so it can be restored when
+// the user returns to SubWindowView. Lives and dies with the subwindow.
+#define CB_PRE_TAB_GEOMETRY "cbPreTabGeometry"
+
 MainWindow* MainWindow ::_instance = nullptr;
 
 MainWindow* MainWindow::getMainWindow(QWidget* parent)
@@ -417,6 +422,21 @@ void MainWindow::subWindowStateChangedSlot(Qt::WindowStates oldState, Qt::Window
     (void)oldState;
     if (((newState & Qt::WindowMaximized) != 0) && (_mdiArea->viewMode() == QMdiArea::SubWindowView))
     {
+        // Capture each subwindow's floating geometry while we are still in
+        // SubWindowView, before the tabbed view (and syncTabbedSubWindowSizes)
+        // resize them to the maximized area -- otherwise their original size and
+        // position are lost and cannot be restored on un-maximize. The window
+        // the user just maximized is already in WindowMaximized state; skip it,
+        // since Qt tracks its pre-maximize geometry and showNormal() restores it.
+        QList<QMdiSubWindow*> subWindows = _mdiArea->subWindowList();
+        for (QMdiSubWindow* subWindow : subWindows)
+        {
+            if (((subWindow->windowState() & Qt::WindowMaximized) == 0) &&
+                (subWindow->property(CB_PRE_TAB_GEOMETRY).isValid() == false))
+            {
+                subWindow->setProperty(CB_PRE_TAB_GEOMETRY, subWindow->geometry());
+            }
+        }
         _mdiArea->setViewMode(QMdiArea::TabbedView);
         decorateTabs();
         syncTabbedSubWindowSizes();
@@ -449,6 +469,17 @@ void MainWindow::syncTabbedSubWindowSizes()
     {
         if ((subWindow != active) && (subWindow->size() != target))
         {
+            // Preserve this window's floating geometry before overwriting it, so
+            // un-maximize can restore it. Safety net for the window the user
+            // originally maximized: subWindowStateChangedSlot skipped it (it was
+            // maximized then), but once it becomes a background tab Qt un-
+            // maximizes it and we resize it here -- capture that non-maximized
+            // rect now. A still-maximized window has size()==target and never
+            // reaches this branch, so geometry() here is always a floating rect.
+            if (subWindow->property(CB_PRE_TAB_GEOMETRY).isValid() == false)
+            {
+                subWindow->setProperty(CB_PRE_TAB_GEOMETRY, subWindow->geometry());
+            }
             subWindow->resize(target);
         }
     }
@@ -529,10 +560,22 @@ void MainWindow::decorateTabs()
 void MainWindow::restoreSubWindowViewSlot()
 {
     _mdiArea->setViewMode(QMdiArea::SubWindowView);
-    QMdiSubWindow* activeSubWindow = _mdiArea->activeSubWindow();
-    if (activeSubWindow != nullptr)
+
+    // Un-maximize every subwindow and put it back where it was before we entered
+    // the tabbed view. Windows whose floating geometry we stashed in
+    // subWindowStateChangedSlot get it restored explicitly (syncTabbedSubWindowSizes
+    // clobbered their size); the window Qt maximized itself is handled by
+    // showNormal(), which restores Qt's own pre-maximize geometry.
+    QList<QMdiSubWindow*> subWindows = _mdiArea->subWindowList();
+    for (QMdiSubWindow* subWindow : subWindows)
     {
-        activeSubWindow->showNormal();
+        subWindow->showNormal();
+        QVariant saved = subWindow->property(CB_PRE_TAB_GEOMETRY);
+        if (saved.isValid() == true)
+        {
+            subWindow->setGeometry(saved.toRect());
+            subWindow->setProperty(CB_PRE_TAB_GEOMETRY, QVariant());
+        }
     }
 }
 
