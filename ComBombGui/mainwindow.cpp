@@ -288,6 +288,7 @@ void MainWindow::subWindowActivatedSlot(QMdiSubWindow* subWindow)
         _mdiArea->setViewMode(QMdiArea::SubWindowView);
     }
     decorateTabs();
+    syncTabbedSubWindowSizes();
 }
 
 void MainWindow::on_actionExit_triggered()
@@ -418,6 +419,38 @@ void MainWindow::subWindowStateChangedSlot(Qt::WindowStates oldState, Qt::Window
     {
         _mdiArea->setViewMode(QMdiArea::TabbedView);
         decorateTabs();
+        syncTabbedSubWindowSizes();
+    }
+}
+
+// In TabbedView, QMdiArea only maximizes the *active* subwindow; background
+// tabs keep their old (small floating-window) geometry and are hidden. Since
+// each terminal derives its PTY/SSH window size from its own widget geometry,
+// background tabs would report that stale small size to their remotes and wrap
+// output at the wrong width. Force every subwindow to the active tab's size so
+// all terminals compute the same maximized grid. Resizing a hidden widget still
+// delivers a QResizeEvent to its TerminalView, which drives the size out to the
+// PTY (the isHidden() guard in TerminalModel::updateTerminalSize() was removed
+// so this propagates for background tabs too).
+void MainWindow::syncTabbedSubWindowSizes()
+{
+    if (_mdiArea->viewMode() != QMdiArea::TabbedView)
+    {
+        return;
+    }
+    QMdiSubWindow* active = _mdiArea->activeSubWindow();
+    if (active == nullptr)
+    {
+        return;
+    }
+    const QSize target = active->size();
+    QList<QMdiSubWindow*> subWindows = _mdiArea->subWindowList();
+    for (QMdiSubWindow* subWindow : subWindows)
+    {
+        if ((subWindow != active) && (subWindow->size() != target))
+        {
+            subWindow->resize(target);
+        }
     }
 }
 

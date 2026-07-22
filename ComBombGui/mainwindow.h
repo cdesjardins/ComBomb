@@ -48,6 +48,7 @@ protected:
     void enableMenuItems(bool enabled);
     void closeEvent(QCloseEvent* event);
     void decorateTabs();
+    void syncTabbedSubWindowSizes();
     void readSettings();
     void saveFileClipboarDockSettings();
     void restoreFileClipboardDockSettings();

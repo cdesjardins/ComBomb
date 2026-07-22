@@ -229,12 +229,18 @@ void TerminalModel::updateTerminalSize()
     const int VIEW_LINES_THRESHOLD = 2;
     const int VIEW_COLUMNS_THRESHOLD = 2;
 
-    //select largest number of lines and columns that will fit in all visible views
+    //select largest number of lines and columns that will fit in all views.
+    //NOTE: the isHidden() test that Konsole uses here is deliberately omitted.
+    //ComBomb has exactly one view per session, and background MDI tabs are
+    //hidden while still needing a valid PTY size that matches the tab content
+    //area. Gating on visibility would freeze a background tab's remote at the
+    //small floating-window size it last had while visible, so output arriving
+    //on that tab wraps at the wrong width. syncTabbedSubWindowSizes() keeps the
+    //hidden tabs sized to the maximized area; this lets that size reach the PTY.
     while (viewIter.hasNext())
     {
         std::shared_ptr<TerminalView> view = viewIter.next();
-        if (view->isHidden() == false &&
-            view->lines() >= VIEW_LINES_THRESHOLD &&
+        if (view->lines() >= VIEW_LINES_THRESHOLD &&
             view->columns() >= VIEW_COLUMNS_THRESHOLD)
         {
             minLines = (minLines == -1) ? view->lines() : qMin(minLines, view->lines());
