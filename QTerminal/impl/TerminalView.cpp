@@ -23,6 +23,9 @@
     02110-1301  USA.
 */
 
+// C++
+#include <cmath>
+
 // Own
 #include "TerminalView.h"
 
@@ -61,6 +64,13 @@
 
 // static
 bool TerminalView::_antialiasText = true;
+
+/* Index of the character cell containing the pixel at offset 'pixels' from the
+   start of the cell grid, where each cell is 'cellSize' pixels wide or tall. */
+static int cellIndex(double pixels, double cellSize)
+{
+    return (int)std::floor(pixels / cellSize);
+}
 
 /* ------------------------------------------------------------------------- */
 /*                                                                           */
@@ -1207,8 +1217,12 @@ void TerminalView::renderToBacking(const QRegion& region)
         painter.setFont(font());
         for (const QRect& rect : region)
         {
-            drawBackground(painter, rect, palette().window().color());
-            drawContents(painter, rect);
+            // the fill and the glyph drawing must cover the same cells, or the
+            // uncleared ones get their text composited on top of itself
+            const QRect cellRect = cellAlignedRect(rect);
+
+            drawBackground(painter, cellRect, palette().window().color());
+            drawContents(painter, cellRect);
         }
     }
 }
@@ -1279,6 +1293,28 @@ void TerminalView::drawInputMethodPreeditString(QPainter& painter, const QRect& 
     _inputMethodData.previousPreeditRect = rect;
 }
 
+QRect TerminalView::cellAlignedRect(const QRect& rect) const
+{
+    // drawContents() maps pixels to cells against a zero x origin and the
+    // contents rect's y origin; mirror that here so the two agree
+    const int topLeftX = 0;
+    const int topLeftY = contentsRect().topLeft().y();
+
+    const int firstColumn = qMax(0, cellIndex(rect.left() - topLeftX - _leftMargin, _fontWidth));
+    const int firstLine = qMax(0, cellIndex(rect.top() - topLeftY - _topMargin, _fontHeight));
+    const int lastColumn = qMax(0, cellIndex(rect.right() - topLeftX - _leftMargin, _fontWidth));
+    const int lastLine = qMax(0, cellIndex(rect.bottom() - topLeftY - _topMargin, _fontHeight));
+
+    const QPoint topLeft((int)(topLeftX + _leftMargin + _fontWidth * firstColumn),
+                         (int)(topLeftY + _topMargin + _fontHeight * firstLine));
+    const QPoint bottomRight((int)(topLeftX + _leftMargin + _fontWidth * (lastColumn + 1)) - 1,
+                             (int)(topLeftY + _topMargin + _fontHeight * (lastLine + 1)) - 1);
+
+    // alignment only ever grows the area; the margins and anything past the
+    // last cell belong to the caller's rect
+    return rect.united(QRect(topLeft, bottomRight));
+}
+
 void TerminalView::drawContents(QPainter& paint, const QRect& rect)
 {
     //qDebug("%s %d drawContents and rect x=%d y=%d w=%d h=%d", __FILE__, __LINE__, rect.x(), rect.y(),rect.width(),rect.height());
@@ -1293,10 +1329,13 @@ void TerminalView::drawContents(QPainter& paint, const QRect& rect)
     // int topLeftX = (_contentWidth - _usedColumns * _fontWidth) / 2;
     int topLeftX = 0;
 
-    int leftUpperX = qMin(_usedColumns - 1, qMax(0, qRound((rect.left()   - topLeftX - _leftMargin) / _fontWidth)));
-    int leftUpperY = qMin(_usedLines - 1, qMax(0, qRound((rect.top()    - topLeftY - _topMargin) / _fontHeight)));
-    int rightLowerX = qMin(_usedColumns - 1, qMax(0, qRound((rect.right()  - topLeftX - _leftMargin) / _fontWidth)));
-    int rightLowerY = qMin(_usedLines - 1, qMax(0, qRound((rect.bottom() - topLeftY - _topMargin) / _fontHeight)));
+    // floor, not round: the bottom/right pixel of a cell-aligned rect sits at
+    // cell*size - 1, which rounds up to the next cell and would draw a row of
+    // text below (or a column right of) the area drawBackground() just cleared
+    int leftUpperX = qMin(_usedColumns - 1, qMax(0, cellIndex(rect.left()   - topLeftX - _leftMargin, _fontWidth)));
+    int leftUpperY = qMin(_usedLines - 1, qMax(0, cellIndex(rect.top()    - topLeftY - _topMargin, _fontHeight)));
+    int rightLowerX = qMin(_usedColumns - 1, qMax(0, cellIndex(rect.right()  - topLeftX - _leftMargin, _fontWidth)));
+    int rightLowerY = qMin(_usedLines - 1, qMax(0, cellIndex(rect.bottom() - topLeftY - _topMargin, _fontHeight)));
 
     const int bufferSize = _usedColumns;
     QChar* disstrU = new QChar[bufferSize];

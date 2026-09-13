@@ -526,6 +526,10 @@ private:
     // fragments according to their colors and styles and calls
     // drawTextFragment() to draw the fragments
     void drawContents(QPainter& paint, const QRect& rect);
+    // grows 'rect' outwards to the boundaries of the character cells it
+    // touches, so that a background fill covers exactly the cells that
+    // drawContents() renders text into
+    QRect cellAlignedRect(const QRect& rect) const;
     // draws a section of text, all the text in this section
     // has a common color and style
     void drawTextFragment(QPainter& painter, const QRect& rect, const QString& text, const Character* style);
