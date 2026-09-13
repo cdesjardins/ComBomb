@@ -1,0 +1,40 @@
+# west manifest for the ComBomb workspace.
+#
+# ComBomb is the manifest repository: "west init" clones it into the workspace
+# topdir, and every path below is relative to that topdir:
+#
+#   topdir/
+#   |-- .west/
+#   |-- ComBomb/           this repo, the Qt6 GUI
+#   |-- QueuePtr/
+#   |-- build/             the build scripts (build.py, makeboost.py, ...)
+#   |-- cppssh/            supplies the three projects below by import
+#   |-- CDLogger/
+#   |-- include/
+#   `-- external/botan/
+#
+# external/boost is not a git repository; it is a tarball that makeboost.py
+# downloads and unpacks, so west does not manage it.
+manifest:
+  version: "1.2"
+
+  remotes:
+    - name: github
+      url-base: ssh://git@github.com/cdesjardins
+
+  defaults:
+    remote: github
+    revision: master
+
+  projects:
+    - name: QueuePtr
+    - name: build
+      west-commands: west-commands.yml
+    # cppssh/west.yml adds CDLogger, include and external/botan, which the GUI
+    # links against as well. To pin any of them from here instead, declare the
+    # project in this file: a top-level definition wins over an imported one.
+    - name: cppssh
+      import: true
+
+  self:
+    path: ComBomb

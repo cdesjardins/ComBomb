@@ -4,15 +4,42 @@ ComBomb is a terminal emulator for debugging embedded systems in the modern era.
 
 #### How to build on both Windows and Linux
 
+The workspace is managed with [west](https://docs.zephyrproject.org/latest/develop/west/index.html)
+(`pip install west`). This repository is the west manifest repository: `west.yml`
+lists the sibling projects, and `west update` fetches them.
+
 Note: All python scripts should work with python 2.6 or higher (including python 3.x)
 ```
-repo init -u git@github.com:cdesjardins/ComBombManifest.git
-repo sync
+west init -m ssh://git@github.com/cdesjardins/ComBomb.git combomb
+cd combomb
+west update
 cd build
 [./]makeboost.py
 [./]makebotan.py
 [./]build.py
 ```
+
+This leaves the workspace laid out as:
+```
+combomb/
+|-- ComBomb/           this repository, the Qt6 GUI
+|-- QueuePtr/
+|-- cppssh/
+|-- CDLogger/
+|-- include/
+|-- build/             the build scripts
+|-- external/          boost and botan
+`-- install/           staged libraries and the packaged GUI
+```
+
+For later work, `west update` re-syncs the workspace and `[./]build.py` rebuilds.
+`makeboost.py` and `makebotan.py` only need rerunning when Boost or Botan change.
+
+The build project also contributes these as west commands — `west cb-boost`,
+`west cb-botan` and `west cb-build` — which run from anywhere in the workspace,
+plus `west cb-shell` to drop into the Ubuntu 22.04 container, where the same
+`./build.py` produces a binary whose glibc floor is low enough to ship.
+See `build/README.md`.
 
 Download Qt source package from: http://www.qt.io/download-open-source/#section-2
 I also typically link to Qt5 statically, to build statically I use the following commands:
@@ -74,7 +101,8 @@ ssh-keygen -p -N "" -f <keyfile>
 ```
 
 Requires:
-git must be in the path (for version number generation)
+west (`pip install west`), and git must be in the path (for version number
+generation)
 
 ComBomb uses the following components:
 
