@@ -33,8 +33,7 @@
       <item>
        <widget class="QLabel" name="copyright">
         <property name="text">
-         <string>ComBomb (C) 2013-2015
-Chris Desjardins</string>
+         <string>ComBomb copyright</string>
         </property>
        </widget>
       </item>

@@ -55,6 +55,15 @@ AboutDialog::AboutDialog(QWidget* parent) :
     ui(new Ui::AboutDialog)
 {
     ui->setupUi(this);
+
+    // __DATE__ expands to "Mmm dd yyyy", so the year begins at offset 7. This
+    // is the year the translation unit was compiled, which a release build
+    // always compiles fresh.
+    QString copyright("ComBomb (C) 2013-");
+    copyright.append(__DATE__ + 7);
+    copyright.append("\nChris Desjardins");
+    ui->copyright->setText(copyright);
+
     QString ver("ComBomb version: ");
     ver.append(getVersion());
     ui->combombVersionLabel->setText(ver);
