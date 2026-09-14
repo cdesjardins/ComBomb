@@ -905,8 +905,10 @@ void Screen::ShowCharacter(unsigned short c)
 
     _lastPos = loc(_cursorX, _cursorY);
 
-    // check if selection is still valid.
-    checkSelection(_cursorX, _cursorY);
+    // check if selection is still valid. checkSelection takes offsets into the
+    // screen image, the same units as _selectionTopLeft and _selectionBottomRight,
+    // so it gets _lastPos rather than the raw cursor column and line.
+    checkSelection(_lastPos, _lastPos);
 
     _screenLines[screenLineIndex(_cursorY)][_cursorX].setProperties(c, _effectiveCursorFg, _effectiveCursorBg,
                                                                     _effectiveCursorRe | RENDITION_RENDER);
