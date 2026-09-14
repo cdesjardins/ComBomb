@@ -1,40 +1,25 @@
-# west manifest for the ComBomb workspace.
-#
-# ComBomb is the manifest repository: "west init" clones it into the workspace
-# topdir, and every path below is relative to that topdir:
-#
-#   topdir/
-#   |-- .west/
-#   |-- ComBomb/           this repo, the Qt6 GUI
-#   |-- QueuePtr/
-#   |-- build/             the build scripts (build.py, makeboost.py, ...)
-#   |-- cppssh/            supplies the three projects below by import
-#   |-- CDLogger/
-#   |-- include/
-#   `-- external/botan/
-#
-# external/boost is not a git repository; it is a tarball that makeboost.py
-# downloads and unpacks, so west does not manage it.
 manifest:
-  version: "1.2"
-
-  remotes:
-    - name: github
-      url-base: ssh://git@github.com/cdesjardins
-
-  defaults:
-    remote: github
-    revision: master
-
   projects:
-    - name: QueuePtr
-    - name: build
-      west-commands: west-commands.yml
-    # cppssh/west.yml adds CDLogger, include and external/botan, which the GUI
-    # links against as well. To pin any of them from here instead, declare the
-    # project in this file: a top-level definition wins over an imported one.
-    - name: cppssh
-      import: true
-
+  - name: QueuePtr
+    url: ssh://git@github.com/cdesjardins/QueuePtr
+    revision: 0c62c7880f45a7c8e0e28bcb822d828f1cf2e716
+  - name: build
+    url: ssh://git@github.com/cdesjardins/build
+    revision: 0bc08c24fe88ca3f1bd5a9926e095c2e15f6fe04
+    west-commands: west-commands.yml
+  - name: cppssh
+    url: ssh://git@github.com/cdesjardins/cppssh
+    revision: 9e8b61826d5e340ef4071998c64c9fab43149df1
+  - name: include
+    url: ssh://git@github.com/cdesjardins/include
+    revision: cbdf7f6b0c47dec769999eac37f305ea97c9480d
+  - name: CDLogger
+    url: ssh://git@github.com/cdesjardins/CDLogger
+    revision: 483269f48047e146344fc89c8f99e46b82ee2848
+  - name: botan
+    url: ssh://git@github.com/cdesjardins/botan
+    revision: 45d6f286c320b2f2efd5373d195ec88c367e3071
+    path: external/botan
+    clone-depth: 1
   self:
     path: ComBomb
