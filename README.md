@@ -66,6 +66,46 @@ cmake --build . --parallel
 cmake --install .
 ```
 
+#### Making a release
+
+Tagging happens once, on one machine. Publishing happens on every platform you
+ship from, and never creates a tag.
+
+```
+west cb-tag "what changed in this release"
+west cb-release
+```
+
+`cb-tag` tags every project in the workspace `v<year>.<dayofyear>.<hour>`, pushes
+the tags, commits a manifest with every project frozen to a SHA, tags that, and
+leaves this repository checked out at the new tag. `cb-release` then builds it —
+in the Ubuntu 22.04 container on Linux, natively on Windows — creates the GitHub
+release using the tag message as the notes, and uploads the artifact.
+
+On the other platform, check out the same tag and publish into the release that
+is already there:
+
+```
+git -C ComBomb fetch --tags
+git -C ComBomb checkout v2026.257.14
+west update
+west cb-release
+```
+
+That `west update` is what makes both platforms build identical sources: the
+manifest committed at the tag pins every project to a SHA, so nothing can drift
+between the two machines. The Linux `.tar.bz2` and the Windows `.zip` land side
+by side in the one release.
+
+`cb-release` cannot create a tag. It refuses to run unless the version reported
+by `createVersion` — the same string that names the archive — is an exact tag,
+and it passes `--verify-tag` to `gh`, which aborts rather than pushing a tag that
+is not already on the remote. Run it with `-n` to build and check without
+publishing anything.
+
+Releases need the GitHub CLI (`gh`) authenticated for this repository; see
+`build/README.md` for the script-level detail.
+
 #### Generating SSH key pairs
 
 ComBomb's SSH client loads private keys in PKCS#8 PEM format
@@ -102,7 +142,7 @@ ssh-keygen -p -N "" -f <keyfile>
 
 Requires:
 west (`pip install west`), and git must be in the path (for version number
-generation)
+generation). Cutting a release also needs the GitHub CLI (`gh`).
 
 ComBomb uses the following components:
 
