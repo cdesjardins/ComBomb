@@ -17,6 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "TgtSerialConnection.h"
+#include "CBException.h"
 #ifndef WIN32
 #include <termios.h>
 #include <unistd.h>
@@ -53,12 +54,23 @@ void TgtSerialIntf::tgtMakeConnection()
     std::shared_ptr<const TgtConnectionConfig> connectionConfig = std::dynamic_pointer_cast<const TgtConnectionConfig>(
         _connectionConfig);
     //_service.reset(new boost::asio::io_service());
-    _port.reset(new boost::asio::serial_port(_service, connectionConfig->_portName));
-    _port->set_option(connectionConfig->_baudRate);
-    _port->set_option(connectionConfig->_parity);
-    _port->set_option(connectionConfig->_byteSize);
-    _port->set_option(connectionConfig->_stopBits);
-    _port->set_option(connectionConfig->_flowControl);
+    try
+    {
+        _port.reset(new boost::asio::serial_port(_service, connectionConfig->_portName));
+        _port->set_option(connectionConfig->_baudRate);
+        _port->set_option(connectionConfig->_parity);
+        _port->set_option(connectionConfig->_byteSize);
+        _port->set_option(connectionConfig->_stopBits);
+        _port->set_option(connectionConfig->_flowControl);
+    }
+    catch (const boost::system::system_error& e)
+    {
+        // Boost names neither the port nor anything else the user chose, so
+        // report which port failed and why.
+        std::stringstream s;
+        s << "Unable to open '" << connectionConfig->_portName << "' (" << e.code().message() << ")";
+        throw CB_EXCEPTION_STR(CBException::CbExcp, s.str().c_str());
+    }
     platformSerialConfig();
     boost::system::error_code err;
 

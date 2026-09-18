@@ -12,6 +12,7 @@ qt_add_library(QTerminal STATIC
     impl/Emulation.cpp
     impl/KeyboardTranslator.cpp
     impl/TgtIntf.cpp
+    impl/CBErrorMessage.cpp
     impl/QTerminalConfig.cpp
     impl/CharacterColor.cpp
 

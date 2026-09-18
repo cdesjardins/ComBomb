@@ -50,7 +50,6 @@ protected:
     CBException(const char* file, const int line, const char* str)
     {
         init(file, line);
-        copyStr(" ");
         copyStr(str);
     }
 
@@ -82,6 +81,8 @@ protected:
 #ifdef CB_LOG_EXECP_FNL
         copyStr(file);
         copyInt(line);
+        // Separates the file and line from the message that follows.
+        copyStr(" ");
 #else
         UNREF_PARAM(file);
         UNREF_PARAM(line);

@@ -32,6 +32,7 @@
 #include "aboutdialog.h"
 #include "configdialog.h"
 #include "ui_mainwindow.h"
+#include "CBErrorMessage.h"
 #include "cppssh/cppssh.h"
 
 // Dynamic-property key: stashes a subwindow's SubWindowView (floating) geometry
@@ -207,7 +208,7 @@ void MainWindow::on_actionOpen_triggered()
         }
         catch (const std::exception& e)
         {
-            MainWindow::errorBox(e.what());
+            MainWindow::errorBox(cbErrorMessage(e));
         }
     }
 }

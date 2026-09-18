@@ -17,6 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "../TgtIntf.h"
+#include "../CBErrorMessage.h"
 #include <algorithm>
 #include <cstring>
 
@@ -153,7 +154,7 @@ void TgtIntf::connectionManagerThread()
             catch (const std::exception& e)
             {
                 // update status bar
-                emit updateStatusSignal(e.what());
+                emit updateStatusSignal(cbErrorMessage(e));
                 tgtAttemptReconnect();
             }
         }
