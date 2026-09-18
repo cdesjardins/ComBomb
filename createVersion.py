@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
 #   ComBomb - Terminal emulator
-#   Copyright (C) 2014  Chris Desjardins
+#   Copyright (C) 2014-2026  Chris Desjardins
 #   https://github.com/cdesjardins/ComBomb cjd@chrisd.info
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -39,7 +39,7 @@ class CreateVer:
         f = open("v.h", "wb")
         f.write(b"""/*
     ComBomb - Terminal emulator
-    Copyright (C) 2014  Chris Desjardins
+    Copyright (C) 2014-2026  Chris Desjardins
     https://github.com/cdesjardins/ComBomb cjd@chrisd.info
 
     This program is free software: you can redistribute it and/or modify

@@ -1,6 +1,6 @@
 /*
     ComBomb - Terminal emulator
-    Copyright (C) 2014  Chris Desjardins
+    Copyright (C) 2014-2026  Chris Desjardins
     https://github.com/cdesjardins/ComBomb cjd@chrisd.info
 
     This program is free software: you can redistribute it and/or modify
