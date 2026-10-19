@@ -18,6 +18,7 @@
 */
 #include "TgtSerialConnection.h"
 #include "CBException.h"
+#include <set>
 #ifndef WIN32
 #include <termios.h>
 #include <unistd.h>
@@ -29,6 +30,17 @@
 **  Serial
 **
 ******************************************************************************/
+
+// The ports owned by serial connections in this process, from creation to
+// destruction (a connection waiting to reconnect still owns its port).
+static std::multiset<std::string> openPorts;
+static std::mutex openPortsMutex;
+
+bool TgtSerialIntf::tgtIsPortInUse(const std::string& portName)
+{
+    std::lock_guard<std::mutex> lock(openPortsMutex);
+    return openPorts.count(portName) > 0;
+}
 
 std::shared_ptr<TgtSerialIntf> TgtSerialIntf::createSerialConnection(
     const std::shared_ptr<const TgtConnectionConfig>& config)
@@ -167,11 +179,18 @@ TgtSerialIntf::TgtSerialIntf(const std::shared_ptr<const TgtConnectionConfig>& c
     _dtr(config->_dtr),
     _rts(config->_rts)
 {
+    std::lock_guard<std::mutex> lock(openPortsMutex);
+    openPorts.insert(config->_portName);
 }
 
 TgtSerialIntf::~TgtSerialIntf ()
 {
+    std::shared_ptr<const TgtConnectionConfig> connectionConfig = std::dynamic_pointer_cast<const TgtConnectionConfig>(
+        _connectionConfig);
+
     tgtDisconnect();
+    std::lock_guard<std::mutex> lock(openPortsMutex);
+    openPorts.erase(openPorts.find(connectionConfig->_portName));
 }
 
 void TgtSerialIntf::tgtReadCallback(const boost::system::error_code& error, const size_t bytesTransferred)

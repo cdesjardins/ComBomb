@@ -24,6 +24,13 @@
 #include <QIntValidator>
 #include <QSettings>
 #include <boost/asio/serial_port.hpp>
+#ifdef WIN32
+#include <windows.h>
+#else
+#include <algorithm>
+#include <filesystem>
+#include <unistd.h>
+#endif
 
 #define CB_OPEN_SETTINGS_ROOT   "OpenDialog/"
 #define CB_OPEN_CONN_TYPE       CB_OPEN_SETTINGS_ROOT "ConnectionType"
@@ -182,20 +189,78 @@ void OpenDialog::addBaudRates()
     }
 }
 
+#ifndef WIN32
+// True when a process this user can see holds the device open. The open file
+// descriptors in /proc/<pid>/fd are links to what they opened, so this needs
+// no open of the device itself.
+static bool isPortInUse(const std::string& device)
+{
+    namespace fs = std::filesystem;
+    std::error_code ec;
+    const fs::path target = fs::canonical(device, ec);
+    const fs::directory_iterator end;
+    bool inUse = false;
+
+    if (!ec)
+    {
+        for (fs::directory_iterator proc("/proc", fs::directory_options::skip_permission_denied, ec);
+             (!ec) && (proc != end) && (inUse == false); proc.increment(ec))
+        {
+            const std::string pid = proc->path().filename().string();
+            std::error_code fdEc;
+            if (std::all_of(pid.begin(), pid.end(), ::isdigit) == true)
+            {
+                for (fs::directory_iterator fd(proc->path() / "fd", fs::directory_options::skip_permission_denied, fdEc);
+                     (!fdEc) && (fd != end) && (inUse == false); fd.increment(fdEc))
+                {
+                    std::error_code linkEc;
+                    const fs::path link = fs::read_symlink(fd->path(), linkEc);
+                    inUse = ((!linkEc) && (link == target));
+                }
+            }
+        }
+    }
+    return inUse;
+}
+#endif
+
+// True when the port exists, checked without opening it.
+static bool isPortPresent(const std::string& device)
+{
+#ifdef WIN32
+    // QueryDosDevice takes the bare name ("COM5"), not "\\.\COM5"
+    std::string name = device;
+    char target[MAX_PATH];
+    if (name.rfind("\\\\.\\", 0) == 0)
+    {
+        name = name.substr(4);
+    }
+    return QueryDosDeviceA(name.c_str(), target, sizeof(target)) != 0;
+#else
+    return access(device.c_str(), R_OK | W_OK) == 0;
+#endif
+}
+
+// List the configured ports that are present and not already in use, without
+// opening any of them: opening a port raises DTR and RTS, which resets boards
+// that wire them to reset or boot pins (and while another connection holds
+// the port, the lines stay raised after the probe closes it). Ports owned by
+// this ComBomb are left out on every platform; on Linux so are ports another
+// process of this user holds. A port held by another program on Windows is
+// listed, and connecting to it reports the failure.
 void OpenDialog::addComPorts()
 {
-    boost::asio::io_context ioService;
-    boost::system::error_code ec;
     QStringList comPorts = ConfigDialog::getPortListSettings();
     for (QStringList::iterator it = comPorts.begin(); it != comPorts.end(); ++it)
     {
-        boost::asio::serial_port port(ioService);
-        QString portname = *it;
-        port.open(portname.toLocal8Bit().constData(), ec);
-        if (port.is_open() == true)
+        std::string device = it->toLocal8Bit().constData();
+        bool inUse = TgtSerialIntf::tgtIsPortInUse(device);
+#ifndef WIN32
+        inUse = ((inUse == true) || (isPortInUse(device) == true));
+#endif
+        if ((isPortPresent(device) == true) && (inUse == false))
         {
             ui->comPortComboBox->addItem(*it);
-            port.close();
         }
     }
 }

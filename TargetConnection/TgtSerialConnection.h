@@ -61,6 +61,9 @@ public:
     static std::shared_ptr<TgtSerialIntf> createSerialConnection(const std::shared_ptr<const TgtConnectionConfig>& config);
     virtual ~TgtSerialIntf ();
     virtual void tgtGetTitle(std::string* szTitle);
+    // True while a serial connection in this process owns the port, so it can
+    // be left out of the port list without opening it.
+    static bool tgtIsPortInUse(const std::string& portName);
     // Drive DTR and RTS now, and again after any reconnect.
     void tgtSetControlLines(const bool dtr, const bool rts);
     bool tgtGetDtr() const;
