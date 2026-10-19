@@ -29,6 +29,7 @@ qt_add_executable(ComBombGui
     finddialog.cpp
     cbfontcombobox.cpp
     capturedialog.cpp
+    seriallineswidget.cpp
 
     mainwindow.ui
     childform.ui

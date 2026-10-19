@@ -22,6 +22,8 @@
 #include "../QTerminal/TgtIntf.h"
 #include "TgtThread.h"
 #include <boost/asio.hpp>
+#include <atomic>
+#include <mutex>
 
 class TgtSerialIntf : public TgtIntf
 {
@@ -32,13 +34,16 @@ public:
                             const boost::asio::serial_port_base::parity parity,
                             const boost::asio::serial_port_base::stop_bits stopBits,
                             const boost::asio::serial_port_base::character_size byteSize,
-                            const boost::asio::serial_port_base::flow_control flowControl)
+                            const boost::asio::serial_port_base::flow_control flowControl,
+                            const bool dtr, const bool rts)
             : _portName(szPortName),
             _baudRate(baudRate),
             _parity(parity),
             _stopBits(stopBits),
             _byteSize(byteSize),
-            _flowControl(flowControl)
+            _flowControl(flowControl),
+            _dtr(dtr),
+            _rts(rts)
         {
         }
 
@@ -48,10 +53,18 @@ public:
         boost::asio::serial_port_base::stop_bits      _stopBits;
         boost::asio::serial_port_base::character_size _byteSize;
         boost::asio::serial_port_base::flow_control   _flowControl;
+        // Initial state of the output control lines, applied once the port
+        // opens. Some boards wire them to reset or boot pins.
+        bool _dtr;
+        bool _rts;
     };
     static std::shared_ptr<TgtSerialIntf> createSerialConnection(const std::shared_ptr<const TgtConnectionConfig>& config);
     virtual ~TgtSerialIntf ();
     virtual void tgtGetTitle(std::string* szTitle);
+    // Drive DTR and RTS now, and again after any reconnect.
+    void tgtSetControlLines(const bool dtr, const bool rts);
+    bool tgtGetDtr() const;
+    bool tgtGetRts() const;
 
 protected:
     TgtSerialIntf (const std::shared_ptr<const TgtConnectionConfig>& config);
@@ -61,6 +74,7 @@ protected:
     virtual void tgtBreakConnection();
     virtual void tgtMakeConnection();
     void platformSerialConfig();
+    void applyControlLines();
 
     boost::asio::io_context _service;
     std::unique_ptr<boost::asio::serial_port> _port;
@@ -68,6 +82,11 @@ protected:
     std::shared_ptr<TgtThread> _serialWriterThread;
     IntrusivePtr<RefCntBuffer> _currentIncomingBuffer;
     char _throwAway[1024];
+    // The GUI sets the lines while reconnects replace the port on the
+    // connection manager thread; _portMutex guards _port across both.
+    std::mutex _portMutex;
+    std::atomic<bool> _dtr;
+    std::atomic<bool> _rts;
 };
 
 #endif

@@ -30,7 +30,8 @@ ChildForm::ChildForm(const QTerminalConfig& terminalConfig, const std::shared_pt
     ui(new Ui::ChildForm),
     _proc(nullptr),
     _procError(false),
-    _captureLogging(false)
+    _captureLogging(false),
+    _targetInterface(targetInterface)
 {
     std::string szTitle;
     ui->setupUi(this);
@@ -250,6 +251,11 @@ void ChildForm::deleteProcess()
 bool ChildForm::isProcessRunning()
 {
     return ((_procError == false) && (_proc != nullptr));
+}
+
+std::shared_ptr<TgtIntf> ChildForm::getTargetInterface() const
+{
+    return _targetInterface;
 }
 
 bool ChildForm::isCaptureRunning()

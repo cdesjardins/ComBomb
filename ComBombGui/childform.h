@@ -41,6 +41,7 @@ public:
     bool isProcessRunning();
     bool isCaptureRunning();
     void captureLog();
+    std::shared_ptr<TgtIntf> getTargetInterface() const;
     virtual ~ChildForm();
 private slots:
     void updateTitleSlot(QString title);
@@ -67,6 +68,7 @@ private:
     bool _redirectStdout;
     bool _redirectStderr;
     bool _captureLogging;
+    std::shared_ptr<TgtIntf> _targetInterface;
 };
 
 #endif // CHILDFORM_H

@@ -79,7 +79,7 @@ std::shared_ptr<const TgtTelnetIntf::TgtConnectionConfig> OpenDialog::getTelnetC
     return ret;
 }
 
-std::shared_ptr<const TgtSerialIntf::TgtConnectionConfig> OpenDialog::getSerialConfig() const
+std::shared_ptr<const TgtSerialIntf::TgtConnectionConfig> OpenDialog::getSerialConfig(const bool dtr, const bool rts) const
 {
     QVariant vBaudRate    = ui->baudRateComboBox->itemData(ui->baudRateComboBox->currentIndex());
     QVariant vParity      = ui->parityComboBox->itemData(ui->parityComboBox->currentIndex());
@@ -98,7 +98,9 @@ std::shared_ptr<const TgtSerialIntf::TgtConnectionConfig> OpenDialog::getSerialC
                                                                 boost::asio::serial_port_base::character_size(
                                                                     vByteSize.toInt()),
                                                                 boost::asio::serial_port_base::flow_control(
-                                                                    (boost::asio::serial_port_base::flow_control::type)vFlowControl.toInt())));
+                                                                    (boost::asio::serial_port_base::flow_control::type)vFlowControl.toInt()),
+                                                                dtr,
+                                                                rts));
     return ret;
 }
 

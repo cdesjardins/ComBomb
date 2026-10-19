@@ -22,6 +22,7 @@
 #include "fileclipboarddialog.h"
 #include "opendialog.h"
 #include "childform.h"
+#include "seriallineswidget.h"
 #include <QMdiArea>
 #include <QMainWindow>
 #include <atomic>
@@ -52,11 +53,14 @@ protected:
     void readSettings();
     void saveFileClipboarDockSettings();
     void restoreFileClipboardDockSettings();
+    std::shared_ptr<TgtSerialIntf> getActiveSerialConnection();
+    void updateSerialLines();
 
 private slots:
     void openWindowSlot();
     void closeWindowSlot();
     void subWindowActivatedSlot(QMdiSubWindow* subWindow);
+    void serialLinesChangedSlot(bool dtr, bool rts);
     void subWindowStateChangedSlot(Qt::WindowStates oldState, Qt::WindowStates newState);
     void updateStatusSlot(QString status);
     void on_actionOpen_triggered();
@@ -88,6 +92,7 @@ private:
     QMdiArea* _mdiArea;
     FileClipboardDialog* _fileClipboardDialog;
     QDockWidget* _fileClipboarDock;
+    SerialLinesWidget* _serialLines;
     static MainWindow* _instance;
     std::atomic_int _windowCnt;
     QString _runProcessIconText;

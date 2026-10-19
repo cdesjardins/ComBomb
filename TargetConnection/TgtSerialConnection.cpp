@@ -21,6 +21,7 @@
 #ifndef WIN32
 #include <termios.h>
 #include <unistd.h>
+#include <sys/ioctl.h>
 #endif
 
 /******************************************************************************
@@ -35,6 +36,54 @@ std::shared_ptr<TgtSerialIntf> TgtSerialIntf::createSerialConnection(
     std::shared_ptr<TgtSerialIntf> ret(new TgtSerialIntf(config));
     ret->tgtAttemptReconnect();
     return ret;
+}
+
+// Drive DTR and RTS to the wanted state on the open port; the caller holds
+// _portMutex. Boost has no option for these lines, and opening a port asserts
+// both (on Windows the flow_control option also enables them). With hardware
+// flow control the driver owns RTS, so it is left alone.
+void TgtSerialIntf::applyControlLines()
+{
+    std::shared_ptr<const TgtConnectionConfig> connectionConfig = std::dynamic_pointer_cast<const TgtConnectionConfig>(
+        _connectionConfig);
+    bool setRts = (connectionConfig->_flowControl.value() != boost::asio::serial_port_base::flow_control::hardware);
+
+    if ((_port != nullptr) && (_port->is_open() == true))
+    {
+#ifdef WIN32
+        EscapeCommFunction(_port->native_handle(), (_dtr.load() == true) ? SETDTR : CLRDTR);
+        if (setRts == true)
+        {
+            EscapeCommFunction(_port->native_handle(), (_rts.load() == true) ? SETRTS : CLRRTS);
+        }
+#else
+        int line = TIOCM_DTR;
+        ioctl(_port->native_handle(), (_dtr.load() == true) ? TIOCMBIS : TIOCMBIC, &line);
+        if (setRts == true)
+        {
+            line = TIOCM_RTS;
+            ioctl(_port->native_handle(), (_rts.load() == true) ? TIOCMBIS : TIOCMBIC, &line);
+        }
+#endif
+    }
+}
+
+void TgtSerialIntf::tgtSetControlLines(const bool dtr, const bool rts)
+{
+    std::lock_guard<std::mutex> lock(_portMutex);
+    _dtr.store(dtr);
+    _rts.store(rts);
+    applyControlLines();
+}
+
+bool TgtSerialIntf::tgtGetDtr() const
+{
+    return _dtr.load();
+}
+
+bool TgtSerialIntf::tgtGetRts() const
+{
+    return _rts.load();
 }
 
 void TgtSerialIntf::platformSerialConfig()
@@ -54,6 +103,7 @@ void TgtSerialIntf::tgtMakeConnection()
     std::shared_ptr<const TgtConnectionConfig> connectionConfig = std::dynamic_pointer_cast<const TgtConnectionConfig>(
         _connectionConfig);
     //_service.reset(new boost::asio::io_service());
+    std::unique_lock<std::mutex> lock(_portMutex);
     try
     {
         _port.reset(new boost::asio::serial_port(_service, connectionConfig->_portName));
@@ -72,6 +122,8 @@ void TgtSerialIntf::tgtMakeConnection()
         throw CB_EXCEPTION_STR(CBException::CbExcp, s.str().c_str());
     }
     platformSerialConfig();
+    applyControlLines();
+    lock.unlock();
     boost::system::error_code err;
 
     _serialWriterThread = TgtThread::create([this]() { return writerThread(); });
@@ -111,7 +163,9 @@ bool TgtSerialIntf::writerThread()
 }
 
 TgtSerialIntf::TgtSerialIntf(const std::shared_ptr<const TgtConnectionConfig>& config)
-    : TgtIntf(config)
+    : TgtIntf(config),
+    _dtr(config->_dtr),
+    _rts(config->_rts)
 {
 }
 
@@ -163,6 +217,7 @@ void TgtSerialIntf::tgtBreakConnection()
 {
     _serialWriterThread.reset();
     _serialServiceThread.reset();
+    std::lock_guard<std::mutex> lock(_portMutex);
     if (_port != nullptr)
     {
         if (_port->is_open())

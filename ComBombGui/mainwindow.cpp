@@ -35,6 +35,9 @@
 #include "CBErrorMessage.h"
 #include "cppssh/cppssh.h"
 
+#define CB_SERIAL_LINES_DTR     "SerialLines/DTR"
+#define CB_SERIAL_LINES_RTS     "SerialLines/RTS"
+
 // Dynamic-property key: stashes a subwindow's SubWindowView (floating) geometry
 // on the QMdiSubWindow itself while tabbed/maximized, so it can be restored when
 // the user returns to SubWindowView. Lives and dies with the subwindow.
@@ -73,7 +76,8 @@ MainWindow::MainWindow(QWidget* parent) :
     _ui(new Ui::MainWindow),
     _mdiArea(new QMdiArea()),
     _fileClipboardDialog(new FileClipboardDialog(this)),
-    _fileClipboarDock(new QDockWidget(tr("File clipboard"), this))
+    _fileClipboarDock(new QDockWidget(tr("File clipboard"), this)),
+    _serialLines(new SerialLinesWidget(this))
 {
     ConfigDialog::handleLogfile();
 
@@ -92,6 +96,11 @@ MainWindow::MainWindow(QWidget* parent) :
     readSettings();
     _runProcessIconText = _ui->action_Run_Process->text();
     _captureLogsIconText = _ui->actionCapture_output->text();
+
+    // Serial control lines, after Options; only live for a serial window
+    _ui->mainToolBar->addWidget(_serialLines);
+    _serialLines->setEnabled(false);
+    connect(_serialLines, SIGNAL(linesChanged(bool,bool)), this, SLOT(serialLinesChangedSlot(bool,bool)));
     connect(_mdiArea, SIGNAL(subWindowActivated(QMdiSubWindow*)), this, SLOT(subWindowActivatedSlot(QMdiSubWindow*)));
 }
 
@@ -181,7 +190,9 @@ void MainWindow::on_actionOpen_triggered()
 
                 case OpenDialog::CB_CONN_SERIAL:
                 {
-                    std::shared_ptr<const TgtSerialIntf::TgtConnectionConfig> p = openDialog.getSerialConfig();
+                    // A new port starts with the toolbar's last DTR/RTS choice
+                    std::shared_ptr<const TgtSerialIntf::TgtConnectionConfig> p = openDialog.getSerialConfig(
+                        _serialLines->dtr(), _serialLines->rts());
                     intf = TgtSerialIntf::createSerialConnection(p);
                 }
                 break;
@@ -225,6 +236,8 @@ void MainWindow::closeEvent(QCloseEvent* event)
 void MainWindow::readSettings()
 {
     QSettings settings;
+    _serialLines->setLines(settings.value(CB_SERIAL_LINES_DTR, true).toBool(),
+                           settings.value(CB_SERIAL_LINES_RTS, true).toBool());
     restoreGeometry(settings.value("Geometry").toByteArray());
     restoreState(settings.value("WindowState").toByteArray());
     restoreFileClipboardDockSettings();
@@ -278,6 +291,45 @@ void MainWindow::closeWindowSlot()
     if (cnt == 1)
     {
         enableMenuItems(false);
+        _serialLines->setEnabled(false);
+    }
+}
+
+// The serial connection behind the active window, or none for other kinds.
+std::shared_ptr<TgtSerialIntf> MainWindow::getActiveSerialConnection()
+{
+    std::shared_ptr<TgtSerialIntf> serial;
+    ChildForm* childForm = getActiveChildWindow();
+
+    if (childForm != nullptr)
+    {
+        serial = std::dynamic_pointer_cast<TgtSerialIntf>(childForm->getTargetInterface());
+    }
+    return serial;
+}
+
+// Enable the DTR/RTS boxes for a serial window and show its line state.
+void MainWindow::updateSerialLines()
+{
+    std::shared_ptr<TgtSerialIntf> serial = getActiveSerialConnection();
+
+    _serialLines->setEnabled(serial != nullptr);
+    if (serial != nullptr)
+    {
+        _serialLines->setLines(serial->tgtGetDtr(), serial->tgtGetRts());
+    }
+}
+
+void MainWindow::serialLinesChangedSlot(bool dtr, bool rts)
+{
+    std::shared_ptr<TgtSerialIntf> serial = getActiveSerialConnection();
+    QSettings settings;
+
+    settings.setValue(CB_SERIAL_LINES_DTR, dtr);
+    settings.setValue(CB_SERIAL_LINES_RTS, rts);
+    if (serial != nullptr)
+    {
+        serial->tgtSetControlLines(dtr, rts);
     }
 }
 
@@ -289,6 +341,7 @@ void MainWindow::subWindowActivatedSlot(QMdiSubWindow* subWindow)
         swapProcessIcon(childForm->isProcessRunning());
         swapCaptureIcon(childForm->isCaptureRunning());
     }
+    updateSerialLines();
     if (_mdiArea->subWindowList().isEmpty() == true)
     {
         _mdiArea->setViewMode(QMdiArea::SubWindowView);

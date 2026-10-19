@@ -44,7 +44,7 @@ public:
 
     std::shared_ptr<const TgtCppsshIntf::TgtConnectionConfig> getSshConfig() const;
     std::shared_ptr<const TgtTelnetIntf::TgtConnectionConfig> getTelnetConfig() const;
-    std::shared_ptr<const TgtSerialIntf::TgtConnectionConfig> getSerialConfig() const;
+    std::shared_ptr<const TgtSerialIntf::TgtConnectionConfig> getSerialConfig(const bool dtr, const bool rts) const;
     std::shared_ptr<const TgtProcessIntf::TgtConnectionConfig> getProcessConfig() const;
 
     ConnectionType getConnectionType();
