@@ -31,7 +31,7 @@
 #ifdef WIN32
 #define BASE_PORTNAME_1 "COM", 1, 257
 #else
-#define BASE_PORTNAME_1 "/dev/ttyS", 0, 256
+#define BASE_PORTNAME_1 "/dev/ttyACM", 0, 256
 #define BASE_PORTNAME_2 "/dev/ttyUSB", 0, 256
 #endif
 
