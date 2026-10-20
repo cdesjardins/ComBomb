@@ -1,0 +1,213 @@
+# One-button ComBomb release.
+#
+#   tag      tagrepo.sh: tags every workspace repo, commits the frozen manifest
+#            to ComBomb and tags it, all as v<year>.<day>.<hour> (UTC)
+#   linux    builds that tag in the Ubuntu 22.04 container -> ComBomb-v*.tar.bz2
+#   windows  builds that tag with MSVC x86                  -> ComBomb-v*.zip
+#   publish  creates the GitHub release with both archives, notes from the tag
+#
+# The builds run release.py --dry-run, which checks the version is a tag and
+# builds but does not publish. The publish job then creates the release once,
+# with both archives, so a failed platform never leaves a half-made release.
+# If a build fails after tagging, "Re-run failed jobs" retries it against the
+# same tag; nothing is tagged twice.
+#
+# Static Qt is not built here. It comes prebuilt from the cdesjardins/qt-static
+# release named by QT_STATIC_TAG; see that repository's README to add a build.
+#
+# Needs the RELEASE_PAT secret: a fine-grained token with Contents read/write
+# on ComBomb, build, cppssh, CDLogger, QueuePtr, include and botan (every
+# project in "west list"), so tagrepo.sh can push tags to the other repos as
+# well as this one.
+
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      description:
+        description: "Release description (the tag message and release notes)"
+        required: true
+        type: string
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+env:
+  QT_STATIC_REPO: cdesjardins/qt-static
+  QT_STATIC_TAG: 6.8.3-1
+  QT_LINUX_ASSET: qt-6.8.3-linux-x64-glibc2.35.tar.xz
+  QT_WINDOWS_ASSET: qt-6.8.3-windows-x86-msvc-static.tar.xz
+  MANIFEST_URL: ssh://git@github.com/cdesjardins/ComBomb
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install west
+        run: pip install west
+
+      - name: Configure git
+        env:
+          RELEASE_PAT: ${{ secrets.RELEASE_PAT }}
+        run: |
+          # west.yml names every repo by ssh://; push to them over https with the token.
+          git config --global url."https://x-access-token:${RELEASE_PAT}@github.com/".insteadOf "ssh://git@github.com/"
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+
+      - name: Workspace
+        run: |
+          west init -m "$MANIFEST_URL" --mr master sw/ComBomb
+          cd sw/ComBomb && west update
+
+      - name: Tag
+        working-directory: sw/ComBomb
+        env:
+          DESC: ${{ inputs.description }}
+        run: ./build/tagrepo.sh "$DESC"
+
+      - name: Version
+        id: version
+        working-directory: sw/ComBomb/ComBomb
+        run: |
+          # tagrepo.sh leaves the manifest repository on the tag it pushed, and
+          # does not stop on a failed push, so check the tag reached GitHub.
+          VERSION=$(git describe --tags --exact-match HEAD)
+          git ls-remote --exit-code origin "refs/tags/$VERSION"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "### Tagged $VERSION" >> "$GITHUB_STEP_SUMMARY"
+
+  linux:
+    needs: tag
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      VERSION: ${{ needs.tag.outputs.version }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install west
+        run: pip install west
+
+      - name: Workspace at ${{ env.VERSION }}
+        run: |
+          # All the repos are public, so plain https needs no token.
+          git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
+          west init -m "$MANIFEST_URL" --mr "$VERSION" sw/ComBomb
+          cd sw/ComBomb && west update --fetch-opt=--tags
+
+      - name: Static Qt
+        run: |
+          # run.sh and build-in-container.sh look for Qt at <workspace parent>/qt6/Qt-2204,
+          # and skip building it when bin/qmake is already there.
+          gh release download "$QT_STATIC_TAG" -R "$QT_STATIC_REPO" -p "$QT_LINUX_ASSET" -D "$RUNNER_TEMP"
+          mkdir -p sw/qt6/Qt-2204
+          tar -xJf "$RUNNER_TEMP/$QT_LINUX_ASSET" -C sw/qt6/Qt-2204
+          test -x sw/qt6/Qt-2204/bin/qmake
+
+      - name: Build
+        working-directory: sw/ComBomb/build
+        run: python release.py --dry-run
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux
+          path: sw/ComBomb/build/build/ComBomb/ComBomb-${{ env.VERSION }}.tar.bz2
+          if-no-files-found: error
+
+  windows:
+    needs: tag
+    runs-on: windows-latest
+    timeout-minutes: 180
+    env:
+      VERSION: ${{ needs.tag.outputs.version }}
+      GH_TOKEN: ${{ github.token }}
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install west and jom
+        run: |
+          pip install west
+          # makebotan.py builds with jom when it is on PATH, otherwise with a
+          # single-threaded nmake.
+          choco install jom -y --no-progress
+
+      - name: Workspace at ${{ env.VERSION }}
+        run: |
+          git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
+          git config --global core.longpaths true
+          west init -m "$env:MANIFEST_URL" --mr "$env:VERSION" sw/ComBomb
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          cd sw/ComBomb
+          west update --fetch-opt=--tags
+
+      - name: Static Qt
+        run: |
+          gh release download "$env:QT_STATIC_TAG" -R "$env:QT_STATIC_REPO" -p "$env:QT_WINDOWS_ASSET" -D "$env:RUNNER_TEMP"
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          python -c "import sys, tarfile; tarfile.open(sys.argv[1]).extractall(sys.argv[2], filter='tar')" "$env:RUNNER_TEMP/$env:QT_WINDOWS_ASSET" sw/qt6/Qt
+          if (!(Test-Path sw/qt6/Qt/lib/cmake/Qt6)) { throw "no Qt6 in the static Qt archive" }
+
+      # The build is 32-bit (Boost address-model=32, Botan --cpu=i386), so an
+      # x86 developer environment, cross-compiling from the x64 host tools.
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: amd64_x86
+
+      - name: Boost
+        working-directory: sw/ComBomb/build
+        run: python makeboost.py
+
+      - name: Botan
+        working-directory: sw/ComBomb/build
+        run: python makebotan.py
+
+      - name: Build
+        working-directory: sw/ComBomb/build
+        run: python release.py --dry-run "--qt=$env:GITHUB_WORKSPACE/sw/qt6/Qt"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: sw/ComBomb/build/build/ComBomb/ComBomb-${{ env.VERSION }}.zip
+          if-no-files-found: error
+
+  publish:
+    needs: [tag, linux, windows]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      VERSION: ${{ needs.tag.outputs.version }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      # gh reads --notes-from-tag from the local annotated tag.
+      - uses: actions/checkout@v4
+        with:
+          ref: refs/tags/${{ env.VERSION }}
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Release ${{ env.VERSION }}
+        run: |
+          gh release create "$VERSION" --verify-tag --notes-from-tag --title "$VERSION" dist/*
+          echo "### Released [$VERSION](https://github.com/${{ github.repository }}/releases/tag/$VERSION)" >> "$GITHUB_STEP_SUMMARY"
